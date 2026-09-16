@@ -105,13 +105,20 @@ not enough to reproduce an implementation.
 
 * **Verified against the real files:** the engine embedded in the 263 file is
   byte-identical to `engine/` (header comment included); both of
-  `embed_engine.py`'s paths reproduce that published file byte-for-byte; all 20
+  `embed_engine.py`'s paths reproduce the delivered file byte-for-byte; all 20
   prototype widgets render with no engine errors; `check_file.py` runs the
   geometric label test over 74 labels in the 263 file with no overlaps.
-* **Found by checking:** the 263 file's prose names the class once, and four of
-  its `<strong>` are labels rather than terms. The prototype's captions predate
-  v6's caption rules and fail them. All three are in `docs/open-issues.md`; the
-  files are committed as delivered, not silently corrected.
+* **Engine is v2.1.** `shiftArrow: false` drops the redundant shift arrow in a
+  schedule-shift widget — the per-row arrows already say it once per row — while
+  keeping the slide and the dimming, and every arrow is now one weight (2.4px).
+  Prompt v6 step 5 changed with it.
+* **`ECO2013-263-SupplyAndDemand.html` is 0 FAIL, 0 WARN.** Its three references
+  to the class are reworded and its four term labels now keep only the term
+  inside `<strong>`.
+* **Left as delivered:** the 9/11 prototype's captions predate v6's caption
+  rules, and its apples widget puts six brace labels on curves (`below:true`
+  would fix it). Both are recorded in `docs/open-issues.md` rather than silently
+  rewritten.
 * **Still open:** figure mode is in the prompt and throws in the engine;
   `preset:"shift"` draws its gap brace above the axis where the hand-written
   template puts it below.

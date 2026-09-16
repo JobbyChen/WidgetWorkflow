@@ -92,3 +92,34 @@ Verified on arrival, against the real files rather than against a description:
    prototype's captions predate v6's caption rules and fail the checker; that is
    a true statement about the file, and silently rewriting Ian's shipped work to
    make a script go green would be worse than the red line.
+
+## 2026-09-16 — engine v2.1, and the first corrections to the delivered file
+
+Ian asked why one arrow in the iced coffee schedule-shift widget was heavier
+than the others. It was not the same kind of arrow: the three thin ones (1.4px)
+were the per-row schedule arrows, and the heavy one (2.4px) was the shift arrow
+the engine draws from `from`, placed by `arrowP` at $4.50 — a price with no row
+in the schedule, so it pointed from nothing to nothing.
+
+Three treatments were rendered and compared before changing anything: matching
+the weights (which kept the pointless fourth arrow and made it look like a
+mistake), dropping the row arrows in favour of the one shift arrow (which loses
+the link between each table row and its point), and dropping the shift arrow.
+
+5. **A schedule-shift widget draws row arrows only.** Engine v2.1 adds
+   `shiftArrow: false`, which suppresses the arrow while keeping the slide
+   animation and the dimming of the original curve — `from` previously bundled
+   all three together, so a config-only fix would have cost the animation. Every
+   arrow is now one weight, 2.4px, so two arrows in a graph never read as two
+   different kinds of thing. Prompt v6 step 5 changed with it, otherwise the
+   next conversion would put the fourth arrow straight back.
+6. **`<strong>` keeps the term and nothing else.** The four flagged tags were
+   real vocabulary terms — v6 names "inferior goods" as a `<strong>` example —
+   so converting them to `<b>` as the checker first advised would have been
+   wrong. The fault was the `(+).` sitting inside the tag. Checking what the
+   rule actually said, rather than what the checker's message said, changed the
+   fix.
+7. **The class references were three, not one.** The checker matched `the class`
+   on a word boundary and so missed `classroom` twice, including in a heading.
+   Word lists that look complete are worth testing against the file rather than
+   trusting.

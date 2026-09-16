@@ -6,19 +6,28 @@ Checkboxes. Keep `CLAUDE.md`'s status paragraph in sync with this file.
 
 ## Found by running the checker on the delivered files
 
-- [ ] **`ECO2013-263-SupplyAndDemand.html` names the class in its prose.**
-      "…roughly 15% to 20% of the class said their answer would have been
-      different." Prompt v6 step 0T: no paragraph may refer to the transcript,
-      the lecture, the recording, the board, or the class. One sentence to
-      reword; the economics survives without the attribution.
-- [ ] **Four `<strong>` in the same file are not vocabulary terms** — "Normal
-      goods (+)." and similar are list-item labels, which v6 makes `<b>`. The
-      stylesheet renders `<strong>` blue, so these read as glossary entries.
+- [x] ~~`ECO2013-263-SupplyAndDemand.html` names the class in its prose.~~ Three
+      references, not one: the section heading, the 15–20% sentence, and "the
+      classroom curve". All reworded; the 15–20% figure survives. The checker
+      had only caught one of the three because `the class` on a word boundary
+      does not match `classroom`; `classroom` is now in its word list.
+- [x] ~~Four `<strong>` in the same file are not vocabulary terms.~~ They *are*
+      terms — v6 names "inferior goods" as a `<strong>` example. The fault was
+      that `(+).` was inside the `<strong>`, so the glossary entry read "Normal
+      goods (+).". Now `<strong>Normal goods</strong><b> (+).</b>`, matching the
+      sibling `<b>Number of potential buyers (+).</b>`. The checker's advice was
+      wrong and has been reworded.
 - [ ] **`ECO2013-Widgets-All.html` fails v6's caption rules** — eight
       "Before – / After –" prefixes and four "Price up, quantity up" shorthands.
       Expected: the prototype is dated 9/11/26 and those rules came later. Left
       as delivered. Worth a pass if the prototype is ever published rather than
       kept as a reference.
+- [ ] **The prototype's apples widget puts six brace labels on curves.** In four
+      of its five scenarios, "Shortage of 80" / "Surplus of 80" sits above the
+      price line where a curve runs through it. The fix is `below: true`, which
+      is what the v6 step 4 template does for exactly this reason. Pre-existing;
+      confirmed identical before and after the v2.1 change. Left as delivered
+      along with the captions above.
 
 ## Prompt v6
 
@@ -34,6 +43,12 @@ Checkboxes. Keep `CLAUDE.md`'s status paragraph in sync with this file.
       prompt throws.
 
 ## Engine
+
+- [x] ~~A schedule-shift widget draws four red arrows: one per schedule row at
+      1.4px, plus a heavier 2.4px shift arrow at a price between rows.~~ Engine
+      v2.1: `shiftArrow: false` drops the redundant arrow while keeping the
+      slide and the dimming, and every arrow is now 2.4px. Both example files
+      and prompt v6 step 5 updated.
 
 - [ ] **Figure mode throws.** `buildPanel` reads `cfg.axes.cents` with no guard,
       so a figure-mode config (title + steps only, hand-written SVG) dies with

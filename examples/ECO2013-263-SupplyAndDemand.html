@@ -57,7 +57,7 @@
 .sdg .arrow { fill:none; stroke-width:2; stroke-linejoin:round; }
 .sdg .arrow.shift { stroke-width:2.4; }
 .sdg .arrow.mv { stroke-width:2.4; stroke:var(--red); }
-.sdg .arrow.row { stroke-width:1.4; stroke:var(--red); }
+.sdg .arrow.row { stroke-width:2.4; stroke:var(--red); }
 .sdg .hline { stroke-width:3; }
 .sdg .brace { fill:none; stroke-width:1.8; }
 .sdg .curve-g.dim .curve { stroke-width:2; opacity:.8; }
@@ -72,7 +72,7 @@
 .sdg .sdg-cap { margin:10px 0 0; padding:10px 12px; background:#fff; border-left:4px solid var(--red); font-size:.92rem; line-height:1.45; min-height:3.2em; }
 </style>
 <script>
-/* ===== sd-graph.js v2 — data-driven supply & demand widgets =====
+/* ===== sd-graph.js v2.1 — data-driven supply & demand widgets =====
    Markup:  <div class="sdg"><script type="application/json">{ ...config... }<\/script></div>
    Top-level config:
      title, lede, caption         heading / intro / static caption (caption used only when there are no steps)
@@ -82,9 +82,11 @@
    Panel config:
      heading                      title above the panel (two-market only)
      axes: {x, y, xmax, ymax, xticks[], yticks[], money, cents, k, grid, bg:false}
-     curves[]: {id, label, pts:[[q,p],...], color, at, until, from, arrowP, curved, thin, dashed, lstart, ldx, ldy}
+     curves[]: {id, label, pts:[[q,p],...], color, at, until, from, arrowP, shiftArrow, curved, thin, dashed, lstart, ldx, ldy}
         lstart = put the curve label at the first point instead of the last; ldx/ldy nudge it
         from   = id of the curve this one shifts away from (animated shift + arrow); arrowP = price height of arrow
+        shiftArrow:false = animate and dim as usual but draw no shift arrow. Use it whenever the
+                 widget already shows per-row arrows (table.arrows), which say the same thing once per row.
         curved = smooth through 3+ points (conceptual, non-linear look)
      points[]: {id, q, p, label, marker, pl, ql, color, at, until, dx, dy, guides:false, showP:false, showQ:false}
         marker = "1"/"2" numbered circle;  pl/ql = symbolic axis labels ("P₁","Q₁") instead of numbers
@@ -161,7 +163,9 @@
         var src = byId[c.from].spec, ap = c.arrowP != null ? c.arrowP : (c.pts[0][1] + last[1]) / 2;
         var q0 = qAt(src.pts, ap), q1 = qAt(c.pts, ap), s = Math.sign(q1 - q0);
         grp.dataset.dx = X(q1) - X(q0); grp.dataset.dy = 0; grp.classList.add('move');
-        g.appendChild(reg(arrow(X(q0) + s * 8, Y(ap), X(q1) - s * 8, Y(ap), cc, 'shift'), {at: c.at || 0, until: c.until}));
+        // shiftArrow:false keeps the slide and the dimming but drops the arrow, for
+        // widgets whose per-row arrows already show the shift once per schedule row.
+        if (c.shiftArrow !== false) g.appendChild(reg(arrow(X(q0) + s * 8, Y(ap), X(q1) - s * 8, Y(ap), cc, 'shift'), {at: c.at || 0, until: c.until}));
       }
       g.appendChild(grp); reg(grp, c);
     });
@@ -412,13 +416,13 @@
 
 <p>Wanting and affording are not the same thing, and affording and buying are not the same thing either. A yacht or a house may be something a student wants but cannot afford. A $400 pair of smart glasses is different. Most students could find $400 in an account or on a credit card, so the honest description is not "I cannot afford them" but "I would rather allocate my limited income elsewhere." The same logic applies to an $800-a-month lease on a sports car: someone with an extra $800 each month can afford it, yet may still choose to spend that money on a concert and a hotel instead. For a consumer to be counted, all three criteria must be met. It is not enough to want the good, and it is not even enough to want it and be able to afford it. The consumer has to be ready to buy it when it is put in front of them at that price.</p>
 
-<h2>A classroom demand experiment</h2>
+<h2>A demand experiment</h2>
 
 <p>To see where a demand relationship comes from, imagine a market in which the good is a grande raspberry white mocha, a sweet, fruity coffee drink topped with whipped cream. Each person names the absolute maximum price they would pay for one right now. Two simplifying assumptions apply: anyone willing to pay a given price is also willing to pay any lower price, and each person buys at most one drink. (In the real world people often buy more than one unit and are willing to pay different amounts for the first and second unit.)</p>
 
 <p>Prices are then called out from high to low. Nobody was willing to pay $50, and nobody was willing to pay $20. At $15, six people raised their hands, so the quantity demanded at $15 is 6. Lowering the price to $12 picked up 7 more buyers, for a total of 13. At $9, 9 more joined, for 22. At $6, 16 more joined, for 38. At $3, 27 more joined, for a total of 65.</p>
 
-<p>A table like this is called a <strong>demand schedule</strong>. It is the demand relationship itself: for each possible price, the quantity that consumers in this market would buy. It holds every buyer's circumstances constant, including their budgets, their taste for sweet caffeinated drinks, and any allergies. If those circumstances changed, the schedule would change. For example, if everyone had been handed $1,000 before answering, roughly 15% to 20% of the class said their answer would have been different. A change in income changes the demand relationship.</p>
+<p>A table like this is called a <strong>demand schedule</strong>. It is the demand relationship itself: for each possible price, the quantity that consumers in this market would buy. It holds every buyer's circumstances constant, including their budgets, their taste for sweet caffeinated drinks, and any allergies. If those circumstances changed, the schedule would change. For example, if every buyer had been handed $1,000 before answering, roughly 15% to 20% of them would have answered differently. A change in income changes the demand relationship.</p>
 
 <p>A <strong>demand curve</strong> shows exactly the same information as the schedule, but graphically. Price goes on the vertical axis and quantity demanded on the horizontal axis. Hover over a row of the schedule below to find its point on the curve.</p>
 
@@ -433,7 +437,7 @@
 
 <p>Something about the axes should look strange if you remember high school math. As described so far, price is the independent variable and quantity demanded depends on it, so by the usual convention price would go on the horizontal axis. In the supply and demand model the convention is flipped: price is on the vertical axis and quantity on the horizontal axis. This has been done for over a hundred years. Some say it began as a mistake that was simply carried forward; others say it was intentional, based on how the original textbook was laid out. Either way, the convention is fixed.</p>
 
-<p>The experiment makes three points. First, it shows where a demand curve actually comes from and what the data represent. Second, it shows that real-world demand curves are <strong>non-linear</strong>. The classroom curve is not a straight line. Textbooks and most online resources nonetheless draw straight-line supply and demand curves, and for most applications nothing is lost by doing so. Straight lines simply make the math easier, and from here on this course uses straight-line curves. Third, it illustrates the law of demand.</p>
+<p>The experiment makes three points. First, it shows where a demand curve actually comes from and what the data represent. Second, it shows that real-world demand curves are <strong>non-linear</strong>. The curve these answers trace is not a straight line. Textbooks and most online resources nonetheless draw straight-line supply and demand curves, and for most applications nothing is lost by doing so. Straight lines simply make the math easier, and from here on this course uses straight-line curves. Third, it illustrates the law of demand.</p>
 
 <h2>The law of demand</h2>
 
@@ -462,12 +466,12 @@
   "axes":{"xmax":55,"ymax":14,"money":true,"grid":true,"xticks":[10,20,30,40,50],"yticks":[4,8,12]},
   "scenarios":{
     "up":{"label":"Increase in demand: 10 more pounds at every price",
-      "curves":[{"id":"D1","label":"D₁","pts":[[20,12],[30,8],[40,4]],"thin":true,"ldx":-26,"ldy":15},{"id":"D2","label":"D₂","pts":[[30,12],[40,8],[50,4]],"color":"red","from":"D1","at":1,"arrowP":10}],
+      "curves":[{"id":"D1","label":"D₁","pts":[[20,12],[30,8],[40,4]],"thin":true,"ldx":-26,"ldy":15},{"id":"D2","label":"D₂","pts":[[30,12],[40,8],[50,4]],"color":"red","from":"D1","shiftArrow":false,"at":1,"arrowP":10}],
       "table":{"cols":["Price","Before","After"],"series":["D1","D2"],"rows":[[12,20,30],[8,30,40],[4,40,50]],"arrows":true},
       "steps":["On the original demand curve D₁, 20 pounds of chicken are demanded at $12, 30 pounds at $8, and 40 pounds at $4.",
                "Demand increases by 10 pounds at every price. At $12 the quantity demanded is now 30 pounds, at $8 it is 40, and at $4 it is 50. Every point has moved 10 pounds to the right, so the entire demand curve shifts to the right, from D₁ to D₂."]},
     "down":{"label":"Decrease in demand: 10 fewer pounds at every price",
-      "curves":[{"id":"D1","label":"D₁","pts":[[20,12],[30,8],[40,4]],"thin":true},{"id":"D2","label":"D₂","pts":[[10,12],[20,8],[30,4]],"color":"red","from":"D1","at":1,"arrowP":10,"ldx":-26,"ldy":15}],
+      "curves":[{"id":"D1","label":"D₁","pts":[[20,12],[30,8],[40,4]],"thin":true},{"id":"D2","label":"D₂","pts":[[10,12],[20,8],[30,4]],"color":"red","from":"D1","shiftArrow":false,"at":1,"arrowP":10,"ldx":-26,"ldy":15}],
       "table":{"cols":["Price","Before","After"],"series":["D1","D2"],"rows":[[12,20,10],[8,30,20],[4,40,30]],"arrows":true},
       "steps":["On the original demand curve D₁, 20 pounds of chicken are demanded at $12, 30 pounds at $8, and 40 pounds at $4.",
                "Demand decreases by 10 pounds at every price. At $12 the quantity demanded is now only 10 pounds, at $8 it is 20, and at $4 it is 30. Every point has moved 10 pounds to the left, so the entire demand curve shifts to the left, from D₁ to D₂."]}
@@ -486,14 +490,14 @@
 <li><b>Number of potential buyers (+).</b> More potential buyers means more demand and a rightward shift; fewer potential buyers means less demand and a leftward shift.</li>
 <li><b>Income</b>, which requires splitting goods into two types.
   <ul>
-  <li><strong>Normal goods (+).</strong> There is a positive relationship between consumers' income and demand. Most clothing, new cars of all types, designer bags, and burrito bowls are normal goods: when incomes rise, people buy more of them, and when incomes fall, they buy fewer.</li>
-  <li><strong>Inferior goods (−).</strong> There is an inverse relationship between consumers' income and demand. The name does not mean low quality, even though many examples are low-quality products. What makes a good inferior is only that people buy more of it when their incomes are lower and less when their incomes are higher. The textbook example is just-add-water ramen noodles; boxed macaroni and cheese is another. Most students stop buying these once they graduate and earn more.</li>
+  <li><strong>Normal goods</strong><b> (+).</b> There is a positive relationship between consumers' income and demand. Most clothing, new cars of all types, designer bags, and burrito bowls are normal goods: when incomes rise, people buy more of them, and when incomes fall, they buy fewer.</li>
+  <li><strong>Inferior goods</strong><b> (−).</b> There is an inverse relationship between consumers' income and demand. The name does not mean low quality, even though many examples are low-quality products. What makes a good inferior is only that people buy more of it when their incomes are lower and less when their incomes are higher. The textbook example is just-add-water ramen noodles; boxed macaroni and cheese is another. Most students stop buying these once they graduate and earn more.</li>
   </ul>
 </li>
 <li><b>Prices of related goods</b>, which also splits into two types.
   <ul>
-  <li><strong>Substitutes (+).</strong> Two goods are substitutes when consumers choose between buying one or the other. Chicken and pork are substitutes. If the price of pork rises, pork is relatively more expensive, so consumers buy more chicken: the demand for chicken increases and shifts right. If the price of pork falls, the demand for chicken decreases and shifts left. There is a positive relationship between the price of a substitute and the demand for the good in question.</li>
-  <li><strong>Complements (−).</strong> Two goods are complements when consumers tend to buy them together, such as milk and cereal. If the price of milk rises, people buy less milk and therefore less cereal, so the demand for cereal decreases. If the price of milk falls, the demand for cereal increases. There is a negative relationship between the price of a complement and the demand for the good in question.</li>
+  <li><strong>Substitutes</strong><b> (+).</b> Two goods are substitutes when consumers choose between buying one or the other. Chicken and pork are substitutes. If the price of pork rises, pork is relatively more expensive, so consumers buy more chicken: the demand for chicken increases and shifts right. If the price of pork falls, the demand for chicken decreases and shifts left. There is a positive relationship between the price of a substitute and the demand for the good in question.</li>
+  <li><strong>Complements</strong><b> (−).</b> Two goods are complements when consumers tend to buy them together, such as milk and cereal. If the price of milk rises, people buy less milk and therefore less cereal, so the demand for cereal decreases. If the price of milk falls, the demand for cereal increases. There is a negative relationship between the price of a complement and the demand for the good in question.</li>
   </ul>
 </li>
 <li><b>Expected future price (+).</b> For goods whose purchase can be moved earlier or later in time, beliefs about the future price matter. If you expect the price of gasoline to rise on Friday, you fill up today, increasing your demand now. If you expect it to fall on Friday, you wait, reducing your demand today. There is a positive relationship between the expected future price and current demand. This does not apply to goods that cannot be stored, such as next week's dinner.</li>
@@ -557,12 +561,12 @@
   "axes":{"xmax":275,"ymax":5.6,"money":true,"grid":true,"xticks":[50,100,150,200,250],"yticks":[3,4,5]},
   "scenarios":{
     "up":{"label":"Increase in supply: 50 more units at every price",
-      "curves":[{"id":"S1","label":"S₁","pts":[[100,3],[200,5]],"thin":true,"ldx":-8,"ldy":-8},{"id":"S2","label":"S₂","pts":[[150,3],[250,5]],"color":"red","from":"S1","at":1,"arrowP":4.5,"ldx":-8,"ldy":-8}],
+      "curves":[{"id":"S1","label":"S₁","pts":[[100,3],[200,5]],"thin":true,"ldx":-8,"ldy":-8},{"id":"S2","label":"S₂","pts":[[150,3],[250,5]],"color":"red","from":"S1","shiftArrow":false,"at":1,"arrowP":4.5,"ldx":-8,"ldy":-8}],
       "table":{"cols":["Price","Before","After"],"series":["S1","S2"],"rows":[[3,100,150],[4,150,200],[5,200,250]],"arrows":true},
       "steps":["On the original supply curve S₁, 100 iced coffees are supplied at $3, 150 at $4, and 200 at $5.",
                "Supply increases by 50 units at every price. At $3 the quantity supplied is now 150, at $4 it is 200, and at $5 it is 250. Every point has moved 50 units to the right, so the entire supply curve shifts to the right, from S₁ to S₂."]},
     "down":{"label":"Decrease in supply: 50 fewer units at every price",
-      "curves":[{"id":"S1","label":"S₁","pts":[[100,3],[200,5]],"thin":true,"ldx":-8,"ldy":-8},{"id":"S2","label":"S₂","pts":[[50,3],[150,5]],"color":"red","from":"S1","at":1,"arrowP":4.5,"ldx":-8,"ldy":-8}],
+      "curves":[{"id":"S1","label":"S₁","pts":[[100,3],[200,5]],"thin":true,"ldx":-8,"ldy":-8},{"id":"S2","label":"S₂","pts":[[50,3],[150,5]],"color":"red","from":"S1","shiftArrow":false,"at":1,"arrowP":4.5,"ldx":-8,"ldy":-8}],
       "table":{"cols":["Price","Before","After"],"series":["S1","S2"],"rows":[[3,100,50],[4,150,100],[5,200,150]],"arrows":true},
       "steps":["On the original supply curve S₁, 100 iced coffees are supplied at $3, 150 at $4, and 200 at $5.",
                "Supply decreases by 50 units at every price. At $3 the quantity supplied is now 50, at $4 it is 100, and at $5 it is 150. Every point has moved 50 units to the left, so the entire supply curve shifts to the left, from S₁ to S₂."]}

@@ -1,4 +1,4 @@
-# Engine reference — `engine/sd-graph.js` v2
+# Engine reference — `engine/sd-graph.js` v2.1
 
 Written from the engine source. The conversion prompt carries a shorter version
 of this in its own "Engine reference" section; that one is what the model needs
@@ -77,7 +77,7 @@ Axis labels default to `P` and `Q`, which is what the printed artwork uses.
 
 ```json
 {"id": "D2", "label": "D₂", "pts": [[104,16],[20,100]], "color": "red",
- "from": "D1", "arrowP": 88, "at": 1,
+ "from": "D1", "arrowP": 88, "shiftArrow": false, "at": 1,
  "curved": true, "thin": true, "dashed": true,
  "lstart": true, "ldx": -26, "ldy": 15}
 ```
@@ -89,6 +89,10 @@ Axis labels default to `P` and `Q`, which is what the printed artwork uses.
   new curve **animates** in from the old one's position, a red shift arrow is
   drawn between them at price `arrowP`, and the original curve is **dimmed**
   (thinner, slightly transparent) from that step onward.
+- `shiftArrow: false` keeps the animation and the dimming but draws no arrow.
+  Set it on any widget whose `table` has `arrows: true`: the per-row arrows
+  already show the shift once per schedule row, and a fourth arrow at a price
+  that is not in the schedule has no point at either end.
 - `thin` draws the original curve of a shift pair; `dashed` dashes it.
 - The label sits at the **last** point, or the first with `lstart:true`, nudged
   by `ldx`/`ldy` (defaults `+6` across, `+2` above an upward curve or `+6` below
@@ -164,6 +168,10 @@ interaction is the point of putting the schedule next to the curve.
 `ink` (the default, a black-navy), `red` (shifted or new), `teal`, `orange`,
 `grey`. Red is reserved: the shifted curve, every arrow, the disequilibrium
 price line, its brace and the new equilibrium. Nothing else.
+
+Every arrow is drawn at the same 2.4px weight — shift, movement and per-row
+alike — so that two arrows in one graph never read as two different kinds of
+thing.
 
 ## Presets
 

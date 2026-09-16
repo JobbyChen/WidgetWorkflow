@@ -51,7 +51,7 @@
 .sdg .arrow { fill:none; stroke-width:2; stroke-linejoin:round; }
 .sdg .arrow.shift { stroke-width:2.4; }
 .sdg .arrow.mv { stroke-width:2.4; stroke:var(--red); }
-.sdg .arrow.row { stroke-width:1.4; stroke:var(--red); }
+.sdg .arrow.row { stroke-width:2.4; stroke:var(--red); }
 .sdg .hline { stroke-width:3; }
 .sdg .brace { fill:none; stroke-width:1.8; }
 .sdg .curve-g.dim .curve { stroke-width:2; opacity:.8; }
@@ -66,7 +66,7 @@
 .sdg .sdg-cap { margin:10px 0 0; padding:10px 12px; background:#fff; border-left:4px solid var(--red); font-size:.92rem; line-height:1.45; min-height:3.2em; }
 </style>
 <script>
-/* ===== sd-graph.js v2 — data-driven supply & demand widgets =====
+/* ===== sd-graph.js v2.1 — data-driven supply & demand widgets =====
    Markup:  <div class="sdg"><script type="application/json">{ ...config... }<\/script></div>
    Top-level config:
      title, lede, caption         heading / intro / static caption (caption used only when there are no steps)
@@ -76,9 +76,11 @@
    Panel config:
      heading                      title above the panel (two-market only)
      axes: {x, y, xmax, ymax, xticks[], yticks[], money, cents, k, grid, bg:false}
-     curves[]: {id, label, pts:[[q,p],...], color, at, until, from, arrowP, curved, thin, dashed, lstart, ldx, ldy}
+     curves[]: {id, label, pts:[[q,p],...], color, at, until, from, arrowP, shiftArrow, curved, thin, dashed, lstart, ldx, ldy}
         lstart = put the curve label at the first point instead of the last; ldx/ldy nudge it
         from   = id of the curve this one shifts away from (animated shift + arrow); arrowP = price height of arrow
+        shiftArrow:false = animate and dim as usual but draw no shift arrow. Use it whenever the
+                 widget already shows per-row arrows (table.arrows), which say the same thing once per row.
         curved = smooth through 3+ points (conceptual, non-linear look)
      points[]: {id, q, p, label, marker, pl, ql, color, at, until, dx, dy, guides:false, showP:false, showQ:false}
         marker = "1"/"2" numbered circle;  pl/ql = symbolic axis labels ("P₁","Q₁") instead of numbers
@@ -155,7 +157,9 @@
         var src = byId[c.from].spec, ap = c.arrowP != null ? c.arrowP : (c.pts[0][1] + last[1]) / 2;
         var q0 = qAt(src.pts, ap), q1 = qAt(c.pts, ap), s = Math.sign(q1 - q0);
         grp.dataset.dx = X(q1) - X(q0); grp.dataset.dy = 0; grp.classList.add('move');
-        g.appendChild(reg(arrow(X(q0) + s * 8, Y(ap), X(q1) - s * 8, Y(ap), cc, 'shift'), {at: c.at || 0, until: c.until}));
+        // shiftArrow:false keeps the slide and the dimming but drops the arrow, for
+        // widgets whose per-row arrows already show the shift once per schedule row.
+        if (c.shiftArrow !== false) g.appendChild(reg(arrow(X(q0) + s * 8, Y(ap), X(q1) - s * 8, Y(ap), cc, 'shift'), {at: c.at || 0, until: c.until}));
       }
       g.appendChild(grp); reg(grp, c);
     });
@@ -421,12 +425,12 @@
   "axes":{"xmax":350,"ymax":32,"money":true,"grid":true,"xticks":[0,50,100,150,200,250,300],"yticks":[0,5,10,15,20,25,30]},
   "scenarios":{
     "up":{"label":"Demand increases: 75 more units at every price",
-      "curves":[{"id":"D1","label":"D₁","pts":[[255,0.5],[58,30]],"thin":true,"lstart":true,"ldx":8,"ldy":-8},{"id":"D2","label":"D₂","pts":[[330,0.5],[133,30]],"color":"red","from":"D1","at":1,"arrowP":9,"lstart":true,"ldx":8,"ldy":-8}],
+      "curves":[{"id":"D1","label":"D₁","pts":[[255,0.5],[58,30]],"thin":true,"lstart":true,"ldx":8,"ldy":-8},{"id":"D2","label":"D₂","pts":[[330,0.5],[133,30]],"color":"red","from":"D1","shiftArrow":false,"at":1,"arrowP":9,"lstart":true,"ldx":8,"ldy":-8}],
       "table":{"cols":["Price","Before","After"],"series":["D1","D2"],"rows":[[5,225,300],[12.5,175,250],[20,125,200],[27.5,75,150]],"arrows":true},
       "steps":["Before – The original schedule, D₁. At $12.50, for example, buyers want 175 units.",
                "After – Every row gains 75 units, so every point moves 75 to the right. The whole curve shifts right, to D₂: an increase in demand."]},
     "down":{"label":"Demand decreases: 50 fewer units at every price",
-      "curves":[{"id":"D1","label":"D₁","pts":[[255,0.5],[58,30]],"thin":true,"lstart":true,"ldx":8,"ldy":-8},{"id":"D2","label":"D₂","pts":[[205,0.5],[8,30]],"color":"red","from":"D1","at":1,"arrowP":9,"lstart":true,"ldx":8,"ldy":-8}],
+      "curves":[{"id":"D1","label":"D₁","pts":[[255,0.5],[58,30]],"thin":true,"lstart":true,"ldx":8,"ldy":-8},{"id":"D2","label":"D₂","pts":[[205,0.5],[8,30]],"color":"red","from":"D1","shiftArrow":false,"at":1,"arrowP":9,"lstart":true,"ldx":8,"ldy":-8}],
       "table":{"cols":["Price","Before","After"],"series":["D1","D2"],"rows":[[5,225,175],[12.5,175,125],[20,125,75],[27.5,75,25]],"arrows":true},
       "steps":["Before – The original schedule, D₁.",
                "After – Every row loses 50 units, so every point moves 50 to the left. The whole curve shifts left, to D₂: a decrease in demand."]}
@@ -471,12 +475,12 @@
   "axes":{"xmax":20000,"ymax":6.6,"money":true,"k":true,"grid":true,"xticks":[0,3000,6000,9000,12000,15000,18000],"yticks":[0,1,2,3,4,5,6]},
   "scenarios":{
     "up":{"label":"Supply increases: 3,000 more at every price",
-      "curves":[{"id":"S1","label":"S₁","pts":[[4800,0.2],[13800,6.2]],"thin":true,"ldx":-26,"ldy":-2},{"id":"S2","label":"S₂","pts":[[7800,0.2],[16800,6.2]],"color":"red","from":"S1","at":1,"arrowP":4.1}],
+      "curves":[{"id":"S1","label":"S₁","pts":[[4800,0.2],[13800,6.2]],"thin":true,"ldx":-26,"ldy":-2},{"id":"S2","label":"S₂","pts":[[7800,0.2],[16800,6.2]],"color":"red","from":"S1","shiftArrow":false,"at":1,"arrowP":4.1}],
       "table":{"cols":["Price","Before","After"],"series":["S1","S2"],"rows":[[1,6000,9000],[3,9000,12000],[5,12000,15000]],"arrows":true},
       "steps":["Before – The original schedule, S₁. At $3, sellers offer 9,000 pineapples.",
                "After – Every row gains 3,000, so every point moves right by 3,000. The whole curve shifts right, to S₂: an increase in supply."]},
     "down":{"label":"Supply decreases: 4,500 fewer at every price",
-      "curves":[{"id":"S1","label":"S₁","pts":[[4800,0.2],[13800,6.2]],"thin":true},{"id":"S2","label":"S₂","pts":[[300,0.2],[9300,6.2]],"color":"red","from":"S1","at":1,"arrowP":4.1,"ldx":-26,"ldy":-2}],
+      "curves":[{"id":"S1","label":"S₁","pts":[[4800,0.2],[13800,6.2]],"thin":true},{"id":"S2","label":"S₂","pts":[[300,0.2],[9300,6.2]],"color":"red","from":"S1","shiftArrow":false,"at":1,"arrowP":4.1,"ldx":-26,"ldy":-2}],
       "table":{"cols":["Price","Before","After"],"series":["S1","S2"],"rows":[[1,6000,1500],[3,9000,4500],[5,12000,7500]],"arrows":true},
       "steps":["Before – The original schedule, S₁.",
                "After – Every row loses 4,500, so every point moves left by 4,500. The whole curve shifts left, to S₂: a decrease in supply."]}

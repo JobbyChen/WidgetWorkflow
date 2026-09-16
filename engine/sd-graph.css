@@ -45,7 +45,7 @@
 .sdg .arrow { fill:none; stroke-width:2; stroke-linejoin:round; }
 .sdg .arrow.shift { stroke-width:2.4; }
 .sdg .arrow.mv { stroke-width:2.4; stroke:var(--red); }
-.sdg .arrow.row { stroke-width:1.4; stroke:var(--red); }
+.sdg .arrow.row { stroke-width:2.4; stroke:var(--red); }
 .sdg .hline { stroke-width:3; }
 .sdg .brace { fill:none; stroke-width:1.8; }
 .sdg .curve-g.dim .curve { stroke-width:2; opacity:.8; }

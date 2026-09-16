@@ -1,4 +1,4 @@
-/* ===== sd-graph.js v2 — data-driven supply & demand widgets =====
+/* ===== sd-graph.js v2.1 — data-driven supply & demand widgets =====
    Markup:  <div class="sdg"><script type="application/json">{ ...config... }<\/script></div>
    Top-level config:
      title, lede, caption         heading / intro / static caption (caption used only when there are no steps)
@@ -8,9 +8,11 @@
    Panel config:
      heading                      title above the panel (two-market only)
      axes: {x, y, xmax, ymax, xticks[], yticks[], money, cents, k, grid, bg:false}
-     curves[]: {id, label, pts:[[q,p],...], color, at, until, from, arrowP, curved, thin, dashed, lstart, ldx, ldy}
+     curves[]: {id, label, pts:[[q,p],...], color, at, until, from, arrowP, shiftArrow, curved, thin, dashed, lstart, ldx, ldy}
         lstart = put the curve label at the first point instead of the last; ldx/ldy nudge it
         from   = id of the curve this one shifts away from (animated shift + arrow); arrowP = price height of arrow
+        shiftArrow:false = animate and dim as usual but draw no shift arrow. Use it whenever the
+                 widget already shows per-row arrows (table.arrows), which say the same thing once per row.
         curved = smooth through 3+ points (conceptual, non-linear look)
      points[]: {id, q, p, label, marker, pl, ql, color, at, until, dx, dy, guides:false, showP:false, showQ:false}
         marker = "1"/"2" numbered circle;  pl/ql = symbolic axis labels ("P₁","Q₁") instead of numbers
@@ -87,7 +89,9 @@
         var src = byId[c.from].spec, ap = c.arrowP != null ? c.arrowP : (c.pts[0][1] + last[1]) / 2;
         var q0 = qAt(src.pts, ap), q1 = qAt(c.pts, ap), s = Math.sign(q1 - q0);
         grp.dataset.dx = X(q1) - X(q0); grp.dataset.dy = 0; grp.classList.add('move');
-        g.appendChild(reg(arrow(X(q0) + s * 8, Y(ap), X(q1) - s * 8, Y(ap), cc, 'shift'), {at: c.at || 0, until: c.until}));
+        // shiftArrow:false keeps the slide and the dimming but drops the arrow, for
+        // widgets whose per-row arrows already show the shift once per schedule row.
+        if (c.shiftArrow !== false) g.appendChild(reg(arrow(X(q0) + s * 8, Y(ap), X(q1) - s * 8, Y(ap), cc, 'shift'), {at: c.at || 0, until: c.until}));
       }
       g.appendChild(grp); reg(grp, c);
     });

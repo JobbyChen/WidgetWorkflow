@@ -43,7 +43,8 @@ PLACEHOLDER = "<!--SDG-ENGINE-->"
 
 SOURCE_WORDS = [
     "the transcript", "the lecture", "the recording", "the board", "the slides",
-    "the class", "the video", "the professor", "the instructor", "in class",
+    "the class", "the classroom", "classroom", "the video", "the professor",
+    "the instructor", "in class",
     "the notes say", "the handout", "he said", "she said", "they said in",
 ]
 
@@ -221,8 +222,10 @@ def check_markup(src, r):
     loose = [s for s in re.findall(r"<strong>(.*?)</strong>", body, re.S)
              if len(s.split()) > 6 or s.rstrip().endswith((".", ":"))]
     if loose:
-        r.warn("markup", "%d <strong> may not be a vocabulary term (a label or a "
-                         "sentence is <b>): %r" % (len(loose), loose[0][:50]))
+        r.warn("markup", "%d <strong> swallows more than the term itself -- a "
+                         "trailing marker or sentence belongs in <b> beside it, "
+                         "not inside the glossary entry: %r"
+               % (len(loose), loose[0][:50]))
     if not any(x for x in (loose,)) and "<strong>" in body:
         r.ok("markup", "<strong> used for short terms only")
 

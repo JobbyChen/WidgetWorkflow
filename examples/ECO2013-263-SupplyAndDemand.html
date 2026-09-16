@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supply and Demand</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://smokinnotes.s3.us-east-1.amazonaws.com/content/sn25-v6.css">
+    <script src="https://smokinnotes.s3.us-east-1.amazonaws.com/content/sn25-v6.js"></script>
+<style>
+.sdg { --navy:#002060; --ink:#1c2a44; --red:#d62828; --teal:#1a8a8a; --orange:#d8641c; --grey:#8a94a6; --rule:#c9d2e3; --paper:#f6f8fc; --plot:#eef3fd;
+  font-family:"Red Hat Display","Segoe UI",system-ui,sans-serif; color:var(--ink);
+  border:1px solid var(--navy); background:var(--paper); padding:18px 20px 16px; width:80%; margin:24px auto; }
+@media (max-width:640px){ .sdg { width:100%; } }
+.sdg, .sdg *, .sdg *::before, .sdg *::after { box-sizing:border-box; }
+.sdg h4 { margin:0 0 4px; color:var(--navy); font-size:1.05rem; font-weight:700; }
+.sdg .sdg-lede { margin:0 0 12px; font-size:.92rem; line-height:1.45; }
+.sdg .sdg-scen { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px; }
+.sdg .sdg-scen button { flex:1 1 200px; border:1px solid var(--navy); background:#fff; color:var(--navy); padding:8px 12px; font:inherit; font-size:.9rem; cursor:pointer; text-align:left; line-height:1.3; }
+.sdg .sdg-scen button[aria-pressed="true"] { background:var(--navy); color:#fff; }
+.sdg .sdg-body { display:grid; grid-template-columns:1fr; gap:14px; align-items:start; }
+.sdg .sdg-body:not(.has-table):not(.two) figure { max-width:460px; margin:0 auto; width:100%; }
+.sdg .sdg-body.has-table { grid-template-columns:minmax(150px,1fr) 2.2fr; }
+.sdg .sdg-body.two { grid-template-columns:1fr 34px 1fr; gap:8px; align-items:center; }
+.sdg .sdg-body.two:not(:has(.sdg-between)) { grid-template-columns:1fr 1fr; gap:14px; }
+.sdg .sdg-between svg { width:34px; height:34px; display:block; }
+.sdg .sdg-between path { fill:none; stroke:var(--ink); stroke-width:4; stroke-linecap:round; stroke-linejoin:round; }
+@media (max-width:640px){
+  .sdg .sdg-body.has-table, .sdg .sdg-body.two { grid-template-columns:1fr; }
+  .sdg .sdg-between svg { transform:rotate(90deg); margin:0 auto; }
+  .sdg .sdg-ctrl button, .sdg .sdg-scen button { min-height:44px; }
+}
+.sdg figure { margin:0; background:#fff; border:1px solid var(--rule); padding:8px 8px 2px; }
+.sdg figcaption { font-size:.9rem; font-weight:700; font-style:italic; color:var(--navy); text-align:center; margin:0 0 4px; }
+.sdg svg { width:100%; height:auto; display:block; }
+.sdg .sdg-table { border-collapse:collapse; width:100%; font-size:.9rem; background:#fff; border:1px solid var(--rule); }
+.sdg .sdg-table th { background:var(--navy); color:#fff; font-weight:700; padding:6px 8px; text-align:center; font-size:.82rem; }
+.sdg .sdg-table td { padding:6px 8px; text-align:center; border-top:1px solid var(--rule); }
+.sdg .sdg-table tr.hi td { background:#fdeadb; font-weight:700; }
+.sdg .plotbg { fill:var(--plot); }
+.sdg .grid { stroke:#b9c2d3; stroke-width:1; stroke-dasharray:4 4; }
+.sdg .ax { fill:none; stroke:var(--ink); stroke-width:1.6; }
+.sdg .tk { font-size:10.5px; fill:var(--navy); }
+.sdg .tk.strong { font-weight:700; }
+.sdg .axlbl { font-size:14px; font-weight:800; fill:var(--navy); }
+.sdg .curve { fill:none; stroke-width:3; stroke-linecap:round; }
+.sdg .curve.thin { stroke-width:2; }
+.sdg .clbl { font-size:13px; font-weight:800; }
+.sdg .guide { fill:none; stroke-width:1.1; stroke-dasharray:4 3; }
+.sdg .pt { fill:#fff; stroke-width:2; }
+.sdg .pt.hi { stroke:var(--orange); stroke-width:3; r:6; }
+.sdg .pt.mk { stroke-width:1.4; }
+.sdg .mktxt { font-size:7.5px; font-weight:800; fill:var(--ink); }
+.sdg .tag { font-size:12px; font-weight:700; }
+.sdg .arrow { fill:none; stroke-width:2; stroke-linejoin:round; }
+.sdg .arrow.shift { stroke-width:2.4; }
+.sdg .arrow.mv { stroke-width:2.4; stroke:var(--red); }
+.sdg .arrow.row { stroke-width:1.4; stroke:var(--red); }
+.sdg .hline { stroke-width:3; }
+.sdg .brace { fill:none; stroke-width:1.8; }
+.sdg .curve-g.dim .curve { stroke-width:2; opacity:.8; }
+.sdg .fade { transition:opacity .45s ease; }
+.sdg .move { transition:transform .6s ease, opacity .45s ease; }
+.sdg .off { opacity:0; pointer-events:none; }
+@media (prefers-reduced-motion:reduce){ .sdg .fade, .sdg .move { transition:none; } }
+.sdg .sdg-ctrl { display:flex; align-items:center; gap:10px; margin-top:12px; flex-wrap:wrap; }
+.sdg .sdg-ctrl button { border:1px solid var(--navy); background:#fff; color:var(--navy); padding:7px 14px; font:inherit; font-size:.9rem; cursor:pointer; }
+.sdg .sdg-ctrl button:disabled { opacity:.4; cursor:default; }
+.sdg .sdg-step { font-size:.85rem; color:var(--navy); font-weight:700; margin-left:auto; }
+.sdg .sdg-cap { margin:10px 0 0; padding:10px 12px; background:#fff; border-left:4px solid var(--red); font-size:.92rem; line-height:1.45; min-height:3.2em; }
+</style>
+<script>
+/* ===== sd-graph.js v2 — data-driven supply & demand widgets =====
+   Markup:  <div class="sdg"><script type="application/json">{ ...config... }<\/script></div>
+   Top-level config:
+     title, lede, caption         heading / intro / static caption (caption used only when there are no steps)
+     steps: [caption, ...]        index 0 = start state; elements use `at`/`until` (step indices) to appear/vanish
+     scenarios: {key:{label, ...overrides}}   one button per scenario; overrides merge over the base config
+     panels: [panelCfg, panelCfg]  two side-by-side graphs (two-market). Otherwise the panel keys live at top level.
+   Panel config:
+     heading                      title above the panel (two-market only)
+     axes: {x, y, xmax, ymax, xticks[], yticks[], money, cents, k, grid, bg:false}
+     curves[]: {id, label, pts:[[q,p],...], color, at, until, from, arrowP, curved, thin, dashed, lstart, ldx, ldy}
+        lstart = put the curve label at the first point instead of the last; ldx/ldy nudge it
+        from   = id of the curve this one shifts away from (animated shift + arrow); arrowP = price height of arrow
+        curved = smooth through 3+ points (conceptual, non-linear look)
+     points[]: {id, q, p, label, marker, pl, ql, color, at, until, dx, dy, guides:false, showP:false, showQ:false}
+        marker = "1"/"2" numbered circle;  pl/ql = symbolic axis labels ("P₁","Q₁") instead of numbers
+     moves[]:  {from:[q,p], to:[q,p], at, until, color, offset}  arrow between two points, drawn `offset` px beside the curve (default 14; negative = other side)
+     hlines[]: {p, label, color, at, until}                       horizontal price line across the plot
+     braces[]: {p, q1, q2, label, at, until, below, color}        curly brace spanning a gap at price p
+     table:    {cols[], series[], rows[[price,q,...]], arrows}    schedule beside the graph; arrows draws row shift arrows
+   Colors: 'ink' (default, black-navy), 'red' (shifted/new), 'teal', 'orange', 'grey'
+   Presets (symbolic graphs, P₁/P₂/Q₁/Q₂, no numbers) — a few keys expand into a full config:
+     {"preset":"shift", "shift":"D"|"S", "dir":"right"|"left", "good":"pasta", "event":"The price of pizza rises.", "why":"...", "static":true}
+     {"preset":"double", "demand":"right"|"left", "supply":"right"|"left", "dD":40, "dS":15, "note":"...", "static":true}
+     {"preset":"double", "demand":"right", "supply":"left", "compare":true}   two panels: larger supply shift vs larger demand shift
+     Presets can be combined with title/lede/caption/steps overrides and with scenarios (each scenario gives its own shift/dir).
+*/
+(function () {
+  var NS = 'http://www.w3.org/2000/svg';
+  var C = {ink: 'var(--ink)', red: 'var(--red)', teal: 'var(--teal)', orange: 'var(--orange)', grey: 'var(--grey)', navy: 'var(--navy)'};
+  function col(c) { return C[c || 'ink']; }
+  function el(tag, a, text) { var e = document.createElementNS(NS, tag); for (var k in a) if (a[k] != null) e.setAttribute(k, a[k]); if (text != null) e.textContent = text; return e; }
+  function h(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+  function fmtP(v, ax) { if (!ax.money) return String(v); if (ax.cents) return '$' + Number(v).toFixed(2); return '$' + (Number.isInteger(v) ? v : v.toFixed(2)); }
+  function fmtQ(v, ax) { if (ax.k && v >= 1000) return (v / 1000) + 'k'; return v.toLocaleString('en-US'); }
+  function merge(a, b) { var o = {}; for (var k in a) o[k] = a[k]; for (var k2 in b) o[k2] = b[k2]; return o; }
+
+  // ---------- one SVG panel ----------
+  function buildPanel(cfg) {
+    var ax = cfg.axes, W = 372, below = (cfg.braces || []).some(function (b) { return b.below; }), H = below ? 268 : 250;
+    var left = ax.cents ? 62 : (ax.yticks && ax.yticks.length ? 54 : 40);
+    var O = {x: left, y: 205}, PW = W - left - 36, PH = 178;
+    var X = function (q) { return O.x + (q / ax.xmax) * PW; }, Y = function (p) { return O.y - (p / ax.ymax) * PH; };
+    var svg = el('svg', {viewBox: '0 0 ' + W + ' ' + H, role: 'img', 'aria-label': cfg.heading || cfg.title || 'Supply and demand graph'});
+    var g = el('g', {}); svg.appendChild(g);
+    var parts = [], byId = {};
+    function reg(node, spec) { node.classList.add('fade'); parts.push({node: node, spec: spec}); if (spec.id) byId[spec.id] = {node: node, spec: spec}; return node; }
+
+    if (ax.bg !== false) g.appendChild(el('rect', {class: 'plotbg', x: O.x, y: 14, width: PW + 14, height: O.y - 14}));
+    if (ax.grid) {
+      (ax.xticks || []).forEach(function (q) { g.appendChild(el('line', {class: 'grid', x1: X(q), y1: 14, x2: X(q), y2: O.y})); });
+      (ax.yticks || []).forEach(function (p) { g.appendChild(el('line', {class: 'grid', x1: O.x, y1: Y(p), x2: O.x + PW + 14, y2: Y(p)})); });
+    }
+    g.appendChild(el('path', {class: 'ax', d: 'M' + O.x + ' 14 L' + O.x + ' ' + O.y + ' L' + (O.x + PW + 14) + ' ' + O.y}));
+    (ax.xticks || []).forEach(function (q) { g.appendChild(el('text', {class: 'tk', x: X(q), y: O.y + 15, 'text-anchor': 'middle'}, fmtQ(q, ax))); });
+    (ax.yticks || []).forEach(function (p) { g.appendChild(el('text', {class: 'tk', x: O.x - 6, y: Y(p) + 4, 'text-anchor': 'end'}, fmtP(p, ax))); });
+    g.appendChild(el('text', {class: 'axlbl', x: O.x + PW + 18, y: O.y + 16}, ax.x || 'Q'));
+    g.appendChild(el('text', {class: 'axlbl', x: O.x - 26, y: 22}, ax.y || 'P'));
+
+    function arrow(x1, y1, x2, y2, c, cls) {
+      var dx = x2 - x1, dy = y2 - y1, len = Math.hypot(dx, dy), ux = dx / len, uy = dy / len, hh = 7, ww = 3.6, bx = x2 - ux * hh, by = y2 - uy * hh;
+      return el('path', {class: 'arrow ' + (cls || ''), stroke: c, d: 'M' + x1 + ' ' + y1 + ' L' + x2 + ' ' + y2 + ' M' + (bx - uy * ww) + ' ' + (by + ux * ww) + ' L' + x2 + ' ' + y2 + ' L' + (bx + uy * ww) + ' ' + (by - ux * ww)});
+    }
+    function pathD(pts, curved) {
+      var P = pts.map(function (p) { return [X(p[0]), Y(p[1])]; });
+      if (!curved || P.length < 3) return P.map(function (p, i) { return (i ? 'L' : 'M') + p[0] + ' ' + p[1]; }).join(' ');
+      var d = 'M' + P[0][0] + ' ' + P[0][1];
+      for (var i = 0; i < P.length - 1; i++) {
+        var p0 = P[i - 1] || P[i], p1 = P[i], p2 = P[i + 1], p3 = P[i + 2] || p2;
+        d += ' C' + (p1[0] + (p2[0] - p0[0]) / 6) + ' ' + (p1[1] + (p2[1] - p0[1]) / 6) + ' ' + (p2[0] - (p3[0] - p1[0]) / 6) + ' ' + (p2[1] - (p3[1] - p1[1]) / 6) + ' ' + p2[0] + ' ' + p2[1];
+      }
+      return d;
+    }
+    function qAt(pts, p) {
+      for (var i = 0; i < pts.length - 1; i++) { var a = pts[i], b = pts[i + 1]; if ((p - a[1]) * (p - b[1]) <= 0 && a[1] !== b[1]) return a[0] + (p - a[1]) * (b[0] - a[0]) / (b[1] - a[1]); }
+      var a2 = pts[0], b2 = pts[pts.length - 1]; return a2[0] + (p - a2[1]) * (b2[0] - a2[0]) / (b2[1] - a2[1]);
+    }
+
+    (cfg.curves || []).forEach(function (c) {
+      var cc = col(c.color), grp = el('g', {class: 'curve-g'});
+      var path = el('path', {class: 'curve' + (c.thin ? ' thin' : ''), d: pathD(c.pts, c.curved), stroke: cc});
+      if (c.dashed) path.setAttribute('stroke-dasharray', '6 4');
+      grp.appendChild(path);
+      var last = c.pts[c.pts.length - 1], up = last[1] > c.pts[0][1], lp = c.lstart ? c.pts[0] : last;
+      grp.appendChild(el('text', {class: 'clbl', x: X(lp[0]) + (c.ldx || 6), y: Y(lp[1]) + (c.ldy || (up ? 2 : 6)), fill: cc}, c.label || c.id));
+      if (c.from && byId[c.from]) {
+        var src = byId[c.from].spec, ap = c.arrowP != null ? c.arrowP : (c.pts[0][1] + last[1]) / 2;
+        var q0 = qAt(src.pts, ap), q1 = qAt(c.pts, ap), s = Math.sign(q1 - q0);
+        grp.dataset.dx = X(q1) - X(q0); grp.dataset.dy = 0; grp.classList.add('move');
+        g.appendChild(reg(arrow(X(q0) + s * 8, Y(ap), X(q1) - s * 8, Y(ap), cc, 'shift'), {at: c.at || 0, until: c.until}));
+      }
+      g.appendChild(grp); reg(grp, c);
+    });
+
+    (cfg.hlines || []).forEach(function (l) {
+      var cc = col(l.color || 'red'), grp = el('g', {});
+      grp.appendChild(el('line', {class: 'hline', stroke: cc, x1: O.x, y1: Y(l.p), x2: O.x + PW + 8, y2: Y(l.p)}));
+      if ((ax.yticks || []).indexOf(l.p) < 0) grp.appendChild(el('text', {class: 'tk strong', x: O.x - 6, y: Y(l.p) + 4, 'text-anchor': 'end', fill: cc}, l.label || fmtP(l.p, ax)));
+      g.appendChild(grp); reg(grp, l);
+    });
+
+    (cfg.braces || []).forEach(function (b) {
+      var cc = col(b.color || 'red'), grp = el('g', {});
+      var x1 = X(Math.min(b.q1, b.q2)), x2 = X(Math.max(b.q1, b.q2)), y = b.below ? O.y + 22 : Y(b.p) - 8, dir = b.below ? 1 : -1, hh = 7, m = (x1 + x2) / 2;
+      var d = 'M' + x1 + ' ' + y + ' Q' + x1 + ' ' + (y + dir * hh) + ' ' + (x1 + hh) + ' ' + (y + dir * hh) + ' L' + (m - hh) + ' ' + (y + dir * hh) + ' Q' + m + ' ' + (y + dir * hh) + ' ' + m + ' ' + (y + dir * 2 * hh) +
+              ' Q' + m + ' ' + (y + dir * hh) + ' ' + (m + hh) + ' ' + (y + dir * hh) + ' L' + (x2 - hh) + ' ' + (y + dir * hh) + ' Q' + x2 + ' ' + (y + dir * hh) + ' ' + x2 + ' ' + y;
+      grp.appendChild(el('path', {class: 'brace', stroke: cc, d: d}));
+      grp.appendChild(el('text', {class: 'tag', x: m, y: y + dir * 2 * hh + (b.below ? 12 : -4), 'text-anchor': 'middle', fill: cc}, b.label));
+      if (!b.below) { [b.q1, b.q2].forEach(function (q) { grp.appendChild(el('line', {class: 'guide', stroke: cc, x1: X(q), y1: Y(b.p), x2: X(q), y2: O.y})); }); }
+      g.appendChild(grp); reg(grp, b);
+    });
+
+    (cfg.moves || []).forEach(function (m) {
+      var x1 = X(m.from[0]), y1 = Y(m.from[1]), x2 = X(m.to[0]), y2 = Y(m.to[1]);
+      var off = m.offset != null ? m.offset : 14, len = Math.hypot(x2 - x1, y2 - y1), nx = -(y2 - y1) / len * off, ny = (x2 - x1) / len * off;
+      var a = arrow(x1 + nx, y1 + ny, x2 + nx, y2 + ny, col(m.color), 'mv');
+      g.appendChild(a); reg(a, m);
+    });
+
+    (cfg.points || []).forEach(function (p) {
+      var cc = col(p.color), grp = el('g', {class: 'ptg'});
+      if (p.guides !== false) grp.appendChild(el('path', {class: 'guide', stroke: cc, d: 'M' + O.x + ' ' + Y(p.p) + ' L' + X(p.q) + ' ' + Y(p.p) + ' L' + X(p.q) + ' ' + O.y}));
+      grp.appendChild(el('circle', {class: 'pt' + (p.marker ? ' mk' : ''), cx: X(p.q), cy: Y(p.p), r: p.marker ? 6 : 4.2, stroke: cc}));
+      if (p.marker) grp.appendChild(el('text', {class: 'mktxt', x: X(p.q), y: Y(p.p) + 2.6, 'text-anchor': 'middle'}, p.marker));
+      if (p.label) grp.appendChild(el('text', {class: 'tag', x: X(p.q) + (p.dx != null ? p.dx : 9), y: Y(p.p) + (p.dy != null ? p.dy : -9), fill: cc}, p.label));
+      var pl = p.pl || ((p.showP !== false && (ax.yticks || []).indexOf(p.p) < 0 && !(cfg.hlines || []).some(function (l) { return l.p === p.p; })) ? fmtP(p.p, ax) : null);
+      var ql = p.ql || ((p.showQ !== false && (ax.xticks || []).indexOf(p.q) < 0) ? fmtQ(p.q, ax) : null);
+      if (pl) grp.appendChild(el('text', {class: 'tk strong', x: O.x - 6, y: Y(p.p) + 4, 'text-anchor': 'end', fill: cc}, pl));
+      if (ql) grp.appendChild(el('text', {class: 'tk strong', x: X(p.q), y: O.y + 15, 'text-anchor': 'middle', fill: cc}, ql));
+      g.appendChild(grp); reg(grp, p);
+    });
+
+    var rowHooks = [];
+    if (cfg.table) {
+      var t = cfg.table;
+      t.rows.forEach(function (row) {
+        var dots = [], p = row[0];
+        (t.series || []).forEach(function (sid, si) {
+          var sc = byId[sid] && byId[sid].spec, q = row[si + 1];
+          var dot = el('circle', {class: 'pt sched', cx: X(q), cy: Y(p), r: 3.8, stroke: col(sc && sc.color)});
+          g.appendChild(dot); reg(dot, {at: (sc && sc.at) || 0}); dots.push(dot);
+          if (t.arrows && si > 0) { var q0 = row[si], s = Math.sign(q - q0); g.appendChild(reg(arrow(X(q0) + s * 6, Y(p), X(q) - s * 6, Y(p), col('ink'), 'row'), {at: (sc && sc.at) || 0})); }
+        });
+        rowHooks.push(dots);
+      });
+    }
+    return {svg: svg, parts: parts, byId: byId, rowHooks: rowHooks, cfg: cfg};
+  }
+
+  // ---------- widget ----------
+  function Widget(host, cfg) { this.host = host; this.cfg = cfg; this.step = 0; this.build(); }
+  Widget.prototype.build = function () {
+    var cfg = this.cfg, self = this, host = this.host; host.innerHTML = '';
+    if (cfg.title) host.appendChild(h('h4', null, cfg.title));
+    if (cfg.lede) host.appendChild(h('p', 'sdg-lede', cfg.lede));
+    if (cfg.scenarios) {
+      var sc = h('div', 'sdg-scen'); sc.setAttribute('role', 'group');
+      Object.keys(cfg.scenarios).forEach(function (k) {
+        var b = h('button', null, cfg.scenarios[k].label); b.type = 'button';
+        b.setAttribute('aria-pressed', k === cfg.activeScenario ? 'true' : 'false');
+        b.addEventListener('click', function () { host.dispatchEvent(new CustomEvent('sdg-scenario', {detail: k})); });
+        sc.appendChild(b);
+      });
+      host.appendChild(sc);
+    }
+    var panels = cfg.panels || [cfg];
+    this.panels = panels.map(buildPanel);
+    var body = h('div', 'sdg-body' + (cfg.table ? ' has-table' : '') + (panels.length > 1 ? ' two' : ''));
+    this.panels.forEach(function (pn, i) {
+      var fig = h('figure');
+      if (pn.cfg.heading) fig.appendChild(h('figcaption', null, pn.cfg.heading));
+      fig.appendChild(pn.svg); body.appendChild(fig);
+      if (i === 0 && panels.length > 1 && cfg.link !== false) { var a = h('div', 'sdg-between'); a.innerHTML = '<svg viewBox="0 0 40 40" aria-hidden="true"><path d="M4 20 H26 M18 11 L28 20 L18 29" /></svg>'; body.appendChild(a); }
+    });
+    if (cfg.table) {
+      var t = cfg.table, ax = cfg.axes, tbl = h('table', 'sdg-table'), thead = h('thead'), tr = h('tr');
+      t.cols.forEach(function (c) { tr.appendChild(h('th', null, c)); }); thead.appendChild(tr); tbl.appendChild(thead);
+      var tbody = h('tbody'), hooks = this.panels[0].rowHooks;
+      t.rows.forEach(function (row, ri) {
+        var r = h('tr');
+        row.forEach(function (v, i) { r.appendChild(h('td', null, i === 0 ? fmtP(v, ax) : fmtQ(v, ax))); });
+        r.addEventListener('mouseenter', function () { r.classList.add('hi'); hooks[ri].forEach(function (d) { d.classList.add('hi'); }); });
+        r.addEventListener('mouseleave', function () { r.classList.remove('hi'); hooks[ri].forEach(function (d) { d.classList.remove('hi'); }); });
+        tbody.appendChild(r);
+      });
+      tbl.appendChild(tbody); var wrap = h('div', 'sdg-tablewrap'); wrap.appendChild(tbl); body.insertBefore(wrap, body.firstChild);
+    }
+    host.appendChild(body);
+    if (cfg.steps && cfg.steps.length > 1) {
+      var ctrl = h('div', 'sdg-ctrl'), prev = h('button', null, 'Back'), next = h('button', null, 'Next step'), reset = h('button', null, 'Start over'), lbl = h('span', 'sdg-step');
+      prev.type = next.type = reset.type = 'button';
+      [prev, next, reset, lbl].forEach(function (x) { ctrl.appendChild(x); }); host.appendChild(ctrl);
+      var cap = h('p', 'sdg-cap'); cap.setAttribute('aria-live', 'polite'); host.appendChild(cap);
+      this.ui = {prev: prev, next: next, lbl: lbl, cap: cap};
+      var n = cfg.steps.length;
+      prev.addEventListener('click', function () { if (self.step > 0) { self.step--; self.render(); } });
+      next.addEventListener('click', function () { if (self.step < n - 1) { self.step++; self.render(); } });
+      reset.addEventListener('click', function () { self.step = 0; self.render(); });
+    } else if (cfg.caption) host.appendChild(h('p', 'sdg-cap', cfg.caption));
+    this.render();
+  };
+  Widget.prototype.render = function () {
+    var s = this.step, cfg = this.cfg;
+    this.panels.forEach(function (pn) {
+      pn.parts.forEach(function (pt) {
+        var at = pt.spec.at || 0, until = pt.spec.until, on = s >= at && (until == null || s < until);
+        pt.node.classList.toggle('off', !on);
+        if (pt.node.dataset.dx != null) pt.node.style.transform = on ? 'translate(0,0)' : 'translate(' + (-pt.node.dataset.dx) + 'px,0)';
+      });
+      (pn.cfg.curves || []).forEach(function (c) { if (c.from && pn.byId[c.from]) pn.byId[c.from].node.classList.toggle('dim', s >= (c.at || 0)); });
+    });
+    if (this.ui) {
+      var n = cfg.steps.length;
+      this.ui.cap.textContent = cfg.steps[s];
+      this.ui.lbl.textContent = 'Step ' + (s + 1) + ' of ' + n;
+      this.ui.prev.disabled = s === 0; this.ui.next.disabled = s === n - 1;
+    }
+  };
+
+
+  // ---------- presets: symbolic (no-number) graphs from a few settings ----------
+  function clipLine(intercept, slope, lo, hi) { // p = intercept + slope*q, return pts with p in [lo,hi] and q in [4,104]
+    var pts = [];
+    [4, 104].forEach(function (q) { var p = intercept + slope * q; if (p < lo) { p = lo; } if (p > hi) { p = hi; } pts.push([(p - intercept) / slope, p]); });
+    return pts;
+  }
+  function shiftPanel(o) { // o: {shift:'D'|'S', dir:'left'|'right', size, static, heading, labels}
+    var d = (o.size || 20) * (o.dir === 'left' ? -1 : 1), D = o.shift === 'D', at1 = o.static ? 0 : 1, at3 = o.static ? 0 : 3;
+    var S = clipLine(0, 1, 8, 100), Dl = clipLine(100, -1, 8, 100);
+    var S2 = clipLine(-d, 1, 8, 100), D2 = clipLine(100 + d, -1, 8, 100);
+    var e2 = D ? [50 + d / 2, 50 + d / 2] : [50 + d / 2, 50 - d / 2];
+    var gap = D ? [50, 50 + d] : [50, 50 + d]; // quantity at P1 on the shifted curve
+    var curves = D ? [{id: 'S', label: 'S', pts: S}, {id: 'D1', label: 'D₁', pts: Dl, thin: true}, {id: 'D2', label: 'D₂', pts: D2, color: 'red', from: 'D1', at: at1, arrowP: 88}]
+                   : [{id: 'D', label: 'D', pts: Dl}, {id: 'S1', label: 'S₁', pts: S, thin: true}, {id: 'S2', label: 'S₂', pts: S2, color: 'red', from: 'S1', at: at1, arrowP: 88}];
+    var isShort = (D && d > 0) || (!D && d < 0);
+    var pn = {heading: o.heading, axes: {xmax: 110, ymax: 110}, curves: curves,
+      points: [{q: 50, p: 50, pl: 'P₁', ql: 'Q₁'}, {q: e2[0], p: e2[1], pl: 'P₂', ql: 'Q₂', color: 'red', at: at3}]};
+    if (!o.static) { pn.points.push({q: 50 + d, p: 50, color: 'red', at: 2, until: 3, showP: false, showQ: false});
+      pn.braces = [{p: 50, q1: 50, q2: 50 + d, label: isShort ? 'Shortage' : 'Surplus', at: 2, until: 3}]; }
+    return pn;
+  }
+  function shiftSteps(o) {
+    var D = o.shift === 'D', right = o.dir !== 'left', good = o.good ? ' for ' + o.good : '';
+    var isShort = (D && right) || (!D && !right), pUp = isShort, qUp = right;
+    var why = o.why || (D ? (right ? 'Buyers want more at every price' : 'Buyers want less at every price') : (right ? 'Selling is more profitable at every price' : 'Selling is less profitable at every price'));
+    var ev = o.event ? o.event + ' ' : '';
+    return [
+      'The market' + good + ' is in equilibrium at P₁ and Q₁.',
+      ev + why + ', so ' + (D ? 'demand' : 'supply') + ' shifts ' + (right ? 'right' : 'left') + ', from ' + (D ? 'D₁ to D₂' : 'S₁ to S₂') + '.',
+      'At the old price P₁ there is now a ' + (isShort ? 'shortage: buyers want more than sellers offer, so the price rises.' : 'surplus: sellers offer more than buyers want, so the price falls.'),
+      'The market settles at P₂ and Q₂. Price ' + (pUp ? 'up' : 'down') + ', quantity ' + (qUp ? 'up' : 'down') + '.'];
+  }
+  function doublePanel(o) { // o: {demand:'left'|'right', supply:'left'|'right', dD, dS, heading, static}
+    var dD = (o.dD || 20) * (o.demand === 'left' ? -1 : 1), dS = (o.dS || 20) * (o.supply === 'left' ? -1 : 1);
+    var q2 = (100 + dD + dS) / 2, p2 = q2 - dS, a1 = o.static ? 0 : 1, a2 = o.static ? 0 : 2, a3 = o.static ? 0 : 3;
+    return {heading: o.heading, axes: {xmax: 110, ymax: 110},
+      curves: [{id: 'D1', label: 'D₁', pts: clipLine(100, -1, 8, 100), thin: true}, {id: 'S1', label: 'S₁', pts: clipLine(0, 1, 8, 100), thin: true},
+               {id: 'D2', label: 'D₂', pts: clipLine(100 + dD, -1, 8, 100), color: 'red', from: 'D1', at: a1, arrowP: 32},
+               {id: 'S2', label: 'S₂', pts: clipLine(-dS, 1, 8, 100), color: 'red', from: 'S1', at: a2, arrowP: 88}],
+      points: [{q: 50, p: 50, pl: 'P₁', ql: 'Q₁', marker: '1'}, {q: q2, p: p2, pl: 'P₂', ql: 'Q₂', color: 'red', marker: '2', at: a3}]};
+  }
+  function doubleSteps(o, q2, p2) {
+    var dr = o.demand !== 'left', sr = o.supply !== 'left';
+    return ['Equilibrium at P₁ and Q₁ (Point 1).',
+      'Demand shifts ' + (dr ? 'right' : 'left') + ', from D₁ to D₂.',
+      'Supply shifts ' + (sr ? 'right' : 'left') + ', from S₁ to S₂.',
+      'The new equilibrium is Point 2: price ' + (p2 > 50 ? 'up' : p2 < 50 ? 'down' : 'unchanged') + ', quantity ' + (q2 > 50 ? 'up' : q2 < 50 ? 'down' : 'unchanged') + '. ' + (o.note || '')];
+  }
+  function expand(cfg) {
+    if (!cfg.preset) return cfg;
+    var out = merge(cfg, {}); delete out.preset;
+    if (cfg.preset === 'shift') {
+      var pn = shiftPanel(cfg); for (var k in pn) out[k] = pn[k];
+      if (!cfg.static && !cfg.steps) out.steps = shiftSteps(cfg);
+    } else if (cfg.preset === 'double') {
+      if (cfg.compare) { // two panels: bigger supply shift vs bigger demand shift
+        var big = cfg.big || 40, small = cfg.small || 15;
+        out.link = false; out.panels = [doublePanel(merge(cfg, {dD: small, dS: big, heading: cfg.headings ? cfg.headings[0] : 'Larger shift of supply'})),
+                      doublePanel(merge(cfg, {dD: big, dS: small, heading: cfg.headings ? cfg.headings[1] : 'Larger shift of demand'}))];
+        if (!cfg.static && !cfg.steps) { var s = doubleSteps(cfg, 50, 50); s[3] = 'Each panel ends at a new Point 2. ' + (cfg.note || 'Compare them: one of price or quantity moves the same way in both; the other depends on which shift is larger.'); out.steps = s; }
+      } else {
+        var one = doublePanel(cfg); for (var k2 in one) out[k2] = one[k2];
+        var e = one.points[1]; if (!cfg.static && !cfg.steps) out.steps = doubleSteps(cfg, e.q, e.p);
+      }
+    }
+    return out;
+  }
+
+  function mount(root) {
+    var script = root.querySelector('script[type="application/json"]'); if (!script) return;
+    var base; try { base = JSON.parse(script.textContent); } catch (e) { root.textContent = 'Widget config error: ' + e.message; return; }
+    function draw(key) {
+      var cfg = base;
+      if (base.scenarios) { key = key || base.activeScenario || Object.keys(base.scenarios)[0]; cfg = merge(base, base.scenarios[key]); cfg.activeScenario = key; }
+      new Widget(root, expand(cfg));
+    }
+    root.addEventListener('sdg-scenario', function (e) { draw(e.detail); });
+    draw();
+  }
+  function init() { document.querySelectorAll('.sdg').forEach(mount); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+})();
+</script>
+</head>
+<body>
+
+<p class="date">Wednesday, 9/2/26</p>
+
+<h1>Supply and Demand</h1>
+
+<p>The supply and demand model is the tool we use to predict how an outside event changes the price of a good and the amount of it that gets bought and sold. This week covers the two halves of the model separately. Demand describes what consumers wish to buy, and supply describes what sellers wish to sell. Next week the two are combined to find the market equilibrium.</p>
+
+<p>One point to keep firmly in mind from the start: supply and demand are <em>completely separate and independent</em> relationships. Demand is not how many units consumers actually purchase; it is how many they <em>want</em> to purchase, regardless of what sellers offer. Supply is not how many units sellers actually sell; it is how many they <em>want</em> to sell, regardless of what buyers want. A common logical error is to reason that "consumers want to buy more because sellers are offering more," or the reverse. Neither is correct. The two relationships only meet when we look at the market as a whole.</p>
+
+<h1>Demand</h1>
+
+<h2>Definition of demand</h2>
+
+<p><strong>Demand</strong> is the relationship between the price of a good and the quantity demanded of that same good, all else held equal. Three parts of that definition matter.</p>
+
+<ul>
+<li><b>Relationship:</b> Demand is not a single number like "1,000 burritos today" or "50,000 Volvo SUVs this quarter." It is the full set of quantities consumers would buy at every possible price. A single number is a <strong>quantity demanded</strong> at one price.</li>
+<li><b>Same good:</b> One demand relationship covers one good, pairing its price with its own quantity demanded. Other goods' prices are handled separately as shifters.</li>
+<li><b>All else held equal:</b> Along a demand curve, only the price of this good changes. If anything else changes, demand itself changes, which is the second half of this section.</li>
+</ul>
+
+<h2>What counts in the quantity demanded</h2>
+
+<p>Where does a number like "50,000 Volvo SUVs" come from? A consumer's desire for a product appears in the quantity demanded only when all three of the following hold.</p>
+
+<ol>
+<li>Consumers <b>want</b> this quantity at this price.</li>
+<li>Consumers <b>can afford</b> this quantity at this price.</li>
+<li>Consumers <b>would purchase</b> this quantity if it were offered at this price.</li>
+</ol>
+
+<p>The first criterion is obvious. The second is an assumption that later economics courses might unpack, but for business applications it makes sense: a business should not count someone who cannot pay for the product as part of its demand. The third criterion is the important one. Demand tells us who would actually show up and buy the good if it were offered at that price.</p>
+
+<p>Wanting and affording are not the same thing, and affording and buying are not the same thing either. A yacht or a house may be something a student wants but cannot afford. A $400 pair of smart glasses is different. Most students could find $400 in an account or on a credit card, so the honest description is not "I cannot afford them" but "I would rather allocate my limited income elsewhere." The same logic applies to an $800-a-month lease on a sports car: someone with an extra $800 each month can afford it, yet may still choose to spend that money on a concert and a hotel instead. For a consumer to be counted, all three criteria must be met. It is not enough to want the good, and it is not even enough to want it and be able to afford it. The consumer has to be ready to buy it when it is put in front of them at that price.</p>
+
+<h2>A classroom demand experiment</h2>
+
+<p>To see where a demand relationship comes from, imagine a market in which the good is a grande raspberry white mocha, a sweet, fruity coffee drink topped with whipped cream. Each person names the absolute maximum price they would pay for one right now. Two simplifying assumptions apply: anyone willing to pay a given price is also willing to pay any lower price, and each person buys at most one drink. (In the real world people often buy more than one unit and are willing to pay different amounts for the first and second unit.)</p>
+
+<p>Prices are then called out from high to low. Nobody was willing to pay $50, and nobody was willing to pay $20. At $15, six people raised their hands, so the quantity demanded at $15 is 6. Lowering the price to $12 picked up 7 more buyers, for a total of 13. At $9, 9 more joined, for 22. At $6, 16 more joined, for 38. At $3, 27 more joined, for a total of 65.</p>
+
+<p>A table like this is called a <strong>demand schedule</strong>. It is the demand relationship itself: for each possible price, the quantity that consumers in this market would buy. It holds every buyer's circumstances constant, including their budgets, their taste for sweet caffeinated drinks, and any allergies. If those circumstances changed, the schedule would change. For example, if everyone had been handed $1,000 before answering, roughly 15% to 20% of the class said their answer would have been different. A change in income changes the demand relationship.</p>
+
+<p>A <strong>demand curve</strong> shows exactly the same information as the schedule, but graphically. Price goes on the vertical axis and quantity demanded on the horizontal axis. Hover over a row of the schedule below to find its point on the curve.</p>
+
+<!-- IMAGE POSITION: below-referenced paragraph -->
+<div class="sdg"><script type="application/json">
+{ "title":"Demand for grande raspberry white mochas",
+  "axes":{"xmax":72,"ymax":17,"money":true,"grid":true,"xticks":[10,20,30,40,50,60,70],"yticks":[3,6,9,12,15]},
+  "curves":[{"id":"D","label":"D","pts":[[6,15],[13,12],[22,9],[38,6],[65,3]],"curved":true,"ldy":-10}],
+  "table":{"cols":["Price","Quantity demanded"],"series":["D"],"rows":[[15,6],[12,13],[9,22],[6,38],[3,65]]},
+  "caption":"Each row of the demand schedule is one point on the curve. At $15 only 6 drinks are demanded; as the price falls to $3, the quantity demanded rises to 65. The curve bends rather than running straight, which is what real-world demand data usually looks like." }
+</script></div>
+
+<p>Something about the axes should look strange if you remember high school math. As described so far, price is the independent variable and quantity demanded depends on it, so by the usual convention price would go on the horizontal axis. In the supply and demand model the convention is flipped: price is on the vertical axis and quantity on the horizontal axis. This has been done for over a hundred years. Some say it began as a mistake that was simply carried forward; others say it was intentional, based on how the original textbook was laid out. Either way, the convention is fixed.</p>
+
+<p>The experiment makes three points. First, it shows where a demand curve actually comes from and what the data represent. Second, it shows that real-world demand curves are <strong>non-linear</strong>. The classroom curve is not a straight line. Textbooks and most online resources nonetheless draw straight-line supply and demand curves, and for most applications nothing is lost by doing so. Straight lines simply make the math easier, and from here on this course uses straight-line curves. Third, it illustrates the law of demand.</p>
+
+<h2>The law of demand</h2>
+
+<p>The <strong>law of demand</strong> can be written several ways that are all logically equivalent.</p>
+
+<ul>
+<li>As the price of a good or service rises (falls), the quantity demanded of that good or service decreases (increases).</li>
+<li>The demand curve is downward sloping.</li>
+<li>There is an inverse relationship between the price of a good or service and the quantity demanded of that same good or service.</li>
+</ul>
+
+<p>A natural question is whether luxury goods violate the law of demand, since some people seem to buy a designer bag precisely because it is expensive. The more careful view is that the high price exists because the brand has built up cachet, and a brand-new bag nobody had heard of could not be sold for $5,000. What matters in practice is what happens for a <em>local</em> change in price. If a $5,000 duffel bag went on sale for $4,800, more people would buy it, because the $200 discount is not enough to change how the bag is perceived but is enough to tip buyers who were on the fence. For reasonable price changes, the law of demand holds.</p>
+
+<h2>Movement along the curve versus a change in demand</h2>
+
+<p>If the price of a raspberry white mocha changes, the market moves from one point on the demand curve to another. A higher price moves it up and to the left; a lower price moves it down and to the right. The curve itself does not move. This is called a <strong>change in the quantity demanded</strong>, and it is caused only by a change in the price of the good itself.</p>
+
+<p>A <strong>change in demand</strong> is different. It happens when something <em>other than</em> the price of the good changes, and it moves the entire curve. An <strong>increase in demand</strong> means the quantity demanded rises at every price, so every point on the curve moves to the right and the whole curve shifts right. A <strong>decrease in demand</strong> means the quantity demanded falls at every price, so the whole curve shifts left.</p>
+
+<p>Consider the market for chicken, with the price of a pound of chicken on the vertical axis and pounds of chicken demanded on the horizontal axis. Start with a demand curve on which 20 pounds are demanded at $12, 30 pounds at $8, and 40 pounds at $4. Pick a case below and step through what happens to the schedule and the curve.</p>
+
+<!-- IMAGE POSITION: below-referenced paragraph -->
+<div class="sdg"><script type="application/json">
+{ "title":"Changes in the demand for chicken",
+  "lede":"Pick a case, then step through it.",
+  "axes":{"xmax":55,"ymax":14,"money":true,"grid":true,"xticks":[10,20,30,40,50],"yticks":[4,8,12]},
+  "scenarios":{
+    "up":{"label":"Increase in demand: 10 more pounds at every price",
+      "curves":[{"id":"D1","label":"D₁","pts":[[20,12],[30,8],[40,4]],"thin":true,"ldx":-26,"ldy":15},{"id":"D2","label":"D₂","pts":[[30,12],[40,8],[50,4]],"color":"red","from":"D1","at":1,"arrowP":10}],
+      "table":{"cols":["Price","Before","After"],"series":["D1","D2"],"rows":[[12,20,30],[8,30,40],[4,40,50]],"arrows":true},
+      "steps":["On the original demand curve D₁, 20 pounds of chicken are demanded at $12, 30 pounds at $8, and 40 pounds at $4.",
+               "Demand increases by 10 pounds at every price. At $12 the quantity demanded is now 30 pounds, at $8 it is 40, and at $4 it is 50. Every point has moved 10 pounds to the right, so the entire demand curve shifts to the right, from D₁ to D₂."]},
+    "down":{"label":"Decrease in demand: 10 fewer pounds at every price",
+      "curves":[{"id":"D1","label":"D₁","pts":[[20,12],[30,8],[40,4]],"thin":true},{"id":"D2","label":"D₂","pts":[[10,12],[20,8],[30,4]],"color":"red","from":"D1","at":1,"arrowP":10,"ldx":-26,"ldy":15}],
+      "table":{"cols":["Price","Before","After"],"series":["D1","D2"],"rows":[[12,20,10],[8,30,20],[4,40,30]],"arrows":true},
+      "steps":["On the original demand curve D₁, 20 pounds of chicken are demanded at $12, 30 pounds at $8, and 40 pounds at $4.",
+               "Demand decreases by 10 pounds at every price. At $12 the quantity demanded is now only 10 pounds, at $8 it is 20, and at $4 it is 30. Every point has moved 10 pounds to the left, so the entire demand curve shifts to the left, from D₁ to D₂."]}
+  } }
+</script></div>
+
+<p>Any increase in demand is drawn as a rightward shift of the demand curve, and any decrease in demand is drawn as a leftward shift.</p>
+
+<h2>Demand shifters</h2>
+
+<p><strong>Demand shifters</strong> are outside events that change the demand for a good or service. The list below covers things that affect the demand for almost all goods, but it is not comprehensive. For a particular good there may be an important shifter that is not on it. Outside temperature, for example, does not affect the demand for most goods, yet it has a huge effect on the demand for ice cream, which is why an ice cream shop in a cold climate may simply close for the winter.</p>
+
+<p>Each shifter is marked with a plus or minus sign. A plus sign does <em>not</em> mean "rightward shift." It means a <strong>positive relationship</strong>: an increase in the shifter increases demand, and a decrease in the shifter decreases demand. A minus sign means a <strong>negative (inverse) relationship</strong>: an increase in the shifter decreases demand, and a decrease in the shifter increases demand.</p>
+
+<ul>
+<li><b>Number of potential buyers (+).</b> More potential buyers means more demand and a rightward shift; fewer potential buyers means less demand and a leftward shift.</li>
+<li><b>Income</b>, which requires splitting goods into two types.
+  <ul>
+  <li><strong>Normal goods (+).</strong> There is a positive relationship between consumers' income and demand. Most clothing, new cars of all types, designer bags, and burrito bowls are normal goods: when incomes rise, people buy more of them, and when incomes fall, they buy fewer.</li>
+  <li><strong>Inferior goods (−).</strong> There is an inverse relationship between consumers' income and demand. The name does not mean low quality, even though many examples are low-quality products. What makes a good inferior is only that people buy more of it when their incomes are lower and less when their incomes are higher. The textbook example is just-add-water ramen noodles; boxed macaroni and cheese is another. Most students stop buying these once they graduate and earn more.</li>
+  </ul>
+</li>
+<li><b>Prices of related goods</b>, which also splits into two types.
+  <ul>
+  <li><strong>Substitutes (+).</strong> Two goods are substitutes when consumers choose between buying one or the other. Chicken and pork are substitutes. If the price of pork rises, pork is relatively more expensive, so consumers buy more chicken: the demand for chicken increases and shifts right. If the price of pork falls, the demand for chicken decreases and shifts left. There is a positive relationship between the price of a substitute and the demand for the good in question.</li>
+  <li><strong>Complements (−).</strong> Two goods are complements when consumers tend to buy them together, such as milk and cereal. If the price of milk rises, people buy less milk and therefore less cereal, so the demand for cereal decreases. If the price of milk falls, the demand for cereal increases. There is a negative relationship between the price of a complement and the demand for the good in question.</li>
+  </ul>
+</li>
+<li><b>Expected future price (+).</b> For goods whose purchase can be moved earlier or later in time, beliefs about the future price matter. If you expect the price of gasoline to rise on Friday, you fill up today, increasing your demand now. If you expect it to fall on Friday, you wait, reducing your demand today. There is a positive relationship between the expected future price and current demand. This does not apply to goods that cannot be stored, such as next week's dinner.</li>
+<li><b>Preferences.</b> This is a catch-all with no sign attached. Anything that makes consumers want the good more increases demand; anything that makes them want it less decreases demand. Hearing that a drink is delicious raises demand for it; learning that smoking causes cancer lowers demand for cigarettes.</li>
+</ul>
+
+<p>Whether a good is normal or inferior, and whether two goods are substitutes or complements, is a question about the <em>market on average</em>, not about any one person. One person may never buy cereal but still buy milk, so for that person the two are not complements. If, on average across the marketplace, a higher milk price reduces the demand for cereal, then milk and cereal are complements. If a higher price of one good raises the demand for another, the two are substitutes in the marketplace. If a higher price of one good has no noticeable effect on the demand for another, the two are neither substitutes nor complements. Individual quirks tend to average out.</p>
+
+<div class="exam-tip"><h4>EXAM TIP: Needs versus wants</h4><p>Economists make no distinction between needs and wants. A need is just something you want very badly. Both are goods and services that you would use your income to purchase, and the model treats them the same way.</p></div>
+
+<p class="date">Wednesday, 9/9/26</p>
+
+<h1>Supply</h1>
+
+<h2>Definition of supply</h2>
+
+<p><strong>Supply</strong> is the relationship between the price of a good or service and the quantity supplied of that same good or service, all else held equal. The same three ideas from the definition of demand apply. Supply is a relationship, not a number: it is not "sellers sold 30,000 burritos this month," but the quantity sellers would like to sell at every possible price. It links the price of a good to the quantity supplied of that same good; the prices of other goods can affect supply, but that is treated separately as a shifter. And along any one supply curve, the only thing that changes is the price of this specific good. Anything else that influences how much sellers want to sell will shift the supply curve rather than move along it.</p>
+
+<p>The market for lemonade gives a first example. With the quantity of lemonade supplied on the horizontal axis and the price of lemonade on the vertical axis, the supply curve slopes upward. At a price of $3 per cup, all firms together want to supply 150 cups. At $4 per cup, they want to supply 300 cups. The curve has a positive vertical intercept, meaning there is some price below which no firm wants to sell lemonade at all. If the curve is a straight line through these two points, that intercept is $2. The widget below draws this curve.</p>
+
+<!-- IMAGE POSITION: below-referenced paragraph -->
+<div class="sdg"><script type="application/json">
+{ "title":"Supply of lemonade",
+  "axes":{"xmax":340,"ymax":4.6,"money":true,"xticks":[150,300],"yticks":[2,3,4]},
+  "curves":[{"id":"S","label":"S","pts":[[0,2],[300,4]]}],
+  "points":[{"q":150,"p":3},{"q":300,"p":4}],
+  "caption":"At $3 the market supplies 150 cups of lemonade, and at $4 it supplies 300 cups. The curve meets the price axis at $2, so no firm is willing to sell lemonade if the price is below $2. Once the price rises above $2, some firms want to sell." }
+</script></div>
+
+<p>The price on the vertical axis is the price of the good, meaning the price at which one unit can be sold. It is <em>not</em> the cost of producing the good.</p>
+
+<h2>The law of supply</h2>
+
+<p>The <strong>law of supply</strong> can be stated in equivalent ways.</p>
+
+<ul>
+<li>As the price of a good or service rises (falls), the quantity supplied of that good or service increases (decreases).</li>
+<li>The supply curve is upward sloping.</li>
+<li>There is a positive relationship between the price of a good or service and the quantity supplied.</li>
+</ul>
+
+<h2>Why the supply curve slopes upward</h2>
+
+<p>The tempting answer is "firms like to make money, so they sell more when the price is higher." That is true, but it is not sufficient. One could just as easily argue that when prices are low, firms need to sell more units to make the same profit, which would give a downward-sloping curve. Saying the supply curve slopes upward is the same as saying firms are <em>not willing to sell as much when prices are lower</em>, and that points to the two real reasons.</p>
+
+<ol>
+<li><b>As production expands, it becomes more costly to procure essential inputs.</b> Eventually a firm finds it harder and more expensive to secure the raw materials needed to keep increasing output, so the per-unit cost of production rises. To justify those higher costs, firms need a higher price before they are willing to expand. A child running a lemonade stand with free lemons from the backyard tree, sugar from the pantry, and cups from the cabinet has a per-unit cost of essentially zero. On a busy day, once the tree is picked clean, the only way to keep selling is to bike to the grocery store and pay for lemons out of the day's revenue. Those extra cups cost more to make. At a low lemonade price the child sells only what the tree provides; at a higher price the trip to the store is worth it.</li>
+<li><b>As prices rise, more firms are willing to enter the market.</b> Different firms have different <strong>reservation prices</strong>, the minimum price at which they would be willing to sell. Consider people deciding whether to give up a football Saturday to sell cold drinks from a cooler in the heat. One person would do it for $8, another for $12, another for $25, and another for $35. At a price of $8 there is one seller in the market. At $12 there are two, at $25 three, and at $35 four. As the price rises, more firms can profitably enter, so the total quantity supplied rises.</li>
+</ol>
+
+<h2>Changes in supply</h2>
+
+<p>Just as with demand, a <strong>change in quantity supplied</strong> is a movement along one supply curve, and the only thing that causes it is a change in the price of the good itself. A higher price of iced coffee raises the quantity of iced coffee supplied; a lower price lowers it. A <strong>change in supply</strong> is a change in the quantity supplied at every price, which shifts the entire curve.</p>
+
+<p>Take the market for iced coffee. On the original supply curve, 100 iced coffees are supplied at $3, 150 at $4, and 200 at $5. Pick a case below and step through the change.</p>
+
+<!-- IMAGE POSITION: below-referenced paragraph -->
+<div class="sdg"><script type="application/json">
+{ "title":"Changes in the supply of iced coffee",
+  "lede":"Pick a case, then step through it.",
+  "axes":{"xmax":275,"ymax":5.6,"money":true,"grid":true,"xticks":[50,100,150,200,250],"yticks":[3,4,5]},
+  "scenarios":{
+    "up":{"label":"Increase in supply: 50 more units at every price",
+      "curves":[{"id":"S1","label":"S₁","pts":[[100,3],[200,5]],"thin":true,"ldx":-8,"ldy":-8},{"id":"S2","label":"S₂","pts":[[150,3],[250,5]],"color":"red","from":"S1","at":1,"arrowP":4.5,"ldx":-8,"ldy":-8}],
+      "table":{"cols":["Price","Before","After"],"series":["S1","S2"],"rows":[[3,100,150],[4,150,200],[5,200,250]],"arrows":true},
+      "steps":["On the original supply curve S₁, 100 iced coffees are supplied at $3, 150 at $4, and 200 at $5.",
+               "Supply increases by 50 units at every price. At $3 the quantity supplied is now 150, at $4 it is 200, and at $5 it is 250. Every point has moved 50 units to the right, so the entire supply curve shifts to the right, from S₁ to S₂."]},
+    "down":{"label":"Decrease in supply: 50 fewer units at every price",
+      "curves":[{"id":"S1","label":"S₁","pts":[[100,3],[200,5]],"thin":true,"ldx":-8,"ldy":-8},{"id":"S2","label":"S₂","pts":[[50,3],[150,5]],"color":"red","from":"S1","at":1,"arrowP":4.5,"ldx":-8,"ldy":-8}],
+      "table":{"cols":["Price","Before","After"],"series":["S1","S2"],"rows":[[3,100,50],[4,150,100],[5,200,150]],"arrows":true},
+      "steps":["On the original supply curve S₁, 100 iced coffees are supplied at $3, 150 at $4, and 200 at $5.",
+               "Supply decreases by 50 units at every price. At $3 the quantity supplied is now 50, at $4 it is 100, and at $5 it is 150. Every point has moved 50 units to the left, so the entire supply curve shifts to the left, from S₁ to S₂."]}
+  } }
+</script></div>
+
+<p>Any increase in demand or supply is drawn as a rightward shift of that curve. Any decrease in demand or supply is drawn as a leftward shift.</p>
+
+<h2>Supply shifters</h2>
+
+<p><strong>Supply shifters</strong> are the things other than the good's own price that affect how much of it firms want to sell. The plus and minus signs have the same meaning as before: a positive or negative relationship with supply, not a direction of shift.</p>
+
+<ul>
+<li><b>Cost of production, or the prices of essential inputs (−).</b> If the price of coffee beans rises, making iced coffee is less profitable, so firms want to sell fewer iced coffees: supply decreases and the curve shifts left. If the cost of production falls, firms want to produce more, and supply shifts right.</li>
+<li><b>Technological innovation (+).</b> Technology generally only moves forward, so this shifter mostly works in one direction. When the technology for producing a good improves, supply increases and the curve shifts right. Automating the pulling of espresso shots, so that a barista pushes one button instead of grinding, packing, and tamping by hand, lets a coffee shop make more drinks per hour and increases the supply of coffee drinks. Firms do have to pay for new technology, and expensive espresso machines or self-order kiosks are not free. They adopt the technology only when the cost savings outweigh the purchase price, so on net it lowers their costs. Innovations that would cost more to adopt than they save simply never get adopted.</li>
+<li><b>Prices of related goods <em>in production</em>.</b> This is the shifter that requires the most careful thinking, and it splits into substitutes in production and complements in production, discussed next.</li>
+<li><b>Expected future price (−).</b> This is the only shifter that appears on both the supply and demand lists. A firm holding inventory that expects the price to be higher in a few days will hold back and sell later, reducing supply today. If a hurricane is expected to hit within five days, a seller of bottled water has an incentive to wait for the higher price. A firm that expects the price to fall wants to sell before the drop, increasing supply today. There is a negative relationship between the expected future price and current supply.</li>
+</ul>
+
+<div class="exam-tip"><h4>EXAM TIP: "In production" means supply</h4><p>When the words <em>substitutes</em> or <em>complements</em> appear on their own, they describe a demand-side relationship between goods that consumers choose between or buy together. When they are followed by <em>in production</em>, they describe a supply-side relationship. If you see "in production," the supply curve shifts; if you do not, the demand curve shifts. You will always be told which relationship applies; you will not be asked to infer it.</p></div>
+
+<h2>Substitutes in production</h2>
+
+<p><strong>Substitutes in production</strong> are two goods where a firm must choose between making more of one or more of the other, usually because both are made from a limited essential input. A dairy farm has a fixed number of cows producing a fixed amount of milk, and that milk can be turned into either butter or ice cream. Allocating more milk to ice cream means less butter, and the reverse.</p>
+
+<p>Suppose butter and ice cream are substitutes in production and the price of butter rises. By the law of supply, firms want to make more butter. In the market for butter this is a movement up and to the right along the supply curve, an increase in the <em>quantity supplied</em> of butter, not a shift. But making more butter leaves less milk for ice cream, so firms reduce their production of ice cream at every price. Because that change is not caused by the price of ice cream, the supply curve for ice cream shifts to the left. There is a negative relationship between the price of a substitute in production and the supply of the good in question.</p>
+
+<h2>Complements in production</h2>
+
+<p><strong>Complements in production</strong> are two goods that are produced together, so that making more of one automatically means making more of the other. They are byproducts of each other. The textbook example is gasoline and kerosene. Kerosene, a cheap fuel used in oil lanterns and portable stoves, is produced when crude oil is refined into gasoline, so neither can be made without the other. If the price of gasoline rises, refiners want to make more gasoline, which is a movement along the gasoline supply curve. Making more gasoline means making more kerosene too, so the supply of kerosene increases and its curve shifts right. There is a positive relationship between the price of a complement in production and the supply of the good in question.</p>
+
+<p>The widget below draws both cases side by side. Pick one and step through the two markets.</p>
+
+<!-- IMAGE POSITION: below-referenced paragraph -->
+<div class="sdg"><script type="application/json">
+{ "lede":"Pick a case, then step through both markets. The left panel shows the good whose price changed; the right panel shows the related good.",
+  "scenarios":{
+    "sub":{"label":"Substitutes in production: the price of butter rises",
+      "title":"Butter and ice cream are substitutes in production",
+      "panels":[
+        {"heading":"Market for butter","axes":{"xmax":100,"ymax":100},
+         "curves":[{"id":"S","label":"S","pts":[[20,10],[45,35],[60,60],[70,90]],"curved":true}],
+         "points":[{"q":45,"p":35,"pl":"P₁","ql":"Q₁"},{"q":60,"p":60,"pl":"P₂","ql":"Q₂","at":1}],
+         "moves":[{"from":[49,42],"to":[57,54],"at":1,"color":"red"}]},
+        {"heading":"Market for ice cream","axes":{"xmax":100,"ymax":100},
+         "curves":[{"id":"D","label":"D","pts":[[15,85],[30,60],[50,45],[85,28]],"curved":true},
+                   {"id":"S1","label":"S₁","pts":[[22,10],[40,30],[50,45],[62,80],[68,95]],"curved":true},
+                   {"id":"S2","label":"S₂","pts":[[0,10],[18,30],[28,45],[40,80],[46,95]],"curved":true,"color":"red","from":"S1","at":2,"arrowP":78}],
+         "points":[{"q":50,"p":45,"pl":"P₁","ql":"Q₁"},{"q":32.5,"p":58,"pl":"P₂","ql":"Q₂","color":"red","at":3}]}
+      ],
+      "steps":["Each market starts at its own equilibrium.",
+               "The price of butter rises from P₁ to P₂. Dairies respond by making more butter, which is a movement up along the butter supply curve from Q₁ to Q₂. The quantity supplied of butter changes, but the supply of butter does not.",
+               "Milk is limited, so more butter means less milk left for ice cream. At every price of ice cream, less is supplied, so the ice cream supply curve shifts left, from S₁ to S₂.",
+               "The ice cream market settles at a new equilibrium. The equilibrium price of ice cream rises to P₂ and the equilibrium quantity falls to Q₂."]},
+    "comp":{"label":"Complements in production: the price of gasoline rises",
+      "title":"Gasoline and kerosene are complements in production",
+      "panels":[
+        {"heading":"Market for gasoline","axes":{"xmax":100,"ymax":100},
+         "curves":[{"id":"S","label":"S","pts":[[20,10],[45,35],[60,60],[70,90]],"curved":true}],
+         "points":[{"q":45,"p":35,"pl":"P₁","ql":"Q₁"},{"q":60,"p":60,"pl":"P₂","ql":"Q₂","at":1}],
+         "moves":[{"from":[49,42],"to":[57,54],"at":1,"color":"red"}]},
+        {"heading":"Market for kerosene","axes":{"xmax":100,"ymax":100},
+         "curves":[{"id":"D","label":"D","pts":[[15,85],[30,60],[50,45],[85,28]],"curved":true},
+                   {"id":"S1","label":"S₁","pts":[[22,10],[40,30],[50,45],[62,80],[68,95]],"curved":true},
+                   {"id":"S2","label":"S₂","pts":[[46,10],[64,30],[74,45],[86,80],[92,95]],"curved":true,"color":"red","from":"S1","at":2,"arrowP":78}],
+         "points":[{"q":50,"p":45,"pl":"P₁","ql":"Q₁"},{"q":70.6,"p":35,"pl":"P₂","ql":"Q₂","color":"red","at":3}]}
+      ],
+      "steps":["Each market starts at its own equilibrium.",
+               "The price of gasoline rises from P₁ to P₂. Refiners respond by making more gasoline, which is a movement up along the gasoline supply curve from Q₁ to Q₂. The quantity supplied of gasoline changes, but the supply of gasoline does not.",
+               "Kerosene comes out of the same refining process, so more gasoline means more kerosene. At every price of kerosene, more is supplied, so the kerosene supply curve shifts right, from S₁ to S₂.",
+               "The kerosene market settles at a new equilibrium. The equilibrium price of kerosene falls to P₂ and the equilibrium quantity rises to Q₂."]}
+  } }
+</script></div>
+
+<p>In both cases the good whose price changed only experiences a change in quantity supplied, while the related good experiences a change in supply. Some textbooks also list the state of nature and the number of suppliers as shifters; they are not emphasized here.</p>
+
+<h1>Market Equilibrium</h1>
+
+<p><strong>Market equilibrium</strong> is the price at which the quantity demanded of a good or service and the quantity supplied of that same good or service are equal. This is where supply and demand finally come together.</p>
+
+<p>Consider the market for chicken thighs. The demand curve slopes down, the supply curve slopes up, and they intersect at a price of $5 and a quantity of 200 units. The equilibrium price of chicken thighs is therefore $5 per unit. It is the only price at which the market <em>clears</em>, meaning quantity demanded equals quantity supplied. Economists expect a market to tend toward its equilibrium, so the prevailing price should be $5 and 200 units should be bought and sold.</p>
+
+<p>Simply pointing at the intersection is an assertion. To see <em>why</em> it is the equilibrium, look at what happens at other prices. Pick a price below and step through the market's response.</p>
+
+<!-- IMAGE POSITION: below-referenced paragraph -->
+<div class="sdg"><script type="application/json">
+{ "title":"Market for chicken thighs: equilibrium, shortage, and surplus",
+  "lede":"Equilibrium is $5 and 200 units. Pick a price and step through what the market does.",
+  "axes":{"xmax":420,"ymax":10,"money":true,"xticks":[80,150,200,240,350],"yticks":[4,5,8]},
+  "curves":[{"id":"D","label":"D","pts":[[40,9],[280,3]]},{"id":"S","label":"S","pts":[[50,2],[400,9]]}],
+  "scenarios":{
+    "eq":{"label":"At the equilibrium price ($5)",
+      "points":[{"q":200,"p":5}],
+      "caption":"At $5, the quantity demanded equals the quantity supplied at 200 units. The market clears, and there is no pressure on the price to move in either direction."},
+    "short":{"label":"Price below equilibrium ($4)",
+      "points":[{"q":200,"p":5,"color":"grey"},{"q":150,"p":4,"color":"red","at":1},{"q":240,"p":4,"color":"red","at":1}],
+      "hlines":[{"p":4,"at":1}],
+      "braces":[{"p":4,"q1":150,"q2":240,"label":"Shortage of 90","below":true,"at":2}],
+      "moves":[{"from":[130,3.6],"to":[194,4.88],"at":3,"color":"red","offset":-14},{"from":[256,3.6],"to":[206,4.85],"at":3,"color":"red","offset":14}],
+      "steps":["At $5 the market clears at 200 units.",
+               "Suppose the price is $4 instead. Buyers now want 240 units, but sellers are only willing to supply 150 units.",
+               "The quantity demanded exceeds the quantity supplied by 90 units, which is a shortage. Only 150 units actually get bought and sold, because every sale needs both a willing buyer and a willing seller.",
+               "Whenever there is a shortage, the price is expected to rise toward the equilibrium price. As it rises, the quantity demanded falls and the quantity supplied rises until the two meet again at $5 and 200 units."]},
+    "surp":{"label":"Price above equilibrium ($8)",
+      "points":[{"q":200,"p":5,"color":"grey"},{"q":80,"p":8,"color":"red","at":1},{"q":350,"p":8,"color":"red","at":1}],
+      "hlines":[{"p":8,"at":1}],
+      "braces":[{"p":8,"q1":80,"q2":350,"label":"Surplus of 270","at":2}],
+      "moves":[{"from":[338,7.75],"to":[218,5.35],"at":3,"color":"red","offset":-14},{"from":[90,7.75],"to":[186,5.35],"at":3,"color":"red","offset":-14}],
+      "steps":["At $5 the market clears at 200 units.",
+               "Suppose the price is $8 instead. Sellers now want to supply 350 units, but buyers only want 80 units.",
+               "The quantity supplied exceeds the quantity demanded by 270 units, which is a surplus. Only 80 units actually get bought and sold, since that is all buyers are willing to take at $8.",
+               "Whenever there is a surplus, the price is expected to fall toward the equilibrium price. As it falls, the quantity supplied drops and the quantity demanded rises until the two meet again at $5 and 200 units."]}
+  } }
+</script></div>
+
+<p>At a price below the equilibrium price, the quantity demanded exceeds the quantity supplied and there is a <strong>shortage</strong>. At $4, the quantity demanded is 240 units and the quantity supplied is 150 units, a shortage of 90 units. Whenever there is a shortage, the price is expected to rise toward the equilibrium price. At a price above the equilibrium price, the quantity supplied exceeds the quantity demanded and there is a <strong>surplus</strong>. At $8, the quantity supplied is 350 units and the quantity demanded is 80 units, a surplus of 270 units. Whenever there is a surplus, the price is expected to fall toward the equilibrium price. Taken together, these two forces explain why the equilibrium price is the price expected to prevail: any other price sets off a natural mechanism that pushes the price back. (Government policies that block this adjustment are covered later.) Neither case involves any change in the curves themselves; the price is simply away from equilibrium and moving back.</p>
+
+<p>Shortages are easy to see in resale markets, where prices respond to new information in real time. When a music festival unexpectedly moved a rapidly rising star to its Sunday lineup, a Sunday pass that had sold for about $50 to $60 in the morning was selling for $400 by the afternoon, once buyers around the country learned the news. The increase in demand created a shortage at the old price, and the price rose.</p>
+
+<div class="exam-tip"><h4>EXAM TIP: How much gets bought and sold?</h4><p>Whenever the quantity demanded and quantity supplied are not equal, the quantity actually transacted is always the <em>smaller</em> of the two, because every unit sold needs both a willing buyer and a willing seller. At $4 in the chicken thigh market, 150 units are sold; at $8, only 80 units are sold.</p></div>
+
+<h1>Predicting Changes to Market Equilibrium</h1>
+
+<p>Any outside event that affects demand or supply shifts the corresponding curve and changes the equilibrium price and quantity. A three-step process makes these questions much easier to get right.</p>
+
+<ol>
+<li><b>Who cares?</b> Ask who is <em>most directly</em> affected by the event: buyers or sellers. If buyers, the demand curve shifts; if sellers, the supply curve shifts. Only the direct effect counts. If pizza is a normal good and consumers' incomes rise, that is a demand shifter, so demand shifts. It is tempting to add "and then sellers would want to sell more pizza too," but that is an indirect effect that happens only because consumers changed their behavior. The slopes of the curves already capture indirect effects, so only one curve shifts.</li>
+<li><b>In which direction?</b> If demand is shifting, ask whether consumers want to buy more (demand shifts right) or less (demand shifts left). If supply is shifting, ask whether it has become more profitable to make the good (supply shifts right) or less profitable (supply shifts left).</li>
+<li><b>Draw it out.</b> Even a rough sketch in the margin of an exam, with P and Q on the axes and one curve moving, makes the answer visible. This is the step everyone wants to skip, and skipping it is where errors come from.</li>
+</ol>
+
+<div class="exam-tip"><h4>EXAM TIP: Always draw it out</h4><p>Students who work through all three steps, including the sketch, get most equilibrium questions right. Students who try to reason through a shift without drawing it are the ones who get confused. Draw the graph every time, even if it is sloppy.</p></div>
+
+<h2>Example 1: chips and Nutella are complements, and the price of Nutella falls</h2>
+
+<p>Start in the market for chips at an equilibrium price of $2 per bag and an equilibrium quantity of 500 bags. Who cares most directly? Since these are complements (not complements in production), this is a demand-side relationship, so the demand for chips shifts. In which direction? When the price of a complement falls, consumers want more chips, so demand shifts right. Step through the drawing below.</p>
+
+<!-- IMAGE POSITION: below-referenced paragraph -->
+<div class="sdg"><script type="application/json">
+{"title":"Chips and Nutella are complements; the price of Nutella falls",
+ "axes":{"xmax":110,"ymax":110},
+ "curves":[{"id":"S","label":"S","pts":[[8,8],[100,100]]},{"id":"D1","label":"D₁","pts":[[4,96],[92,8]],"thin":true},{"id":"D2","label":"D₂","pts":[[20,100],[104,16]],"color":"red","from":"D1","at":1,"arrowP":88}],
+ "points":[{"q":50,"p":50,"pl":"P₁","ql":"Q₁"},{"q":70,"p":50,"color":"red","at":2,"until":3,"showP":false,"showQ":false},{"q":60,"p":60,"pl":"P₂","ql":"Q₂","color":"red","at":3}],
+ "braces":[{"p":50,"q1":50,"q2":70,"label":"Shortage","below":true,"at":2,"until":3}],
+ "steps":["The market for chips is in equilibrium at P₁ and Q₁, which in this example are $2 per bag and 500 bags.",
+          "Nutella gets cheaper, and chips are a complement to Nutella. Consumers want more chips at every price, so the demand for chips shifts to the right, from D₁ to D₂.",
+          "At the original price of $2 there is now a shortage of chips, because the quantity demanded on D₂ is greater than the quantity supplied. A shortage puts upward pressure on the price.",
+          "The price rises until the market clears again at P₂ and Q₂, which here are $3 and 700 bags. When demand shifts right, the equilibrium price and the equilibrium quantity both increase."]}
+</script></div>
+
+<p>The specific numbers do not matter; what matters is the direction. The price rose because, once demand had shifted right, the original price of $2 left a shortage. The equilibrium price rose to $3 and the equilibrium quantity rose from 500 to 700 units.</p>
+
+<h2>Example 2: cheese and cheese curds are complements in production, and the price of cheese curds rises</h2>
+
+<p>Cheese is made in water, and as it coagulates, pieces of byproduct float to the top. Those pieces, beer-battered and deep fried, are cheese curds. Making cheese always produces curds, and making curds requires making cheese, so the two are complements in production. Start in the market for cheese at an equilibrium price of $7 and an equilibrium quantity of 450 units. The words "in production" signal a supply-side relationship, so the supply of cheese shifts. When the price of cheese curds rises, producers want to make more curds, which means making more cheese, so the supply of cheese shifts right.</p>
+
+<!-- IMAGE POSITION: below-referenced paragraph -->
+<div class="sdg"><script type="application/json">
+{"title":"Cheese and cheese curds are complements in production; the price of cheese curds rises",
+ "axes":{"xmax":110,"ymax":110},
+ "curves":[{"id":"D","label":"D","pts":[[4,96],[92,8]]},{"id":"S1","label":"S₁","pts":[[8,8],[100,100]],"thin":true},{"id":"S2","label":"S₂","pts":[[28,8],[104,84]],"color":"red","from":"S1","at":1,"arrowP":88}],
+ "points":[{"q":50,"p":50,"pl":"P₁","ql":"Q₁"},{"q":70,"p":50,"color":"red","at":2,"until":3,"showP":false,"showQ":false},{"q":60,"p":40,"pl":"P₂","ql":"Q₂","color":"red","at":3}],
+ "braces":[{"p":50,"q1":50,"q2":70,"label":"Surplus","below":true,"at":2,"until":3}],
+ "steps":["The market for cheese is in equilibrium at P₁ and Q₁, which in this example are $7 and 450 units.",
+          "The price of cheese curds rises, so producers make more curds, and more curds means more cheese. More cheese is supplied at every price, so the supply of cheese shifts to the right, from S₁ to S₂.",
+          "At the original price of $7 there is now a surplus of cheese, because the quantity supplied on S₂ is greater than the quantity demanded. A surplus puts downward pressure on the price.",
+          "The price falls until the market clears again at P₂ and Q₂, which here are $5 and 500 units. When supply shifts right, the equilibrium price decreases and the equilibrium quantity increases."]}
+</script></div>
+
+<h2>When supply and demand shift at the same time</h2>
+
+<p>Suppose supply and demand both increase, so both curves shift right. The result depends on which shift is larger. If demand shifts by a lot and supply by a little, the equilibrium quantity rises and the equilibrium price also rises. If demand shifts by a little and supply by a lot, the equilibrium quantity still rises, but the equilibrium price falls. Step through both panels at once below.</p>
+
+<!-- IMAGE POSITION: below-referenced paragraph -->
+<div class="sdg"><script type="application/json">
+{"title":"Supply and demand both increase",
+ "link":false,
+ "panels":[
+  {"heading":"Supply shifts by more","axes":{"xmax":110,"ymax":110},
+   "curves":[{"id":"D1","label":"D₁","pts":[[4,96],[92,8]],"thin":true},{"id":"S1","label":"S₁","pts":[[8,8],[100,100]],"thin":true},{"id":"D2","label":"D₂","pts":[[15,100],[104,11]],"color":"red","from":"D1","at":1,"arrowP":24},{"id":"S2","label":"S₂","pts":[[48,8],[104,64]],"color":"red","from":"S1","at":2,"arrowP":60}],
+   "points":[{"q":50,"p":50,"pl":"P₁","ql":"Q₁","marker":"1"},{"q":77.5,"p":37.5,"pl":"P₂","ql":"Q₂","color":"red","marker":"2","at":3}]},
+  {"heading":"Demand shifts by more","axes":{"xmax":110,"ymax":110},
+   "curves":[{"id":"D1","label":"D₁","pts":[[4,96],[92,8]],"thin":true},{"id":"S1","label":"S₁","pts":[[8,8],[100,100]],"thin":true},{"id":"D2","label":"D₂","pts":[[40,100],[104,36]],"color":"red","from":"D1","at":1,"arrowP":40},{"id":"S2","label":"S₂","pts":[[23,8],[104,89]],"color":"red","from":"S1","at":2,"arrowP":80}],
+   "points":[{"q":50,"p":50,"pl":"P₁","ql":"Q₁","marker":"1"},{"q":77.5,"p":62.5,"pl":"P₂","ql":"Q₂","color":"red","marker":"2","at":3}]}
+ ],
+ "lede":"The only difference between the two panels is which curve shifts by more.",
+ "steps":["Both markets start in equilibrium at P₁ and Q₁ (Point 1).",
+          "Demand increases, so the demand curve shifts right from D₁ to D₂. In the left panel the demand shift is small; in the right panel it is large.",
+          "Supply also increases, so the supply curve shifts right from S₁ to S₂. In the left panel the supply shift is large; in the right panel it is small.",
+          "Each market settles at Point 2. The equilibrium quantity increases in both panels. The equilibrium price falls when supply shifts by more and rises when demand shifts by more, so without knowing which shift is larger the change in price is ambiguous."]}
+</script></div>
+
+<p>When both curves shift and you do not know which one shifts by more, one of the two outcomes is certain and the other is ambiguous. The table summarizes all four combinations; a question mark means the change cannot be determined without more information.</p>
+
+<table>
+<tr><th></th><th>Increase in supply</th><th>Decrease in supply</th></tr>
+<tr><td><b>Increase in demand</b></td><td>Price ?, Quantity increases</td><td>Price increases, Quantity ?</td></tr>
+<tr><td><b>Decrease in demand</b></td><td>Price decreases, Quantity ?</td><td>Price ?, Quantity decreases</td></tr>
+</table>
+
+<p>If you are told which curve shifts by more, both changes can be determined.</p>
+
+</body>
+</html>

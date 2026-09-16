@@ -12,8 +12,10 @@ What `CLAUDE.md` records about it, so the conventions are not lost:
 - There were two v5 variants. They differed in the engine source they embedded:
   the TOOL variant appended the two engine files as Appendix A and Appendix B and
   stripped the header comment from the JavaScript.
-- **Repo convention:** `engine/sd-graph.js` keeps its header comment; embedded
-  copies drop it. `scripts/embed_engine.py` does this, and
-  `scripts/check_file.py` compares with the header stripped, so the two agree.
+- **Convention, checked against the delivered file:** a published notes file
+  embeds `sd-graph.js` and `sd-graph.css` **verbatim, header comment included**.
+  `scripts/embed_engine.py` writes them that way and `scripts/check_file.py`
+  compares the whole block. (An earlier note here claimed embedded copies drop
+  the header. That is true only of the TOOL prompt variant's appendix.)
 - If a standalone tool prompt is needed again, append the two engine files as
   Appendix A and B rather than pointing at `engine/`.

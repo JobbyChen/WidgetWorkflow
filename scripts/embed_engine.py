@@ -1,19 +1,22 @@
 #!/usr/bin/env python3
-"""Inline engine/sd-graph.css and engine/sd-graph.js into a notes file's <head>.
+"""Insert engine/sd-graph.css and engine/sd-graph.js into a notes file's <head>.
 
-    python scripts/embed_engine.py examples/engine-testbed.html
+    python scripts/embed_engine.py examples/ECO2013-263-SupplyAndDemand.html
 
-This is step 7 of the conversion prompt. A published notes file must carry its
-own copy of the engine -- no <link> or <script src> pointing at S3, because a
-file that fetches the engine breaks the moment the engine moves.
+This is the "calling program" the conversion prompt refers to. The model never
+types the engine: it emits a single placeholder line in the <head>,
 
-The embedded copies sit between marker comments, so running this again after an
-engine change replaces them in place instead of stacking copies. It also
-replaces any <link>/<script src> that references sd-graph.css or sd-graph.js.
+    <!--SDG-ENGINE-->
 
-Repo convention: engine/sd-graph.js keeps its header comment; the embedded copy
-drops it (the version line is carried by the marker comment instead). Run
-scripts/check_file.py afterwards -- it verifies the embedded bytes match.
+directly after the sn25-v6.js script line, and this script replaces that line
+with a <style> block and a <script> block holding the engine verbatim.
+
+Run with no placeholder present and the file already carrying an embedded
+engine, it replaces those two blocks with the current engine instead -- that is
+the re-embed step after any change to engine/ (CLAUDE.md hard rule 1).
+
+The embedded copies are byte-identical to engine/, header comment included;
+scripts/check_file.py verifies that.
 """
 
 import argparse
@@ -25,37 +28,20 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 CSS_SRC = ROOT / "engine" / "sd-graph.css"
 JS_SRC = ROOT / "engine" / "sd-graph.js"
 
-BEGIN = "<!-- sd-graph engine %s (embedded from engine/sd-graph.%s) -->"
-END = "<!-- /sd-graph engine %s -->"
-
-LINK_RE = re.compile(r'[ \t]*<link[^>]*sd-graph\.css[^>]*>\s*\n?', re.I)
-SCRIPT_RE = re.compile(r'[ \t]*<script[^>]*src=["\'][^"\']*sd-graph\.js["\'][^>]*>\s*</script>\s*\n?', re.I)
-BLOCK_RE = r"<!-- sd-graph engine [^>]*sd-graph\.%s\) -->.*?<!-- /sd-graph engine %s -->\s*"
-
-
-def engine_version():
-    """The version comment at the top of engine/sd-graph.js, e.g. 'v2'."""
-    head = JS_SRC.read_text(encoding="utf-8").split("\n", 1)[0]
-    m = re.search(r"\b(v\d+)\b", head)
-    return m.group(1) if m else "v?"
+PLACEHOLDER = "<!--SDG-ENGINE-->"
+# An embedded engine is a <style> block whose first rule is .sdg, and a <script>
+# block that is the engine's header comment or its IIFE.
+CSS_BLOCK = re.compile(r"[ \t]*<style>\s*\n\.sdg \{.*?\n</style>\n?", re.S)
+JS_BLOCK = re.compile(r"[ \t]*<script>\s*\n(?:/\* ===== sd-graph\.js|\(function \(\) \{).*?\n</script>\n?", re.S)
+HOSTED = re.compile(
+    r'[ \t]*(?:<link[^>]*sd-graph\.css[^>]*>|<script[^>]*src=["\'][^"\']*sd-graph\.js["\'][^>]*>\s*</script>)\s*\n?',
+    re.I)
 
 
-def strip_header(js):
-    """Drop the leading /* ... */ header comment from the engine source."""
-    if not js.lstrip().startswith("/*"):
-        return js
-    end = js.index("*/") + 2
-    return js[end:].lstrip("\n")
-
-
-def build_blocks(version):
+def blocks():
     css = CSS_SRC.read_text(encoding="utf-8").rstrip("\n")
-    js = strip_header(JS_SRC.read_text(encoding="utf-8")).rstrip("\n")
-    css_block = "%s\n<style>\n%s\n</style>\n%s\n" % (
-        BEGIN % (version, "css"), css, END % version)
-    js_block = "%s\n<script>\n%s\n</script>\n%s\n" % (
-        BEGIN % (version, "js"), js, END % version)
-    return css_block, js_block
+    js = JS_SRC.read_text(encoding="utf-8").rstrip("\n")
+    return "<style>\n%s\n</style>\n<script>\n%s\n</script>\n" % (css, js)
 
 
 def main():
@@ -69,30 +55,43 @@ def main():
     if not path.exists():
         sys.exit("no such file: %s" % path)
     src = path.read_text(encoding="utf-8")
-    version = engine_version()
-    css_block, js_block = build_blocks(version)
+    engine = blocks()
 
-    # Remove anything already there: previous embeds, and links to a hosted copy.
-    out = re.sub(BLOCK_RE % ("css", r"[^>]*"), "", src, flags=re.S)
-    out = re.sub(BLOCK_RE % ("js", r"[^>]*"), "", out, flags=re.S)
-    removed_links = len(LINK_RE.findall(out)) + len(SCRIPT_RE.findall(out))
-    out = LINK_RE.sub("", out)
-    out = SCRIPT_RE.sub("", out)
+    had_placeholder = PLACEHOLDER in src
+    had_embedded = bool(CSS_BLOCK.search(src)) or bool(JS_BLOCK.search(src))
 
-    if "</head>" not in out:
-        sys.exit("%s has no </head> to embed into" % path)
-    out = out.replace("</head>", css_block + js_block + "</head>", 1)
+    out = HOSTED.sub("", src)
+    n_hosted = len(HOSTED.findall(src))
+
+    if had_placeholder:
+        if src.count(PLACEHOLDER) > 1:
+            sys.exit("%s has %d %s lines; expected exactly one"
+                     % (path, src.count(PLACEHOLDER), PLACEHOLDER))
+        out = re.sub(r"[ \t]*" + re.escape(PLACEHOLDER) + r"[ \t]*\n?", engine, out, count=1)
+        how = "replaced the %s placeholder" % PLACEHOLDER
+    elif had_embedded:
+        out = CSS_BLOCK.sub("", out)
+        out = JS_BLOCK.sub("", out)
+        if "</head>" not in out:
+            sys.exit("%s has no </head>" % path)
+        out = out.replace("</head>", engine + "</head>", 1)
+        how = "re-embedded over the existing engine"
+    else:
+        if "</head>" not in out:
+            sys.exit("%s has no </head> and no %s placeholder" % (path, PLACEHOLDER))
+        out = out.replace("</head>", engine + "</head>", 1)
+        how = "inserted the engine before </head>"
+
+    note = "%s%s" % (how, ", removed %d hosted reference(s)" % n_hosted if n_hosted else "")
 
     if args.dry_run:
-        print("would embed engine %s into %s (%d external reference(s) removed)"
-              % (version, path, removed_links))
+        print("would embed into %s: %s" % (path, note))
         return 0
     if out == src:
-        print("%s already up to date (engine %s)" % (path, version))
+        print("%s already up to date" % path)
         return 0
     path.write_text(out, encoding="utf-8")
-    print("embedded engine %s into %s (%d external reference(s) removed)"
-          % (version, path, removed_links))
+    print("%s: %s" % (path, note))
     return 0
 
 

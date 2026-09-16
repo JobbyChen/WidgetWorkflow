@@ -1,8 +1,8 @@
 # Project brief
 
-> **Stub.** The original brief — the instructions the project was started from —
-> is in `eco-widgets.zip`, which never reached this repository. This is the brief
-> as `CLAUDE.md` states it, plus where things stand.
+> The original brief is not in the repository; `docs/conversion-prompt-v6.md` is
+> the operating procedure it became, and is authoritative. This page is the
+> why behind it.
 
 ## The problem
 
@@ -22,7 +22,7 @@ The pieces:
 
 - **`engine/sd-graph.js` + `.css`** — one copy, embedded verbatim into every
   published notes file.
-- **`docs/conversion-prompt-v5.md`** — the step-numbered procedure that turns a
+- **`docs/conversion-prompt-v6.md`** — the step-numbered procedure that turns a
   PDF, an HTML file, a transcript, or a "this semester it's hotdogs" message into
   a finished notes file.
 - **`scripts/`** — embed the engine, check the result mechanically, screenshot
@@ -51,6 +51,6 @@ only, `<p class="date">`, `<h1>`/`<h2>`, `.exam-tip`, plain tables, every
 
 ## Status
 
-The engine, the procedure, the scripts and a test bed are here and working end to
-end. The finished Fall '26 notes file, the earlier examples, the reference images
-and the original history are not — see `docs/open-issues.md`.
+The engine, the procedure, the scripts, the finished Fall '26 notes file and the
+prototype are all here. The 30 reference images and the earlier changelogs are
+not — see `docs/open-issues.md`.

@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>sd-graph engine test bed</title>
+<link rel="stylesheet" href="../engine/sd-graph.css">
+<style>
+  body { font: 16px/1.5 Georgia, serif; max-width: 760px; margin: 2rem auto; padding: 0 1rem; }
+  h1 { font-size: 1.4rem; } h2 { font-size: 1.05rem; margin-top: 2rem; }
+  p.note { color: #555; font-size: 0.9rem; }
+</style>
+</head>
+<body>
+
+<h1>sd-graph engine test bed</h1>
+<p class="note">Not course notes and not for publication. These configs are
+fixtures that exercise every shape the engine draws, with made-up numbers, so a
+change to <code>engine/sd-graph.js</code> can be eyeballed before it reaches a
+notes file. Real widgets take their numbers from the source material only.</p>
+
+<h2>1. Symbolic single shift (preset)</h2>
+<div class="sdg"><script type="application/json">
+{
+  "preset": "shift",
+  "curve": "demand",
+  "direction": "right",
+  "magnitude": 18,
+  "title": "Fixture: demand shifts right",
+  "steps": [
+    {"caption": "The market for a good sits at its starting equilibrium, where the quantity buyers want matches the quantity sellers offer."},
+    {"caption": "Something makes buyers want more of the good at every price, so the whole demand curve moves to the right."},
+    {"caption": "At the new equilibrium both the price and the quantity traded are higher than they were."}
+  ]
+}
+</script></div>
+
+<h2>2. Schedule plus curve (numeric, straight line, hollow dots)</h2>
+<div class="sdg"><script type="application/json">
+{
+  "title": "Fixture: a demand schedule and the curve it plots",
+  "mode": "numeric",
+  "axes": {
+    "x": {"label": "Q", "min": 0, "max": 60, "ticks": [{"value": 10, "text": "10"}, {"value": 20, "text": "20"}, {"value": 30, "text": "30"}, {"value": 40, "text": "40"}, {"value": 50, "text": "50"}]},
+    "y": {"label": "P", "min": 0, "max": 6, "ticks": [{"value": 1, "text": "$1"}, {"value": 2, "text": "$2"}, {"value": 3, "text": "$3"}, {"value": 4, "text": "$4"}, {"value": 5, "text": "$5"}]}
+  },
+  "curves": [
+    {"id": "D", "kind": "demand", "shape": "line", "from": [10, 5], "to": [50, 1],
+     "label": {"text": "D", "pos": "end", "dx": 8, "dy": 4}}
+  ],
+  "points": [
+    {"x": 10, "y": 5}, {"x": 20, "y": 4}, {"x": 30, "y": 3}, {"x": 40, "y": 2}, {"x": 50, "y": 1}
+  ],
+  "schedule": {
+    "heading": "Demand schedule",
+    "head": ["Price", "Quantity demanded"],
+    "rows": [["$5", "10"], ["$4", "20"], ["$3", "30"], ["$2", "40"], ["$1", "50"]]
+  },
+  "steps": [
+    {"caption": "Each row of the schedule pairs a price with the quantity buyers are willing to purchase at that price."},
+    {"caption": "Plotting those pairs and joining them traces the demand curve, which slopes down because buyers take more when the price falls."}
+  ]
+}
+</script></div>
+
+<h2>3. Schedule shift with scenarios</h2>
+<div class="sdg"><script type="application/json">
+{
+  "title": "Fixture: a schedule that shifts, two directions",
+  "mode": "numeric",
+  "axes": {
+    "x": {"label": "Q", "min": 0, "max": 60, "ticks": [{"value": 20, "text": "20"}, {"value": 30, "text": "30"}, {"value": 40, "text": "40"}]},
+    "y": {"label": "P", "min": 0, "max": 6, "ticks": [{"value": 2, "text": "$2"}, {"value": 3, "text": "$3"}, {"value": 4, "text": "$4"}]}
+  },
+  "curves": [
+    {"id": "D1", "kind": "demand", "shape": "line", "from": [10, 5], "to": [50, 1],
+     "label": {"text": "D₁", "pos": "end", "dx": 8, "dy": 4}}
+  ],
+  "steps": [
+    {"caption": "The starting schedule gives the quantity buyers want at each price."},
+    {"caption": "Every quantity in the schedule changes by the same amount, so the whole curve moves sideways."}
+  ],
+  "scenarios": [
+    {
+      "label": "Demand increases",
+      "overlay": {
+        "curves": [
+          {"id": "D1", "kind": "demand", "shape": "line", "from": [10, 5], "to": [50, 1],
+           "label": {"text": "D₁", "pos": "end", "dx": 8, "dy": 4}},
+          {"id": "D2", "kind": "demand", "shape": "line", "color": "red", "at": 1,
+           "from": [20, 5], "to": [60, 1], "label": {"text": "D₂", "pos": "end", "dx": 8, "dy": 4}}
+        ],
+        "arrows": [{"from": [26, 3.2], "to": [36, 3.2], "at": 1}],
+        "schedule": {
+          "heading": "Quantity demanded, before and after",
+          "head": ["Price", "Before", "After"],
+          "shiftColumn": 2,
+          "rows": [["$5", "10", "20"], ["$4", "20", "30"], ["$3", "30", "40"], ["$2", "40", "50"]],
+          "arrows": ["up", "up", "up", "up"]
+        }
+      }
+    },
+    {
+      "label": "Demand decreases",
+      "overlay": {
+        "curves": [
+          {"id": "D1", "kind": "demand", "shape": "line", "from": [10, 5], "to": [50, 1],
+           "label": {"text": "D₁", "pos": "end", "dx": 8, "dy": 4}},
+          {"id": "D2", "kind": "demand", "shape": "line", "color": "red", "at": 1,
+           "from": [0, 5], "to": [40, 1], "label": {"text": "D₂", "pos": "end", "dx": 8, "dy": 6}}
+        ],
+        "arrows": [{"from": [30, 3.2], "to": [20, 3.2], "at": 1}],
+        "schedule": {
+          "heading": "Quantity demanded, before and after",
+          "head": ["Price", "Before", "After"],
+          "shiftColumn": 2,
+          "rows": [["$5", "10", "0"], ["$4", "20", "10"], ["$3", "30", "20"], ["$2", "40", "30"]],
+          "arrows": ["down", "down", "down", "down"]
+        }
+      }
+    }
+  ]
+}
+</script></div>
+
+<h2>4. Surplus and shortage (guides, brace, arrows)</h2>
+<div class="sdg"><script type="application/json">
+{
+  "title": "Fixture: prices away from equilibrium",
+  "mode": "symbolic",
+  "axes": {
+    "x": {"label": "Q", "min": 0, "max": 110, "ticks": [{"value": 50, "text": "Q₁"}]},
+    "y": {"label": "P", "min": 0, "max": 110, "ticks": [{"value": 50, "text": "P₁"}]}
+  },
+  "curves": [
+    {"id": "D", "kind": "demand", "from": [8, 96], "to": [96, 8],
+     "label": {"text": "D", "pos": "end", "dx": 8, "dy": 6}},
+    {"id": "S", "kind": "supply", "from": [8, 12], "to": [96, 96],
+     "label": {"text": "S", "pos": "end", "dx": 8, "dy": -2}}
+  ],
+  "points": [{"on": ["D", "S"], "label": {"text": "E", "dx": 0, "dy": -12, "anchor": "middle"}}],
+  "guides": [{"on": ["D", "S"], "axis": "h"}, {"on": ["D", "S"], "axis": "v"}],
+  "steps": [
+    {"caption": "At the equilibrium price the quantity buyers want and the quantity sellers offer are the same, so nothing pushes the price either way."},
+    {"caption": "Above that price sellers offer more than buyers will take, and the unsold amount pushes the price back down."}
+  ],
+  "scenarios": [
+    {
+      "label": "Surplus",
+      "overlay": {
+        "guides": [
+          {"on": ["D", "S"], "axis": "h"}, {"on": ["D", "S"], "axis": "v"},
+          {"y": 72, "from": 0, "to": 72, "color": "red", "at": 1,
+           "label": {"text": "Price floor", "dx": 6, "dy": -5, "anchor": "start"}}
+        ],
+        "braces": [{"y": 82, "from": 28, "to": 72, "at": 1, "below": false,
+                    "label": {"text": "Surplus"}}],
+        "arrows": [{"from": [50, 70], "to": [50, 54], "at": 1}],
+        "points": [{"on": ["D", "S"], "label": {"text": "E", "dx": 0, "dy": -12, "anchor": "middle"}},
+                   {"x": 28, "y": 72, "at": 1}, {"x": 72, "y": 72, "at": 1}]
+      }
+    },
+    {
+      "label": "Shortage",
+      "overlay": {
+        "steps": [
+          {"caption": "At the equilibrium price the quantity buyers want and the quantity sellers offer are the same, so nothing pushes the price either way."},
+          {"caption": "Below that price buyers want more than sellers will supply, and the unmet demand pulls the price back up."}
+        ],
+        "guides": [
+          {"on": ["D", "S"], "axis": "h"}, {"on": ["D", "S"], "axis": "v"},
+          {"y": 28, "from": 0, "to": 72, "color": "red", "at": 1,
+           "label": {"text": "Price ceiling", "dx": 6, "dy": -5, "anchor": "start"}}
+        ],
+        "braces": [{"y": 20, "from": 28, "to": 72, "at": 1, "below": true,
+                    "label": {"text": "Shortage"}}],
+        "arrows": [{"from": [50, 30], "to": [50, 46], "at": 1}],
+        "points": [{"on": ["D", "S"], "label": {"text": "E", "dx": 0, "dy": -12, "anchor": "middle"}},
+                   {"x": 28, "y": 28, "at": 1}, {"x": 72, "y": 28, "at": 1}]
+      }
+    }
+  ]
+}
+</script></div>
+
+<h2>5. Two panels (two markets), curved curves with numbered markers</h2>
+<div class="sdg"><script type="application/json">
+{
+  "title": "Fixture: one shock, two related markets",
+  "panels": [
+    {
+      "label": "First market",
+      "axes": {"x": {"label": "Q", "min": 0, "max": 110,
+                     "ticks": [{"on": ["D", "S"], "text": "Q₁"},
+                               {"on": ["D", "S2"], "text": "Q₂", "color": "red", "at": 2}]},
+               "y": {"label": "P", "min": 0, "max": 110,
+                     "ticks": [{"on": ["D", "S"], "text": "P₁"},
+                               {"on": ["D", "S2"], "text": "P₂", "color": "red", "at": 2}]}},
+      "curves": [
+        {"id": "D", "kind": "demand", "from": [8, 96], "to": [96, 8], "bow": 0.12,
+         "marker": {"n": 1, "pos": 0.12}, "label": {"text": "D", "pos": "end", "dx": 8, "dy": 6}},
+        {"id": "S", "kind": "supply", "from": [8, 12], "to": [96, 96], "bow": 0.1,
+         "label": {"text": "S₁", "pos": "end", "dx": 8, "dy": -2}},
+        {"id": "S2", "kind": "supply", "color": "red", "at": 1, "from": [26, 12], "to": [104, 90],
+         "bow": 0.1, "marker": {"n": 2, "pos": 0.12},
+         "label": {"text": "S₂", "pos": "end", "dx": 8, "dy": -2}}
+      ],
+      "points": [{"on": ["D", "S"], "label": {"text": "E₁", "dx": 7, "dy": -13, "anchor": "start"}},
+                 {"on": ["D", "S2"], "color": "red", "at": 2,
+                  "label": {"text": "E₂", "dx": -7, "dy": 21, "anchor": "end"}}],
+      "guides": [{"on": ["D", "S"], "axis": "h"}, {"on": ["D", "S"], "axis": "v"},
+                 {"on": ["D", "S2"], "axis": "h", "color": "red", "at": 2},
+                 {"on": ["D", "S2"], "axis": "v", "color": "red", "at": 2}],
+      "arrows": [{"from": [18, 34], "to": [34, 34], "at": 1}]
+    },
+    {
+      "label": "Second market",
+      "axes": {"x": {"label": "Q", "min": 0, "max": 110,
+                     "ticks": [{"on": ["D", "S"], "text": "Q₁"},
+                               {"on": ["D2", "S"], "text": "Q₂", "color": "red", "at": 2}]},
+               "y": {"label": "P", "min": 0, "max": 110,
+                     "ticks": [{"on": ["D", "S"], "text": "P₁"},
+                               {"on": ["D2", "S"], "text": "P₂", "color": "red", "at": 2}]}},
+      "curves": [
+        {"id": "S", "kind": "supply", "from": [8, 12], "to": [96, 96], "bow": 0.1,
+         "label": {"text": "S", "pos": "end", "dx": 8, "dy": -2}},
+        {"id": "D", "kind": "demand", "from": [8, 96], "to": [96, 8], "bow": 0.12,
+         "label": {"text": "D₁", "pos": "end", "dx": 8, "dy": 6}},
+        {"id": "D2", "kind": "demand", "color": "red", "at": 2, "from": [8, 76], "to": [76, 8],
+         "bow": 0.12, "label": {"text": "D₂", "pos": 0.1, "dx": -6, "dy": -7, "anchor": "end"}}
+      ],
+      "points": [{"on": ["D", "S"], "label": {"text": "E₁", "dx": 7, "dy": -13, "anchor": "start"}},
+                 {"on": ["D2", "S"], "color": "red", "at": 2,
+                  "label": {"text": "E₂", "dx": -7, "dy": 21, "anchor": "end"}}],
+      "guides": [{"on": ["D", "S"], "axis": "h"}, {"on": ["D", "S"], "axis": "v"},
+                 {"on": ["D2", "S"], "axis": "h", "color": "red", "at": 2},
+                 {"on": ["D2", "S"], "axis": "v", "color": "red", "at": 2}],
+      "arrows": [{"from": [46, 86], "to": [30, 78], "at": 2}]
+    }
+  ],
+  "steps": [
+    {"caption": "Both markets begin at their own equilibrium."},
+    {"caption": "A change in production conditions moves the supply curve in the first market to the right."},
+    {"caption": "The first market's price falls, and because the two goods are used together, demand in the second market falls with it, lowering its price and quantity too."}
+  ]
+}
+</script></div>
+
+<h2>6. Vertical brace and a movement-along arrow</h2>
+<div class="sdg"><script type="application/json">
+{
+  "title": "Fixture: vertical brace, curved arrow",
+  "mode": "symbolic",
+  "axes": {"x": {"label": "Q", "min": 0, "max": 110,
+                 "ticks": [{"onCurve": {"curve": "D", "y": 70}, "text": "Q₁"},
+                           {"onCurve": {"curve": "D", "y": 40}, "text": "Q₂", "at": 1}]},
+           "y": {"label": "P", "min": 0, "max": 110,
+                 "ticks": [{"value": 70, "text": "P₁"}, {"value": 40, "text": "P₂", "at": 1}]}},
+  "curves": [{"id": "D", "kind": "demand", "from": [8, 96], "to": [96, 8],
+              "label": {"text": "D", "pos": "end", "dx": 8, "dy": 6}}],
+  "points": [{"onCurve": {"curve": "D", "y": 70}},
+             {"onCurve": {"curve": "D", "y": 40}, "at": 1}],
+  "guides": [{"onCurve": {"curve": "D", "y": 70}, "axis": "h"},
+             {"onCurve": {"curve": "D", "y": 70}, "axis": "v"},
+             {"onCurve": {"curve": "D", "y": 40}, "axis": "h", "at": 1},
+             {"onCurve": {"curve": "D", "y": 40}, "axis": "v", "at": 1}],
+  "braces": [{"x": 94, "from": 40, "to": 70, "at": 1, "below": true,
+              "label": {"text": "Fall in price"}}],
+  "moves": [{"from": {"onCurve": {"curve": "D", "y": 70}},
+             "to": {"onCurve": {"curve": "D", "y": 40}},
+             "curved": 0.09, "at": 1}],
+  "steps": [
+    {"caption": "At the higher price buyers take the smaller quantity."},
+    {"caption": "When the price falls, buyers move down the same curve to a larger quantity; the curve itself has not moved."}
+  ]
+}
+</script></div>
+
+<script src="../engine/sd-graph.js"></script>
+</body>
+</html>

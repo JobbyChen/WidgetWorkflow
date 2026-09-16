@@ -41,12 +41,17 @@ CSS_SRC = ROOT / "engine" / "sd-graph.css"
 JS_SRC = ROOT / "engine" / "sd-graph.js"
 PLACEHOLDER = "<!--SDG-ENGINE-->"
 
-SOURCE_WORDS = [
-    "the transcript", "the lecture", "the recording", "the board", "the slides",
-    "the class", "the classroom", "classroom", "the video", "the professor",
-    "the instructor", "in class",
-    "the notes say", "the handout", "he said", "she said", "they said in",
-]
+# Hard rule 4 / prompt v6 step 0T: student-facing text never names where the
+# material came from. Two tiers, because some of these words have innocent uses.
+# NOUNS match on their own, whatever article precedes them -- "a lecture
+# recording" has to trip the same wire as "the recording". PHRASES are words
+# that are only a giveaway in context: a "class" of goods and the "board" of a
+# company are both ordinary economics.
+SOURCE_NOUNS = ["transcript", "lecture", "recording", "classroom", "professor",
+                "instructor", "lecturer"]
+SOURCE_PHRASES = ["the board", "the class", "in class", "the slides",
+                  "the handout", "the video", "the notes say", "the reading",
+                  "he said", "she said", "they said in", "this course covers"]
 
 CSS_BLOCK = re.compile(r"<style>\s*\n(\.sdg \{.*?)\n</style>", re.S)
 JS_BLOCK = re.compile(r"<script>\s*\n(/\* ===== sd-graph\.js.*?)\n</script>", re.S)
@@ -478,8 +483,9 @@ def visible_text(src, cfgs):
 def check_source(src, cfgs, r):
     hits = {}
     for t in visible_text(src, cfgs):
-        for w in SOURCE_WORDS:
-            m = re.search(r"\b" + re.escape(w) + r"\b", t, re.I)
+        for w in SOURCE_NOUNS + SOURCE_PHRASES:
+            m = re.search(r"\b" + re.escape(w) + r"\w*\b" if w in SOURCE_NOUNS
+                          else r"\b" + re.escape(w) + r"\b", t, re.I)
             if m:
                 i = max(0, m.start() - 40)
                 hits.setdefault(w, t[i:m.end() + 40].strip())

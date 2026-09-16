@@ -138,9 +138,10 @@ guessed dot lands beside the crossing.
 before writing a config, not after.
 
 - At a crossing the curves take the diagonals, so the free wedges are due north,
-  south, east and west. Equilibrium labels go north (`dx 7, dy -13, anchor
-  start`) and south (`dx -7, dy 21, anchor end`). The north-east and south-west
-  corners look empty on a sketch and are not.
+  south, east and west. Equilibrium labels go north (`dx 0, dy -14, anchor
+  middle`) and south (`dx -7, dy 21, anchor end`) — due north is clear outright,
+  while the south label has to step aside from the guide dropping to the axis.
+  The north-east and south-west corners look empty on a sketch and are not.
 - Curve labels sit at the end of the curve, outside the plot, offset away from
   the line: `{"pos": "end", "dx": 8, "dy": 6}` below a demand curve,
   `{"pos": "end", "dx": 8, "dy": -2}` above a supply curve. When two curve ends

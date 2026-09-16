@@ -82,9 +82,11 @@
 
   /* At a crossing the curves occupy the diagonals -- supply runs north-east to
      south-west, demand north-west to south-east -- so the free wedges are due
-     north, south, east and west. Equilibrium labels use north and south, nudged
-     sideways to clear the dashed guide that drops from the point. */
-  var NORTH = { dx: 7, dy: -13, anchor: "start" };
+     north, south, east and west. Equilibrium labels use north and south. Due
+     north is clear outright -- the vertical guide runs from the axis up to the
+     point, never above it -- so that label is centred; the south label has to
+     step aside from that guide. */
+  var NORTH = { dx: 0, dy: -14, anchor: "middle" };
   var SOUTH = { dx: -7, dy: 21, anchor: "end" };
 
 

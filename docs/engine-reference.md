@@ -205,7 +205,7 @@ north, south, east and west. Equilibrium labels use north and south, nudged
 sideways to clear the dashed guide dropping from the point:
 
 ```json
-"label": {"text": "E₁", "dx": 7,  "dy": -13, "anchor": "start"}   // north
+"label": {"text": "E₁", "dx": 0,  "dy": -14, "anchor": "middle"}  // north
 "label": {"text": "E₂", "dx": -7, "dy": 21,  "anchor": "end"}     // south
 ```
 

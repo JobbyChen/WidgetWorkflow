@@ -47,11 +47,23 @@ PLACEHOLDER = "<!--SDG-ENGINE-->"
 # recording" has to trip the same wire as "the recording". PHRASES are words
 # that are only a giveaway in context: a "class" of goods and the "board" of a
 # company are both ordinary economics.
-SOURCE_NOUNS = ["transcript", "lecture", "recording", "classroom", "professor",
-                "instructor", "lecturer"]
-SOURCE_PHRASES = ["the board", "the class", "in class", "the slides",
+#
+# Naming a person is a different question from naming the source, and it is not
+# a rule a script can settle: some professors are happy to be credited and
+# others must never appear. So attributing content to whoever taught it is a
+# FAIL here ("the professor said"), while a name itself is only ever a WARN --
+# see check_names below and hard rule 4 in CLAUDE.md. "your professor" is left
+# alone: it addresses the student rather than sourcing the material.
+SOURCE_NOUNS = ["transcript", "lecture", "recording", "classroom"]
+# "on the board" and not "the board": a company has one of those too, and the
+# rule is about the classroom whiteboard. "the class" likewise skips "the class
+# of goods", which is ordinary economics.
+SOURCE_PHRASES = ["on the board", "at the board", "in class", "the slides",
                   "the handout", "the video", "the notes say", "the reading",
-                  "he said", "she said", "they said in", "this course covers"]
+                  "he said", "she said", "they said in",
+                  "the professor", "our professor", "the instructor",
+                  "the lecturer"]
+SOURCE_GUARDED = [(r"the class(?! of\b)", "the class")]
 
 CSS_BLOCK = re.compile(r"<style>\s*\n(\.sdg \{.*?)\n</style>", re.S)
 JS_BLOCK = re.compile(r"<script>\s*\n(/\* ===== sd-graph\.js.*?)\n</script>", re.S)
@@ -483,9 +495,11 @@ def visible_text(src, cfgs):
 def check_source(src, cfgs, r):
     hits = {}
     for t in visible_text(src, cfgs):
-        for w in SOURCE_NOUNS + SOURCE_PHRASES:
-            m = re.search(r"\b" + re.escape(w) + r"\w*\b" if w in SOURCE_NOUNS
-                          else r"\b" + re.escape(w) + r"\b", t, re.I)
+        probes = ([(r"\b" + re.escape(w) + r"\w*\b", w) for w in SOURCE_NOUNS]
+                  + [(r"\b" + re.escape(w) + r"\b", w) for w in SOURCE_PHRASES]
+                  + [(r"\b" + pat, w) for pat, w in SOURCE_GUARDED])
+        for pat, w in probes:
+            m = re.search(pat, t, re.I)
             if m:
                 i = max(0, m.start() - 40)
                 hits.setdefault(w, t[i:m.end() + 40].strip())
@@ -495,6 +509,29 @@ def check_source(src, cfgs, r):
                    % (w, " ".join(hits[w].split())))
     else:
         r.ok("source", "no student-facing text names its source")
+
+
+NAME_RE = re.compile(r"\b(?:Professor|Prof\.|Dr\.|Mr\.|Mrs\.|Ms\.)\s+[A-Z][\w'\u2019-]+")
+
+
+def check_names(src, cfgs, r):
+    """Report people named in student-facing text. Never fails.
+
+    Whether a given professor may be named is Ian's call, not a rule a script
+    can hold, so this only ever raises a hand. It also only catches a name that
+    carries a title -- a bare surname is indistinguishable from any other
+    capitalised word, so a person named without one will pass silently."""
+    found = {}
+    for t in visible_text(src, cfgs):
+        for m in NAME_RE.finditer(t):
+            i = max(0, m.start() - 40)
+            found.setdefault(m.group(0), " ".join(t[i:m.end() + 40].split()))
+    if not found:
+        r.ok("names", "no person is named with a title in student-facing text")
+        return
+    for who, ctx in sorted(found.items()):
+        r.warn("names", "%r is named -- check whether this one may be: ...%s..."
+               % (who, ctx))
 
 
 def check_images(src, r):
@@ -535,6 +572,7 @@ def main():
     check_arrows(cfgs, r)
     check_captions(cfgs, r)
     check_source(src, cfgs, r)
+    check_names(src, cfgs, r)
     check_images(src, r)
     r.skip("numbers", "whether each number is the source's number needs the source")
 

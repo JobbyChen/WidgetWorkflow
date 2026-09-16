@@ -70,6 +70,15 @@ Checkboxes. Keep `CLAUDE.md`'s status paragraph in sync with this file.
 
 ## Workflow
 
+- [ ] **No list of who may be named, by choice.** Hard rule 4 covers the policy:
+      the checker raises a WARN on "Professor X" / "Dr. X" and never fails, and
+      Ian decides each time. If that ever becomes too much traffic, the options
+      already weighed were a committed names-only deny-list or a gitignored one;
+      both were declined in favour of keeping the judgement manual.
+- [ ] The name check only catches a title + name. Someone named by surname alone
+      is indistinguishable from any other capitalised word without a list, so it
+      passes silently.
+
 - [ ] **Where do finished files get published?** An S3 path, the LMS, or
       somewhere else. Unknown — one for Ian.
 - [ ] **Does the professor's PDF for the Fall '26 chapter exist yet?** The

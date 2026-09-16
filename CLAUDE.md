@@ -69,10 +69,24 @@ flag them in the changelog.
    one. Authority order: user message > notes prose > notes labels > transcript >
    image > alt text.
 4. **Student-facing text never mentions its source.** No "the transcript", "the
-   lecture", "the recording", "the board", "the slides", "the class", "the file"
-   — in captions, labels, or prose. This is also Ian's standing preference for
-   all study-guide work: paraphrase in original wording, never copy
-   textbook/printed phrasing, and flag anything that closely mirrors a source.
+   lecture", "the recording", "on the board", "the slides", "the class", "the
+   file" — in captions, labels, or prose. Attributing content to whoever taught
+   it ("the professor said") is the same violation whoever they are. This is
+   also Ian's standing preference for all study-guide work: paraphrase in
+   original wording, never copy textbook/printed phrasing, and flag anything
+   that closely mirrors a source.
+
+   **Naming a person is a separate question, and it is Ian's call.** Some
+   professors are happy to be credited; others must never appear in a published
+   file, and getting that wrong costs more than any typo here. There is no list
+   in this repo, by Ian's choice — so no script, and no session, should decide
+   it. `scripts/check_file.py` raises a WARN on any "Professor X" / "Dr. X" in
+   student-facing text and never fails the file; the judgement stays with Ian
+   every time. If you are converting material that names someone, keep the name
+   (prompt v6 step 0 transcribes named people exactly) and list it in the
+   changelog so it is reviewed before publication. Note the checker only sees a
+   name that carries a title: a person named by surname alone passes silently,
+   so read the prose too.
 5. **Match the printed artwork.** Black original curve, red shifted curve, every
    arrow red, curved D/S with numbered markers on conceptual graphs, straight
    lines with hollow dots on numeric ones, dashed grid on schedules, P and Q as

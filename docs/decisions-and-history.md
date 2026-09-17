@@ -123,3 +123,27 @@ the link between each table row and its point), and dropping the shift arrow.
    on a word boundary and so missed `classroom` twice, including in a heading.
    Word lists that look complete are worth testing against the file rather than
    trusting.
+
+## 2026-09-17 — PPF probed, and the label test finally covers rule 5
+
+Asked whether a production possibilities frontier was in scope before the source
+docs existed, the answer came from building three PPF widgets against the real
+engine rather than reasoning about it. Most of PPF turned out to work unchanged,
+including every kind of shift; the probe is throwaway and stayed out of the repo.
+
+8. **The label test now covers arrows, points, axis ticks and the values a point
+   prints for itself.** It had only ever tested labels against curves and other
+   labels, while rule 5 says "a curve, a point, an arrow, or another label" — so
+   an arrow lying across a point label passed, and so did a point's automatic
+   "85" sitting a pixel from an "80" tick. Both were spotted by eye in the PPF
+   probe, which is the failure the script existed to prevent. It also now warns
+   when two labels are under about six pixels apart rather than only when they
+   overlap, since a clump reads as one label.
+9. **Boxes are only compared when they can share a step.** Adding tick boxes made
+   this necessary: two points that never appear together were being reported as
+   overlapping.
+10. **Axis titles take a word.** `P` and `Q` fit anywhere; "Butter" ran into the
+    plot and "Guns" was clipped off the right edge. The x title is now anchored
+    to the right edge and the y title sits in the headroom above the plot, which
+    moves `P` and `Q` by a few pixels in existing widgets and is invisible in
+    practice — checked against before-and-after renders of the shipped file.

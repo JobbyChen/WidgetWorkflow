@@ -29,6 +29,42 @@ Checkboxes. Keep `CLAUDE.md`'s status paragraph in sync with this file.
       confirmed identical before and after the v2.1 change. Left as delivered
       along with the captions above.
 
+## PPF (production possibilities frontier)
+
+Docs not yet supplied. Probed against the real engine on 2026-09-17: the
+frontier, the combinations table with dots on the curve, points on/inside/
+outside, movement along the frontier, and **outward, inward and pivot shifts**
+all work with no engine change — a shift of the frontier is the same `from`
+mechanic as a shift of supply. What is missing:
+
+- [x] ~~Axis titles are sized for one character, so "Butter" ran into the plot
+      and "Guns" was clipped at the right edge.~~ Engine v2.2 anchors the x title
+      to the right edge and puts the y title in the headroom above the plot.
+- [ ] **No vertical brace.** `braces` span quantities at a price (`{p, q1, q2}`).
+      The quantity gained can be braced; the quantity given up — the other half
+      of every opportunity-cost lesson — cannot. Needs `{q, p1, p2}`.
+- [ ] **No label position along a curve.** Only the first or last point, nudged.
+      Both frontiers terminate on the same two axes, so end labels crowd in a way
+      D and S never do. Needs a "label at fraction t" option.
+- [ ] **No `vlines`** (a vertical reference line at a quantity). Guides cover
+      most of it; low priority.
+- [ ] Area fills of any kind, so the attainable region cannot be shaded. This one
+      is real work, not a small addition. Only needed if the source shades it.
+- [ ] The schedule table's first column is always the y-axis good, because rows
+      are read as `[price, q, …]`. A PPF table therefore lists the vertical good
+      first. Documented rather than changed: renaming would break every config.
+- [ ] Prompt v6 step 1 already lists PPF as a graph to convert, but step 3's
+      pattern table, step 4's templates and step 5's drawing rules are all supply
+      and demand, and hard rule 5 in `CLAUDE.md` still says "P and Q as axis
+      labels". Those need PPF rows and a template — more writing than engine
+      work.
+
+**Authoring note for whoever writes the first PPF config:** tick the axes where
+the combinations are *not*. Every PPF point is a round number, and a point prints
+its own value, so a point at 85 beside an `80` tick gives two labels a pixel
+apart. Set `showP:false`/`showQ:false` on illustrative points (an "inefficient"
+or "unattainable" dot) whose exact coordinates are not the lesson.
+
 ## Prompt v6
 
 - [ ] **Does the two-movement-arrow rule apply to an equilibrium-shift widget?**

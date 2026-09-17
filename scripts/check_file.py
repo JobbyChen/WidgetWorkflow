@@ -310,6 +310,20 @@ def geom(v, ax):
             lambda p: oy - (p / ymax) * ph, ox, oy)
 
 
+def fmt_p(v, ax):
+    if not ax.get("money"):
+        return str(v)
+    if ax.get("cents"):
+        return "$%.2f" % v
+    return "$" + (str(int(v)) if float(v).is_integer() else "%.2f" % v)
+
+
+def fmt_q(v, ax):
+    if ax.get("k") and v >= 1000:
+        return "%gk" % (v / 1000.0)
+    return "{:,}".format(v)
+
+
 def box(x, y, text, size, anchor="start"):
     w = 0.58 * size * max(1, len(str(text)))
     if anchor == "middle":
@@ -324,9 +338,8 @@ def overlaps(a, b, inset=1.0):
                 or a[3] - inset <= b[1] + inset or b[3] - inset <= a[1] + inset)
 
 
-def curve_hits(bx, pts, X, Y, samples=160):
-    """Does the polyline through pts pass inside the box?"""
-    px = [(X(q), Y(p)) for q, p in pts]
+def poly_hits(bx, px, samples=160):
+    """Does the polyline through these pixel points pass inside the box?"""
     for i in range(len(px) - 1):
         (x1, y1), (x2, y2) = px[i], px[i + 1]
         for s in range(samples + 1):
@@ -335,6 +348,63 @@ def curve_hits(bx, pts, X, Y, samples=160):
             if bx[0] < x < bx[2] and bx[1] < y < bx[3]:
                 return True
     return False
+
+
+def curve_hits(bx, pts, X, Y):
+    return poly_hits(bx, [(X(q), Y(p)) for q, p in pts])
+
+
+def dot_hits(bx, cx, cy, r):
+    """Does a dot of radius r overlap the box?"""
+    nx = min(max(cx, bx[0]), bx[2])
+    ny = min(max(cy, bx[1]), bx[3])
+    return (nx - cx) ** 2 + (ny - cy) ** 2 < r * r
+
+
+def q_at(pts, p):
+    """Quantity on a polyline at price p -- the engine's qAt, for shift arrows."""
+    for i in range(len(pts) - 1):
+        a, b = pts[i], pts[i + 1]
+        if (p - a[1]) * (p - b[1]) <= 0 and a[1] != b[1]:
+            return a[0] + (p - a[1]) * (b[0] - a[0]) / (b[1] - a[1])
+    a, b = pts[0], pts[-1]
+    if a[1] == b[1]:
+        return a[0]
+    return a[0] + (p - a[1]) * (b[0] - a[0]) / (b[1] - a[1])
+
+
+def arrow_segments(pn, X, Y):
+    """Every arrow the engine will draw, as pixel endpoints with a description.
+
+    Rule 5 forbids a label touching an arrow, not just a curve, so these have to
+    be in the collision test too. Shift arrows are reconstructed the way the
+    engine places them (at price arrowP, inset 8px at each end); `moves` are
+    displaced perpendicular by `offset`, which is what puts them beside the
+    curve rather than on it."""
+    out = []
+    byid = {c.get("id"): c for c in (pn.get("curves") or []) if c.get("id")}
+    for c in pn.get("curves") or []:
+        src = byid.get(c.get("from"))
+        if not src or c.get("shiftArrow") is False:
+            continue
+        pts, spts = c.get("pts") or [], src.get("pts") or []
+        if len(pts) < 2 or len(spts) < 2:
+            continue
+        ap = c["arrowP"] if c.get("arrowP") is not None else (pts[0][1] + pts[-1][1]) / 2.0
+        q0, q1 = q_at(spts, ap), q_at(pts, ap)
+        sgn = 1 if q1 > q0 else (-1 if q1 < q0 else 0)
+        out.append((((X(q0) + sgn * 8, Y(ap)), (X(q1) - sgn * 8, Y(ap))),
+                    "the %s shift arrow" % (c.get("label") or c.get("id"))))
+    for m in pn.get("moves") or []:
+        if not (isinstance(m.get("from"), list) and isinstance(m.get("to"), list)):
+            continue
+        x1, y1 = X(m["from"][0]), Y(m["from"][1])
+        x2, y2 = X(m["to"][0]), Y(m["to"][1])
+        off = m.get("offset", 14)
+        ln = math.hypot(x2 - x1, y2 - y1) or 1
+        nx, ny = -(y2 - y1) / ln * off, (x2 - x1) / ln * off
+        out.append((((x1 + nx, y1 + ny), (x2 + nx, y2 + ny)), "a movement arrow"))
+    return out
 
 
 def check_labels(cfgs, r):
@@ -356,6 +426,19 @@ def check_labels(cfgs, r):
                     n, " (%s)" % label if label else "",
                     " panel %d" % (pi + 1) if len(panels(v)) > 1 else "")
                 boxes = []
+                xt = [t for t in (ax.get("xticks") or [])]
+                yt = [t for t in (ax.get("yticks") or [])]
+                hl = [h.get("p") for h in (pn.get("hlines") or [])]
+
+                # Axis ticks are always on screen, so anything landing near one
+                # collides with it. These were missing from the test, which is
+                # why "85" beside the "80" tick went unreported.
+                for t in xt:
+                    boxes.append((box(X(t), oy + 15, fmt_q(t, ax), 10.5, "middle"),
+                                  "the %s tick on Q" % fmt_q(t, ax), (0, None)))
+                for t in yt:
+                    boxes.append((box(ox - 6, Y(t) + 4, fmt_p(t, ax), 10.5, "end"),
+                                  "the %s tick on P" % fmt_p(t, ax), (0, None)))
 
                 for c in pn.get("curves") or []:
                     pts = c.get("pts") or []
@@ -367,20 +450,32 @@ def check_labels(cfgs, r):
                     bx = box(X(lp[0]) + c.get("ldx", 6),
                              Y(lp[1]) + c.get("ldy", 2 if up else 6),
                              c.get("label") or c.get("id") or "", 13)
-                    boxes.append((bx, "curve label %r" % (c.get("label") or c.get("id"))))
+                    boxes.append((bx, "curve label %r" % (c.get("label") or c.get("id")),
+                                  (c.get("at", 0), c.get("until"))))
 
                 for p in pn.get("points") or []:
+                    win = (p.get("at", 0), p.get("until"))
                     if p.get("label"):
                         bx = box(X(p["q"]) + (p.get("dx") if p.get("dx") is not None else 9),
                                  Y(p["p"]) + (p.get("dy") if p.get("dy") is not None else -9),
                                  p["label"], 12)
-                        boxes.append((bx, "point label %r" % p["label"]))
-                    if p.get("pl"):
-                        boxes.append((box(ox - 6, Y(p["p"]) + 4, p["pl"], 10.5, "end"),
-                                      "axis label %r" % p["pl"]))
-                    if p.get("ql"):
-                        boxes.append((box(X(p["q"]), oy + 15, p["ql"], 10.5, "middle"),
-                                      "axis label %r" % p["ql"]))
+                        boxes.append((bx, "point label %r" % p["label"], win))
+                    # The engine prints a point's own price and quantity on the
+                    # axes unless they are already ticks (or pl/ql override
+                    # them), so those labels exist whether the author wrote them
+                    # or not, and have to be tested.
+                    pl = p.get("pl") or (fmt_p(p["p"], ax)
+                                         if p.get("showP") is not False
+                                         and p["p"] not in yt and p["p"] not in hl else None)
+                    ql = p.get("ql") or (fmt_q(p["q"], ax)
+                                         if p.get("showQ") is not False
+                                         and p["q"] not in xt else None)
+                    if pl:
+                        boxes.append((box(ox - 6, Y(p["p"]) + 4, pl, 10.5, "end"),
+                                      "axis label %r" % pl, win))
+                    if ql:
+                        boxes.append((box(X(p["q"]), oy + 15, ql, 10.5, "middle"),
+                                      "axis label %r" % ql, win))
 
                 for b in pn.get("braces") or []:
                     if not b.get("label"):
@@ -390,11 +485,14 @@ def check_labels(cfgs, r):
                     m = (X(min(b["q1"], b["q2"])) + X(max(b["q1"], b["q2"]))) / 2
                     boxes.append((box(m, y + d * 14 + (12 if b.get("below") else -4),
                                       b["label"], 12, "middle"),
-                                  "brace label %r" % b["label"]))
+                                  "brace label %r" % b["label"],
+                                  (b.get("at", 0), b.get("until"))))
 
                 checked += len(boxes)
 
-                for bx, what in boxes:
+                arrows = arrow_segments(pn, X, Y)
+
+                for bx, what, _win in boxes:
                     for c in pn.get("curves") or []:
                         pts = c.get("pts") or []
                         if len(pts) < 2:
@@ -404,11 +502,37 @@ def check_labels(cfgs, r):
                             continue  # a curve's own label sits at its end
                         if curve_hits(bx, pts, X, Y):
                             r.fail("labels", "%s: %s sits on curve %s" % (where, what, cid))
+                    for seg, desc in arrows:
+                        if poly_hits(bx, list(seg)):
+                            r.fail("labels", "%s: %s sits on %s" % (where, what, desc))
+                    for pt in pn.get("points") or []:
+                        cx, cy = X(pt["q"]), Y(pt["p"])
+                        rad = 6.0 if pt.get("marker") else 4.2
+                        own = pt.get("label") and what == "point label %r" % pt["label"]
+                        if not own and dot_hits(bx, cx, cy, rad):
+                            r.fail("labels", "%s: %s sits on the point at (%s, %s)"
+                                   % (where, what, pt["q"], pt["p"]))
+
+                def coexist(a, b):
+                    """Can these two ever be on screen together?"""
+                    a0, a1 = a
+                    b0, b1 = b
+                    lo = max(a0 or 0, b0 or 0)
+                    hi = min(a1 if a1 is not None else 10 ** 6,
+                             b1 if b1 is not None else 10 ** 6)
+                    return lo < hi
 
                 for i in range(len(boxes)):
                     for j in range(i + 1, len(boxes)):
+                        if not coexist(boxes[i][2], boxes[j][2]):
+                            continue
                         if overlaps(boxes[i][0], boxes[j][0]):
                             r.fail("labels", "%s: %s overlaps %s"
+                                   % (where, boxes[i][1], boxes[j][1]))
+                        elif overlaps(boxes[i][0], boxes[j][0], inset=-3.0):
+                            # Not touching, but under ~6px apart reads as one
+                            # clump rather than two values.
+                            r.warn("labels", "%s: %s is crowded against %s"
                                    % (where, boxes[i][1], boxes[j][1]))
 
                 seen = {}
@@ -423,7 +547,8 @@ def check_labels(cfgs, r):
     if skipped:
         r.skip("labels", "%d preset config(s): the engine computes their geometry" % skipped)
     if checked:
-        r.ok("labels", "%d label(s) tested against every curve" % checked)
+        r.ok("labels", "%d label(s) tested against every curve, arrow and point"
+              % checked)
 
 
 def check_arrows(cfgs, r):

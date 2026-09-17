@@ -1,4 +1,4 @@
-# Engine reference — `engine/sd-graph.js` v2.1
+# Engine reference — `engine/sd-graph.js` v2.2
 
 Written from the engine source. The conversion prompt carries a shorter version
 of this in its own "Engine reference" section; that one is what the model needs
@@ -71,7 +71,16 @@ identically in each, or it will appear to jump when the reader switches.
 quantities of 1000+ as `12k`. `grid` draws the dashed gridlines at every tick —
 the schedule-graph look. `bg:false` removes the tinted plot rectangle.
 
-Axis labels default to `P` and `Q`, which is what the printed artwork uses.
+`x` and `y` are the axis **titles**, defaulting to `P` and `Q`, which is what
+the printed artwork uses. A production possibilities frontier names its axes with
+words instead ("Guns", "Butter"), so the x title is anchored to the right edge of
+the box and the y title sits in the headroom above the plot. Keep them to a word
+or two — nothing wraps them.
+
+**A point prints its own price and quantity on the axes** (see `points` below),
+so on any graph whose points sit at round numbers, choose ticks that those values
+will not land beside. A point at 85 next to an `80` tick produces two labels a
+pixel apart. `scripts/check_file.py` tests for this.
 
 ### `curves`
 

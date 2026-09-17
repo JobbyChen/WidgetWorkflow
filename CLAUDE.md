@@ -122,11 +122,20 @@ not enough to reproduce an implementation.
   `embed_engine.py`'s paths reproduce the delivered file byte-for-byte; all 20
   prototype widgets render with no engine errors; `check_file.py` runs the
   geometric label test over 74 labels in the 263 file with no overlaps.
-* **Engine is v2.1.** `shiftArrow: false` drops the redundant shift arrow in a
+* **Engine is v2.2.** `shiftArrow: false` drops the redundant shift arrow in a
   schedule-shift widget — the per-row arrows already say it once per row — while
-  keeping the slide and the dimming, and every arrow is now one weight (2.4px).
-  Prompt v6 step 5 changed with it.
-* **`ECO2013-263-SupplyAndDemand.html` is 0 FAIL, 0 WARN.** Its three references
+  keeping the slide and the dimming, and every arrow is one weight (2.4px).
+  Prompt v6 step 5 changed with it. Axis titles now take a word (`x` anchored to
+  the right edge, `y` in the headroom above the plot) so a PPF can name its axes.
+* **PPF is feasible without new architecture.** Probed against the real engine:
+  the frontier, its combinations table, points on/inside/outside, movement along
+  it, and outward/inward/pivot shifts all work unchanged — a frontier shift is
+  the same `from` mechanic as a supply shift. Four small gaps and the prompt work
+  are in `docs/open-issues.md`; the docs themselves have not arrived yet.
+* **`ECO2013-263-SupplyAndDemand.html` is 0 FAIL.** Three WARNs remain, all
+  crowding: `P₁`/`P₂` are about a pixel apart in widgets 7 and 8, and `S₁`/`S₂`
+  in widget 9's second panel. Readable, and moving them means moving equilibrium
+  labels in shipped work, so they are reported rather than changed. Its three references
   to the class are reworded and its four term labels now keep only the term
   inside `<strong>`.
 * **Left as delivered:** the 9/11 prototype's captions predate v6's caption

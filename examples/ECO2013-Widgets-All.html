@@ -66,7 +66,7 @@
 .sdg .sdg-cap { margin:10px 0 0; padding:10px 12px; background:#fff; border-left:4px solid var(--red); font-size:.92rem; line-height:1.45; min-height:3.2em; }
 </style>
 <script>
-/* ===== sd-graph.js v2.1 — data-driven supply & demand widgets =====
+/* ===== sd-graph.js v2.2 — data-driven supply & demand widgets =====
    Markup:  <div class="sdg"><script type="application/json">{ ...config... }<\/script></div>
    Top-level config:
      title, lede, caption         heading / intro / static caption (caption used only when there are no steps)
@@ -76,6 +76,7 @@
    Panel config:
      heading                      title above the panel (two-market only)
      axes: {x, y, xmax, ymax, xticks[], yticks[], money, cents, k, grid, bg:false}
+        x, y = axis titles, default 'Q' and 'P'. A word or two fits; they are never wrapped.
      curves[]: {id, label, pts:[[q,p],...], color, at, until, from, arrowP, shiftArrow, curved, thin, dashed, lstart, ldx, ldy}
         lstart = put the curve label at the first point instead of the last; ldx/ldy nudge it
         from   = id of the curve this one shifts away from (animated shift + arrow); arrowP = price height of arrow
@@ -124,8 +125,12 @@
     g.appendChild(el('path', {class: 'ax', d: 'M' + O.x + ' 14 L' + O.x + ' ' + O.y + ' L' + (O.x + PW + 14) + ' ' + O.y}));
     (ax.xticks || []).forEach(function (q) { g.appendChild(el('text', {class: 'tk', x: X(q), y: O.y + 15, 'text-anchor': 'middle'}, fmtQ(q, ax))); });
     (ax.yticks || []).forEach(function (p) { g.appendChild(el('text', {class: 'tk', x: O.x - 6, y: Y(p) + 4, 'text-anchor': 'end'}, fmtP(p, ax))); });
-    g.appendChild(el('text', {class: 'axlbl', x: O.x + PW + 18, y: O.y + 16}, ax.x || 'Q'));
-    g.appendChild(el('text', {class: 'axlbl', x: O.x - 26, y: 22}, ax.y || 'P'));
+    // Axis titles. P and Q fit anywhere, but a PPF names its axes with words, so
+    // the x title is anchored to the right edge instead of running off it, and the
+    // y title sits in the headroom above the plot instead of inside its top-left
+    // corner. Keep axis titles to a word or two: nothing here can wrap them.
+    g.appendChild(el('text', {class: 'axlbl', x: W - 2, y: O.y + 16, 'text-anchor': 'end'}, ax.x || 'Q'));
+    g.appendChild(el('text', {class: 'axlbl', x: O.x - 2, y: 11}, ax.y || 'P'));
 
     function arrow(x1, y1, x2, y2, c, cls) {
       var dx = x2 - x1, dy = y2 - y1, len = Math.hypot(dx, dy), ux = dx / len, uy = dy / len, hh = 7, ww = 3.6, bx = x2 - ux * hh, by = y2 - uy * hh;

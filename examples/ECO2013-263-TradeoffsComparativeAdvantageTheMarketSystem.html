@@ -34,7 +34,7 @@
   .sdg .sdg-ctrl button, .sdg .sdg-scen button { min-height:44px; }
 }
 .sdg figure { margin:0; background:#fff; border:1px solid var(--rule); padding:8px 8px 2px; }
-.sdg figcaption { font-size:.9rem; font-weight:700; font-style:italic; color:var(--navy); text-align:center; margin:0 0 4px; }
+.sdg figcaption { font-size:1.05rem; font-weight:700; color:var(--navy); text-align:center; margin:0 0 6px; }
 .sdg svg { width:100%; height:auto; display:block; }
 .sdg .sdg-table { border-collapse:collapse; width:100%; font-size:.9rem; background:#fff; border:1px solid var(--rule); }
 .sdg .sdg-table th { background:var(--navy); color:#fff; font-weight:700; padding:6px 8px; text-align:center; font-size:.82rem; }
@@ -73,7 +73,7 @@
 .sdg .sdg-cap { margin:10px 0 0; padding:10px 12px; background:#fff; border-left:4px solid var(--red); font-size:.92rem; line-height:1.45; min-height:3.2em; }
 </style>
 <script>
-/* ===== sd-graph.js v2.4 — data-driven supply & demand widgets =====
+/* ===== sd-graph.js v2.5 — data-driven supply & demand widgets =====
    Markup:  <div class="sdg"><script type="application/json">{ ...config... }<\/script></div>
    Top-level config:
      title, lede, caption         heading / intro / static caption (caption used only when there are no steps)
@@ -464,9 +464,9 @@
 
 <h1>What Is Economics?</h1>
 
-<div class="exam-tip"><h4>EXAM TIP: Scarcity</h4><p>Remember that people must make economic decisions because of scarcity, a situation in which unlimited wants are met with limited resources.</p></div>
-
 <p><strong>Economics</strong> is the study of the allocation of scarce resources.  Economic agents (including individuals, firms, households, and entire societies) face economic decisions because of <strong>scarcity</strong>, the existence of limited resources alongside unlimited wants.</p>
+
+<div class="exam-tip"><h4>EXAM TIP: Scarcity</h4><p>Remember that people must make economic decisions because of scarcity, a situation in which unlimited wants are met with limited resources.</p></div>
 
 <p>Economists assume that everyone has unlimited wants.  In other words, no one can ever be satiated&mdash;no matter how much a person has, he or she will still want more.  Dr. Knight noted that this assumption is one way in which economics differs from many other social sciences.  For example, even the richest person in the world wants to have more money.  Individuals will never reach a point where they have no wants.</p>
 
@@ -484,13 +484,14 @@
 
 <h1>Introduction to Opportunity Costs</h1>
 
-<div class="exam-tip"><h4>EXAM TIP: The next-best alternative</h4><p>Remember that the opportunity cost of an action is the value of the single, next-best alternative.</p></div>
 
 <p>The <strong>opportunity cost</strong> of an action or decision is the <em>single</em> highest-valued alternative.  That is, it is what you have to give up in order to pursue an alternative activity or get something else.  A general definition for the opportunity cost of any decision is as follows:</p>
 
 <p>\[\text{Opportunity Cost} = \frac{\text{What You Lose}}{\text{What You Gain}}\]</p>
 
 <p>Note that the opportunity cost is always expressed in terms of what you lose, or give up.  It is the <em>second-</em>best alternative.  For example, suppose that you could spend an hour of your time going to class, sleeping, or studying.  You rank your options (from most preferred to least preferred) as follows:</p>
+
+<div class="exam-tip"><h4>EXAM TIP: The next-best alternative</h4><p>Remember that the opportunity cost of an action is the value of the single, next-best alternative.</p></div>
 
 <ol>
 <li>Going to class</li>
@@ -770,11 +771,12 @@
 
 <h2>The PPF and Opportunity Costs</h2>
 
-<div class="exam-tip"><h4>EXAM TIP: Calculating opportunity cost</h4><p>Be sure you can calculate opportunity costs between two points along a linear PPF.</p></div>
 
 <p>If an economic actor is producing along its PPF, it cannot increase the production of one good without giving up production of another good.  In this sense, the PPF illustrates the concept of <em>trade-offs</em> and <em>opportunity costs</em>.  The opportunity cost of producing more of one good is the production of the other good that must be given up to do so.  That is, the opportunity cost of one additional unit of Good X is calculated as follows:</p>
 
 <p>\[\frac{\text{# Units Lost of Good Y}}{\text{# Units Gained of Good X}}\]</p>
+
+<div class="exam-tip"><h4>EXAM TIP: Calculating opportunity cost</h4><p>Be sure you can calculate opportunity costs between two points along a linear PPF.</p></div>
 
 <p>Let&rsquo;s reconsider the PPF that shows the production possibilities for tissues and Lego sets:</p>
 
@@ -869,6 +871,7 @@
     50
    ],
    "at": 1,
+   "until": 2,
    "offset": -15
   },
   {
@@ -1015,8 +1018,8 @@
    "q": 60,
    "p": 50,
    "label": "C",
-   "dx": 8,
-   "dy": -10
+   "dx": 10,
+   "dy": 16
   }
  ],
  "moves": [
@@ -1030,6 +1033,7 @@
     80
    ],
    "at": 1,
+   "until": 2,
    "offset": -14
   },
   {
@@ -1136,8 +1140,8 @@
       ]
      ],
      "thin": true,
-     "ldx": -38,
-     "ldy": -8
+     "ldx": -30,
+     "ldy": 15
     },
     {
      "id": "PPF2",
@@ -1156,7 +1160,7 @@
      "from": "PPF1",
      "at": 1,
      "arrowP": 45,
-     "ldx": 8,
+     "ldx": 9,
      "ldy": -8
     }
    ],
@@ -1182,8 +1186,8 @@
       ]
      ],
      "thin": true,
-     "ldx": -38,
-     "ldy": -8
+     "ldx": -30,
+     "ldy": 15
     },
     {
      "id": "PPF2",
@@ -1202,7 +1206,7 @@
      "from": "PPF1",
      "at": 1,
      "arrowP": 20,
-     "ldx": 8,
+     "ldx": 9,
      "ldy": -8
     }
    ],
@@ -1228,9 +1232,8 @@
       ]
      ],
      "thin": true,
-     "lstart": true,
-     "ldx": 8,
-     "ldy": 30
+     "ldx": -30,
+     "ldy": 15
     },
     {
      "id": "PPF2",
@@ -1250,8 +1253,8 @@
      "at": 1,
      "arrowP": 80,
      "lstart": true,
-     "ldx": 8,
-     "ldy": -6
+     "ldx": 9,
+     "ldy": -8
     }
    ],
    "steps": [
@@ -1327,15 +1330,15 @@
  "moves": [
   {
    "from": [
-    30,
-    30
+    32,
+    31
    ],
    "to": [
-    50,
-    45
+    47,
+    43
    ],
    "at": 1,
-   "offset": -14
+   "offset": 0
   }
  ],
  "steps": [
@@ -1351,19 +1354,19 @@
 
 <p>It is not hard to understand why economic units would trade when they each have an absolute advantage in the production of different goods.  For example, suppose that you type faster than your roommate and your roommate is faster at cleaning.  It would make sense that you would trade your typing service for your roommate&rsquo;s cleaning services.  However, economic theory holds that two economic actors can benefit from trade even if one economic actor has an absolute advantage in the production of <em>all</em> goods.  As long as the economic actors have different <em>opportunity costs</em>, they can benefit from specialization and trade.</p>
 
-<p>A country or individual has a <strong>comparative advantage</strong> in producing a particular good or service if it can produce that good or service at a lower opportunity cost than another country or individual.  The <strong>theory of comparative advantage</strong> holds that economic units can gain from trade by specializing in the production of the good for which they have the lowest opportunity cost and trading with one another.</p>
-
 <div class="exam-tip"><h4>EXAM TIP: Absolute advantage is not required</h4><p>Absolute advantage is not necessary for countries to gain from trade. Countries can gain from trade even without an absolute advantage, as long as they have a comparative advantage.</p></div>
 
-<div class="exam-tip"><h4>EXAM TIP: Only one comparative advantage</h4><p>A country can have a comparative advantage in only one of the two goods it produces.</p></div>
+<p>A country or individual has a <strong>comparative advantage</strong> in producing a particular good or service if it can produce that good or service at a lower opportunity cost than another country or individual.  The <strong>theory of comparative advantage</strong> holds that economic units can gain from trade by specializing in the production of the good for which they have the lowest opportunity cost and trading with one another.</p>
+
 
 <p>The key difference between absolute advantage and comparative advantage lies in how the cost of production is measured.  Absolute advantage considers only the costs of the inputs required to produce the good in question.  Comparative advantage, on the other hand, measures costs in terms of the <em>opportunity cost</em>&mdash;the amount of the other good that must be foregone to produce one more unit of the good in question.  For example, consider a country that produces only bananas and coffee.  The opportunity cost of a banana is equal to the number of units of coffee that the nation must give up to produce one more banana.</p>
 
 <p>If we&rsquo;re considering a simple world in which there are two countries that produce two goods, a single country can have an absolute advantage in the production of none, one, or both of the goods.  A country can only have a <em>comparative</em> advantage in the production of one of the goods, however.  If a country has a comparative advantage in the production of one good, the other country must have a comparative advantage in the production of the other good.</p>
 
+<div class="exam-tip"><h4>EXAM TIP: Only one comparative advantage</h4><p>A country can have a comparative advantage in only one of the two goods it produces.</p></div>
+
 <h2>An Example Demonstrating Gains From Trade for Two Nations</h2>
 
-<div class="exam-tip"><h4>EXAM TIP: Producing versus consuming</h4><p>A country can never produce outside of its PPF, but it can consume outside of its PPF with specialization and trade.</p></div>
 
 <p>The concept of comparative advantage explains how nations can benefit from specialization and trade.  For example, suppose that the United States and Mexico produce only strawberries and apples. Their production possibilities frontiers are shown below.  Step through the widget to follow them from production to specialization to trade.</p>
 
@@ -1512,6 +1515,8 @@
 <p>As you can see, the United States would be able to <em>consume</em> 100 strawberries and 200 apples&mdash;more than it could before.  Likewise, Mexico would be able to <em>consume</em> 50 strawberries and 100 apples&mdash;more than it could before.</p>
 
 <p>Again, note that specialization and trade don&rsquo;t allow Mexico or the United States to <b>produce</b> outside their PPFs, but they do allow these nations to <b>consume</b> outside their PPFs.</p>
+
+<div class="exam-tip"><h4>EXAM TIP: Producing versus consuming</h4><p>A country can never produce outside of its PPF, but it can consume outside of its PPF with specialization and trade.</p></div>
 
 <p>Finally, note that the terms of trade (the ratio at which the two goods are exchanged) must fall between the two countries&rsquo; opportunity costs, or one of the countries would not voluntarily agree to trade.  In the example above, one apple per strawberry lies between each country&rsquo;s opportunity cost of a strawberry (0.67 apples and 1.5 apples), so both countries benefit.  Comparative advantage determines the <em>direction</em> of trade&mdash;who specializes in what and which good gets shipped where&mdash;but the <em>volume</em> of trade depends on the preferences of the people in each country, which this model tells us nothing about.  Dr. Knight may use different countries and goods in class, but the method for identifying comparative advantages is identical.</p>
 

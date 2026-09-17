@@ -1,4 +1,4 @@
-# Engine reference — `engine/sd-graph.js` v2.4
+# Engine reference — `engine/sd-graph.js` v2.5
 
 Written from the engine source. The conversion prompt carries a shorter version
 of this in its own "Engine reference" section; that one is what the model needs
@@ -57,7 +57,8 @@ identically in each, or it will appear to jump when the reader switches.
 
 ## Panel
 
-`heading` titles a panel (two-panel widgets only).
+`heading` titles a panel (two-panel widgets only). It is set larger than the
+axis titles, so a panel reads as a named market rather than a caption.
 
 ### `axes`
 

@@ -76,3 +76,20 @@ figures independently: 300/200 = 1.5 and 100/150 = 0.67 match the text.
 
 `check_file.py`: 0 FAIL, 1 WARN (the Dr. Knight flag).
 `render_widgets.py`: 24 screenshots, no engine errors, reviewed for collisions.
+
+## Revision, same day
+
+Six things found by eye in the rendered file, none of which the checker reports
+because each is a near-miss rather than an overlap:
+
+- The two movement arrows in the opportunity-cost widget abutted, reading as one
+  long arrow with two heads. Each step now shows only its own arrow (`until`).
+- The same fix applied to the bowed-out frontier, and Point C's label moved
+  below its dot so the arrowhead no longer reaches it.
+- `PPF₁` sat along its own line in the growth widget. Both frontier labels now
+  sit at the end the other one does not use, off the line rather than on it.
+- The movement arrow in the unemployment widget cut across the frontier and the
+  guides. Its `offset` is now 0 and it runs between the two dots.
+- Panel headings were smaller than the axis titles (engine v2.5).
+- Every exam tip moved to follow the paragraph it reinforces, rather than
+  leading the section.

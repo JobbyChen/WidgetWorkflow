@@ -21,7 +21,7 @@
   .sdg .sdg-ctrl button, .sdg .sdg-scen button { min-height:44px; }
 }
 .sdg figure { margin:0; background:#fff; border:1px solid var(--rule); padding:8px 8px 2px; }
-.sdg figcaption { font-size:.9rem; font-weight:700; font-style:italic; color:var(--navy); text-align:center; margin:0 0 4px; }
+.sdg figcaption { font-size:1.05rem; font-weight:700; color:var(--navy); text-align:center; margin:0 0 6px; }
 .sdg svg { width:100%; height:auto; display:block; }
 .sdg .sdg-table { border-collapse:collapse; width:100%; font-size:.9rem; background:#fff; border:1px solid var(--rule); }
 .sdg .sdg-table th { background:var(--navy); color:#fff; font-weight:700; padding:6px 8px; text-align:center; font-size:.82rem; }

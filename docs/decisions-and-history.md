@@ -192,3 +192,11 @@ including every kind of shift; the probe is throwaway and stayed out of the repo
     was needed; `check_tick_emphasis` now warns when one graph mixes the two, so
     the same mistake cannot pass quietly. A count of instances is not evidence of
     a defect until you have checked what the convention is.
+
+17. **Questions are allowed here, but not in prompt v6.** Ian relaxed the
+    no-questions rule on 2026-09-17: in this repo, ask when a wrong guess would
+    be costly — a number, which graphs to convert, which of two readings of a
+    table — and decide-and-flag everything else. v6 keeps "You never reply with
+    a question" because it runs in Cowork, where a question stalls a run with
+    nobody watching. The two documents therefore disagree on purpose, which is
+    recorded in CLAUDE.md so a future session does not tidy it away.

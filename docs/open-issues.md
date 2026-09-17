@@ -70,6 +70,19 @@ or "unattainable" dot) whose exact coordinates are not the lesson.
 
 ## Prompt v6
 
+- [ ] **Word is not a listed input.** v6's four modes are PDF, notes HTML,
+      transcript (where Word *is* named) and change-by-message. Notes supplied as
+      a .docx are not covered, and are being handled as mode (a). Worth adding
+      properly in a v7, along with how to read a Word table and what to do with
+      its inline images.
+- [ ] **No PPF pattern or template.** Step 1 lists PPF as a graph to convert, but
+      step 3's pattern table and step 4's templates are supply and demand only,
+      so the first PPF configs are hand-written from the engine reference. Add a
+      PPF row and a worked template in v7 so the next chapter is not hand-built.
+- [ ] **v6 must keep forbidding questions** even though `CLAUDE.md` now allows
+      them here — it runs unattended in Cowork. Deliberate divergence, recorded
+      in `CLAUDE.md` under *Asking questions*.
+
 - [ ] **Does the two-movement-arrow rule apply to an equilibrium-shift widget?**
       Step 5 says "every surplus or shortage walkthrough" ends with two movement
       arrows; step 3's pattern table lists "Surplus / shortage" (hlines + braces)

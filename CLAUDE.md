@@ -47,8 +47,11 @@ one HTML file carrying the house head, a `<!--SDG-ENGINE-->` placeholder, and a
 `<div class="sdg">` JSON widget in place of every graph image (or, in mode d, a
 set of REPLACE patches), plus a changelog
 whose first line is the file name `COURSE-TERMCODE-Topic.html` (Fall 2026 →
-`263`). Never ask the user a question during a conversion; carry values over and
-flag them in the changelog.
+`263`). **Ask only when a wrong guess would be costly** — a number, which graphs
+to convert, which of two readings of a table or figure. Everything else you
+decide and flag in the changelog: heading levels, table markup, label placement,
+how a scenario is grouped. See *Asking questions* below, and note that prompt v6
+itself still forbids questions outright.
 
 ## Hard rules (these override anything you'd otherwise do)
 
@@ -178,8 +181,24 @@ Full list with checkboxes: `docs/open-issues.md`.
 * Commit messages: plain imperative. Don't commit `shots/` (screenshots) — it's
   in `.gitignore`.
 * Ian is the only user. He reviews output by reading it and clicking through
-  widgets; he does not want questions mid-conversion, he wants the file plus a
-  changelog he can scan.
+  widgets, and wants the file plus a changelog he can scan.
+
+### Asking questions
+
+Ian changed this rule on 2026-09-17, and the change applies **here only**:
+
+* **In this repo, ask when a wrong guess would be costly.** That means a number
+  (rule 3), which graphs to convert, or which of two readings of a table or
+  figure is intended. Batch them if there are several; do not ask one at a time.
+* **Decide everything else and flag it.** Heading levels, table markup, `<b>` vs
+  `<strong>`, label placement, scenario grouping, prose edits. A changelog line
+  is the right place for those, not a question.
+* **`docs/conversion-prompt-v6.md` still says "You never reply with a question",
+  and that is deliberate — do not harmonise the two.** v6 runs in Claude Cowork,
+  where a question stalls a run that nobody is watching, so it must always
+  finish the output. This file governs work done here, with Ian present. If v6
+  is ever given a question-asking step, it needs a bump to v7 and a note about
+  unattended runs.
 
 ## Vocabulary
 

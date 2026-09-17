@@ -156,3 +156,27 @@ including every kind of shift; the probe is throwaway and stayed out of the repo
     to the right edge and the y title sits in the headroom above the plot, which
     moves `P` and `Q` by a few pixels in existing widgets and is invisible in
     practice — checked against before-and-after renders of the shipped file.
+
+## 2026-09-17 — the upright brace
+
+12. **`vbraces` mirror the horizontal brace rather than inventing a new idea.**
+    The first mock put the brace inside the plot at a quantity, where it fought
+    the point labels for space — Ian's suggestion to put it outside the P axis,
+    the way `below: true` puts a flat brace outside the Q axis, is better: the
+    plot interior stays clear and each half of a trade-off is marked on the axis
+    it belongs to. It costs 44px of plot width, and only on widgets that use it,
+    exactly as `below` costs 18px of height.
+13. **The label runs up the axis** because horizontal text needs about 85px and
+    the margin is 54.
+14. **`check_file.py` learned the widened margin in the same commit.** It
+    replicates the engine's geometry, so a left brace it did not know about
+    would have put every coordinate 44px out — and reported the results
+    confidently. Teaching the checker is part of an engine change, not a
+    follow-up to one.
+15. **Brace outlines went into the collision test too**, closing the gap noted
+    when guides were added: only brace *labels* had been tested, never the
+    bracket. This immediately produced three classes of false positive, all
+    adjacency that is correct by design — a brace's label beside its own
+    bracket, the same value printed by two points at one price, and an x tick
+    beside a y tick in the origin corner. They are exempted by name rather than
+    by loosening the test.

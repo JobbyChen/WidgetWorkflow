@@ -72,7 +72,7 @@
 .sdg .sdg-cap { margin:10px 0 0; padding:10px 12px; background:#fff; border-left:4px solid var(--red); font-size:.92rem; line-height:1.45; min-height:3.2em; }
 </style>
 <script>
-/* ===== sd-graph.js v2.2 — data-driven supply & demand widgets =====
+/* ===== sd-graph.js v2.3 — data-driven supply & demand widgets =====
    Markup:  <div class="sdg"><script type="application/json">{ ...config... }<\/script></div>
    Top-level config:
      title, lede, caption         heading / intro / static caption (caption used only when there are no steps)
@@ -94,6 +94,10 @@
      moves[]:  {from:[q,p], to:[q,p], at, until, color, offset}  arrow between two points, drawn `offset` px beside the curve (default 14; negative = other side)
      hlines[]: {p, label, color, at, until}                       horizontal price line across the plot
      braces[]: {p, q1, q2, label, at, until, below, color}        curly brace spanning a gap at price p
+     vbraces[]:{p1, p2, q, label, at, until, left, side, color}   the same brace turned upright, spanning a
+        price gap. left:true is the mirror of a brace's below:true: it sits outside the P axis, clear of the
+        plot and the tick numbers, with its label running up the axis, and widens the left margin to fit.
+        Without left it sits inside the plot at quantity q, opening right unless side:'left'.
      table:    {cols[], series[], rows[[price,q,...]], arrows}    schedule beside the graph; arrows draws row shift arrows
    Colors: 'ink' (default, black-navy), 'red' (shifted/new), 'teal', 'orange', 'grey'
    Presets (symbolic graphs, P₁/P₂/Q₁/Q₂, no numbers) — a few keys expand into a full config:
@@ -115,7 +119,10 @@
   // ---------- one SVG panel ----------
   function buildPanel(cfg) {
     var ax = cfg.axes, W = 372, below = (cfg.braces || []).some(function (b) { return b.below; }), H = below ? 268 : 250;
-    var left = ax.cents ? 62 : (ax.yticks && ax.yticks.length ? 54 : 40);
+    // A brace outside the P axis needs margin to sit in, the way a brace below
+    // the Q axis needs the extra panel height above.
+    var vleft = (cfg.vbraces || []).some(function (b) { return b.left; });
+    var left = (ax.cents ? 62 : (ax.yticks && ax.yticks.length ? 54 : 40)) + (vleft ? 44 : 0);
     var O = {x: left, y: 205}, PW = W - left - 36, PH = 178;
     var X = function (q) { return O.x + (q / ax.xmax) * PW; }, Y = function (p) { return O.y - (p / ax.ymax) * PH; };
     var svg = el('svg', {viewBox: '0 0 ' + W + ' ' + H, role: 'img', 'aria-label': cfg.heading || cfg.title || 'Supply and demand graph'});
@@ -190,6 +197,34 @@
       grp.appendChild(el('path', {class: 'brace', stroke: cc, d: d}));
       grp.appendChild(el('text', {class: 'tag', x: m, y: y + dir * 2 * hh + (b.below ? 12 : -4), 'text-anchor': 'middle', fill: cc}, b.label));
       if (!b.below) { [b.q1, b.q2].forEach(function (q) { grp.appendChild(el('line', {class: 'guide', stroke: cc, x1: X(q), y1: Y(b.p), x2: X(q), y2: O.y})); }); }
+      g.appendChild(grp); reg(grp, b);
+    });
+
+    // The brace turned upright, spanning a price gap. left:true mirrors the
+    // horizontal brace's below:true -- outside the P axis, clear of the plot and
+    // the tick numbers, label running up the axis because horizontal text does
+    // not fit in the margin.
+    (cfg.vbraces || []).forEach(function (b) {
+      var cc = col(b.color || 'red'), grp = el('g', {});
+      var y1 = Y(Math.max(b.p1, b.p2)), y2 = Y(Math.min(b.p1, b.p2));
+      var x = b.left ? O.x - 32 : X(b.q);
+      var dir = (b.left || b.side === 'left') ? -1 : 1, hh = 7, m = (y1 + y2) / 2;
+      var d = 'M' + x + ' ' + y1 +
+              ' Q' + (x + dir * hh) + ' ' + y1 + ' ' + (x + dir * hh) + ' ' + (y1 + hh) +
+              ' L' + (x + dir * hh) + ' ' + (m - hh) +
+              ' Q' + (x + dir * hh) + ' ' + m + ' ' + (x + dir * 2 * hh) + ' ' + m +
+              ' Q' + (x + dir * hh) + ' ' + m + ' ' + (x + dir * hh) + ' ' + (m + hh) +
+              ' L' + (x + dir * hh) + ' ' + (y2 - hh) +
+              ' Q' + (x + dir * hh) + ' ' + y2 + ' ' + x + ' ' + y2;
+      grp.appendChild(el('path', {class: 'brace', stroke: cc, d: d}));
+      if (b.left) {
+        var lx = x + dir * (2 * hh + 8);
+        grp.appendChild(el('text', {class: 'tag', x: lx, y: m, 'text-anchor': 'middle',
+          transform: 'rotate(-90 ' + lx + ' ' + m + ')', fill: cc}, b.label));
+      } else {
+        grp.appendChild(el('text', {class: 'tag', x: x + dir * (2 * hh + 6), y: m + 4,
+          'text-anchor': dir > 0 ? 'start' : 'end', fill: cc}, b.label));
+      }
       g.appendChild(grp); reg(grp, b);
     });
 

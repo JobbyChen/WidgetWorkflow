@@ -300,8 +300,12 @@ def check_schema(cfgs, r):
 W = 372.0
 
 
-def geom(v, ax):
+def geom(pn, ax):
     left = 62.0 if ax.get("cents") else (54.0 if ax.get("yticks") else 40.0)
+    # A vbrace with left:true widens the engine's left margin. Miss this and
+    # every coordinate below is off by 44px.
+    if any(b.get("left") for b in (pn.get("vbraces") or [])):
+        left += 44.0
     ox, oy = left, 205.0
     pw, ph = W - left - 36.0, 178.0
     xmax = float(ax.get("xmax") or 1)
@@ -420,6 +424,36 @@ def arrow_segments(pn, X, Y):
     return out
 
 
+def label_of(desc):
+    """The quoted label inside a description, so a brace's own label can be told
+    apart from someone else's."""
+    m = re.search(r"'([^']*)'", desc)
+    return m.group(1) if m else None
+
+
+def same_spot(a, b, tol=1.5):
+    return all(abs(a[i] - b[i]) <= tol for i in range(4))
+
+
+def exempt(desc_a, desc_b, box_a=None, box_b=None):
+    """Pairs that are adjacent by design, not by accident."""
+    # A brace's label belongs beside its own bracket.
+    if ("brace label" in desc_a and "brace" in desc_b) or \
+       ("brace label" in desc_b and "brace" in desc_a):
+        if label_of(desc_a) and label_of(desc_a) == label_of(desc_b):
+            return True
+    # The same value printed twice lands in the same place and reads as one
+    # label -- two points at the same price both print it.
+    if desc_a == desc_b and box_a and box_b and same_spot(box_a, box_b):
+        return True
+    # An x tick and a y tick only ever meet in the origin corner, where both
+    # belong.
+    if ("tick on Q" in desc_a and "tick on P" in desc_b) or \
+       ("tick on P" in desc_a and "tick on Q" in desc_b):
+        return True
+    return False
+
+
 def guide_segments(pn, X, Y, ox, oy):
     """Every dashed guide the engine draws, as pixel polylines.
 
@@ -439,14 +473,30 @@ def guide_segments(pn, X, Y, ox, oy):
                     "the %s price line" % h.get("label", h["p"]),
                     (h.get("at", 0), h.get("until"))))
     for b in pn.get("braces") or []:
-        if b.get("below"):
-            continue
-        for q in (b.get("q1"), b.get("q2")):
-            if q is None:
-                continue
-            out.append(([(X(q), Y(b["p"])), (X(q), oy)],
-                        "a guide under the %r brace" % b.get("label"),
-                        (b.get("at", 0), b.get("until"))))
+        win = (b.get("at", 0), b.get("until"))
+        if not b.get("below"):
+            for q in (b.get("q1"), b.get("q2")):
+                if q is None:
+                    continue
+                out.append(([(X(q), Y(b["p"])), (X(q), oy)],
+                            "a guide under the %r brace" % b.get("label"), win))
+        # the bracket itself
+        y = (oy + 22) if b.get("below") else (Y(b["p"]) - 8)
+        d = 1 if b.get("below") else -1
+        x1, x2 = X(min(b["q1"], b["q2"])), X(max(b["q1"], b["q2"]))
+        m = (x1 + x2) / 2.0
+        out.append(([(x1, y), (x1 + 7, y + d * 7), (m - 7, y + d * 7), (m, y + d * 14),
+                     (m + 7, y + d * 7), (x2 - 7, y + d * 7), (x2, y)],
+                    "the %r brace" % b.get("label"), win))
+    for b in pn.get("vbraces") or []:
+        win = (b.get("at", 0), b.get("until"))
+        y1, y2 = Y(max(b["p1"], b["p2"])), Y(min(b["p1"], b["p2"]))
+        x = (ox - 32) if b.get("left") else X(b["q"])
+        d = -1 if (b.get("left") or b.get("side") == "left") else 1
+        m = (y1 + y2) / 2.0
+        out.append(([(x, y1), (x + d * 7, y1 + 7), (x + d * 7, m - 7), (x + d * 14, m),
+                     (x + d * 7, m + 7), (x + d * 7, y2 - 7), (x, y2)],
+                    "the %r brace" % b.get("label"), win))
     return out
 
 
@@ -464,7 +514,7 @@ def check_labels(cfgs, r):
                 ax = pn.get("axes")
                 if not ax:
                     continue
-                X, Y, ox, oy = geom(v, ax)
+                X, Y, ox, oy = geom(pn, ax)
                 where = "widget %d%s%s" % (
                     n, " (%s)" % label if label else "",
                     " panel %d" % (pi + 1) if len(panels(v)) > 1 else "")
@@ -531,6 +581,24 @@ def check_labels(cfgs, r):
                                   "brace label %r" % b["label"],
                                   (b.get("at", 0), b.get("until"))))
 
+                for b in pn.get("vbraces") or []:
+                    if not b.get("label"):
+                        continue
+                    win = (b.get("at", 0), b.get("until"))
+                    y1, y2 = Y(max(b["p1"], b["p2"])), Y(min(b["p1"], b["p2"]))
+                    x = (ox - 32) if b.get("left") else X(b["q"])
+                    d = -1 if (b.get("left") or b.get("side") == "left") else 1
+                    m = (y1 + y2) / 2.0
+                    if b.get("left"):
+                        # rotated a quarter turn, so the box is tall and narrow
+                        lx = x + d * 22
+                        h = 0.58 * 12 * len(str(b["label"]))
+                        bx = (lx - 7, m - h / 2, lx + 7, m + h / 2)
+                    else:
+                        bx = box(x + d * 20, m + 4, b["label"], 12,
+                                 "start" if d > 0 else "end")
+                    boxes.append((bx, "upright brace label %r" % b["label"], win))
+
                 checked += len(boxes)
 
                 arrows = arrow_segments(pn, X, Y)
@@ -538,7 +606,7 @@ def check_labels(cfgs, r):
 
                 for bx, what, win in boxes:
                     for gpx, gdesc, gwin in guides:
-                        if not coexist(win, gwin):
+                        if not coexist(win, gwin) or exempt(what, gdesc):
                             continue
                         if poly_hits(inflate(bx, 3.0), gpx):
                             r.warn("labels", "%s: %s is close to %s"
@@ -566,6 +634,8 @@ def check_labels(cfgs, r):
                 for i in range(len(boxes)):
                     for j in range(i + 1, len(boxes)):
                         if not coexist(boxes[i][2], boxes[j][2]):
+                            continue
+                        if exempt(boxes[i][1], boxes[j][1], boxes[i][0], boxes[j][0]):
                             continue
                         if overlaps(boxes[i][0], boxes[j][0]):
                             r.fail("labels", "%s: %s overlaps %s"

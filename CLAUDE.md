@@ -122,11 +122,13 @@ not enough to reproduce an implementation.
   `embed_engine.py`'s paths reproduce the delivered file byte-for-byte; all 20
   prototype widgets render with no engine errors; `check_file.py` runs the
   geometric label test over 74 labels in the 263 file with no overlaps.
-* **Engine is v2.2.** `shiftArrow: false` drops the redundant shift arrow in a
+* **Engine is v2.3.** `shiftArrow: false` drops the redundant shift arrow in a
   schedule-shift widget — the per-row arrows already say it once per row — while
   keeping the slide and the dimming, and every arrow is one weight (2.4px).
-  Prompt v6 step 5 changed with it. Axis titles now take a word (`x` anchored to
-  the right edge, `y` in the headroom above the plot) so a PPF can name its axes.
+  Prompt v6 step 5 changed with it. Axis titles take a word (`x` anchored to the
+  right edge, `y` in the headroom above the plot) so a PPF can name its axes.
+  `vbraces` add the upright brace: `left: true` puts it outside the P axis,
+  mirroring a horizontal brace's `below: true`.
 * **PPF is feasible without new architecture.** Probed against the real engine:
   the frontier, its combinations table, points on/inside/outside, movement along
   it, and outward/inward/pivot shifts all work unchanged — a frontier shift is

@@ -1,4 +1,4 @@
-# Engine reference — `engine/sd-graph.js` v2.2
+# Engine reference — `engine/sd-graph.js` v2.3
 
 Written from the engine source. The conversion prompt carries a shorter version
 of this in its own "Engine reference" section; that one is what the model needs
@@ -156,6 +156,26 @@ A curly brace spanning `q1`→`q2` at price `p`. Red by default.
 `below:true` puts it under the Q axis (and grows the panel from 250 to 268 units
 tall to make room). `below:false` puts it just above the price line **and also
 draws vertical guides** from each end down to the axis.
+
+### `vbraces`
+
+The same brace turned upright, spanning a **price** gap rather than a quantity
+gap — the other half of an opportunity cost, or the size of a price change.
+
+```json
+{"p1": 70, "p2": 85, "label": "15 butter given up", "left": true, "at": 1}
+{"p1": 70, "p2": 85, "q": 40, "label": "15 butter", "side": "left", "at": 1}
+```
+
+`left: true` is the mirror of a horizontal brace's `below: true`: it sits outside
+the P axis, clear of the plot and of the tick numbers, and **widens the left
+margin by 44px** to fit — the same trade a `below` brace makes for 18px of panel
+height. Its label runs up the axis, because horizontal text does not fit in a
+54px margin.
+
+Without `left`, it sits inside the plot at quantity `q`, opening right unless
+`side: "left"`. Inside the plot it competes with the curves for space, so prefer
+`left` unless the gap has to be shown at a particular quantity.
 
 ### `table`
 

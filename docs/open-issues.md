@@ -40,9 +40,12 @@ mechanic as a shift of supply. What is missing:
 - [x] ~~Axis titles are sized for one character, so "Butter" ran into the plot
       and "Guns" was clipped at the right edge.~~ Engine v2.2 anchors the x title
       to the right edge and puts the y title in the headroom above the plot.
-- [ ] **No vertical brace.** `braces` span quantities at a price (`{p, q1, q2}`).
-      The quantity gained can be braced; the quantity given up — the other half
-      of every opportunity-cost lesson — cannot. Needs `{q, p1, p2}`.
+- [x] ~~No vertical brace.~~ Engine v2.3 adds `vbraces`. `left: true` puts it
+      outside the P axis, mirroring a horizontal brace's `below: true`, with the
+      label running up the axis; without it the brace sits inside the plot at a
+      quantity. This also gives supply and demand a way to mark the size of a
+      price change, which is what `P₁`/`P₂` a pixel apart is standing in for
+      today.
 - [ ] **No label position along a curve.** Only the first or last point, nudged.
       Both frontiers terminate on the same two axes, so end labels crowd in a way
       D and S never do. Needs a "label at fraction t" option.

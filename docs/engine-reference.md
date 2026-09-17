@@ -231,7 +231,9 @@ thing.
 
 A preset expands into a full symbolic config on `110 × 110` axes with the
 equilibrium at `[50,50]`. `shift` writes its own four step captions from `good`,
-`event` and `why`, and draws the gap brace at the old price on step 2 only.
+`event` and `why`, and draws the gap brace at the old price on step 2 only,
+`below` the axis — above it the SHORTAGE/SURPLUS label lands on whichever curve
+crosses that price.
 `static:true` collapses everything to step 0 and draws **no brace**, which is
 what makes the four-cases-in-one-widget scenario set work.
 

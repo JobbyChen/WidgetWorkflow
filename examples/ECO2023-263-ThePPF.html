@@ -80,7 +80,7 @@
 .sdg .sdg-cap { margin:10px 0 0; padding:10px 12px; background:#fff; border-left:4px solid var(--red); font-size:.92rem; line-height:1.45; min-height:3.2em; }
 </style>
 <script>
-/* ===== sd-graph.js v2.6 — data-driven supply & demand widgets =====
+/* ===== sd-graph.js v2.7 — data-driven supply & demand widgets =====
    Markup:  <div class="sdg"><script type="application/json">{ ...config... }<\/script></div>
    Top-level config:
      title, lede, caption         heading / intro / static caption (caption used only when there are no steps)
@@ -366,7 +366,9 @@
     var pn = {heading: o.heading, axes: {xmax: 110, ymax: 110}, curves: curves,
       points: [{q: 50, p: 50, pl: 'P₁', ql: 'Q₁'}, {q: e2[0], p: e2[1], pl: 'P₂', ql: 'Q₂', color: 'red', at: at3}]};
     if (!o.static) { pn.points.push({q: 50 + d, p: 50, color: 'red', at: 2, until: 3, showP: false, showQ: false});
-      pn.braces = [{p: 50, q1: 50, q2: 50 + d, label: isShort ? 'Shortage' : 'Surplus', at: 2, until: 3}]; }
+      // below:true, as the hand-written symbolic template always has it: above
+      // the axis the label lands on whichever curve crosses that price.
+      pn.braces = [{p: 50, q1: 50, q2: 50 + d, label: isShort ? 'Shortage' : 'Surplus', below: true, at: 2, until: 3}]; }
     return pn;
   }
   function shiftSteps(o) {
@@ -440,15 +442,15 @@
 <summary><strong>📘 Table of Contents</strong></summary>
 <nav>
 <ul style="line-height: 1.8">
-<li><a href="#the-production-possibilities-frontier" style="font-weight: bold">The Production Possibilities Frontier</a></li>
-<li><a href="#scarcity--opportunity-cost" style="font-weight: bold">Scarcity &amp; Opportunity Cost</a>
+<li><a href="#the-production-possibilities-frontier" style="font-weight: bold">The Production Possibilities Frontier</a>
 <ul>
+<li><a href="#scarcity--opportunity-cost">Scarcity &amp; Opportunity Cost</a></li>
 <li><a href="#example-a-students-gpa">Example: A Student&rsquo;s GPA</a></li>
+<li><a href="#shifts-of-the-ppf">Shifts of the PPF</a></li>
+<li><a href="#production-efficiency-vs-allocative-efficiency">Production Efficiency vs. Allocative Efficiency</a></li>
+<li><a href="#the-law-of-increasing-opportunity-costs-why-the-ppf-is-bowed-out">The Law of Increasing Opportunity Costs: Why the PPF Is Bowed-Out</a></li>
 </ul>
 </li>
-<li><a href="#shifts-of-the-ppf" style="font-weight: bold">Shifts of the PPF</a></li>
-<li><a href="#production-efficiency-vs-allocative-efficiency" style="font-weight: bold">Production Efficiency vs. Allocative Efficiency</a></li>
-<li><a href="#the-law-of-increasing-opportunity-costs-why-the-ppf-is-bowed-out" style="font-weight: bold">The Law of Increasing Opportunity Costs: Why the PPF Is Bowed-Out</a></li>
 </ul>
 </nav>
 </details>
@@ -561,11 +563,11 @@
 
 <p>The PPF helps us answer the &ldquo;what&rdquo; question and the &ldquo;how&rdquo; question, but not the &ldquo;who&rdquo; question.  The PPF tells us what and how much a country can produce, but it does not tell us anything about how those goods and services are divided among the country&rsquo;s citizens.  Its answer to the &ldquo;how&rdquo; question is simply that we want to produce efficiently&mdash;on the PPF&mdash;without wasting or misallocating resources.  In general, our capitalist economy does a good job at allocating resources, so the U.S. economy is likely operating near the PPF.  Decades ago, China probably operated at a point well within its PPF, but it has moved closer to the PPF since adopting more capitalistic policies.  Dr. Rush treats the PPF as a conceptual tool for organizing your thoughts&mdash;you cannot actually estimate a PPF&mdash;and after this chapter we will not see it again.</p>
 
-<h1 id="scarcity--opportunity-cost">Scarcity &amp; Opportunity Cost</h1>
-
-<div class="exam-tip"><h4>EXAM TIP: The next-best alternative</h4><p>Remember that the opportunity cost of an action or decision is the <b>single</b> next-highest valued alternative foregone.</p></div>
+<h2 id="scarcity--opportunity-cost">Scarcity &amp; Opportunity Cost</h2>
 
 <p>The PPF reflects <strong>scarcity</strong>.  Specifically, it reflects the fact that economies have limited technology and limited resources.  People&rsquo;s wants will always exceed the economy&rsquo;s ability to meet them because resources are limited.  The <strong>opportunity cost</strong> of an action or decision is the single next highest-valued alternative foregone because you took that action or made that decision.  Dr. Rush calls this the &ldquo;true&rdquo; cost of an action.  Almost every action you can think of has an opportunity cost.  Even sitting in an economics course has an opportunity cost&mdash;the statistics course, the sleep, or the hours at work that you gave up to be there.  In the real world, opportunity cost is difficult to measure, but it always exists; on a PPF it is easy to measure, because there are only two goods.  The opportunity cost is the single next-best alternative foregone (i.e., a given action can have only one opportunity cost).  An opportunity cost is the same thing as a relative price but different from a money cost.  Money cost is expressed in dollars, whereas opportunity cost is expressed in terms of the things that you actually give up.</p>
+
+<div class="exam-tip"><h4>EXAM TIP: Opportunity Cost</h4><p>Remember that the opportunity cost of an action or decision is the <b>single</b> next-highest valued alternative foregone.</p></div>
 
 <div class="example-box"><h4>Example: Food and Opportunity Cost</h4>
 <p>Suppose you have $10 to spend on lunch.  You could choose between a Bento sushi roll, a Chick-fil-A sandwich, or a Panda Express bowl.  Let&rsquo;s say your preferences, from most to least desired, are:</p>
@@ -684,9 +686,9 @@
 
 <p>A student can get a GPA of 3.8 if he works his hardest and doesn&rsquo;t go on any dates.  He could go on 20 dates if he tries his hardest at it and doesn&rsquo;t worry at all about school.  Notice that points on the curve represent all of the maximum possible combinations of GPA and dates.  Points under the curve are possible but not efficient&mdash;at those points, production would not be at maximum potential.  Above the curve, production would be impossible at all points&mdash;the student simply can&rsquo;t attain this combination of dates and GPA, no matter how hard he works.  The PPF represents the maximum possible number of dates and GPA the student can attain by operating as efficiently as possible.</p>
 
-<div class="exam-tip"><h4>EXAM TIP: Every point on the frontier is a trade-off</h4><p>If you&rsquo;re at a point on your PPF, you can&rsquo;t produce more of one good without giving up production of the other good.</p></div>
-
 <p>The opportunity cost is the next-best alternative foregone.  Using our example, the student could change his grades and the number of dates he goes on&mdash;that is, he could move along the PPF.  If he had a GPA of 2.0 and were going on 12 dates a week, he could change that.  He could boost his GPA to 2.8, but he would have to give up 4 dates to do so, bringing him down to 8 dates a week.  The 4 dates that he gave up represent the opportunity cost of increasing his GPA by 0.8.  Similarly, if he wanted to go on more dates per week, he could do that, but his GPA would fall.  The opportunity cost of going on more dates is the amount of grade points that he has to give up to do so.</p>
+
+<div class="exam-tip"><h4>EXAM TIP: Movement Along the PPF</h4><p>If you&rsquo;re at a point on your PPF, you can&rsquo;t produce more of one good without giving up production of the other good.</p></div>
 
 <!-- IMAGE POSITION: below-referenced paragraph -->
 <div class="sdg"><script type="application/json">
@@ -933,7 +935,7 @@
 </script></div>
 </div>
 
-<h1 id="shifts-of-the-ppf">Shifts of the PPF</h1>
+<h2 id="shifts-of-the-ppf">Shifts of the PPF</h2>
 
 <p>Why can&rsquo;t we produce at a point outside the PPF?  Why does the PPF represent the <em>maximum</em> possible output?</p>
 
@@ -1157,7 +1159,7 @@
 <p>Also, notice that points along the student&rsquo;s PPF as a senior were previously unattainable as a freshman.  In this case, the improvement in study skills and socializing skills allows the student to obtain a combination of grades and dates as a senior that was simply unattainable as a freshman.</p>
 </div>
 
-<h1 id="production-efficiency-vs-allocative-efficiency">Production Efficiency vs. Allocative Efficiency</h1>
+<h2 id="production-efficiency-vs-allocative-efficiency">Production Efficiency vs. Allocative Efficiency</h2>
 
 <p>We say that every point on the PPF is <strong>production-efficient</strong>.  That is, at these points, we are producing the maximum possible combination of goods by working as efficiently as possible.  However, note that, as a practical matter, not every point along the PPF may be equally desirable for all people.</p>
 
@@ -1247,15 +1249,15 @@
 
 <p>Dr. Rush distinguishes the actual point at which the economy produces from the most desirable point.  In Chapter 3, we will use supply and demand to determine the actual point&mdash;on which point along a PPF a country actually operates.  In Chapter 5, we will use the concepts of marginal social benefit and marginal social cost to determine the most desirable (allocatively efficient) point.  We can then compare these two points to determine whether the country is producing in an allocatively efficient manner&mdash;a comparison we will return to in Chapters 6, 7, 13, 14, 16, and 17.</p>
 
-<h1 id="the-law-of-increasing-opportunity-costs-why-the-ppf-is-bowed-out">The Law of Increasing Opportunity Costs: Why the PPF Is Bowed-Out</h1>
-
-<div class="exam-tip"><h4>EXAM TIP: Why a frontier bows out</h4><p>PPFs are bowed-out when resources are not equally suited to produce both goods on the PPF.</p></div>
+<h2 id="the-law-of-increasing-opportunity-costs-why-the-ppf-is-bowed-out">The Law of Increasing Opportunity Costs: Why the PPF Is Bowed-Out</h2>
 
 <p>Moving along the production possibilities frontier, <b>as more of a good is produced, the opportunity cost of an additional unit increases</b>.  Why?  Resources are not equally suited for different jobs.  For example, some people are better at producing some goods than others.</p>
 
+<div class="exam-tip"><h4>EXAM TIP: Opportunity Costs Calculation</h4><p>You will probably need to know how to calculate opportunity costs on the exam.  Dr. Rush will never ask you to draw a PPF (the exams are multiple choice), but he may ask for the opportunity cost between two points on a PPF&mdash;just take what you lose and divide it by what you gain&mdash;and which points are attainable, production efficient, or production inefficient.</p></div>
+
 <p>The <strong>law of increasing opportunity costs</strong> is what causes the &ldquo;bowed-out&rdquo; shape of the production possibilities frontier.  As you move to the right along the PPF, the opportunity cost of the good along the horizontal axis increases and the PPF gets steeper.</p>
 
-<div class="exam-tip"><h4>EXAM TIP: Calculating opportunity cost</h4><p>You will probably need to know how to calculate opportunity costs on the exam.  Dr. Rush will never ask you to draw a PPF (the exams are multiple choice), but he may ask for the opportunity cost between two points on a PPF&mdash;just take what you lose and divide it by what you gain&mdash;and which points are attainable, production efficient, or production inefficient.</p></div>
+<div class="exam-tip"><h4>EXAM TIP: PPF Shape</h4><p>PPFs are bowed-out when resources are not equally suited to produce both goods on the PPF.</p></div>
 
 <div class="example-box"><h4>Gumballs, Machines, and the Law of Increasing Opportunity Costs</h4>
 <p>Assume that a country only produces two things&mdash;gumballs and machines.  Five possibilities for maximum output are shown below.</p>

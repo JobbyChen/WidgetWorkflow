@@ -159,10 +159,14 @@ or "unattainable" dot) whose exact coordinates are not the lesson.
       and drive `data-at`/`data-until` on the div's own SVG from the step index —
       but it is an engine change, so it needs a version bump and a re-embed
       everywhere (hard rule 1).
-- [ ] `preset:"shift"` draws its gap brace with `below` unset, so the label sits
-      above the axis. In the symbolic template the step 4 prompt writes by hand,
-      the brace is always `below:true` precisely so the label clears the curves.
-      The preset should match the template.
+- [x] `preset:"shift"` drew its gap brace with `below` unset, so the label sat
+      above the axis and landed on whichever curve crossed that price. Fixed in
+      engine v2.7: the preset now matches the hand-written template. Found by
+      rendering the six worked examples in
+      `examples/ECO2023-263-SupplyAndDemand.html`, which are the repo's first
+      use of the preset -- `check_file.py` skips preset widgets, because the
+      engine computes their geometry, so only a render catches this class of
+      defect.
 - [ ] No automatic collision detection in the engine. `check_file.py` now does
       the x-position test statically, which covers the common cases; genuinely
       overlapping text at render time still needs `render_widgets.py` and a
@@ -183,6 +187,30 @@ or "unattainable" dot) whose exact coordinates are not the lesson.
       an inside offset drops the arrow below the axis, and the only way to stop
       it short is to fake the `to` coordinate (the gumballs widget's D→E arrow
       ends at `[3.8, 0.9]`). An explicit trim or a `shorten` would be honest.
+
+- [ ] **No area fill in the engine.** The total revenue figure in
+      `ECO2023-263-Elasticity.html` shades the price-times-quantity rectangle
+      under the demand curve; the widget marks the midpoint and shows the
+      revenue hump beside it instead.
+- [ ] **`check_file.py` skips preset widgets**, because the engine computes
+      their geometry, so its label test never sees them. The v2.7 brace defect
+      lived in the repo unnoticed for exactly that reason and only a render
+      caught it. Either expand the preset in the checker, or make the render
+      pass mandatory for any file that uses one.
+- [ ] **LibreOffice here has no Writer module** (`libswlo.so` absent), so
+      `soffice` fails on every Word file, `.doc` and `.docx` alike. `antiword`
+      and `catdoc` read `.doc`; `.docx` is parsed directly. Worth installing
+      the Writer module if figure rendering from Word is ever wanted.
+- [ ] **Heading levels come from the source's run formatting**, not from
+      structure: bold alone is `<h1>`, bold and underlined at size 23 is
+      `<h2>`. A binary `.doc` gives no such spans through `antiword`, so
+      document 3's levels were read from paragraph alignment (centred is
+      `<h1>`). Prompt v6 step 0 should state the rule.
+- [ ] **Exam tip titles are written, and go under the paragraph they belong
+      to.** Ian's convention is a short topic phrase -- "Opportunity Costs
+      Calculation", "PPF Shape" -- and the block sits *after* the paragraph it
+      comments on, never before it. The source's boxes are headed only "Exam
+      Tip". Prompt v6 step 0 should say both things.
 
 ## Workflow
 

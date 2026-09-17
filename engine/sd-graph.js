@@ -1,4 +1,4 @@
-/* ===== sd-graph.js v2.6 — data-driven supply & demand widgets =====
+/* ===== sd-graph.js v2.7 — data-driven supply & demand widgets =====
    Markup:  <div class="sdg"><script type="application/json">{ ...config... }<\/script></div>
    Top-level config:
      title, lede, caption         heading / intro / static caption (caption used only when there are no steps)
@@ -284,7 +284,9 @@
     var pn = {heading: o.heading, axes: {xmax: 110, ymax: 110}, curves: curves,
       points: [{q: 50, p: 50, pl: 'P₁', ql: 'Q₁'}, {q: e2[0], p: e2[1], pl: 'P₂', ql: 'Q₂', color: 'red', at: at3}]};
     if (!o.static) { pn.points.push({q: 50 + d, p: 50, color: 'red', at: 2, until: 3, showP: false, showQ: false});
-      pn.braces = [{p: 50, q1: 50, q2: 50 + d, label: isShort ? 'Shortage' : 'Surplus', at: 2, until: 3}]; }
+      // below:true, as the hand-written symbolic template always has it: above
+      // the axis the label lands on whichever curve crosses that price.
+      pn.braces = [{p: 50, q1: 50, q2: 50 + d, label: isShort ? 'Shortage' : 'Surplus', below: true, at: 2, until: 3}]; }
     return pn;
   }
   function shiftSteps(o) {

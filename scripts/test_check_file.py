@@ -165,6 +165,14 @@ case("a named person is flagged, never failed", lambda r: (
 
 # ---- markup ----------------------------------------------------------------
 
+case("the price-up punchline", lambda r: C.check_captions(widget(
+     caption="The market settles at P\u2082 and Q\u2082. Price up, quantity up."), r)
+     or r.has("FAIL", "caption", "shorthand"))
+case("up or down inside a sentence", lambda r: C.check_captions(widget(
+     caption="A surplus pushes the price down toward equilibrium, and the "
+             "quantity supplied falls with it."), r)
+     or not r.lines)
+
 case("<u> in the body", lambda r: C.check_markup("<body><p>a <u>term</u></p></body>", r)
      or r.has("FAIL", "markup", "<u>"))
 case("<h3> in the body", lambda r: C.check_markup("<body><h3>Sub</h3></body>", r)

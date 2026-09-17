@@ -886,7 +886,14 @@ def check_captions(cfgs, r):
             if re.match(r"^(before|after)\s*[-–—:]", s, re.I):
                 r.fail("caption", "widget %d: 'Before -/After -' prefix: %r" % (n, s[:60]))
                 bad += 1
-            elif re.search(r"\b(price|quantity)\s+(up|down)\b", s, re.I):
+            # The target is the slide-bullet punchline -- "Price up, quantity
+            # up." -- not the words "up" and "down" wherever they appear. Bare
+            # "price down" used as a clause of its own, or joined straight to
+            # "and quantity", is shorthand; "pushes the price down toward
+            # equilibrium" is a sentence, and failing it failed correct prose.
+            elif re.search(r"\b(price|quantity)\s+(up|down)\b"
+                           r"(?=\s*[,.;:]|\s*$|\s+and\s+(?:the\s+)?(?:price|quantity)\b)",
+                           s, re.I):
                 r.fail("caption", "widget %d: shorthand instead of words: %r" % (n, s[-40:]))
                 bad += 1
             elif not re.search(r"[.!?]$", s):

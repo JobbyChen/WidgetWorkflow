@@ -105,9 +105,18 @@ format decision for review.
 - The `D → E` arrow in that widget stops just short of E. Its chord ends on the
   Q axis, so an arrow offset to the inside along the whole chord ran below the
   axis and through the 4 tick.
-- The "Exam 1 Topics" list from the document's title block became an
-  `.aside-box` at the top, treated as cover matter rather than body content —
-  the same call made for document 1.
+- The "Exam 1 Topics" list from the document's title block became a `.toc-box`
+  at the top — the house collapsible table of contents (`<details>` with a
+  `<summary>`), not the generic `.aside-box` it was first given. It is cover
+  matter rather than body content, the same call made for document 1, except
+  that document 1 dropped the list and this one keeps it.
+- **A step exists only where the graph changes.** "Different people, different
+  frontiers" therefore carries one caption per button instead of two steps, since
+  nothing on the drawing moves within a scenario, and the food/clothing
+  walkthrough reveals Point A on its second step and Point B on its third rather
+  than drawing both from the start.
+- The movement arrow on the GPA opportunity-cost widget sits on the **outside**
+  of the frontier, up and to the right, not inside the attainable region.
 
 ## Numbers carried over or assumed
 
@@ -125,7 +134,7 @@ format decision for review.
 overlap; point values are emphasised consistently; all 8 IMAGE POSITION
 comments are preserved.
 
-`python scripts/render_widgets.py` → 28 screenshots (8 widgets × scenarios ×
+`python scripts/render_widgets.py` → 25 screenshots (8 widgets × scenarios ×
 steps), no engine errors, reviewed for collisions at every step.
 
 ## Engine

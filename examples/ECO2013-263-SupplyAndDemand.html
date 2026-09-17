@@ -72,7 +72,7 @@
 .sdg .sdg-cap { margin:10px 0 0; padding:10px 12px; background:#fff; border-left:4px solid var(--red); font-size:.92rem; line-height:1.45; min-height:3.2em; }
 </style>
 <script>
-/* ===== sd-graph.js v2.3 — data-driven supply & demand widgets =====
+/* ===== sd-graph.js v2.4 — data-driven supply & demand widgets =====
    Markup:  <div class="sdg"><script type="application/json">{ ...config... }<\/script></div>
    Top-level config:
      title, lede, caption         heading / intro / static caption (caption used only when there are no steps)
@@ -85,6 +85,7 @@
         x, y = axis titles, default 'Q' and 'P'. A word or two fits; they are never wrapped.
      curves[]: {id, label, pts:[[q,p],...], color, at, until, from, arrowP, shiftArrow, curved, thin, dashed, lstart, ldx, ldy}
         lstart = put the curve label at the first point instead of the last; ldx/ldy nudge it
+        label:"" draws no label at all (a lone PPF needs none); omitting label falls back to the id
         from   = id of the curve this one shifts away from (animated shift + arrow); arrowP = price height of arrow
         shiftArrow:false = animate and dim as usual but draw no shift arrow. Use it whenever the
                  widget already shows per-row arrows (table.arrows), which say the same thing once per row.
@@ -170,7 +171,10 @@
       if (c.dashed) path.setAttribute('stroke-dasharray', '6 4');
       grp.appendChild(path);
       var last = c.pts[c.pts.length - 1], up = last[1] > c.pts[0][1], lp = c.lstart ? c.pts[0] : last;
-      grp.appendChild(el('text', {class: 'clbl', x: X(lp[0]) + (c.ldx || 6), y: Y(lp[1]) + (c.ldy || (up ? 2 : 6)), fill: cc}, c.label || c.id));
+      // label:"" draws nothing. A lone frontier needs no name -- the axis titles
+      // already say what it is -- but the id is still needed by table.series, and
+      // falling back to it parked "PPF" on the curve. Omitting label still uses the id.
+      grp.appendChild(el('text', {class: 'clbl', x: X(lp[0]) + (c.ldx || 6), y: Y(lp[1]) + (c.ldy || (up ? 2 : 6)), fill: cc}, c.label != null ? c.label : (c.id || '')));
       if (c.from && byId[c.from]) {
         var src = byId[c.from].spec, ap = c.arrowP != null ? c.arrowP : (c.pts[0][1] + last[1]) / 2;
         var q0 = qAt(src.pts, ap), q1 = qAt(c.pts, ap), s = Math.sign(q1 - q0);

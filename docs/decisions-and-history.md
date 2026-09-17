@@ -200,3 +200,21 @@ including every kind of shift; the probe is throwaway and stayed out of the repo
     a question" because it runs in Cowork, where a question stalls a run with
     nobody watching. The two documents therefore disagree on purpose, which is
     recorded in CLAUDE.md so a future session does not tidy it away.
+
+## 2026-09-17 — first PPF conversion, and what it cost the tooling
+
+18. **Axis titles went into the label test.** A frontier's curve label, parked at
+    the end of the curve in the bottom-right corner, landed on the Q axis title,
+    and nothing noticed: the titles are drawn text that the test had never
+    included. That is the fourth category found by eye rather than by the script
+    — after arrows, ticks and guides — and it is now the last of the drawn text
+    elements.
+19. **`label: ""` draws nothing.** A lone PPF needs no curve name, but the id is
+    still needed by `table.series`, and falling back to it parked "PPF" across
+    the frontier. An explicit empty label is now distinct from an absent one.
+20. **Two source phrases were narrowed again.** "the class" fired on *the class
+    average* and "in class" on *you may be sitting in class* — ordinary English
+    about being a student, not attributions. Both now need an attribution verb
+    nearby, or an exclusion. This is the third time a word list has been too
+    literal; the lesson holds that it must be tested against a real file, not
+    reasoned about.

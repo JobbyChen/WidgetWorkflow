@@ -58,12 +58,20 @@ SOURCE_NOUNS = ["transcript", "lecture", "recording", "classroom"]
 # "on the board" and not "the board": a company has one of those too, and the
 # rule is about the classroom whiteboard. "the class" likewise skips "the class
 # of goods", which is ordinary economics.
-SOURCE_PHRASES = ["on the board", "at the board", "in class", "the slides",
+SOURCE_PHRASES = ["on the board", "at the board", "the slides",
                   "the handout", "the video", "the notes say", "the reading",
                   "he said", "she said", "they said in",
                   "the professor", "our professor", "the instructor",
                   "the lecturer"]
-SOURCE_GUARDED = [(r"the class(?! of\b)", "the class")]
+# "the class" and "in class" are ordinary English for a student -- a class
+# average, sitting in class -- and only give the source away when something is
+# attributed to what happened there.
+SOURCE_GUARDED = [
+    (r"the class\b(?!\s+(?:average|of\b))", "the class"),
+    (r"(?:said|says|noted|explained|mentioned|covered|discussed|showed|drew|"
+     r"went over)[^.]{0,40}\bin class\b", "in class"),
+    (r"\bin class\b[^.]{0,40}(?:said|says|noted|explained|mentioned)", "in class"),
+]
 
 CSS_BLOCK = re.compile(r"<style>\s*\n(\.sdg \{.*?)\n</style>", re.S)
 JS_BLOCK = re.compile(r"<script>\s*\n(/\* ===== sd-graph\.js.*?)\n</script>", re.S)
@@ -519,6 +527,14 @@ def check_labels(cfgs, r):
                     n, " (%s)" % label if label else "",
                     " panel %d" % (pi + 1) if len(panels(v)) > 1 else "")
                 boxes = []
+                # The axis titles are drawn text too. They were the last
+                # category missing from this test, after arrows, ticks and
+                # guides -- a curve label parked in the bottom-right corner
+                # lands on the Q title, which nothing here used to notice.
+                boxes.append((box(W - 2.0, oy + 16, ax.get("x") or "Q", 14, "end"),
+                              "the %r axis title" % (ax.get("x") or "Q"), (0, None)))
+                boxes.append((box(ox - 2.0, 11.0, ax.get("y") or "P", 14),
+                              "the %r axis title" % (ax.get("y") or "P"), (0, None)))
                 xt = [t for t in (ax.get("xticks") or [])]
                 yt = [t for t in (ax.get("yticks") or [])]
                 hl = [h.get("p") for h in (pn.get("hlines") or [])]
@@ -535,15 +551,16 @@ def check_labels(cfgs, r):
 
                 for c in pn.get("curves") or []:
                     pts = c.get("pts") or []
-                    if len(pts) < 2:
+                    text = c.get("label") if c.get("label") is not None else c.get("id")
+                    if len(pts) < 2 or not text:
                         continue
                     last = pts[-1]
                     up = last[1] > pts[0][1]
                     lp = pts[0] if c.get("lstart") else last
                     bx = box(X(lp[0]) + c.get("ldx", 6),
                              Y(lp[1]) + c.get("ldy", 2 if up else 6),
-                             c.get("label") or c.get("id") or "", 13)
-                    boxes.append((bx, "curve label %r" % (c.get("label") or c.get("id")),
+                             text, 13)
+                    boxes.append((bx, "curve label %r" % text,
                                   (c.get("at", 0), c.get("until"))))
 
                 for p in pn.get("points") or []:

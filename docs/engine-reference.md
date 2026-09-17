@@ -1,4 +1,4 @@
-# Engine reference — `engine/sd-graph.js` v2.3
+# Engine reference — `engine/sd-graph.js` v2.4
 
 Written from the engine source. The conversion prompt carries a shorter version
 of this in its own "Engine reference" section; that one is what the model needs
@@ -105,7 +105,9 @@ pixel apart. `scripts/check_file.py` tests for this.
 - `thin` draws the original curve of a shift pair; `dashed` dashes it.
 - The label sits at the **last** point, or the first with `lstart:true`, nudged
   by `ldx`/`ldy` (defaults `+6` across, `+2` above an upward curve or `+6` below
-  a downward one).
+  a downward one). **`label: ""` draws no label at all** — a lone frontier needs
+  no name, since the axis titles already say what it is — while omitting `label`
+  falls back to the `id`, which `table.series` still needs.
 
 ### `points`
 

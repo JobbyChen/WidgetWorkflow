@@ -6,7 +6,12 @@
 The house script (content/sn25-v5.js, and studyguide/sn25-v2.js, which are the
 same code apart from the emoji and where they insert) builds the table of
 contents in the browser: a collapsed <details class="toc-box"> holding one
-anchor per h1/h2/h3, h2s nested under their h1, inserted before the first <h1>.
+anchor per h1/h2/h3, h2s nested under their h1.
+
+It goes at the very top of the body, above any prose that precedes the first
+heading -- which is where the notes script (v5) puts it, and Ian's preference.
+The study-guide script inserts before the first <h1> instead, so on a page that
+opens with a sentence or two the contents would sit under them.
 
 content/sn25-v6.js, which every converted file loads, returns 403 from S3 -- it
 is the only one of the five house assets that is not public -- so on a published
@@ -102,14 +107,20 @@ def build(src):
     lines += ["</ul>", "</nav>", MARK_END]
     toc = "\n".join(lines)
 
-    # replace the block written last time, else insert before the first heading
+    # replace the block written last time, else open the body with it
     old = re.search(re.escape(MARK_OPEN) + r".*?" + re.escape(MARK_END) + r"\n*",
                     src, re.S)
     if old:
         return src[:old.start()] + toc + "\n\n" + src[old.end():], len(hs)
-    first = re.search(r"<h1\b", src[src.find("<body"):], re.I)
-    at = src.find("<body") + first.start()
-    return src[:at] + toc + "\n\n" + src[at:], len(hs)
+    m = re.search(r"<body\b[^>]*>", src, re.I)
+    head = m.end()
+    # The date pill is float:right with a negative top margin, so anything
+    # placed above it drags it down out of the corner. Slot in just under it.
+    d = re.compile(r'\s*<p class="date">.*?</p>', re.S).match(src, head)
+    if d:
+        head = d.end()
+    at = head + len(src[head:]) - len(src[head:].lstrip("\n"))
+    return src[:head] + "\n\n" + toc + "\n\n" + src[at:], len(hs)
 
 
 def main():

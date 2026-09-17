@@ -114,8 +114,11 @@ format decision for review.
   page nothing runs and no contents appear. The script writes exactly what the
   house script would have produced: same element, same classes and inline
   styles, and ids from the same rule (which is why "Scarcity & Opportunity Cost"
-  really becomes `scarcity--opportunity-cost`, with two hyphens). If that S3
-  object is ever made public, the script will add a second one and this block
+  really becomes `scarcity--opportunity-cost`, with two hyphens). It sits at the
+  top of the page, above any prose that precedes the first heading, but below
+  the `<p class="date">` line: the date pill is `float:right` with a negative
+  top margin, so anything placed above it drags it out of its corner. If that
+  S3 object is ever made public, the script will add a second one and this block
   should come out; `check_file.py` reports whether the links and the headings
   are still in step.
 - The "Exam 1 Topics" list from the document's title block is dropped as cover

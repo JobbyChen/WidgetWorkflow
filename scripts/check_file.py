@@ -10,6 +10,8 @@ Groups, in order:
   engine    <!--SDG-ENGINE--> exactly once, or an engine already embedded whose
             bytes match engine/; and no <link>/<script src> to a hosted copy
   markup    no <u>, no <h3>, <strong> used for vocabulary terms only
+  toc       the house table of contents, and whether its links reach the
+            headings -- the script that would build it is not public
   json      every <div class="sdg"> holds one parseable JSON config
   escape    no literal </script> inside a config
   schema    steps (>=2) or a caption or a static preset with scenarios; at/until
@@ -257,12 +259,6 @@ def check_markup(src, r):
                          "<strong> when the word is a term")
     if re.search(r"<h3\b", body, re.I):
         r.fail("markup", "<h3> is not part of the house format; use <h2>")
-    # sn25-v6.js builds the table of contents itself, as a collapsed
-    # <details class="toc-box"> of every h1/h2/h3, inserted before the first
-    # <h1>. A hand-written one gives the page two.
-    if re.search(r"toc-box", body, re.I) or re.search(r"table of contents", body, re.I):
-        r.fail("markup", "the house script builds the table of contents from "
-                         "the headings; the page must not carry its own")
     loose = [s for s in re.findall(r"<strong>(.*?)</strong>", body, re.S)
              if len(s.split()) > 6 or s.rstrip().endswith((".", ":"))]
     if loose:
@@ -272,6 +268,47 @@ def check_markup(src, r):
                % (len(loose), loose[0][:50]))
     if not any(x for x in (loose,)) and "<strong>" in body:
         r.ok("markup", "<strong> used for short terms only")
+
+
+# -------------------------------------------------------------------- toc ----
+
+def check_toc(src, r):
+    """The table of contents, and whether its anchors reach the headings.
+
+    The house script would build this in the browser, but content/sn25-v6.js
+    returns 403 from S3 -- alone among the five house assets -- so on a
+    published page nothing runs and no table of contents appears. Until that is
+    fixed the markup lives in the file, written by scripts/add_toc.py, and what
+    matters is that it stays in step with the headings: a renamed heading
+    silently breaks its own link."""
+    body = src[src.find("<body"):] if "<body" in src else src
+    hs = [(int(m.group(1)), re.search(r'\bid="([^"]*)"', m.group(2)))
+          for m in re.finditer(r"<h([123])\b([^>]*)>", body, re.I)]
+    block = re.search(r'<details class="toc-box">(.*?)</details>', body, re.S)
+
+    if not block:
+        if hs:
+            r.warn("toc", "no table of contents; the house script cannot supply "
+                          "one while content/sn25-v6.js is not public "
+                          "(run scripts/add_toc.py)")
+        return
+
+    linked = re.findall(r'href="#([^"]*)"', block.group(1))
+    ids = [m.group(1) for _, m in hs if m]
+    missing = [a for a in linked if a not in ids]
+    unlisted = [m.group(1) for _, m in hs if m and m.group(1) not in linked]
+    noid = sum(1 for _, m in hs if not m)
+
+    if missing:
+        r.fail("toc", "%d contents link(s) point at no heading: %s"
+               % (len(missing), ", ".join(missing[:3])))
+    if noid:
+        r.fail("toc", "%d heading(s) have no id, so nothing can link to them" % noid)
+    if unlisted:
+        r.fail("toc", "%d heading(s) are missing from the contents: %s"
+               % (len(unlisted), ", ".join(unlisted[:3])))
+    if not (missing or noid or unlisted):
+        r.ok("toc", "%d contents link(s) reach their headings" % len(linked))
 
 
 # ----------------------------------------------------------------- schema ----
@@ -946,6 +983,7 @@ def main():
     check_head(src, r)
     check_engine(src, r)
     check_markup(src, r)
+    check_toc(src, r)
     cfgs = configs(src, r)
     check_schema(cfgs, r)
     check_labels(cfgs, r)

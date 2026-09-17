@@ -106,14 +106,23 @@ or "unattainable" dot) whose exact coordinates are not the lesson.
       Ian gave the correct block on 2026-09-17. `check_file.py` warns on the
       old order rather than failing it, because the delivered
       `ECO2013-263-SupplyAndDemand.html` still carries it.
-- [ ] **Prompt v6 says nothing about the table of contents.** The house script
-      builds it from the h1/h2/h3 headings — a collapsed
-      `<details class="toc-box">` inserted before the first `<h1>` — so a
-      converted file must never write its own. Step 0 should say so.
-- [ ] **`content/sn25-v6.js` is not readable from here** (S3 returns 403), so
-      what the notes pages actually run is inferred from
-      `studyguide/sn25-v2.js`, which is public and builds the TOC and the
-      sticky header. Worth confirming the two behave the same.
+- [ ] **`content/sn25-v6.js` returns 403 from S3** and is the only one of the
+      five house assets that is not public (`content/sn25-v6.css`,
+      `content/sn25-v5.js`, `studyguide/sn25-v2.js` and `studyguide/sn25-v2.css`
+      all return 200). That script is what builds the table of contents and
+      drives the sticky header, so while it 403s a published notes page gets
+      neither. **One for Ian: check that object's permissions.** Until then
+      `scripts/add_toc.py` writes the contents into the file.
+- [ ] **Remove the written-in contents once that object is public.** The house
+      script does not look for an existing block before inserting its own, so a
+      page would then show two. `check_file.py`'s `toc` group reports the state
+      either way.
+- [ ] **Prompt v6 says nothing about the table of contents.** Step 0 should say
+      where it comes from and, while the script is unreachable, that
+      `scripts/add_toc.py` runs after step 7.
+- [ ] **Neither house file carries `<div id="sticky-header">`**, which the house
+      script needs before it will track the current heading. Worth asking
+      whether published pages are meant to have one.
 - [ ] **Reorder the head of `ECO2013-263-SupplyAndDemand.html`?** It is Ian's
       delivered file, so it is reported rather than rewritten. One for Ian.
 

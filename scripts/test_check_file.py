@@ -169,9 +169,23 @@ case("<u> in the body", lambda r: C.check_markup("<body><p>a <u>term</u></p></bo
      or r.has("FAIL", "markup", "<u>"))
 case("<h3> in the body", lambda r: C.check_markup("<body><h3>Sub</h3></body>", r)
      or r.has("FAIL", "markup", "<h3>"))
-case("a hand-written table of contents", lambda r: C.check_markup(
-     '<body><div class="toc-box"><ul><li>Ch. 1</li></ul></div></body>', r)
-     or r.has("FAIL", "markup", "table of contents"))
+TOC_PAGE = ('<body><details class="toc-box"><nav><ul>'
+            '<li><a href="#alpha">Alpha</a></li></ul></nav></details>'
+            '<h1 id="alpha">Alpha</h1>')
+case("a contents link pointing at no heading", lambda r: C.check_toc(
+     TOC_PAGE.replace('id="alpha">Alpha</h1>', 'id="beta">Beta</h1>'), r)
+     or r.has("FAIL", "toc", "point at no heading"))
+case("a heading missing from the contents", lambda r: C.check_toc(
+     TOC_PAGE + '<h1 id="gamma">Gamma</h1>', r)
+     or r.has("FAIL", "toc", "missing from the contents"))
+case("a heading with no id", lambda r: C.check_toc(
+     TOC_PAGE + "<h2>Delta</h2>", r)
+     or r.has("FAIL", "toc", "no id"))
+case("no table of contents at all", lambda r: C.check_toc(
+     "<body><h1 id=\"a\">A</h1>", r)
+     or r.has("WARN", "toc", "no table of contents"))
+case("a contents block in step with its headings", lambda r: C.check_toc(TOC_PAGE, r)
+     or not r.lines)
 
 HEAD_OK = ('<title>The PPF</title>'
            '<link rel="stylesheet" href="https://x/content/sn25-v6.css">'

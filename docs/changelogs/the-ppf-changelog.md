@@ -105,16 +105,23 @@ format decision for review.
 - The `D → E` arrow in that widget stops just short of E. Its chord ends on the
   Q axis, so an arrow offset to the inside along the whole chord ran below the
   axis and through the 4 tick.
-- **The page carries no table of contents, because the house script builds
-  one.** `studyguide/sn25-v2.js` — the readable sibling of the notes script —
-  inserts a collapsed `<details class="toc-box">` before the first `<h1>`,
-  listing every `h1`/`h2`/`h3` as an anchor link, and gives each heading an id.
-  Nothing hand-written is wanted. Two earlier attempts here were both wrong (an
-  `.aside-box`, then a hand-built `.toc-box`), and `check_file.py` now fails any
-  file that carries its own. The "Exam 1 Topics" list from the document's title
-  block is therefore dropped as cover matter, the same call made for document 1.
-  If that chapter list should appear on the page, it needs a home that is not
-  the top of it.
+- **The table of contents is written into the file, by
+  `scripts/add_toc.py`.** The house script would build it in the browser —
+  `content/sn25-v5.js` and `studyguide/sn25-v2.js` are the same code and both
+  insert a collapsed `<details class="toc-box">` of every `h1`/`h2`/`h3` before
+  the first `<h1>` — but `content/sn25-v6.js`, which every converted file loads,
+  returns **403** from S3, alone among the five house assets. So on a published
+  page nothing runs and no contents appear. The script writes exactly what the
+  house script would have produced: same element, same classes and inline
+  styles, and ids from the same rule (which is why "Scarcity & Opportunity Cost"
+  really becomes `scarcity--opportunity-cost`, with two hyphens). If that S3
+  object is ever made public, the script will add a second one and this block
+  should come out; `check_file.py` reports whether the links and the headings
+  are still in step.
+- The "Exam 1 Topics" list from the document's title block is dropped as cover
+  matter, the same call made for document 1. It is a list of the seven exam
+  chapters, not of this page, so it would read as a second contents block at
+  the top. If it should appear, it needs a home that is not there.
 - **The head order follows the current house files**: `sn25-v6.css` first, then
   the three font links on one line with `&amp;display=swap`. Note that the
   ECO2013 file delivered earlier, and prompt v6 step 0, both have the opposite

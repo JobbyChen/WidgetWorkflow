@@ -662,6 +662,52 @@ def check_labels(cfgs, r):
               % checked)
 
 
+def check_tick_emphasis(cfgs, r):
+    """Point values should all be ticks, or none of them.
+
+    The engine prints a point's own value in bold only when that value is not
+    already a tick, so within one graph some point values can come out bold and
+    others plain depending purely on which ticks the author listed. Prompt v6
+    step 5 settles it -- "ticks are the values the prose uses, nothing extra" --
+    which makes every point value a tick and the emphasis uniform. A widget that
+    mixes the two reads as if the bold ones matter more."""
+    mixed = 0
+    for n, cfg, _ in cfgs:
+        for label, v in variants(cfg):
+            if v.get("preset"):
+                continue
+            for pi, pn in enumerate(panels(v)):
+                ax = pn.get("axes")
+                if not ax:
+                    continue
+                for key, tkey, skey, axis in (("q", "xticks", "showQ", "Q"),
+                                              ("p", "yticks", "showP", "P")):
+                    ticks = ax.get(tkey) or []
+                    if not ticks:
+                        continue
+                    on, off = [], []
+                    for pt in pn.get("points") or []:
+                        if pt.get(skey) is False or pt.get("pl" if axis == "P" else "ql"):
+                            continue
+                        val = pt.get(key)
+                        if val is None:
+                            continue
+                        (on if val in ticks else off).append(val)
+                    if on and off:
+                        mixed += 1
+                        where = "widget %d%s%s" % (
+                            n, " (%s)" % label if label else "",
+                            " panel %d" % (pi + 1) if len(panels(v)) > 1 else "")
+                        r.warn("ticks", "%s: on %s, %s %s ticked (plain) while %s %s not "
+                               "(bold). Tick the values the prose uses, or none of them."
+                               % (where, axis, sorted(set(on)),
+                                  "is" if len(set(on)) == 1 else "are",
+                                  sorted(set(off)),
+                                  "is" if len(set(off)) == 1 else "are"))
+    if cfgs and not mixed:
+        r.ok("ticks", "point values are emphasised consistently")
+
+
 def check_arrows(cfgs, r):
     n_checked = 0
     for n, cfg, _ in cfgs:
@@ -805,6 +851,7 @@ def main():
     cfgs = configs(src, r)
     check_schema(cfgs, r)
     check_labels(cfgs, r)
+    check_tick_emphasis(cfgs, r)
     check_arrows(cfgs, r)
     check_captions(cfgs, r)
     check_source(src, cfgs, r)

@@ -122,6 +122,14 @@ pixel apart. `scripts/check_file.py` tests for this.
   price on the P axis whenever that price is not already a `ytick` and no
   `hline` sits at it; `showQ` does the same on Q. `pl`/`ql` override the number
   with a symbol (`"P₁"`, `"Q₁"`) — which is how symbolic graphs get their axes.
+- **A value the point prints for itself is bold; a tick is not.** That makes
+  emphasis depend on which ticks you listed, not on what matters: a point at 85
+  comes out bold, and the same point comes out plain the moment you add an `85`
+  tick. Prompt v6 step 5 resolves it — "ticks are the values the prose uses,
+  nothing extra" — so every point value is a tick, nothing is bold, and the dots
+  and guides show which values are the points. Mix a generic scale with points
+  that miss it and you get some bold and some plain in one graph, which reads as
+  if the bold ones matter more. `check_file.py` warns on that mix.
 - `label` is separate from the axis labels and is offset by `dx`/`dy`
   (defaults `+9`, `−9`).
 

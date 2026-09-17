@@ -180,3 +180,15 @@ including every kind of shift; the probe is throwaway and stayed out of the repo
     bracket, the same value printed by two points at one price, and an x tick
     beside a y tick in the origin corner. They are exempted by name rather than
     by loosening the test.
+
+16. **Bold axis values are a fallback, not a feature — and the "18 and 44
+    instances" were not a bug.** Asked why one point value was bold and another
+    plain, a scan found 18 point-values-coinciding-with-ticks in the 263 file and
+    44 in the prototype, which looked like a widespread defect and was reported
+    as one. It is not: in both files *every* tick is a value the prose uses, so
+    every point value is a tick, nothing is bold, and the graphs are uniform. The
+    mixed appearance was in a PPF probe that listed a generic 20/40/60/80/100
+    scale the points did not land on, breaking prompt v6 step 5. No engine change
+    was needed; `check_tick_emphasis` now warns when one graph mixes the two, so
+    the same mistake cannot pass quietly. A count of instances is not evidence of
+    a defect until you have checked what the convention is.

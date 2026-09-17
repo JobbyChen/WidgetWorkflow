@@ -127,7 +127,7 @@ not enough to reproduce an implementation.
   `embed_engine.py`'s paths reproduce the delivered file byte-for-byte; all 20
   prototype widgets render with no engine errors; `check_file.py` runs the
   geometric label test over 74 labels in the 263 file with no overlaps.
-* **Engine is v2.5.** `shiftArrow: false` drops the redundant shift arrow in a
+* **Engine is v2.6.** `shiftArrow: false` drops the redundant shift arrow in a
   schedule-shift widget — the per-row arrows already say it once per row — while
   keeping the slide and the dimming, and every arrow is one weight (2.4px).
   Prompt v6 step 5 changed with it. Axis titles take a word (`x` anchored to the

@@ -1,4 +1,4 @@
-# Engine reference — `engine/sd-graph.js` v2.5
+# Engine reference — `engine/sd-graph.js` v2.6
 
 Written from the engine source. The conversion prompt carries a shorter version
 of this in its own "Engine reference" section; that one is what the model needs
@@ -57,8 +57,11 @@ identically in each, or it will appear to jump when the reader switches.
 
 ## Panel
 
-`heading` titles a panel (two-panel widgets only). It is set larger than the
-axis titles, so a panel reads as a named market rather than a caption.
+`heading` titles a panel (two-panel widgets only). Text inside the plot is SVG
+and scales with the panel's width, so the heading is sized in container-width
+units to keep one order at every screen size: **heading, then axis title, then
+point label**. Set in fixed pixels it was overtaken by the axis titles on a wide
+screen.
 
 ### `axes`
 

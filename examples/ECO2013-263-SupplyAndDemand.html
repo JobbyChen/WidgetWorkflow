@@ -28,12 +28,22 @@
 .sdg .sdg-between svg { width:34px; height:34px; display:block; }
 .sdg .sdg-between path { fill:none; stroke:var(--ink); stroke-width:4; stroke-linecap:round; stroke-linejoin:round; }
 @media (max-width:640px){
-  .sdg .sdg-body.has-table, .sdg .sdg-body.two { grid-template-columns:1fr; }
+  /* The :not(:has(.sdg-between)) rule above is more specific than a plain
+     .sdg-body.two, so without repeating it here a two-panel widget with
+     link:false never stacked on a phone -- it stayed side by side and shrank
+     each panel to about a third of the screen. */
+  .sdg .sdg-body.has-table, .sdg .sdg-body.two,
+  .sdg .sdg-body.two:not(:has(.sdg-between)) { grid-template-columns:1fr; }
   .sdg .sdg-between svg { transform:rotate(90deg); margin:0 auto; }
   .sdg .sdg-ctrl button, .sdg .sdg-scen button { min-height:44px; }
 }
-.sdg figure { margin:0; background:#fff; border:1px solid var(--rule); padding:8px 8px 2px; }
-.sdg figcaption { font-size:1.05rem; font-weight:700; color:var(--navy); text-align:center; margin:0 0 6px; }
+/* The panel heading is HTML at a fixed size while everything inside the plot is
+   SVG text that scales with the panel's width, so on a wide screen the axis
+   titles overtook the heading. Sizing the heading in container-width units keeps
+   the order fixed at every width: heading, then axis title (14 SVG units =
+   3.76cqw), then point label (12 units = 3.23cqw). */
+.sdg figure { margin:0; background:#fff; border:1px solid var(--rule); padding:8px 8px 2px; container-type:inline-size; }
+.sdg figcaption { font-size:max(1.05rem, 5cqw); font-weight:700; color:var(--navy); text-align:center; margin:0 0 6px; line-height:1.2; }
 .sdg svg { width:100%; height:auto; display:block; }
 .sdg .sdg-table { border-collapse:collapse; width:100%; font-size:.9rem; background:#fff; border:1px solid var(--rule); }
 .sdg .sdg-table th { background:var(--navy); color:#fff; font-weight:700; padding:6px 8px; text-align:center; font-size:.82rem; }
@@ -72,7 +82,7 @@
 .sdg .sdg-cap { margin:10px 0 0; padding:10px 12px; background:#fff; border-left:4px solid var(--red); font-size:.92rem; line-height:1.45; min-height:3.2em; }
 </style>
 <script>
-/* ===== sd-graph.js v2.5 — data-driven supply & demand widgets =====
+/* ===== sd-graph.js v2.6 — data-driven supply & demand widgets =====
    Markup:  <div class="sdg"><script type="application/json">{ ...config... }<\/script></div>
    Top-level config:
      title, lede, caption         heading / intro / static caption (caption used only when there are no steps)

@@ -106,3 +106,17 @@ says so.
 No script could have caught this: it is a question of whether a coordinate means
 what the source means, which `check_file.py` reports as SKIP ("whether each
 number is the source's number needs the source").
+
+## Second revision
+
+The panel headings were still smaller than the axis titles on a wide screen.
+Making them a fixed 1.05rem in v2.5 had not fixed it, because the axis titles are
+SVG text that scales with the panel while the heading did not: at 1512px the
+axis title reached 20.8px and the heading stayed at 16.8px. The heading is now
+sized in container-width units (engine v2.6), so the order holds at every width:
+heading, axis title, point label.
+
+Checking that across widths turned up a separate bug. A two-panel widget with
+`link: false` never stacked on a phone, because the `:not(:has(.sdg-between))`
+rule that sets two columns is more specific than the mobile rule that sets one.
+Each panel was about a third of a 390px screen. Fixed in the same version.

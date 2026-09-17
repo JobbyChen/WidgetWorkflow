@@ -169,6 +169,20 @@ case("<u> in the body", lambda r: C.check_markup("<body><p>a <u>term</u></p></bo
      or r.has("FAIL", "markup", "<u>"))
 case("<h3> in the body", lambda r: C.check_markup("<body><h3>Sub</h3></body>", r)
      or r.has("FAIL", "markup", "<h3>"))
+case("a hand-written table of contents", lambda r: C.check_markup(
+     '<body><div class="toc-box"><ul><li>Ch. 1</li></ul></div></body>', r)
+     or r.has("FAIL", "markup", "table of contents"))
+
+HEAD_OK = ('<title>The PPF</title>'
+           '<link rel="stylesheet" href="https://x/content/sn25-v6.css">'
+           '<link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display" rel="stylesheet">'
+           '<script src="https://x/content/sn25-v6.js"></script>')
+case("the font link placed before the house stylesheet", lambda r: C.check_head(
+     HEAD_OK.replace('<link rel="stylesheet" href="https://x/content/sn25-v6.css">', '')
+     + '<link rel="stylesheet" href="https://x/content/sn25-v6.css">', r)
+     or r.has("WARN", "head", "stylesheet first"))
+case("the current house head order", lambda r: C.check_head(HEAD_OK, r)
+     or not r.has("WARN", "head", "stylesheet first"))
 
 
 def main():

@@ -100,6 +100,23 @@ or "unattainable" dot) whose exact coordinates are not the lesson.
       or cut it from the prompt, because a config written to that part of the
       prompt throws.
 
+- [ ] **Prompt v6 step 0 specifies the wrong head order.** It lists the two
+      preconnects and the font link before `sn25-v6.css`; the current house
+      files put `sn25-v6.css` first, then the three font links on one line.
+      Ian gave the correct block on 2026-09-17. `check_file.py` warns on the
+      old order rather than failing it, because the delivered
+      `ECO2013-263-SupplyAndDemand.html` still carries it.
+- [ ] **Prompt v6 says nothing about the table of contents.** The house script
+      builds it from the h1/h2/h3 headings — a collapsed
+      `<details class="toc-box">` inserted before the first `<h1>` — so a
+      converted file must never write its own. Step 0 should say so.
+- [ ] **`content/sn25-v6.js` is not readable from here** (S3 returns 403), so
+      what the notes pages actually run is inferred from
+      `studyguide/sn25-v2.js`, which is public and builds the TOC and the
+      sticky header. Worth confirming the two behave the same.
+- [ ] **Reorder the head of `ECO2013-263-SupplyAndDemand.html`?** It is Ian's
+      delivered file, so it is reported rather than rewritten. One for Ian.
+
 ## The label test
 
 - [x] ~~Arrows are tested against labels, but not against curves or each

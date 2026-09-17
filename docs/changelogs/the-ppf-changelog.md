@@ -105,11 +105,21 @@ format decision for review.
 - The `D → E` arrow in that widget stops just short of E. Its chord ends on the
   Q axis, so an arrow offset to the inside along the whole chord ran below the
   axis and through the 4 tick.
-- The "Exam 1 Topics" list from the document's title block became a `.toc-box`
-  at the top — the house collapsible table of contents (`<details>` with a
-  `<summary>`), not the generic `.aside-box` it was first given. It is cover
-  matter rather than body content, the same call made for document 1, except
-  that document 1 dropped the list and this one keeps it.
+- **The page carries no table of contents, because the house script builds
+  one.** `studyguide/sn25-v2.js` — the readable sibling of the notes script —
+  inserts a collapsed `<details class="toc-box">` before the first `<h1>`,
+  listing every `h1`/`h2`/`h3` as an anchor link, and gives each heading an id.
+  Nothing hand-written is wanted. Two earlier attempts here were both wrong (an
+  `.aside-box`, then a hand-built `.toc-box`), and `check_file.py` now fails any
+  file that carries its own. The "Exam 1 Topics" list from the document's title
+  block is therefore dropped as cover matter, the same call made for document 1.
+  If that chapter list should appear on the page, it needs a home that is not
+  the top of it.
+- **The head order follows the current house files**: `sn25-v6.css` first, then
+  the three font links on one line with `&amp;display=swap`. Note that the
+  ECO2013 file delivered earlier, and prompt v6 step 0, both have the opposite
+  order; document 1's output has been brought into line, and the delivered file
+  is left alone and reported instead (it picks up one WARN).
 - **A step exists only where the graph changes.** "Different people, different
   frontiers" therefore carries one caption per button instead of two steps, since
   nothing on the drawing moves within a scenario, and the food/clothing

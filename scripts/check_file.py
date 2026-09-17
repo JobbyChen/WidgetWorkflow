@@ -210,6 +210,19 @@ def check_head(src, r):
     if old:
         r.fail("head", "references an older house asset: %s" % ", ".join(sorted(set(old))))
 
+    # Ian's instruction of 2026-09-17 puts the house stylesheet first and the
+    # three font links after it, on one line, as the current notes files carry
+    # them. The ECO2013 file delivered earlier has the opposite order, and so
+    # does prompt v6 step 0, so this can only ever warn: failing it would fail
+    # shipped work. Reordering a delivered file is Ian's call, not a script's.
+    css_at, font_at = src.find("sn25-v6.css"), src.find("Red+Hat+Display")
+    if css_at >= 0 and font_at >= 0:
+        if css_at < font_at:
+            r.ok("head", "the house stylesheet precedes the font link")
+        else:
+            r.warn("head", "the font link precedes sn25-v6.css; the current "
+                           "house head has the stylesheet first")
+
 
 def check_engine(src, r):
     n = src.count(PLACEHOLDER)
@@ -244,6 +257,12 @@ def check_markup(src, r):
                          "<strong> when the word is a term")
     if re.search(r"<h3\b", body, re.I):
         r.fail("markup", "<h3> is not part of the house format; use <h2>")
+    # sn25-v6.js builds the table of contents itself, as a collapsed
+    # <details class="toc-box"> of every h1/h2/h3, inserted before the first
+    # <h1>. A hand-written one gives the page two.
+    if re.search(r"toc-box", body, re.I) or re.search(r"table of contents", body, re.I):
+        r.fail("markup", "the house script builds the table of contents from "
+                         "the headings; the page must not carry its own")
     loose = [s for s in re.findall(r"<strong>(.*?)</strong>", body, re.S)
              if len(s.split()) > 6 or s.rstrip().endswith((".", ":"))]
     if loose:

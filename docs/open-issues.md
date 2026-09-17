@@ -102,13 +102,20 @@ or "unattainable" dot) whose exact coordinates are not the lesson.
 
 ## The label test
 
-- [ ] **Arrows are tested against labels, but not against curves, guides or each
-      other.** Six defects in the first PPF conversion were found by eye: two
-      arrows abutting into what looked like one arrow, an arrowhead reaching a
-      point label, and an arrow cutting across a frontier and its guides. The
-      test fails on overlap and warns under six pixels, and none of those is
-      either. Adding arrow-versus-curve, arrow-versus-guide and
-      arrow-versus-arrow would catch the whole class.
+- [x] ~~Arrows are tested against labels, but not against curves or each
+      other.~~ Added, and regression-tested against the two defects that
+      prompted them: two arrows abutting into what looks like one, and an arrow
+      lying across a frontier. Both warn.
+- [ ] **Arrow-versus-guide was tried and dropped.** It fired ten times on
+      correct work, because a surplus or shortage arrow has to cross the guides
+      between the price line and the equilibrium. A check that fires on correct
+      output teaches people to ignore it. Distinguishing "crosses a guide"
+      (fine) from "runs along one" (not) needs a parallelism test, not a
+      distance test.
+- [ ] **The checker has no tests of its own.** The arrow checks were verified
+      against a throwaway fixture that was not kept. Six categories have been
+      added to the label test one complaint at a time; without a fixture, a
+      later change can silently stop any of them firing.
 
 ## Engine
 

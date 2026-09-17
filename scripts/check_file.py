@@ -363,6 +363,29 @@ def overlaps(a, b, inset=1.0):
                 or a[3] - inset <= b[1] + inset or b[3] - inset <= a[1] + inset)
 
 
+def sample(px, n=70):
+    """n points spread along a polyline in pixel space."""
+    out = []
+    for i in range(len(px) - 1):
+        (x1, y1), (x2, y2) = px[i], px[i + 1]
+        for s in range(n + 1):
+            t = s / n
+            out.append((x1 + t * (x2 - x1), y1 + t * (y2 - y1)))
+    return out
+
+
+def min_gap(a, b):
+    """Closest approach between two polylines, in pixels."""
+    pa, pb = sample(a), sample(b)
+    best = 1e9
+    for x1, y1 in pa:
+        for x2, y2 in pb:
+            d = (x1 - x2) ** 2 + (y1 - y2) ** 2
+            if d < best:
+                best = d
+    return math.sqrt(best)
+
+
 def poly_hits(bx, px, samples=160):
     """Does the polyline through these pixel points pass inside the box?"""
     for i in range(len(px) - 1):
@@ -419,7 +442,8 @@ def arrow_segments(pn, X, Y):
         q0, q1 = q_at(spts, ap), q_at(pts, ap)
         sgn = 1 if q1 > q0 else (-1 if q1 < q0 else 0)
         out.append((((X(q0) + sgn * 8, Y(ap)), (X(q1) - sgn * 8, Y(ap))),
-                    "the %s shift arrow" % (c.get("label") or c.get("id"))))
+                    "the %s shift arrow" % (c.get("label") or c.get("id")),
+                    (c.get("at", 0), c.get("until"))))
     for m in pn.get("moves") or []:
         if not (isinstance(m.get("from"), list) and isinstance(m.get("to"), list)):
             continue
@@ -428,7 +452,9 @@ def arrow_segments(pn, X, Y):
         off = m.get("offset", 14)
         ln = math.hypot(x2 - x1, y2 - y1) or 1
         nx, ny = -(y2 - y1) / ln * off, (x2 - x1) / ln * off
-        out.append((((x1 + nx, y1 + ny), (x2 + nx, y2 + ny)), "a movement arrow"))
+        out.append((((x1 + nx, y1 + ny), (x2 + nx, y2 + ny)),
+                    "the movement arrow %s\u2192%s" % (m["from"], m["to"]),
+                    (m.get("at", 0), m.get("until"))))
     return out
 
 
@@ -637,7 +663,7 @@ def check_labels(cfgs, r):
                             continue  # a curve's own label sits at its end
                         if curve_hits(bx, pts, X, Y):
                             r.fail("labels", "%s: %s sits on curve %s" % (where, what, cid))
-                    for seg, desc in arrows:
+                    for seg, desc, _aw in arrows:
                         if poly_hits(bx, list(seg)):
                             r.fail("labels", "%s: %s sits on %s" % (where, what, desc))
                     for pt in pn.get("points") or []:
@@ -662,6 +688,42 @@ def check_labels(cfgs, r):
                             # clump rather than two values.
                             r.warn("labels", "%s: %s is crowded against %s"
                                    % (where, boxes[i][1], boxes[j][1]))
+
+                # Rule 5 forbids a label touching an arrow, and says an arrow
+                # showing a change must read clearly: drawn beside a curve, in
+                # open space, not crossing another arrow. None of that is a
+                # label-versus-label overlap, so it needs its own tests.
+                curve_px = [([(X(q), Y(p)) for q, p in (c.get("pts") or [])],
+                             c.get("label") or c.get("id") or "a curve",
+                             (c.get("at", 0), c.get("until")))
+                            for c in (pn.get("curves") or [])
+                            if len(c.get("pts") or []) >= 2]
+
+                for i, (segA, descA, winA) in enumerate(arrows):
+                    pa = list(segA)
+                    # An arrow that points AT something on a curve touches that
+                    # curve at its tip by definition -- two movement arrows
+                    # converging on an equilibrium always do. So only the
+                    # arrow's middle is tested: lying across a curve is a
+                    # defect, landing on one is the whole point.
+                    (ax1, ay1), (ax2, ay2) = segA
+                    mid = [(ax1 + t * (ax2 - ax1), ay1 + t * (ay2 - ay1))
+                           for t in (0.18, 0.82)]
+                    for cpx, cdesc, cwin in curve_px:
+                        if not coexist(winA, cwin):
+                            continue
+                        if min_gap(mid, cpx) < 2.0:
+                            r.warn("arrows", "%s: %s lies across curve %s"
+                                   % (where, descA, cdesc))
+                    # Guides are deliberately not tested. A surplus arrow has to
+                    # cross the guides between the price line and the
+                    # equilibrium, so flagging it fires on correct work.
+                    for segB, descB, winB in arrows[i + 1:]:
+                        if not coexist(winA, winB):
+                            continue
+                        if min_gap(pa, list(segB)) < 4.0:
+                            r.warn("arrows", "%s: %s and %s touch, and read as "
+                                   "one arrow" % (where, descA, descB))
 
                 seen = {}
                 for p in pn.get("points") or []:

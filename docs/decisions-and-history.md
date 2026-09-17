@@ -218,3 +218,14 @@ including every kind of shift; the probe is throwaway and stayed out of the repo
     nearby, or an exclusion. This is the third time a word list has been too
     literal; the lesson holds that it must be tested against a real file, not
     reasoned about.
+
+21. **Arrows are tested against curves and against each other; guides were tried
+    and dropped.** Only the arrow's middle is tested against curves, because an
+    arrow that points at something on a curve touches it at the tip by
+    definition -- two movement arrows converging on an equilibrium always do,
+    and testing the whole arrow flagged correct work in the chicken-thighs
+    widget. Arrow-versus-guide was dropped outright: a surplus arrow must cross
+    the guides between the price line and the equilibrium, so it fired ten times
+    on files that are right. Both surviving checks were run against a fixture
+    reproducing the two original defects, and both fire; all three example files
+    stay clean.

@@ -1,0 +1,1480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The PPF</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://smokinnotes.s3.us-east-1.amazonaws.com/content/sn25-v6.css">
+    <script src="https://smokinnotes.s3.us-east-1.amazonaws.com/content/sn25-v6.js"></script>
+<style>
+.sdg { --navy:#002060; --ink:#1c2a44; --red:#d62828; --teal:#1a8a8a; --orange:#d8641c; --grey:#8a94a6; --rule:#c9d2e3; --paper:#f6f8fc; --plot:#eef3fd;
+  font-family:"Red Hat Display","Segoe UI",system-ui,sans-serif; color:var(--ink);
+  border:1px solid var(--navy); background:var(--paper); padding:18px 20px 16px; width:80%; margin:24px auto; }
+@media (max-width:640px){ .sdg { width:100%; } }
+.sdg, .sdg *, .sdg *::before, .sdg *::after { box-sizing:border-box; }
+.sdg h4 { margin:0 0 4px; color:var(--navy); font-size:1.05rem; font-weight:700; }
+.sdg .sdg-lede { margin:0 0 12px; font-size:.92rem; line-height:1.45; }
+.sdg .sdg-scen { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px; }
+.sdg .sdg-scen button { flex:1 1 200px; border:1px solid var(--navy); background:#fff; color:var(--navy); padding:8px 12px; font:inherit; font-size:.9rem; cursor:pointer; text-align:left; line-height:1.3; }
+.sdg .sdg-scen button[aria-pressed="true"] { background:var(--navy); color:#fff; }
+.sdg .sdg-body { display:grid; grid-template-columns:1fr; gap:14px; align-items:start; }
+.sdg .sdg-body:not(.has-table):not(.two) figure { max-width:460px; margin:0 auto; width:100%; }
+.sdg .sdg-body.has-table { grid-template-columns:minmax(150px,1fr) 2.2fr; }
+.sdg .sdg-body.two { grid-template-columns:1fr 34px 1fr; gap:8px; align-items:center; }
+.sdg .sdg-body.two:not(:has(.sdg-between)) { grid-template-columns:1fr 1fr; gap:14px; }
+.sdg .sdg-between svg { width:34px; height:34px; display:block; }
+.sdg .sdg-between path { fill:none; stroke:var(--ink); stroke-width:4; stroke-linecap:round; stroke-linejoin:round; }
+@media (max-width:640px){
+  /* The :not(:has(.sdg-between)) rule above is more specific than a plain
+     .sdg-body.two, so without repeating it here a two-panel widget with
+     link:false never stacked on a phone -- it stayed side by side and shrank
+     each panel to about a third of the screen. */
+  .sdg .sdg-body.has-table, .sdg .sdg-body.two,
+  .sdg .sdg-body.two:not(:has(.sdg-between)) { grid-template-columns:1fr; }
+  .sdg .sdg-between svg { transform:rotate(90deg); margin:0 auto; }
+  .sdg .sdg-ctrl button, .sdg .sdg-scen button { min-height:44px; }
+}
+/* The panel heading is HTML at a fixed size while everything inside the plot is
+   SVG text that scales with the panel's width, so on a wide screen the axis
+   titles overtook the heading. Sizing the heading in container-width units keeps
+   the order fixed at every width: heading, then axis title (14 SVG units =
+   3.76cqw), then point label (12 units = 3.23cqw). */
+.sdg figure { margin:0; background:#fff; border:1px solid var(--rule); padding:8px 8px 2px; container-type:inline-size; }
+.sdg figcaption { font-size:max(1.05rem, 5cqw); font-weight:700; color:var(--navy); text-align:center; margin:0 0 6px; line-height:1.2; }
+.sdg svg { width:100%; height:auto; display:block; }
+.sdg .sdg-table { border-collapse:collapse; width:100%; font-size:.9rem; background:#fff; border:1px solid var(--rule); }
+.sdg .sdg-table th { background:var(--navy); color:#fff; font-weight:700; padding:6px 8px; text-align:center; font-size:.82rem; }
+.sdg .sdg-table td { padding:6px 8px; text-align:center; border-top:1px solid var(--rule); }
+.sdg .sdg-table tr.hi td { background:#fdeadb; font-weight:700; }
+.sdg .plotbg { fill:var(--plot); }
+.sdg .grid { stroke:#b9c2d3; stroke-width:1; stroke-dasharray:4 4; }
+.sdg .ax { fill:none; stroke:var(--ink); stroke-width:1.6; }
+.sdg .tk { font-size:10.5px; fill:var(--navy); }
+.sdg .tk.strong { font-weight:700; }
+.sdg .axlbl { font-size:14px; font-weight:800; fill:var(--navy); }
+.sdg .curve { fill:none; stroke-width:3; stroke-linecap:round; }
+.sdg .curve.thin { stroke-width:2; }
+.sdg .clbl { font-size:13px; font-weight:800; }
+.sdg .guide { fill:none; stroke-width:1.1; stroke-dasharray:4 3; }
+.sdg .pt { fill:#fff; stroke-width:2; }
+.sdg .pt.hi { stroke:var(--orange); stroke-width:3; r:6; }
+.sdg .pt.mk { stroke-width:1.4; }
+.sdg .mktxt { font-size:7.5px; font-weight:800; fill:var(--ink); }
+.sdg .tag { font-size:12px; font-weight:700; }
+.sdg .arrow { fill:none; stroke-width:2; stroke-linejoin:round; }
+.sdg .arrow.shift { stroke-width:2.4; }
+.sdg .arrow.mv { stroke-width:2.4; stroke:var(--red); }
+.sdg .arrow.row { stroke-width:2.4; stroke:var(--red); }
+.sdg .hline { stroke-width:3; }
+.sdg .brace { fill:none; stroke-width:1.8; }
+.sdg .curve-g.dim .curve { stroke-width:2; opacity:.8; }
+.sdg .fade { transition:opacity .45s ease; }
+.sdg .move { transition:transform .6s ease, opacity .45s ease; }
+.sdg .off { opacity:0; pointer-events:none; }
+@media (prefers-reduced-motion:reduce){ .sdg .fade, .sdg .move { transition:none; } }
+.sdg .sdg-ctrl { display:flex; align-items:center; gap:10px; margin-top:12px; flex-wrap:wrap; }
+.sdg .sdg-ctrl button { border:1px solid var(--navy); background:#fff; color:var(--navy); padding:7px 14px; font:inherit; font-size:.9rem; cursor:pointer; }
+.sdg .sdg-ctrl button:disabled { opacity:.4; cursor:default; }
+.sdg .sdg-step { font-size:.85rem; color:var(--navy); font-weight:700; margin-left:auto; }
+.sdg .sdg-cap { margin:10px 0 0; padding:10px 12px; background:#fff; border-left:4px solid var(--red); font-size:.92rem; line-height:1.45; min-height:3.2em; }
+</style>
+<script>
+/* ===== sd-graph.js v2.6 — data-driven supply & demand widgets =====
+   Markup:  <div class="sdg"><script type="application/json">{ ...config... }<\/script></div>
+   Top-level config:
+     title, lede, caption         heading / intro / static caption (caption used only when there are no steps)
+     steps: [caption, ...]        index 0 = start state; elements use `at`/`until` (step indices) to appear/vanish
+     scenarios: {key:{label, ...overrides}}   one button per scenario; overrides merge over the base config
+     panels: [panelCfg, panelCfg]  two side-by-side graphs (two-market). Otherwise the panel keys live at top level.
+   Panel config:
+     heading                      title above the panel (two-market only)
+     axes: {x, y, xmax, ymax, xticks[], yticks[], money, cents, k, grid, bg:false}
+        x, y = axis titles, default 'Q' and 'P'. A word or two fits; they are never wrapped.
+     curves[]: {id, label, pts:[[q,p],...], color, at, until, from, arrowP, shiftArrow, curved, thin, dashed, lstart, ldx, ldy}
+        lstart = put the curve label at the first point instead of the last; ldx/ldy nudge it
+        label:"" draws no label at all (a lone PPF needs none); omitting label falls back to the id
+        from   = id of the curve this one shifts away from (animated shift + arrow); arrowP = price height of arrow
+        shiftArrow:false = animate and dim as usual but draw no shift arrow. Use it whenever the
+                 widget already shows per-row arrows (table.arrows), which say the same thing once per row.
+        curved = smooth through 3+ points (conceptual, non-linear look)
+     points[]: {id, q, p, label, marker, pl, ql, color, at, until, dx, dy, guides:false, showP:false, showQ:false}
+        marker = "1"/"2" numbered circle;  pl/ql = symbolic axis labels ("P₁","Q₁") instead of numbers
+     moves[]:  {from:[q,p], to:[q,p], at, until, color, offset}  arrow between two points, drawn `offset` px beside the curve (default 14; negative = other side)
+     hlines[]: {p, label, color, at, until}                       horizontal price line across the plot
+     braces[]: {p, q1, q2, label, at, until, below, color}        curly brace spanning a gap at price p
+     vbraces[]:{p1, p2, q, label, at, until, left, side, color}   the same brace turned upright, spanning a
+        price gap. left:true is the mirror of a brace's below:true: it sits outside the P axis, clear of the
+        plot and the tick numbers, with its label running up the axis, and widens the left margin to fit.
+        Without left it sits inside the plot at quantity q, opening right unless side:'left'.
+     table:    {cols[], series[], rows[[price,q,...]], arrows}    schedule beside the graph; arrows draws row shift arrows
+   Colors: 'ink' (default, black-navy), 'red' (shifted/new), 'teal', 'orange', 'grey'
+   Presets (symbolic graphs, P₁/P₂/Q₁/Q₂, no numbers) — a few keys expand into a full config:
+     {"preset":"shift", "shift":"D"|"S", "dir":"right"|"left", "good":"pasta", "event":"The price of pizza rises.", "why":"...", "static":true}
+     {"preset":"double", "demand":"right"|"left", "supply":"right"|"left", "dD":40, "dS":15, "note":"...", "static":true}
+     {"preset":"double", "demand":"right", "supply":"left", "compare":true}   two panels: larger supply shift vs larger demand shift
+     Presets can be combined with title/lede/caption/steps overrides and with scenarios (each scenario gives its own shift/dir).
+*/
+(function () {
+  var NS = 'http://www.w3.org/2000/svg';
+  var C = {ink: 'var(--ink)', red: 'var(--red)', teal: 'var(--teal)', orange: 'var(--orange)', grey: 'var(--grey)', navy: 'var(--navy)'};
+  function col(c) { return C[c || 'ink']; }
+  function el(tag, a, text) { var e = document.createElementNS(NS, tag); for (var k in a) if (a[k] != null) e.setAttribute(k, a[k]); if (text != null) e.textContent = text; return e; }
+  function h(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+  function fmtP(v, ax) { if (!ax.money) return String(v); if (ax.cents) return '$' + Number(v).toFixed(2); return '$' + (Number.isInteger(v) ? v : v.toFixed(2)); }
+  function fmtQ(v, ax) { if (ax.k && v >= 1000) return (v / 1000) + 'k'; return v.toLocaleString('en-US'); }
+  function merge(a, b) { var o = {}; for (var k in a) o[k] = a[k]; for (var k2 in b) o[k2] = b[k2]; return o; }
+
+  // ---------- one SVG panel ----------
+  function buildPanel(cfg) {
+    var ax = cfg.axes, W = 372, below = (cfg.braces || []).some(function (b) { return b.below; }), H = below ? 268 : 250;
+    // A brace outside the P axis needs margin to sit in, the way a brace below
+    // the Q axis needs the extra panel height above.
+    var vleft = (cfg.vbraces || []).some(function (b) { return b.left; });
+    var left = (ax.cents ? 62 : (ax.yticks && ax.yticks.length ? 54 : 40)) + (vleft ? 44 : 0);
+    var O = {x: left, y: 205}, PW = W - left - 36, PH = 178;
+    var X = function (q) { return O.x + (q / ax.xmax) * PW; }, Y = function (p) { return O.y - (p / ax.ymax) * PH; };
+    var svg = el('svg', {viewBox: '0 0 ' + W + ' ' + H, role: 'img', 'aria-label': cfg.heading || cfg.title || 'Supply and demand graph'});
+    var g = el('g', {}); svg.appendChild(g);
+    var parts = [], byId = {};
+    function reg(node, spec) { node.classList.add('fade'); parts.push({node: node, spec: spec}); if (spec.id) byId[spec.id] = {node: node, spec: spec}; return node; }
+
+    if (ax.bg !== false) g.appendChild(el('rect', {class: 'plotbg', x: O.x, y: 14, width: PW + 14, height: O.y - 14}));
+    if (ax.grid) {
+      (ax.xticks || []).forEach(function (q) { g.appendChild(el('line', {class: 'grid', x1: X(q), y1: 14, x2: X(q), y2: O.y})); });
+      (ax.yticks || []).forEach(function (p) { g.appendChild(el('line', {class: 'grid', x1: O.x, y1: Y(p), x2: O.x + PW + 14, y2: Y(p)})); });
+    }
+    g.appendChild(el('path', {class: 'ax', d: 'M' + O.x + ' 14 L' + O.x + ' ' + O.y + ' L' + (O.x + PW + 14) + ' ' + O.y}));
+    (ax.xticks || []).forEach(function (q) { g.appendChild(el('text', {class: 'tk', x: X(q), y: O.y + 15, 'text-anchor': 'middle'}, fmtQ(q, ax))); });
+    (ax.yticks || []).forEach(function (p) { g.appendChild(el('text', {class: 'tk', x: O.x - 6, y: Y(p) + 4, 'text-anchor': 'end'}, fmtP(p, ax))); });
+    // Axis titles. P and Q fit anywhere, but a PPF names its axes with words, so
+    // the x title is anchored to the right edge instead of running off it, and the
+    // y title sits in the headroom above the plot instead of inside its top-left
+    // corner. Keep axis titles to a word or two: nothing here can wrap them.
+    g.appendChild(el('text', {class: 'axlbl', x: W - 2, y: O.y + 16, 'text-anchor': 'end'}, ax.x || 'Q'));
+    g.appendChild(el('text', {class: 'axlbl', x: O.x - 2, y: 11}, ax.y || 'P'));
+
+    function arrow(x1, y1, x2, y2, c, cls) {
+      var dx = x2 - x1, dy = y2 - y1, len = Math.hypot(dx, dy), ux = dx / len, uy = dy / len, hh = 7, ww = 3.6, bx = x2 - ux * hh, by = y2 - uy * hh;
+      return el('path', {class: 'arrow ' + (cls || ''), stroke: c, d: 'M' + x1 + ' ' + y1 + ' L' + x2 + ' ' + y2 + ' M' + (bx - uy * ww) + ' ' + (by + ux * ww) + ' L' + x2 + ' ' + y2 + ' L' + (bx + uy * ww) + ' ' + (by - ux * ww)});
+    }
+    function pathD(pts, curved) {
+      var P = pts.map(function (p) { return [X(p[0]), Y(p[1])]; });
+      if (!curved || P.length < 3) return P.map(function (p, i) { return (i ? 'L' : 'M') + p[0] + ' ' + p[1]; }).join(' ');
+      var d = 'M' + P[0][0] + ' ' + P[0][1];
+      for (var i = 0; i < P.length - 1; i++) {
+        var p0 = P[i - 1] || P[i], p1 = P[i], p2 = P[i + 1], p3 = P[i + 2] || p2;
+        d += ' C' + (p1[0] + (p2[0] - p0[0]) / 6) + ' ' + (p1[1] + (p2[1] - p0[1]) / 6) + ' ' + (p2[0] - (p3[0] - p1[0]) / 6) + ' ' + (p2[1] - (p3[1] - p1[1]) / 6) + ' ' + p2[0] + ' ' + p2[1];
+      }
+      return d;
+    }
+    function qAt(pts, p) {
+      for (var i = 0; i < pts.length - 1; i++) { var a = pts[i], b = pts[i + 1]; if ((p - a[1]) * (p - b[1]) <= 0 && a[1] !== b[1]) return a[0] + (p - a[1]) * (b[0] - a[0]) / (b[1] - a[1]); }
+      var a2 = pts[0], b2 = pts[pts.length - 1]; return a2[0] + (p - a2[1]) * (b2[0] - a2[0]) / (b2[1] - a2[1]);
+    }
+
+    (cfg.curves || []).forEach(function (c) {
+      var cc = col(c.color), grp = el('g', {class: 'curve-g'});
+      var path = el('path', {class: 'curve' + (c.thin ? ' thin' : ''), d: pathD(c.pts, c.curved), stroke: cc});
+      if (c.dashed) path.setAttribute('stroke-dasharray', '6 4');
+      grp.appendChild(path);
+      var last = c.pts[c.pts.length - 1], up = last[1] > c.pts[0][1], lp = c.lstart ? c.pts[0] : last;
+      // label:"" draws nothing. A lone frontier needs no name -- the axis titles
+      // already say what it is -- but the id is still needed by table.series, and
+      // falling back to it parked "PPF" on the curve. Omitting label still uses the id.
+      grp.appendChild(el('text', {class: 'clbl', x: X(lp[0]) + (c.ldx || 6), y: Y(lp[1]) + (c.ldy || (up ? 2 : 6)), fill: cc}, c.label != null ? c.label : (c.id || '')));
+      if (c.from && byId[c.from]) {
+        var src = byId[c.from].spec, ap = c.arrowP != null ? c.arrowP : (c.pts[0][1] + last[1]) / 2;
+        var q0 = qAt(src.pts, ap), q1 = qAt(c.pts, ap), s = Math.sign(q1 - q0);
+        grp.dataset.dx = X(q1) - X(q0); grp.dataset.dy = 0; grp.classList.add('move');
+        // shiftArrow:false keeps the slide and the dimming but drops the arrow, for
+        // widgets whose per-row arrows already show the shift once per schedule row.
+        if (c.shiftArrow !== false) g.appendChild(reg(arrow(X(q0) + s * 8, Y(ap), X(q1) - s * 8, Y(ap), cc, 'shift'), {at: c.at || 0, until: c.until}));
+      }
+      g.appendChild(grp); reg(grp, c);
+    });
+
+    (cfg.hlines || []).forEach(function (l) {
+      var cc = col(l.color || 'red'), grp = el('g', {});
+      grp.appendChild(el('line', {class: 'hline', stroke: cc, x1: O.x, y1: Y(l.p), x2: O.x + PW + 8, y2: Y(l.p)}));
+      if ((ax.yticks || []).indexOf(l.p) < 0) grp.appendChild(el('text', {class: 'tk strong', x: O.x - 6, y: Y(l.p) + 4, 'text-anchor': 'end', fill: cc}, l.label || fmtP(l.p, ax)));
+      g.appendChild(grp); reg(grp, l);
+    });
+
+    (cfg.braces || []).forEach(function (b) {
+      var cc = col(b.color || 'red'), grp = el('g', {});
+      var x1 = X(Math.min(b.q1, b.q2)), x2 = X(Math.max(b.q1, b.q2)), y = b.below ? O.y + 22 : Y(b.p) - 8, dir = b.below ? 1 : -1, hh = 7, m = (x1 + x2) / 2;
+      var d = 'M' + x1 + ' ' + y + ' Q' + x1 + ' ' + (y + dir * hh) + ' ' + (x1 + hh) + ' ' + (y + dir * hh) + ' L' + (m - hh) + ' ' + (y + dir * hh) + ' Q' + m + ' ' + (y + dir * hh) + ' ' + m + ' ' + (y + dir * 2 * hh) +
+              ' Q' + m + ' ' + (y + dir * hh) + ' ' + (m + hh) + ' ' + (y + dir * hh) + ' L' + (x2 - hh) + ' ' + (y + dir * hh) + ' Q' + x2 + ' ' + (y + dir * hh) + ' ' + x2 + ' ' + y;
+      grp.appendChild(el('path', {class: 'brace', stroke: cc, d: d}));
+      grp.appendChild(el('text', {class: 'tag', x: m, y: y + dir * 2 * hh + (b.below ? 12 : -4), 'text-anchor': 'middle', fill: cc}, b.label));
+      if (!b.below) { [b.q1, b.q2].forEach(function (q) { grp.appendChild(el('line', {class: 'guide', stroke: cc, x1: X(q), y1: Y(b.p), x2: X(q), y2: O.y})); }); }
+      g.appendChild(grp); reg(grp, b);
+    });
+
+    // The brace turned upright, spanning a price gap. left:true mirrors the
+    // horizontal brace's below:true -- outside the P axis, clear of the plot and
+    // the tick numbers, label running up the axis because horizontal text does
+    // not fit in the margin.
+    (cfg.vbraces || []).forEach(function (b) {
+      var cc = col(b.color || 'red'), grp = el('g', {});
+      var y1 = Y(Math.max(b.p1, b.p2)), y2 = Y(Math.min(b.p1, b.p2));
+      var x = b.left ? O.x - 32 : X(b.q);
+      var dir = (b.left || b.side === 'left') ? -1 : 1, hh = 7, m = (y1 + y2) / 2;
+      var d = 'M' + x + ' ' + y1 +
+              ' Q' + (x + dir * hh) + ' ' + y1 + ' ' + (x + dir * hh) + ' ' + (y1 + hh) +
+              ' L' + (x + dir * hh) + ' ' + (m - hh) +
+              ' Q' + (x + dir * hh) + ' ' + m + ' ' + (x + dir * 2 * hh) + ' ' + m +
+              ' Q' + (x + dir * hh) + ' ' + m + ' ' + (x + dir * hh) + ' ' + (m + hh) +
+              ' L' + (x + dir * hh) + ' ' + (y2 - hh) +
+              ' Q' + (x + dir * hh) + ' ' + y2 + ' ' + x + ' ' + y2;
+      grp.appendChild(el('path', {class: 'brace', stroke: cc, d: d}));
+      if (b.left) {
+        var lx = x + dir * (2 * hh + 8);
+        grp.appendChild(el('text', {class: 'tag', x: lx, y: m, 'text-anchor': 'middle',
+          transform: 'rotate(-90 ' + lx + ' ' + m + ')', fill: cc}, b.label));
+      } else {
+        grp.appendChild(el('text', {class: 'tag', x: x + dir * (2 * hh + 6), y: m + 4,
+          'text-anchor': dir > 0 ? 'start' : 'end', fill: cc}, b.label));
+      }
+      g.appendChild(grp); reg(grp, b);
+    });
+
+    (cfg.moves || []).forEach(function (m) {
+      var x1 = X(m.from[0]), y1 = Y(m.from[1]), x2 = X(m.to[0]), y2 = Y(m.to[1]);
+      var off = m.offset != null ? m.offset : 14, len = Math.hypot(x2 - x1, y2 - y1), nx = -(y2 - y1) / len * off, ny = (x2 - x1) / len * off;
+      var a = arrow(x1 + nx, y1 + ny, x2 + nx, y2 + ny, col(m.color), 'mv');
+      g.appendChild(a); reg(a, m);
+    });
+
+    (cfg.points || []).forEach(function (p) {
+      var cc = col(p.color), grp = el('g', {class: 'ptg'});
+      if (p.guides !== false) grp.appendChild(el('path', {class: 'guide', stroke: cc, d: 'M' + O.x + ' ' + Y(p.p) + ' L' + X(p.q) + ' ' + Y(p.p) + ' L' + X(p.q) + ' ' + O.y}));
+      grp.appendChild(el('circle', {class: 'pt' + (p.marker ? ' mk' : ''), cx: X(p.q), cy: Y(p.p), r: p.marker ? 6 : 4.2, stroke: cc}));
+      if (p.marker) grp.appendChild(el('text', {class: 'mktxt', x: X(p.q), y: Y(p.p) + 2.6, 'text-anchor': 'middle'}, p.marker));
+      if (p.label) grp.appendChild(el('text', {class: 'tag', x: X(p.q) + (p.dx != null ? p.dx : 9), y: Y(p.p) + (p.dy != null ? p.dy : -9), fill: cc}, p.label));
+      var pl = p.pl || ((p.showP !== false && (ax.yticks || []).indexOf(p.p) < 0 && !(cfg.hlines || []).some(function (l) { return l.p === p.p; })) ? fmtP(p.p, ax) : null);
+      var ql = p.ql || ((p.showQ !== false && (ax.xticks || []).indexOf(p.q) < 0) ? fmtQ(p.q, ax) : null);
+      if (pl) grp.appendChild(el('text', {class: 'tk strong', x: O.x - 6, y: Y(p.p) + 4, 'text-anchor': 'end', fill: cc}, pl));
+      if (ql) grp.appendChild(el('text', {class: 'tk strong', x: X(p.q), y: O.y + 15, 'text-anchor': 'middle', fill: cc}, ql));
+      g.appendChild(grp); reg(grp, p);
+    });
+
+    var rowHooks = [];
+    if (cfg.table) {
+      var t = cfg.table;
+      t.rows.forEach(function (row) {
+        var dots = [], p = row[0];
+        (t.series || []).forEach(function (sid, si) {
+          var sc = byId[sid] && byId[sid].spec, q = row[si + 1];
+          var dot = el('circle', {class: 'pt sched', cx: X(q), cy: Y(p), r: 3.8, stroke: col(sc && sc.color)});
+          g.appendChild(dot); reg(dot, {at: (sc && sc.at) || 0}); dots.push(dot);
+          if (t.arrows && si > 0) { var q0 = row[si], s = Math.sign(q - q0); g.appendChild(reg(arrow(X(q0) + s * 6, Y(p), X(q) - s * 6, Y(p), col('ink'), 'row'), {at: (sc && sc.at) || 0})); }
+        });
+        rowHooks.push(dots);
+      });
+    }
+    return {svg: svg, parts: parts, byId: byId, rowHooks: rowHooks, cfg: cfg};
+  }
+
+  // ---------- widget ----------
+  function Widget(host, cfg) { this.host = host; this.cfg = cfg; this.step = 0; this.build(); }
+  Widget.prototype.build = function () {
+    var cfg = this.cfg, self = this, host = this.host; host.innerHTML = '';
+    if (cfg.title) host.appendChild(h('h4', null, cfg.title));
+    if (cfg.lede) host.appendChild(h('p', 'sdg-lede', cfg.lede));
+    if (cfg.scenarios) {
+      var sc = h('div', 'sdg-scen'); sc.setAttribute('role', 'group');
+      Object.keys(cfg.scenarios).forEach(function (k) {
+        var b = h('button', null, cfg.scenarios[k].label); b.type = 'button';
+        b.setAttribute('aria-pressed', k === cfg.activeScenario ? 'true' : 'false');
+        b.addEventListener('click', function () { host.dispatchEvent(new CustomEvent('sdg-scenario', {detail: k})); });
+        sc.appendChild(b);
+      });
+      host.appendChild(sc);
+    }
+    var panels = cfg.panels || [cfg];
+    this.panels = panels.map(buildPanel);
+    var body = h('div', 'sdg-body' + (cfg.table ? ' has-table' : '') + (panels.length > 1 ? ' two' : ''));
+    this.panels.forEach(function (pn, i) {
+      var fig = h('figure');
+      if (pn.cfg.heading) fig.appendChild(h('figcaption', null, pn.cfg.heading));
+      fig.appendChild(pn.svg); body.appendChild(fig);
+      if (i === 0 && panels.length > 1 && cfg.link !== false) { var a = h('div', 'sdg-between'); a.innerHTML = '<svg viewBox="0 0 40 40" aria-hidden="true"><path d="M4 20 H26 M18 11 L28 20 L18 29" /></svg>'; body.appendChild(a); }
+    });
+    if (cfg.table) {
+      var t = cfg.table, ax = cfg.axes, tbl = h('table', 'sdg-table'), thead = h('thead'), tr = h('tr');
+      t.cols.forEach(function (c) { tr.appendChild(h('th', null, c)); }); thead.appendChild(tr); tbl.appendChild(thead);
+      var tbody = h('tbody'), hooks = this.panels[0].rowHooks;
+      t.rows.forEach(function (row, ri) {
+        var r = h('tr');
+        row.forEach(function (v, i) { r.appendChild(h('td', null, i === 0 ? fmtP(v, ax) : fmtQ(v, ax))); });
+        r.addEventListener('mouseenter', function () { r.classList.add('hi'); hooks[ri].forEach(function (d) { d.classList.add('hi'); }); });
+        r.addEventListener('mouseleave', function () { r.classList.remove('hi'); hooks[ri].forEach(function (d) { d.classList.remove('hi'); }); });
+        tbody.appendChild(r);
+      });
+      tbl.appendChild(tbody); var wrap = h('div', 'sdg-tablewrap'); wrap.appendChild(tbl); body.insertBefore(wrap, body.firstChild);
+    }
+    host.appendChild(body);
+    if (cfg.steps && cfg.steps.length > 1) {
+      var ctrl = h('div', 'sdg-ctrl'), prev = h('button', null, 'Back'), next = h('button', null, 'Next step'), reset = h('button', null, 'Start over'), lbl = h('span', 'sdg-step');
+      prev.type = next.type = reset.type = 'button';
+      [prev, next, reset, lbl].forEach(function (x) { ctrl.appendChild(x); }); host.appendChild(ctrl);
+      var cap = h('p', 'sdg-cap'); cap.setAttribute('aria-live', 'polite'); host.appendChild(cap);
+      this.ui = {prev: prev, next: next, lbl: lbl, cap: cap};
+      var n = cfg.steps.length;
+      prev.addEventListener('click', function () { if (self.step > 0) { self.step--; self.render(); } });
+      next.addEventListener('click', function () { if (self.step < n - 1) { self.step++; self.render(); } });
+      reset.addEventListener('click', function () { self.step = 0; self.render(); });
+    } else if (cfg.caption) host.appendChild(h('p', 'sdg-cap', cfg.caption));
+    this.render();
+  };
+  Widget.prototype.render = function () {
+    var s = this.step, cfg = this.cfg;
+    this.panels.forEach(function (pn) {
+      pn.parts.forEach(function (pt) {
+        var at = pt.spec.at || 0, until = pt.spec.until, on = s >= at && (until == null || s < until);
+        pt.node.classList.toggle('off', !on);
+        if (pt.node.dataset.dx != null) pt.node.style.transform = on ? 'translate(0,0)' : 'translate(' + (-pt.node.dataset.dx) + 'px,0)';
+      });
+      (pn.cfg.curves || []).forEach(function (c) { if (c.from && pn.byId[c.from]) pn.byId[c.from].node.classList.toggle('dim', s >= (c.at || 0)); });
+    });
+    if (this.ui) {
+      var n = cfg.steps.length;
+      this.ui.cap.textContent = cfg.steps[s];
+      this.ui.lbl.textContent = 'Step ' + (s + 1) + ' of ' + n;
+      this.ui.prev.disabled = s === 0; this.ui.next.disabled = s === n - 1;
+    }
+  };
+
+
+  // ---------- presets: symbolic (no-number) graphs from a few settings ----------
+  function clipLine(intercept, slope, lo, hi) { // p = intercept + slope*q, return pts with p in [lo,hi] and q in [4,104]
+    var pts = [];
+    [4, 104].forEach(function (q) { var p = intercept + slope * q; if (p < lo) { p = lo; } if (p > hi) { p = hi; } pts.push([(p - intercept) / slope, p]); });
+    return pts;
+  }
+  function shiftPanel(o) { // o: {shift:'D'|'S', dir:'left'|'right', size, static, heading, labels}
+    var d = (o.size || 20) * (o.dir === 'left' ? -1 : 1), D = o.shift === 'D', at1 = o.static ? 0 : 1, at3 = o.static ? 0 : 3;
+    var S = clipLine(0, 1, 8, 100), Dl = clipLine(100, -1, 8, 100);
+    var S2 = clipLine(-d, 1, 8, 100), D2 = clipLine(100 + d, -1, 8, 100);
+    var e2 = D ? [50 + d / 2, 50 + d / 2] : [50 + d / 2, 50 - d / 2];
+    var gap = D ? [50, 50 + d] : [50, 50 + d]; // quantity at P1 on the shifted curve
+    var curves = D ? [{id: 'S', label: 'S', pts: S}, {id: 'D1', label: 'D₁', pts: Dl, thin: true}, {id: 'D2', label: 'D₂', pts: D2, color: 'red', from: 'D1', at: at1, arrowP: 88}]
+                   : [{id: 'D', label: 'D', pts: Dl}, {id: 'S1', label: 'S₁', pts: S, thin: true}, {id: 'S2', label: 'S₂', pts: S2, color: 'red', from: 'S1', at: at1, arrowP: 88}];
+    var isShort = (D && d > 0) || (!D && d < 0);
+    var pn = {heading: o.heading, axes: {xmax: 110, ymax: 110}, curves: curves,
+      points: [{q: 50, p: 50, pl: 'P₁', ql: 'Q₁'}, {q: e2[0], p: e2[1], pl: 'P₂', ql: 'Q₂', color: 'red', at: at3}]};
+    if (!o.static) { pn.points.push({q: 50 + d, p: 50, color: 'red', at: 2, until: 3, showP: false, showQ: false});
+      pn.braces = [{p: 50, q1: 50, q2: 50 + d, label: isShort ? 'Shortage' : 'Surplus', at: 2, until: 3}]; }
+    return pn;
+  }
+  function shiftSteps(o) {
+    var D = o.shift === 'D', right = o.dir !== 'left', good = o.good ? ' for ' + o.good : '';
+    var isShort = (D && right) || (!D && !right), pUp = isShort, qUp = right;
+    var why = o.why || (D ? (right ? 'Buyers want more at every price' : 'Buyers want less at every price') : (right ? 'Selling is more profitable at every price' : 'Selling is less profitable at every price'));
+    var ev = o.event ? o.event + ' ' : '';
+    return [
+      'The market' + good + ' is in equilibrium at P₁ and Q₁.',
+      ev + why + ', so ' + (D ? 'demand' : 'supply') + ' shifts ' + (right ? 'right' : 'left') + ', from ' + (D ? 'D₁ to D₂' : 'S₁ to S₂') + '.',
+      'At the old price P₁ there is now a ' + (isShort ? 'shortage: buyers want more than sellers offer, so the price rises.' : 'surplus: sellers offer more than buyers want, so the price falls.'),
+      'The market settles at P₂ and Q₂. Price ' + (pUp ? 'up' : 'down') + ', quantity ' + (qUp ? 'up' : 'down') + '.'];
+  }
+  function doublePanel(o) { // o: {demand:'left'|'right', supply:'left'|'right', dD, dS, heading, static}
+    var dD = (o.dD || 20) * (o.demand === 'left' ? -1 : 1), dS = (o.dS || 20) * (o.supply === 'left' ? -1 : 1);
+    var q2 = (100 + dD + dS) / 2, p2 = q2 - dS, a1 = o.static ? 0 : 1, a2 = o.static ? 0 : 2, a3 = o.static ? 0 : 3;
+    return {heading: o.heading, axes: {xmax: 110, ymax: 110},
+      curves: [{id: 'D1', label: 'D₁', pts: clipLine(100, -1, 8, 100), thin: true}, {id: 'S1', label: 'S₁', pts: clipLine(0, 1, 8, 100), thin: true},
+               {id: 'D2', label: 'D₂', pts: clipLine(100 + dD, -1, 8, 100), color: 'red', from: 'D1', at: a1, arrowP: 32},
+               {id: 'S2', label: 'S₂', pts: clipLine(-dS, 1, 8, 100), color: 'red', from: 'S1', at: a2, arrowP: 88}],
+      points: [{q: 50, p: 50, pl: 'P₁', ql: 'Q₁', marker: '1'}, {q: q2, p: p2, pl: 'P₂', ql: 'Q₂', color: 'red', marker: '2', at: a3}]};
+  }
+  function doubleSteps(o, q2, p2) {
+    var dr = o.demand !== 'left', sr = o.supply !== 'left';
+    return ['Equilibrium at P₁ and Q₁ (Point 1).',
+      'Demand shifts ' + (dr ? 'right' : 'left') + ', from D₁ to D₂.',
+      'Supply shifts ' + (sr ? 'right' : 'left') + ', from S₁ to S₂.',
+      'The new equilibrium is Point 2: price ' + (p2 > 50 ? 'up' : p2 < 50 ? 'down' : 'unchanged') + ', quantity ' + (q2 > 50 ? 'up' : q2 < 50 ? 'down' : 'unchanged') + '. ' + (o.note || '')];
+  }
+  function expand(cfg) {
+    if (!cfg.preset) return cfg;
+    var out = merge(cfg, {}); delete out.preset;
+    if (cfg.preset === 'shift') {
+      var pn = shiftPanel(cfg); for (var k in pn) out[k] = pn[k];
+      if (!cfg.static && !cfg.steps) out.steps = shiftSteps(cfg);
+    } else if (cfg.preset === 'double') {
+      if (cfg.compare) { // two panels: bigger supply shift vs bigger demand shift
+        var big = cfg.big || 40, small = cfg.small || 15;
+        out.link = false; out.panels = [doublePanel(merge(cfg, {dD: small, dS: big, heading: cfg.headings ? cfg.headings[0] : 'Larger shift of supply'})),
+                      doublePanel(merge(cfg, {dD: big, dS: small, heading: cfg.headings ? cfg.headings[1] : 'Larger shift of demand'}))];
+        if (!cfg.static && !cfg.steps) { var s = doubleSteps(cfg, 50, 50); s[3] = 'Each panel ends at a new Point 2. ' + (cfg.note || 'Compare them: one of price or quantity moves the same way in both; the other depends on which shift is larger.'); out.steps = s; }
+      } else {
+        var one = doublePanel(cfg); for (var k2 in one) out[k2] = one[k2];
+        var e = one.points[1]; if (!cfg.static && !cfg.steps) out.steps = doubleSteps(cfg, e.q, e.p);
+      }
+    }
+    return out;
+  }
+
+  function mount(root) {
+    var script = root.querySelector('script[type="application/json"]'); if (!script) return;
+    var base; try { base = JSON.parse(script.textContent); } catch (e) { root.textContent = 'Widget config error: ' + e.message; return; }
+    function draw(key) {
+      var cfg = base;
+      if (base.scenarios) { key = key || base.activeScenario || Object.keys(base.scenarios)[0]; cfg = merge(base, base.scenarios[key]); cfg.activeScenario = key; }
+      new Widget(root, expand(cfg));
+    }
+    root.addEventListener('sdg-scenario', function (e) { draw(e.detail); });
+    draw();
+  }
+  function init() { document.querySelectorAll('.sdg').forEach(mount); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+})();
+</script>
+</head>
+<body>
+
+<p class="date">Wednesday, 8/26/26</p>
+
+<div class="aside-box"><h4>Exam 1 Topics</h4>
+<ul>
+<li>Ch. 1 &ndash; Intro to Microeconomics</li>
+<li>Ch. 2 &ndash; The PPF</li>
+<li>Ch. 3 &ndash; Supply &amp; Demand</li>
+<li>Ch. 4 &ndash; Elasticity</li>
+<li>Ch. 5 &ndash; Efficiency</li>
+<li>Ch. 6 &ndash; Government Intervention in Markets</li>
+<li>Ch. 7 &ndash; Global Markets in Action</li>
+</ul>
+</div>
+
+<h1>The Production Possibilities Frontier</h1>
+
+<p>A <strong>production possibilities frontier (PPF)</strong> shows the maximum attainable combinations of two goods that can be produced with current technology and available resources.  (You may also see it called a production possibilities curve; it is the same thing.)  The PPF is the first abstract economic model we will use.  For example, suppose that an economy can use its scarce resources to produce two goods: steaks or hamburgers.  The PPF shows the maximum combinations of steaks and hamburgers that the nation can produce if it devotes all of its resources to producing those two goods.  Dr. Rush builds his first frontier around a student who produces a GPA and dates (see the example below), and then around a simple economy that produces gumballs and machines.</p>
+
+<ul>
+<li>Points <b>on</b> the PPF are <b>attainable and efficient</b> (Dr. Rush calls these production efficient points).</li>
+<li>Points <b>inside</b> the PPF are <b>attainable but inefficient</b> (production inefficient points).</li>
+<li>Points <b>outside</b> the PPF are <b>unattainable</b>&mdash;at least right now.  If resources or technology increase, points that were unattainable may become attainable.</li>
+</ul>
+
+<!-- IMAGE POSITION: beside-referenced paragraph -->
+<div class="sdg"><script type="application/json">
+{
+ "title": "Attainable, efficient, and out of reach",
+ "lede": "Step through the three kinds of point on and around a frontier.",
+ "axes": {
+  "xmax": 115,
+  "ymax": 95,
+  "x": "Hamburgers",
+  "y": "Steaks"
+ },
+ "curves": [
+  {
+   "id": "PPF",
+   "label": "",
+   "pts": [
+    [
+     0.0,
+     85.0
+    ],
+    [
+     27.4,
+     79.9
+    ],
+    [
+     45.9,
+     69.6
+    ],
+    [
+     61.3,
+     54.7
+    ],
+    [
+     72.5,
+     36.0
+    ],
+    [
+     78.8,
+     14.8
+    ],
+    [
+     80.0,
+     0.0
+    ]
+   ],
+   "curved": true
+  }
+ ],
+ "points": [
+  {
+   "q": 61.3,
+   "p": 54.7,
+   "label": "Efficient",
+   "at": 1,
+   "until": 2,
+   "dx": 10,
+   "dy": -10,
+   "guides": false,
+   "showP": false,
+   "showQ": false
+  },
+  {
+   "q": 22,
+   "p": 30,
+   "label": "Inefficient",
+   "at": 2,
+   "until": 3,
+   "dx": 10,
+   "dy": -10,
+   "guides": false,
+   "showP": false,
+   "showQ": false
+  },
+  {
+   "q": 68,
+   "p": 72,
+   "label": "Unattainable",
+   "at": 3,
+   "dx": 9,
+   "dy": -9,
+   "guides": false,
+   "showP": false,
+   "showQ": false
+  }
+ ],
+ "steps": [
+  "An economy that puts all of its resources into just two goods can produce any combination of steaks and hamburgers on or inside this frontier. The frontier itself is the most steaks it can manage for each quantity of hamburgers.",
+  "A point on the frontier is attainable and production-efficient: every resource is in use, so more hamburgers can only be had by producing fewer steaks.",
+  "A point inside the frontier is attainable but production-inefficient. Resources are idle or badly matched to their jobs, so both steaks and hamburgers could rise at once.",
+  "A point beyond the frontier is unattainable with current resources and technology, which is why you cannot even ask whether it is efficient. More resources or better technology would be needed before that many steaks and hamburgers could be produced together."
+ ]
+}
+</script></div>
+
+<p>A society benefits from producing at a point on the PPF&mdash;that is, society benefits from producing the maximum possible combination of goods by working as efficiently as possible.  An attainable and efficient point is always the most preferred.  Note that you cannot ask whether a point beyond the PPF is efficient or inefficient&mdash;you have to be able to produce a point before you can judge whether it uses your resources efficiently.</p>
+
+<p>The PPF helps us answer the &ldquo;what&rdquo; question and the &ldquo;how&rdquo; question, but not the &ldquo;who&rdquo; question.  The PPF tells us what and how much a country can produce, but it does not tell us anything about how those goods and services are divided among the country&rsquo;s citizens.  Its answer to the &ldquo;how&rdquo; question is simply that we want to produce efficiently&mdash;on the PPF&mdash;without wasting or misallocating resources.  In general, our capitalist economy does a good job at allocating resources, so the U.S. economy is likely operating near the PPF.  Decades ago, China probably operated at a point well within its PPF, but it has moved closer to the PPF since adopting more capitalistic policies.  Dr. Rush treats the PPF as a conceptual tool for organizing your thoughts&mdash;you cannot actually estimate a PPF&mdash;and after this chapter we will not see it again.</p>
+
+<h1>Scarcity &amp; Opportunity Cost</h1>
+
+<div class="exam-tip"><h4>EXAM TIP: The next-best alternative</h4><p>Remember that the opportunity cost of an action or decision is the <b>single</b> next-highest valued alternative foregone.</p></div>
+
+<p>The PPF reflects <strong>scarcity</strong>.  Specifically, it reflects the fact that economies have limited technology and limited resources.  People&rsquo;s wants will always exceed the economy&rsquo;s ability to meet them because resources are limited.  The <strong>opportunity cost</strong> of an action or decision is the single next highest-valued alternative foregone because you took that action or made that decision.  Dr. Rush calls this the &ldquo;true&rdquo; cost of an action.  Almost every action you can think of has an opportunity cost.  Even sitting in an economics course has an opportunity cost&mdash;the statistics course, the sleep, or the hours at work that you gave up to be there.  In the real world, opportunity cost is difficult to measure, but it always exists; on a PPF it is easy to measure, because there are only two goods.  The opportunity cost is the single next-best alternative foregone (i.e., a given action can have only one opportunity cost).  An opportunity cost is the same thing as a relative price but different from a money cost.  Money cost is expressed in dollars, whereas opportunity cost is expressed in terms of the things that you actually give up.</p>
+
+<div class="example-box"><h4>Example: Food and Opportunity Cost</h4>
+<p>Suppose you have $10 to spend on lunch.  You could choose between a Bento sushi roll, a Chick-fil-A sandwich, or a Panda Express bowl.  Let&rsquo;s say your preferences, from most to least desired, are:</p>
+<ol>
+<li>Bento sushi roll</li>
+<li>Chick-fil-A sandwich</li>
+<li>Panda Express bowl</li>
+</ol>
+<p>If you buy the sushi roll, your opportunity cost is the foregone chance to enjoy the Chick-fil-A sandwich&mdash;your next-best alternative.  The opportunity cost is not all the other options, just the single next-best one.</p>
+</div>
+
+<h2>Example: A Student&rsquo;s GPA</h2>
+
+<p>Let&rsquo;s assume that a student does only two things: go on dates and study.  He doesn&rsquo;t eat, sleep, or do anything else.  A production possibilities frontier for this person&rsquo;s life would look like the one below.  Dr. Rush works the same example with a GPA that runs from 0 to 4.0 and up to 24 one-hour dates in a day, but the idea is exactly the same.</p>
+
+<!-- IMAGE POSITION: beside-referenced paragraph -->
+<div class="sdg"><script type="application/json">
+{
+ "title": "A student's frontier: grades and dates",
+ "lede": "All study and no dates gives a 3.8; all dates and no study gives 20.",
+ "axes": {
+  "x": "Dates",
+  "y": "GPA",
+  "xmax": 24,
+  "ymax": 4.4,
+  "xticks": [
+   0,
+   8,
+   12,
+   20
+  ],
+  "yticks": [
+   0,
+   2,
+   2.8,
+   3.8
+  ]
+ },
+ "curves": [
+  {
+   "id": "PPF",
+   "label": "",
+   "pts": [
+    [
+     0,
+     3.8
+    ],
+    [
+     8,
+     2.8
+    ],
+    [
+     12,
+     2
+    ],
+    [
+     20,
+     0
+    ]
+   ],
+   "curved": true
+  }
+ ],
+ "points": [
+  {
+   "q": 0,
+   "p": 3.8,
+   "guides": false
+  },
+  {
+   "q": 20,
+   "p": 0,
+   "guides": false
+  },
+  {
+   "q": 12,
+   "p": 2,
+   "label": "Efficient",
+   "at": 1,
+   "until": 2,
+   "dx": 10,
+   "dy": -10
+  },
+  {
+   "q": 7,
+   "p": 1.2,
+   "label": "Inefficient",
+   "at": 2,
+   "until": 3,
+   "dx": 10,
+   "dy": 20,
+   "guides": false,
+   "showP": false,
+   "showQ": false
+  },
+  {
+   "q": 15,
+   "p": 3.2,
+   "label": "Unattainable",
+   "at": 3,
+   "dx": -96,
+   "dy": -10,
+   "guides": false,
+   "showP": false,
+   "showQ": false
+  }
+ ],
+ "steps": [
+  "A student who does nothing but study earns a 3.8 and goes on no dates; one who does nothing but socialise manages 20 dates and no grades. Every combination on the frontier between those two is attainable and efficient.",
+  "Twelve dates alongside a 2.0 is on the frontier, so the student's time is fully used: another date now costs grade points, and another tenth of a grade point costs dates.",
+  "A combination inside the frontier is attainable but wasteful. The student has time left over, so both the GPA and the number of dates could rise together.",
+  "A combination beyond the frontier is simply out of reach. No matter how the student arranges the week, that many dates and that high a GPA cannot both happen."
+ ]
+}
+</script></div>
+
+<p>A student can get a GPA of 3.8 if he works his hardest and doesn&rsquo;t go on any dates.  He could go on 20 dates if he tries his hardest at it and doesn&rsquo;t worry at all about school.  Notice that points on the curve represent all of the maximum possible combinations of GPA and dates.  Points under the curve are possible but not efficient&mdash;at those points, production would not be at maximum potential.  Above the curve, production would be impossible at all points&mdash;the student simply can&rsquo;t attain this combination of dates and GPA, no matter how hard he works.  The PPF represents the maximum possible number of dates and GPA the student can attain by operating as efficiently as possible.</p>
+
+<div class="exam-tip"><h4>EXAM TIP: Every point on the frontier is a trade-off</h4><p>If you&rsquo;re at a point on your PPF, you can&rsquo;t produce more of one good without giving up production of the other good.</p></div>
+
+<p>The opportunity cost is the next-best alternative foregone.  Using our example, the student could change his grades and the number of dates he goes on&mdash;that is, he could move along the PPF.  If he had a GPA of 2.0 and were going on 12 dates a week, he could change that.  He could boost his GPA to 2.8, but he would have to give up 4 dates to do so, bringing him down to 8 dates a week.  The 4 dates that he gave up represent the opportunity cost of increasing his GPA by 0.8.  Similarly, if he wanted to go on more dates per week, he could do that, but his GPA would fall.  The opportunity cost of going on more dates is the amount of grade points that he has to give up to do so.</p>
+
+<!-- IMAGE POSITION: below-referenced paragraph -->
+<div class="sdg"><script type="application/json">
+{
+ "title": "The opportunity cost of a higher GPA",
+ "lede": "Moving up the frontier is paid for in dates.",
+ "axes": {
+  "x": "Dates",
+  "y": "GPA",
+  "xmax": 24,
+  "ymax": 4.4,
+  "xticks": [
+   0,
+   8,
+   12,
+   20
+  ],
+  "yticks": [
+   0,
+   2,
+   2.8,
+   3.8
+  ]
+ },
+ "curves": [
+  {
+   "id": "PPF",
+   "label": "",
+   "pts": [
+    [
+     0,
+     3.8
+    ],
+    [
+     8,
+     2.8
+    ],
+    [
+     12,
+     2
+    ],
+    [
+     20,
+     0
+    ]
+   ],
+   "curved": true
+  }
+ ],
+ "points": [
+  {
+   "q": 12,
+   "p": 2
+  },
+  {
+   "q": 8,
+   "p": 2.8,
+   "at": 1
+  }
+ ],
+ "moves": [
+  {
+   "from": [
+    12,
+    2
+   ],
+   "to": [
+    8,
+    2.8
+   ],
+   "at": 1,
+   "offset": -21
+  }
+ ],
+ "braces": [
+  {
+   "p": 0,
+   "q1": 8,
+   "q2": 12,
+   "label": "4 dates given up",
+   "below": true,
+   "at": 1
+  }
+ ],
+ "vbraces": [
+  {
+   "p1": 2,
+   "p2": 2.8,
+   "label": "0.8 grade points gained",
+   "left": true,
+   "at": 1
+  }
+ ],
+ "steps": [
+  "The student starts on the frontier at 12 dates and a 2.0, with every hour of the week already committed.",
+  "Raising the GPA to 2.8 means giving up 4 dates, so the opportunity cost of those 0.8 grade points is 4 dates. Grades rise and dates fall, and the reverse trade works the same way in the other direction."
+ ]
+}
+</script></div>
+
+<p>When you&rsquo;re operating inefficiently (i.e., from within the interior of the PPF curve), some of your resources are either unemployed or misallocated.  In a case where you&rsquo;re operating inefficiently, you can increase both your grades and your dates by operating more efficiently.  Thus, there may not be an opportunity cost to adding more of either dates or grade points.  A point within the curve is less desirable than a point on the curve because any point on the curve maximizes efficiency.  Think of it like a test score: a 60% leaves room to improve while a 100% does not, but nobody prefers the 60%.  Production inefficient points are the 60%&mdash;you could have more of everything&mdash;so you want to be at a production efficient point, and once you are there, changing means giving something up.</p>
+
+<p>Time and skills are the two limitations on what this student can attain.  He could shift the entire curve outward by getting better at one or both activities&mdash;getting dates and getting good grades.  If he learned new study skills or improved his looks, he would have new capabilities, and his PPF would shift outward.  Alternatively, if he got amnesia and couldn&rsquo;t remember anything or he forgot to bathe, his PPF would shift inward&mdash;he would no longer be able to get grades as high as before, or he would no longer get as many dates.  In general, the two things that shift a PPF are your resources (here, your time, study skills, and social skills) and your technology&mdash;how you combine those resources.  The same lessons carry over if the student does three things (say, dating, studying, and sleeping): the PPF becomes three-dimensional, points beyond it are unattainable, points inside it are inefficient, and moving along it means giving up one or more of the other activities.</p>
+
+<div class="example-box"><h4>Different PPFs for Different People</h4>
+<p>Note that the PPF may be different among people who are better at different things.  Consider the following examples:</p>
+<!-- IMAGE POSITION: below-referenced paragraph -->
+<div class="sdg"><script type="application/json">
+{
+ "title": "Different people, different frontiers",
+ "lede": "Same two activities, same scale, three sets of skills.",
+ "axes": {
+  "xmax": 115,
+  "ymax": 95,
+  "x": "Dates",
+  "y": "GPA"
+ },
+ "scenarios": {
+  "school": {
+   "label": "Good at school, bad at socialising",
+   "curves": [
+    {
+     "id": "PPF",
+     "label": "",
+     "pts": [
+      [
+       0.0,
+       73.0
+      ],
+      [
+       8.2,
+       68.6
+      ],
+      [
+       13.8,
+       59.8
+      ],
+      [
+       18.4,
+       46.9
+      ],
+      [
+       21.7,
+       30.9
+      ],
+      [
+       23.6,
+       12.7
+      ],
+      [
+       24.0,
+       0.0
+      ]
+     ],
+     "curved": true
+    }
+   ],
+   "steps": [
+    "This student can reach a high GPA but very few dates, so the frontier is tall and narrow.",
+    "Because studying is what this student is good at, grade points come cheaply and each extra date costs a lot of GPA."
+   ]
+  },
+  "social": {
+   "label": "Good at socialising, bad at school",
+   "curves": [
+    {
+     "id": "PPF",
+     "label": "",
+     "pts": [
+      [
+       0.0,
+       20.0
+      ],
+      [
+       34.9,
+       18.8
+      ],
+      [
+       58.5,
+       16.4
+      ],
+      [
+       78.1,
+       12.9
+      ],
+      [
+       92.4,
+       8.5
+      ],
+      [
+       100.5,
+       3.5
+      ],
+      [
+       102.0,
+       0.0
+      ]
+     ],
+     "curved": true
+    }
+   ],
+   "steps": [
+    "This student can reach a great many dates but only a low GPA, so the frontier is wide and flat.",
+    "Here it is dates that come cheaply, and each extra tenth of a grade point costs a large number of dates."
+   ]
+  },
+  "neither": {
+   "label": "Bad at both",
+   "curves": [
+    {
+     "id": "PPF",
+     "label": "",
+     "pts": [
+      [
+       0.0,
+       20.0
+      ],
+      [
+       7.5,
+       18.8
+      ],
+      [
+       12.6,
+       16.4
+      ],
+      [
+       16.9,
+       12.9
+      ],
+      [
+       19.9,
+       8.5
+      ],
+      [
+       21.7,
+       3.5
+      ],
+      [
+       22.0,
+       0.0
+      ]
+     ],
+     "curved": true
+    }
+   ],
+   "steps": [
+    "This student is weak at both activities, so the whole frontier sits close to the origin.",
+    "Every attainable combination here has both a lower GPA and fewer dates than either of the other two students could manage."
+   ]
+  }
+ }
+}
+</script></div>
+</div>
+
+<h1>Shifts of the PPF</h1>
+
+<p>Why can&rsquo;t we produce at a point outside the PPF?  Why does the PPF represent the <em>maximum</em> possible output?</p>
+
+<ul>
+<li>Limited resources (land, labor, capital, entrepreneurship)</li>
+<li>Limited technology</li>
+</ul>
+
+<p>Economists group resources into four broad categories: <strong>labor</strong> (all of our workers&mdash;their hours of work and their skills), <strong>capital</strong> (the actual physical capital, such as an industrial robot in an automobile plant or a rental car&mdash;not shares of stock or money a company has saved up), <strong>land</strong> (all of the natural resources, or &ldquo;gifts of nature,&rdquo; including farmland, lumber, and oil), and <strong>entrepreneurship</strong> (the people who organize businesses and make business decisions&mdash;the resource that organizes the other resources).  An economy is production inefficient if some of these resources are lying fallow or are misallocated&mdash;for example, if people who are good at making machines are making gumballs while people who are good at making gumballs are making machines.</p>
+
+<p>Dr. Rush thinks of technology as a recipe: it tells you how to combine your inputs to get your output.  Technology increases when you find new and better ways of producing things you produced before, or when you can produce new things (five years ago we could not produce AI; now we can).</p>
+
+<p>The text defines these two factors as <strong>technological change</strong>, the development of new goods and better ways of producing goods and services, and <strong>capital accumulation</strong>, the growth of capital resources, including human capital.  If advancements occur in either resources or technology, the PPF can shift outward.</p>
+
+<!-- IMAGE POSITION: beside-referenced paragraph -->
+<div class="sdg"><script type="application/json">
+{
+ "title": "Economic growth shifts the frontier out",
+ "lede": "More resources and better technology move the whole frontier.",
+ "axes": {
+  "xmax": 115,
+  "ymax": 95,
+  "x": "Hamburgers",
+  "y": "Steaks"
+ },
+ "curves": [
+  {
+   "id": "PPF2026",
+   "label": "2026",
+   "pts": [
+    [
+     0.0,
+     66.0
+    ],
+    [
+     17.1,
+     62.0
+    ],
+    [
+     28.7,
+     54.1
+    ],
+    [
+     38.3,
+     42.4
+    ],
+    [
+     45.3,
+     27.9
+    ],
+    [
+     49.2,
+     11.5
+    ],
+    [
+     50.0,
+     0.0
+    ]
+   ],
+   "curved": true,
+   "thin": true,
+   "ldx": 8,
+   "ldy": -8
+  },
+  {
+   "id": "PPF2027",
+   "label": "2027",
+   "pts": [
+    [
+     0.0,
+     80.0
+    ],
+    [
+     29.1,
+     75.2
+    ],
+    [
+     48.8,
+     65.5
+    ],
+    [
+     65.1,
+     51.4
+    ],
+    [
+     77.0,
+     33.8
+    ],
+    [
+     83.7,
+     13.9
+    ],
+    [
+     85.0,
+     0.0
+    ]
+   ],
+   "curved": true,
+   "color": "red",
+   "from": "PPF2026",
+   "arrowP": 30,
+   "ldx": 14,
+   "ldy": -16,
+   "at": 1
+  }
+ ],
+ "steps": [
+  "With this year's resources and technology, the economy can produce any combination of steaks and hamburgers on or inside the frontier.",
+  "Better technology and more capital push the frontier outward, so the economy can produce more steaks and more hamburgers than before. The shift is not parallel here: hamburger production grows far more than steak production, so hamburgers become the cheaper of the two."
+ ]
+}
+</script></div>
+
+<p>The outward shift that occurs is <strong>economic growth</strong>, which typically corresponds with an increase in the standard of living.  The curve does not have to shift in a parallel fashion.  That is, technological advancements could have been much greater for one good than for the other, or vice versa.</p>
+
+<p>Economic growth depends on the decisions regarding what is to be produced.  There is an opportunity cost to economic growth.  For example, investment in capital and R&amp;D may promote economic growth, but the cost is that the nation must forego consumption in the current period.  Dr. Rush illustrates this with gumballs and machines: gumballs stand in for currently consumable goods (restaurant meals, sporting events, or clothing you buy this year), while machines are capital.  If the economy produces at a point with more machines and fewer gumballs this year, it has more capital next year, so its PPF shifts out farther and it grows more rapidly&mdash;but it had to give up gumballs to do so.  Economic growth is not free.</p>
+
+<p>In the United States, the PPF is progressively shifting outward, and our economy typically grows about 1&frac12; to 2% each year because we accumulate more capital, more and better-skilled workers, and better technology.  However, in some countries, the PPF has shifted inward.  For example, diseases, wars, and natural disasters may cause a country&rsquo;s PPF to shift inward.  The horrific civil war in Syria over the past 20 years destroyed a great deal of capital, and millions of Syrians fled the country, so Syria&rsquo;s PPF in 2026 is much smaller than it was in 2006.  Likewise, the Russian invasion of Ukraine has reduced Ukraine&rsquo;s production possibilities, so its PPF has shifted inward.</p>
+
+<div class="example-box"><h4>Illustrating Shifts of the PPF</h4>
+<p>Let&rsquo;s return to the example in which a person can either produce dates or grades.  The individual&rsquo;s PPF might shift over time as he or she obtains more resources or skills.  For example, over the course of four years of college, the student might gain additional skills that shift his or her PPF outward.  Most students experience an improvement in study skills during their college careers, and most also improve their socializing skills.  Therefore, by the end of a student&rsquo;s college career (as a senior), his or her PPF might shift outward as shown below.</p>
+<!-- IMAGE POSITION: beside-referenced paragraph -->
+<div class="sdg"><script type="application/json">
+{
+ "title": "A student's frontier over four years",
+ "lede": "Growth need not be the same for both activities.",
+ "axes": {
+  "xmax": 115,
+  "ymax": 95,
+  "x": "Grades",
+  "y": "Dates"
+ },
+ "curves": [
+  {
+   "id": "Fresh",
+   "label": "Freshman",
+   "pts": [
+    [
+     0.0,
+     50.0
+    ],
+    [
+     23.9,
+     47.0
+    ],
+    [
+     40.2,
+     40.9
+    ],
+    [
+     53.6,
+     32.1
+    ],
+    [
+     63.4,
+     21.1
+    ],
+    [
+     69.0,
+     8.7
+    ],
+    [
+     70.0,
+     0.0
+    ]
+   ],
+   "curved": true,
+   "thin": true,
+   "ldx": -84,
+   "ldy": -12
+  },
+  {
+   "id": "Senior",
+   "label": "Senior",
+   "pts": [
+    [
+     0.0,
+     84.0
+    ],
+    [
+     29.1,
+     79.0
+    ],
+    [
+     48.8,
+     68.8
+    ],
+    [
+     65.1,
+     54.0
+    ],
+    [
+     77.0,
+     35.5
+    ],
+    [
+     83.7,
+     14.6
+    ],
+    [
+     85.0,
+     0.0
+    ]
+   ],
+   "curved": true,
+   "color": "red",
+   "from": "Fresh",
+   "arrowP": 40,
+   "ldx": 14,
+   "ldy": -16,
+   "at": 1
+  }
+ ],
+ "steps": [
+  "As a freshman the student has a given stock of study skills and social skills, and the frontier shows the best combinations of grades and dates those skills allow.",
+  "Four years of practice pushes the frontier outward, so the senior can reach combinations of grades and dates that were unattainable as a freshman. The shift is not parallel: social skills improved more than study skills, so dates rose much further than grades."
+ ]
+}
+</script></div>
+<p>Note that the shift of the PPF was not parallel.  This reflects the fact that the improvement in socializing skills was more significant than the improvement in study skills.  The student&rsquo;s production possibilities increased for both grades and dates, but the improvement was more pronounced for dates than for grades.</p>
+<p>Also, notice that points along the student&rsquo;s PPF as a senior were previously unattainable as a freshman.  In this case, the improvement in study skills and socializing skills allows the student to obtain a combination of grades and dates as a senior that was simply unattainable as a freshman.</p>
+</div>
+
+<h1>Production Efficiency vs. Allocative Efficiency</h1>
+
+<p>We say that every point on the PPF is <strong>production-efficient</strong>.  That is, at these points, we are producing the maximum possible combination of goods by working as efficiently as possible.  However, note that, as a practical matter, not every point along the PPF may be equally desirable for all people.</p>
+
+<!-- IMAGE POSITION: beside-referenced paragraph -->
+<div class="sdg"><script type="application/json">
+{
+ "title": "Production-efficient is not the same as desirable",
+ "lede": "Both ends of the frontier are efficient, and neither is what anyone wants.",
+ "axes": {
+  "xmax": 115,
+  "ymax": 95,
+  "x": "Food",
+  "y": "Clothing"
+ },
+ "curves": [
+  {
+   "id": "PPF",
+   "label": "",
+   "pts": [
+    [
+     0.0,
+     85.0
+    ],
+    [
+     27.4,
+     79.9
+    ],
+    [
+     45.9,
+     69.6
+    ],
+    [
+     61.3,
+     54.7
+    ],
+    [
+     72.5,
+     36.0
+    ],
+    [
+     78.8,
+     14.8
+    ],
+    [
+     80.0,
+     0.0
+    ]
+   ],
+   "curved": true
+  }
+ ],
+ "points": [
+  {
+   "q": 0,
+   "p": 85,
+   "label": "A",
+   "dx": -16,
+   "dy": 4,
+   "guides": false,
+   "showP": false,
+   "showQ": false
+  },
+  {
+   "q": 80,
+   "p": 0,
+   "label": "B",
+   "dx": 9,
+   "dy": -6,
+   "guides": false,
+   "showP": false,
+   "showQ": false
+  }
+ ],
+ "steps": [
+  "Every point on this frontier is production-efficient, including the two ends, where the country makes only one of the two goods.",
+  "At Point A the country makes all clothing and no food. Clothing output is as high as it can be and food output is zero, which is production-efficient and still no use to anybody: the people are beautifully dressed and starving.",
+  "At Point B the country makes all food and no clothing. Food output is as high as it can be and clothing output is zero. People prefer variety, so the combination society actually values most sits somewhere between A and B."
+ ]
+}
+</script></div>
+
+<p>Consider the extremes, where you produce all of one good and none of the other.  Clearly, individuals (and societies) prefer variety.  So, while those points are production-efficient, they may not be <strong>allocatively efficient</strong>.</p>
+
+<p>For example, consider a country that produces only food and clothing.  Although the point associated with producing only clothing may be production-efficient in that it lies along the PPF, it certainly would not be allocatively efficient.  If the country were to produce only clothing, people would be well-clothed, but they would be starving (a nation of incredibly well-dressed corpses, as Dr. Rush put it).</p>
+
+<p>Dr. Rush distinguishes the actual point at which the economy produces from the most desirable point.  In Chapter 3, we will use supply and demand to determine the actual point&mdash;on which point along a PPF a country actually operates.  In Chapter 5, we will use the concepts of marginal social benefit and marginal social cost to determine the most desirable (allocatively efficient) point.  We can then compare these two points to determine whether the country is producing in an allocatively efficient manner&mdash;a comparison we will return to in Chapters 6, 7, 13, 14, 16, and 17.</p>
+
+<h1>The Law of Increasing Opportunity Costs: Why the PPF Is Bowed-Out</h1>
+
+<div class="exam-tip"><h4>EXAM TIP: Why a frontier bows out</h4><p>PPFs are bowed-out when resources are not equally suited to produce both goods on the PPF.</p></div>
+
+<p>Moving along the production possibilities frontier, <b>as more of a good is produced, the opportunity cost of an additional unit increases</b>.  Why?  Resources are not equally suited for different jobs.  For example, some people are better at producing some goods than others.</p>
+
+<p>The <strong>law of increasing opportunity costs</strong> is what causes the &ldquo;bowed-out&rdquo; shape of the production possibilities frontier.  As you move to the right along the PPF, the opportunity cost of the good along the horizontal axis increases and the PPF gets steeper.</p>
+
+<div class="exam-tip"><h4>EXAM TIP: Calculating opportunity cost</h4><p>You will probably need to know how to calculate opportunity costs on the exam.  Dr. Rush will never ask you to draw a PPF (the exams are multiple choice), but he may ask for the opportunity cost between two points on a PPF&mdash;just take what you lose and divide it by what you gain&mdash;and which points are attainable, production efficient, or production inefficient.</p></div>
+
+<div class="example-box"><h4>Gumballs, Machines, and the Law of Increasing Opportunity Costs</h4>
+<p>Assume that a country only produces two things&mdash;gumballs and machines.  Five possibilities for maximum output are shown below.</p>
+<p>Note that this PPF works like the first one we examined.  An attainable, completely efficient level of production would occur on the PPF.  Levels of production under the PPF would be attainable but not efficient, and it would be impossible to attain production above the PPF.</p>
+<p>To calculate the opportunity cost of producing one more gumball, we take the number of machines lost and divide it by the number of gumballs gained.  The opportunity costs of moving from left to right along this PPF (from A to E) can be calculated as follows:</p>
+<ul>
+<li><b>A to B:</b> 1 machine per gumball</li>
+<li><b>B to C:</b> 2 machines per gumball</li>
+<li><b>C to D:</b> 3 machines per gumball</li>
+<li><b>D to E:</b> 4 machines per gumball</li>
+</ul>
+<!-- IMAGE POSITION: beside-referenced paragraph -->
+<div class="sdg"><script type="application/json">
+{
+ "title": "Gumballs, machines, and rising opportunity cost",
+ "lede": "Each row of the table is one point on the frontier.",
+ "axes": {
+  "x": "Gumballs",
+  "y": "Machines",
+  "xmax": 5.0,
+  "ymax": 10.6,
+  "xticks": [
+   0,
+   1,
+   2,
+   3,
+   4
+  ],
+  "yticks": [
+   0,
+   4,
+   7,
+   9,
+   10
+  ],
+  "grid": true
+ },
+ "curves": [
+  {
+   "id": "PPF",
+   "label": "",
+   "pts": [
+    [
+     0,
+     10
+    ],
+    [
+     1,
+     9
+    ],
+    [
+     2,
+     7
+    ],
+    [
+     3,
+     4
+    ],
+    [
+     4,
+     0
+    ]
+   ],
+   "curved": true
+  }
+ ],
+ "points": [
+  {
+   "q": 0,
+   "p": 10,
+   "label": "A",
+   "dx": 10,
+   "dy": -4,
+   "guides": false
+  },
+  {
+   "q": 1,
+   "p": 9,
+   "label": "B",
+   "dx": 10,
+   "dy": -8,
+   "guides": false
+  },
+  {
+   "q": 2,
+   "p": 7,
+   "label": "C",
+   "dx": 10,
+   "dy": -8,
+   "guides": false
+  },
+  {
+   "q": 3,
+   "p": 4,
+   "label": "D",
+   "dx": 10,
+   "dy": -8,
+   "guides": false
+  },
+  {
+   "q": 4,
+   "p": 0,
+   "label": "E",
+   "dx": 8,
+   "dy": -12,
+   "guides": false
+  }
+ ],
+ "moves": [
+  {
+   "from": [
+    0,
+    10
+   ],
+   "to": [
+    1,
+    9
+   ],
+   "at": 1,
+   "until": 2,
+   "offset": 12
+  },
+  {
+   "from": [
+    1,
+    9
+   ],
+   "to": [
+    2,
+    7
+   ],
+   "at": 2,
+   "until": 3,
+   "offset": 12
+  },
+  {
+   "from": [
+    2,
+    7
+   ],
+   "to": [
+    3,
+    4
+   ],
+   "at": 3,
+   "until": 4,
+   "offset": 12
+  },
+  {
+   "from": [
+    3,
+    4
+   ],
+   "to": [
+    3.8,
+    0.9
+   ],
+   "at": 4,
+   "offset": 12
+  }
+ ],
+ "table": {
+  "cols": [
+   "Machines",
+   "Gumballs"
+  ],
+  "series": [
+   "PPF"
+  ],
+  "rows": [
+   [
+    10,
+    0
+   ],
+   [
+    9,
+    1
+   ],
+   [
+    7,
+    2
+   ],
+   [
+    4,
+    3
+   ],
+   [
+    0,
+    4
+   ]
+  ]
+ },
+ "steps": [
+  "A country that makes only gumballs and machines has five maximum combinations, A through E. Points on the curve are attainable and efficient, points under it are attainable but wasteful, and points above it cannot be produced at all.",
+  "Moving from A to B, the first gumball costs 1 machine, because the workers moved across are the ones who were always better at gumballs than at machines.",
+  "Moving from B to C, the second gumball costs 2 machines. The same one gumball is gained, but more machines are given up.",
+  "Moving from C to D, the third gumball costs 3 machines. Each further gumball is bought with a bigger drop in machines.",
+  "Moving from D to E, the last gumball costs 4 machines, because the workers moved across are the ones best at making machines. The cost of a gumball rises with every step, and that rising cost is what bows the frontier outward."
+ ]
+}
+</script></div>
+</div>
+
+<div class="example-box"><h4>Gumballs, Machines, and the Law of Increasing Opportunity Costs (Cntd.)</h4>
+<p>The <strong>law of increasing opportunity costs</strong> states that, as you move along the PPF, when more of one good is produced, the opportunity cost of additional units increases.  Why?  Resources are not equally suited for different jobs.  For instance, some people are better at making gumballs, and some are better at making machines.  At first (A&rarr;B), workers who are better at making gumballs than machines are reallocated from making machines to making gumballs.  But, at the end (D&rarr;E), the workers that are being moved from machine production to gumball production are better at making machines than at making gumballs.  So, the opportunity cost of producing that last gumball is greater than the opportunity cost of producing the first one.  This is why the curve is &ldquo;bowed-out.&rdquo;  Graphically, each move to the right gains the same one gumball, but the drop down&mdash;the machines lost&mdash;gets bigger and bigger (1, then 2, then 3, then 4), which produces the bowed-out shape.</p>
+<p>If the PPF were a straight line, opportunity cost would not change as you move along the PPF.  This would suggest that resources are similarly well-suited to produce both of the goods depicted in the PPF.</p>
+</div>
+
+<div class="other-box"><h4>From the Textbook: Topics We Did Not Cover</h4>
+<p>A few concepts appear in the textbook chapter but are not part of our coverage:</p>
+<ul>
+<li><b>Capital accumulation</b>&mdash;the growth of both physical capital and human capital&mdash;can drive economic growth.  Hong Kong has grown faster than the United States since the 1960s because it has devoted more of its resources to capital accumulation.</li>
+<li><b>Types of property</b>&mdash;three types of property include <em>real property</em> (land and buildings), <em>financial property</em> (stocks and bonds), and <em>intellectual property</em> (intangible products of creative effort).</li>
+</ul>
+</div>
+
+</body>
+</html>

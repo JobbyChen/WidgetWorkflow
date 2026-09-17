@@ -144,6 +144,20 @@ or "unattainable" dot) whose exact coordinates are not the lesson.
 - [ ] Only two panels are supported. A four-panel figure (the prompt mentions
       `image-wide-85` for them) would need engine work.
 
+- [ ] **A curve label can only sit at the first or last point.** Both ends of a
+      full production possibilities frontier are on an axis, so a period label
+      ("2026", "Senior") has to be nudged into open space by hand with `ldx`/
+      `ldy` and re-rendered to check it. A way to anchor the label to a chosen
+      point of `pts`, or to a data coordinate, would remove the guesswork.
+- [ ] **Point labels are one line of SVG text.** The printed zone labels on a
+      PPF are two lines ("Attainable &" / "Efficient"), so
+      `ECO2023-263-ThePPF.html` shortens them to "Efficient" / "Inefficient" and
+      puts the full wording in the caption.
+- [ ] **A `moves` arrow spans the whole chord.** When the chord ends on an axis,
+      an inside offset drops the arrow below the axis, and the only way to stop
+      it short is to fake the `to` coordinate (the gumballs widget's D→E arrow
+      ends at `[3.8, 0.9]`). An explicit trim or a `shorten` would be honest.
+
 ## Workflow
 
 - [ ] **No list of who may be named, by choice.** Hard rule 4 covers the policy:
@@ -166,3 +180,14 @@ or "unattainable" dot) whose exact coordinates are not the lesson.
       examples and prompt v6 are here, which is the part that matters.
 - [ ] `scripts/render_widgets.py` needs `pip install playwright`. It uses the
       Chromium already under `/opt/pw-browsers/` rather than downloading one.
+
+- [ ] **Is document 2 a different course from document 1?** `1 - ECO2013 …` is
+      Dr. Knight's; `03-ECO2023-Fall26-Exam1-PPF.docx` is Dr. Rush's, with its
+      own chapter numbering and its own examples, and the two overlap heavily on
+      the PPF. They were described as four chapters of one exam. The output is
+      named `ECO2023-263-ThePPF.html` from the file name, per v6 step 0; if that
+      is wrong the file name has to change before publication. One for Ian.
+- [ ] **The PPF document contradicts itself about the freshman → senior shift.**
+      One paragraph says study skills improved more, the next says socializing
+      skills did. The drawing says socializing, and the widget follows the
+      drawing. Recorded in `docs/changelogs/the-ppf-changelog.md`. One for Ian.

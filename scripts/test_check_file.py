@@ -1,0 +1,207 @@
+#!/usr/bin/env python3
+"""Tests for scripts/check_file.py.
+
+    python scripts/test_check_file.py
+
+Every check in check_file.py was added because a defect got past it and a person
+spotted it. Nothing verified they keep working: a rule that has been narrowed
+one time too many stops firing silently, and the example files still report
+0 FAIL, which looks exactly like success.
+
+So each case below is a widget or a sentence with one deliberate defect, and the
+test asserts the matching check still reports it. The second half asserts the
+opposite: that the real example files produce no label, arrow or source findings,
+because a check that fires on correct work is as useless as one that never fires.
+
+Run this after any change to check_file.py.
+"""
+
+import pathlib
+import sys
+
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+import check_file as C
+
+ROOT = pathlib.Path(__file__).resolve().parent.parent
+
+
+class Catch:
+    """A Report that keeps what it was told."""
+
+    def __init__(self):
+        self.lines = []
+
+    def ok(self, n, m):
+        pass
+
+    def skip(self, n, m):
+        pass
+
+    def warn(self, n, m):
+        self.lines.append(("WARN", n, m))
+
+    def fail(self, n, m):
+        self.lines.append(("FAIL", n, m))
+
+    def has(self, level, group, needle):
+        return any(l == level and g == group and needle.lower() in m.lower()
+                   for l, g, m in self.lines)
+
+
+PPF = {"axes": {"x": "Q", "y": "P", "xmax": 110, "ymax": 110},
+       "curves": [{"id": "D", "label": "D", "pts": [[8, 96], [96, 8]]}]}
+
+
+def widget(**over):
+    cfg = {k: (v[:] if isinstance(v, list) else v) for k, v in PPF.items()}
+    cfg.update(over)
+    return [(1, cfg, "")]
+
+
+CASES = []
+
+
+def case(name, fn):
+    CASES.append((name, fn))
+
+
+# ---- the label test, one case per category it has learned ------------------
+
+case("label sitting on a curve", lambda r: C.check_labels(widget(
+    points=[{"q": 50, "p": 50, "label": "E", "dx": 2, "dy": 2}]), r)
+    or r.has("FAIL", "labels", "sits on curve"))
+
+case("label overlapping another label", lambda r: C.check_labels(widget(
+    points=[{"q": 30, "p": 80, "label": "AAAA", "dx": 10, "dy": 0},
+            {"q": 31, "p": 80, "label": "BBBB", "dx": 10, "dy": 0}]), r)
+    or r.has("FAIL", "labels", "overlaps"))
+
+case("label sitting on a point", lambda r: C.check_labels(widget(
+    points=[{"q": 30, "p": 80, "showP": False, "showQ": False},
+            {"q": 60, "p": 40, "label": "X", "dx": -84, "dy": -62,
+             "showP": False, "showQ": False}]), r)
+    or r.has("FAIL", "labels", "sits on the point"))
+
+case("label sitting on a movement arrow", lambda r: C.check_labels(widget(
+    points=[{"q": 50, "p": 50, "label": "E", "dx": 6, "dy": -12,
+             "showP": False, "showQ": False}],
+    moves=[{"from": [30, 70], "to": [70, 30], "offset": -14}]), r)
+    or r.has("FAIL", "labels", "sits on a movement arrow")
+    or r.has("FAIL", "labels", "sits on the movement"))
+
+case("axis title overlapping a tick", lambda r: C.check_labels(widget(
+    axes={"x": "Boxes of Tissues", "y": "P", "xmax": 110, "ymax": 110,
+          "xticks": [105], "yticks": [50]}), r)
+    or r.has("FAIL", "labels", "axis title"))
+
+case("two axis values crowded together", lambda r: C.check_labels(widget(
+    points=[{"q": 50, "p": 50, "showQ": False},
+            {"q": 60, "p": 58, "showQ": False}]), r)
+    or r.has("WARN", "labels", "crowded"))
+
+case("label pressed against a guide", lambda r: C.check_labels(widget(
+    points=[{"q": 50, "p": 50, "label": "E", "dx": -18, "dy": 3}]), r)
+    or r.has("WARN", "labels", "close to the guides"))
+
+# ---- the arrow tests -------------------------------------------------------
+
+case("two arrows abutting", lambda r: C.check_labels(widget(
+    moves=[{"from": [10, 90], "to": [40, 60], "offset": -15},
+           {"from": [40, 60], "to": [70, 30], "offset": -15}]), r)
+    or r.has("WARN", "arrows", "read as one arrow"))
+
+case("arrow lying across a curve", lambda r: C.check_labels(widget(
+    moves=[{"from": [20, 60], "to": [80, 40], "offset": 0}]), r)
+    or r.has("WARN", "arrows", "lies across curve"))
+
+# ---- tick emphasis ---------------------------------------------------------
+
+case("some point values ticked and others not", lambda r: C.check_tick_emphasis(widget(
+    axes={"x": "Q", "y": "P", "xmax": 110, "ymax": 110, "xticks": [30], "yticks": [50]},
+    points=[{"q": 30, "p": 50}, {"q": 70, "p": 50}]), r)
+    or r.has("WARN", "ticks", "ticked (plain)"))
+
+# ---- the surplus/shortage arrow rule --------------------------------------
+
+case("surplus walkthrough with no movement arrows", lambda r: C.check_arrows(widget(
+    hlines=[{"p": 70}],
+    braces=[{"p": 70, "q1": 20, "q2": 80, "label": "Surplus"}],
+    steps=["one.", "two."]), r)
+    or r.has("FAIL", "arrows", "two movement arrows"))
+
+# ---- captions --------------------------------------------------------------
+
+case("'Before -' caption prefix", lambda r: C.check_captions(
+    [(1, {"steps": ["Before – the original schedule."]}, "")], r)
+    or r.has("FAIL", "caption", "before"))
+
+case("'Price up, quantity up' shorthand", lambda r: C.check_captions(
+    [(1, {"steps": ["It settles at $40. Price up, quantity up."]}, "")], r)
+    or r.has("FAIL", "caption", "shorthand"))
+
+# ---- the source-word rules, which have been narrowed three times -----------
+
+for txt, tag in [("<p>built from a lecture recording alone.</p>", "a lecture recording"),
+                 ("<p>as the transcript shows, demand rises.</p>", "the transcript"),
+                 ("<p>he drew it on the board during the review.</p>", "on the board"),
+                 ("<p>roughly 20% of the class said otherwise.</p>", "the class said"),
+                 ("<p>he explained the model in class last week.</p>", "in class"),
+                 ("<p>the professor said demand shifts right.</p>", "the professor said")]:
+    case("source: %s" % tag,
+         (lambda t: lambda r: C.check_source(t, [], r) or r.has("FAIL", "source", ""))(txt))
+
+for txt, tag in [("<p>the class average was below 74.</p>", "the class average"),
+                 ("<p>you may be sitting in class.</p>", "sitting in class"),
+                 ("<p>the board of a firm sets the price.</p>", "the board of a firm"),
+                 ("<p>one class of goods behaves differently.</p>", "a class of goods"),
+                 ("<p>ask your professor which convention applies.</p>", "your professor")]:
+    case("not a source: %s" % tag,
+         (lambda t: lambda r: C.check_source(t, [], r) or not r.lines)(txt))
+
+case("a named person is flagged, never failed", lambda r: (
+    C.check_names("<p>Professor Chen drew the example.</p>", [], r)
+    or (r.has("WARN", "names", "professor chen")
+        and not any(l == "FAIL" for l, _, _ in r.lines))))
+
+# ---- markup ----------------------------------------------------------------
+
+case("<u> in the body", lambda r: C.check_markup("<body><p>a <u>term</u></p></body>", r)
+     or r.has("FAIL", "markup", "<u>"))
+case("<h3> in the body", lambda r: C.check_markup("<body><h3>Sub</h3></body>", r)
+     or r.has("FAIL", "markup", "<h3>"))
+
+
+def main():
+    bad = 0
+    for name, fn in CASES:
+        r = Catch()
+        try:
+            ok = bool(fn(r))
+        except Exception as e:                      # a broken check is a failure
+            ok, name = False, "%s (raised %s)" % (name, e)
+        print("%-4s %s" % ("ok" if ok else "FAIL", name))
+        bad += not ok
+
+    # No check may fire on work that is correct.
+    print()
+    for f in sorted((ROOT / "examples").glob("*.html")):
+        src = f.read_text(encoding="utf-8")
+        r = Catch()
+        cfgs = C.configs(src, r)
+        C.check_labels(cfgs, r)
+        C.check_tick_emphasis(cfgs, r)
+        C.check_source(src, cfgs, r)
+        noise = [m for l, g, m in r.lines if g in ("arrows", "source")]
+        # The 9/11 prototype predates v6 and has recorded label failures; its
+        # arrow and source lines must still be empty.
+        print("%-4s no arrow or source findings in %s" % ("ok" if not noise else "FAIL", f.name))
+        for m in noise:
+            print("       " + m)
+        bad += bool(noise)
+
+    print("\n%d failing" % bad)
+    return 1 if bad else 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

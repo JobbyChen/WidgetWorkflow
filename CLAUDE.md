@@ -33,6 +33,7 @@ reference-images/             ← the source PNGs (empty — see open issues)
 scripts/
   embed_engine.py             ← inline engine/ into a notes file's <head> (prompt step 7)
   check_file.py               ← mechanical step-8 checks (JSON, </script>, head, engine identity…)
+  test_check_file.py          ← tests for check_file.py. Run after changing it.
   render_widgets.py           ← Playwright: screenshot every widget × scenario × step for collision review
 .claude/commands/             ← /convert, /check, /render
 ```
@@ -175,6 +176,10 @@ Full list with checkboxes: `docs/open-issues.md`.
   through every numbered point. A point's axis labels are automatic: it prints
   its own price and quantity unless they are already ticks, and `pl`/`ql` replace
   them with `P₁`/`Q₁` on symbolic graphs.
+* After any change to `scripts/check_file.py`: `python scripts/test_check_file.py`
+  (must be 0 failing). Its checks have been narrowed repeatedly, and a rule
+  narrowed once too often stops firing silently while every file still reports
+  0 FAIL.
 * After any change to a notes file: `python scripts/check_file.py <file>` (must
   be 0 FAIL) and, for anything visual, `python scripts/render_widgets.py <file>`
   and look at every PNG for collisions at every step.

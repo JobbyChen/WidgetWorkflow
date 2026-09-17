@@ -229,3 +229,13 @@ including every kind of shift; the probe is throwaway and stayed out of the repo
     on files that are right. Both surviving checks were run against a fixture
     reproducing the two original defects, and both fire; all three example files
     stay clean.
+
+22. **The checker has tests, and they were mutation-tested.** Every check in
+    `check_file.py` was added after a defect got past it, and nothing verified
+    they kept working — a rule narrowed once too often stops firing while every
+    file still reports 0 FAIL, which is indistinguishable from success. The
+    source-word list alone was narrowed three times in one day. The tests assert
+    each check still reports its defect, that five ordinary sentences do not trip
+    the source rules, and that no arrow or source finding appears on a real file.
+    Then three checks were deliberately broken to confirm the tests fail; a test
+    suite that has never failed is evidence of nothing.

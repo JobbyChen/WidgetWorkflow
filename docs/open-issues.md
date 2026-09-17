@@ -112,10 +112,11 @@ or "unattainable" dot) whose exact coordinates are not the lesson.
       output teaches people to ignore it. Distinguishing "crosses a guide"
       (fine) from "runs along one" (not) needs a parallelism test, not a
       distance test.
-- [ ] **The checker has no tests of its own.** The arrow checks were verified
-      against a throwaway fixture that was not kept. Six categories have been
-      added to the label test one complaint at a time; without a fixture, a
-      later change can silently stop any of them firing.
+- [x] ~~The checker has no tests of its own.~~ `scripts/test_check_file.py`: one
+      deliberate defect per check, plus five sentences that must *not* trip the
+      source rules, plus an assertion that no arrow or source finding appears on
+      any example file. Verified by mutation — breaking the abut threshold, the
+      source nouns and the curve test each makes it fail.
 
 ## Engine
 

@@ -217,7 +217,9 @@ scenarios, each scenario supplying its own `shift`/`dir`.
 
 `ldx`/`ldy`/`dx`/`dy`/`offset` are all in these SVG units, and `dy` is positive
 downward. `scripts/check_file.py` replicates this geometry to test every label
-against every curve.
+against every curve, arrow, point dot, axis tick and the values a point prints
+for itself — a real overlap fails, and a gap under about six pixels, or a label
+pressed against a dashed guide, warns.
 
 Animation: elements cross-fade over 0.45s and shifted curves slide over 0.6s,
 both disabled under `prefers-reduced-motion`. A screenshot taken sooner than

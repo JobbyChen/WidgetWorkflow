@@ -333,6 +333,19 @@ def box(x, y, text, size, anchor="start"):
     return (x, y - size * 0.78, x + w, y + size * 0.22)
 
 
+def inflate(bx, by):
+    return (bx[0] - by, bx[1] - by, bx[2] + by, bx[3] + by)
+
+
+def coexist(a, b):
+    """Can these two ever be on screen at the same step?"""
+    a0, a1 = a
+    b0, b1 = b
+    lo = max(a0 or 0, b0 or 0)
+    hi = min(a1 if a1 is not None else 10 ** 6, b1 if b1 is not None else 10 ** 6)
+    return lo < hi
+
+
 def overlaps(a, b, inset=1.0):
     return not (a[2] - inset <= b[0] + inset or b[2] - inset <= a[0] + inset
                 or a[3] - inset <= b[1] + inset or b[3] - inset <= a[1] + inset)
@@ -404,6 +417,36 @@ def arrow_segments(pn, X, Y):
         ln = math.hypot(x2 - x1, y2 - y1) or 1
         nx, ny = -(y2 - y1) / ln * off, (x2 - x1) / ln * off
         out.append((((x1 + nx, y1 + ny), (x2 + nx, y2 + ny)), "a movement arrow"))
+    return out
+
+
+def guide_segments(pn, X, Y, ox, oy):
+    """Every dashed guide the engine draws, as pixel polylines.
+
+    Rule 5 lists curves, points, arrows and labels -- not guides. But a label
+    pressed against the dashed line dropping from its own point reads as
+    crowded, so these are tested too, and only ever warn."""
+    out = []
+    pw = W - ox - 36.0
+    for p in pn.get("points") or []:
+        if p.get("guides") is False:
+            continue
+        out.append(([(ox, Y(p["p"])), (X(p["q"]), Y(p["p"])), (X(p["q"]), oy)],
+                    "the guides from (%s, %s)" % (p["q"], p["p"]),
+                    (p.get("at", 0), p.get("until"))))
+    for h in pn.get("hlines") or []:
+        out.append(([(ox, Y(h["p"])), (ox + pw + 8, Y(h["p"]))],
+                    "the %s price line" % h.get("label", h["p"]),
+                    (h.get("at", 0), h.get("until"))))
+    for b in pn.get("braces") or []:
+        if b.get("below"):
+            continue
+        for q in (b.get("q1"), b.get("q2")):
+            if q is None:
+                continue
+            out.append(([(X(q), Y(b["p"])), (X(q), oy)],
+                        "a guide under the %r brace" % b.get("label"),
+                        (b.get("at", 0), b.get("until"))))
     return out
 
 
@@ -491,8 +534,15 @@ def check_labels(cfgs, r):
                 checked += len(boxes)
 
                 arrows = arrow_segments(pn, X, Y)
+                guides = guide_segments(pn, X, Y, ox, oy)
 
-                for bx, what, _win in boxes:
+                for bx, what, win in boxes:
+                    for gpx, gdesc, gwin in guides:
+                        if not coexist(win, gwin):
+                            continue
+                        if poly_hits(inflate(bx, 3.0), gpx):
+                            r.warn("labels", "%s: %s is close to %s"
+                                   % (where, what, gdesc))
                     for c in pn.get("curves") or []:
                         pts = c.get("pts") or []
                         if len(pts) < 2:
@@ -512,15 +562,6 @@ def check_labels(cfgs, r):
                         if not own and dot_hits(bx, cx, cy, rad):
                             r.fail("labels", "%s: %s sits on the point at (%s, %s)"
                                    % (where, what, pt["q"], pt["p"]))
-
-                def coexist(a, b):
-                    """Can these two ever be on screen together?"""
-                    a0, a1 = a
-                    b0, b1 = b
-                    lo = max(a0 or 0, b0 or 0)
-                    hi = min(a1 if a1 is not None else 10 ** 6,
-                             b1 if b1 is not None else 10 ** 6)
-                    return lo < hi
 
                 for i in range(len(boxes)):
                     for j in range(i + 1, len(boxes)):

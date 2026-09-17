@@ -142,7 +142,16 @@ including every kind of shift; the probe is throwaway and stayed out of the repo
 9. **Boxes are only compared when they can share a step.** Adding tick boxes made
    this necessary: two points that never appear together were being reported as
    overlapping.
-10. **Axis titles take a word.** `P` and `Q` fit anywhere; "Butter" ran into the
+10. **Dashed guides are in the label test, as warnings only.** Rule 5 lists
+    curves, points, arrows and labels, not guides — but a label pressed against
+    the dashed line dropping from its own point reads as crowded, which is how a
+    PPF point label was spotted by eye. Point guides, price lines and the
+    verticals under an above-axis brace are now all tested. They warn rather
+    than fail, because the rule does not name them. This was the third category
+    the test was missing after arrows and ticks; the pattern is that every
+    element the engine draws needs to be in it, not just the ones the rule
+    enumerates.
+11. **Axis titles take a word.** `P` and `Q` fit anywhere; "Butter" ran into the
     plot and "Guns" was clipped off the right edge. The x title is now anchored
     to the right edge and the y title sits in the headroom above the plot, which
     moves `P` and `Q` by a few pixels in existing widgets and is invisible in

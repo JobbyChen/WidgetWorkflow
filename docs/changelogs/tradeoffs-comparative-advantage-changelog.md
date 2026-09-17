@@ -93,3 +93,16 @@ because each is a near-miss rather than an overlap:
 - Panel headings were smaller than the axis titles (engine v2.5).
 - Every exam tip moved to follow the paragraph it reinforces, rather than
   leading the section.
+
+## Correction
+
+Point B in the unemployment widget was drawn **on** the frontier. The source says
+reducing unemployment causes "a movement from a point within the PPF to a point
+*closer to* the PPF", and its figure shows B inside. On the frontier, B would
+mean unemployment had fallen to zero, which is a different claim from the one
+the notes make. B is now inside, closer to the frontier than A, and the caption
+says so.
+
+No script could have caught this: it is a question of whether a coordinate means
+what the source means, which `check_file.py` reports as SKIP ("whether each
+number is the source's number needs the source").

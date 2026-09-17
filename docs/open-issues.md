@@ -100,6 +100,16 @@ or "unattainable" dot) whose exact coordinates are not the lesson.
       or cut it from the prompt, because a config written to that part of the
       prompt throws.
 
+## The label test
+
+- [ ] **Arrows are tested against labels, but not against curves, guides or each
+      other.** Six defects in the first PPF conversion were found by eye: two
+      arrows abutting into what looked like one arrow, an arrowhead reaching a
+      point label, and an arrow cutting across a frontier and its guides. The
+      test fails on overlap and warns under six pixels, and none of those is
+      either. Adding arrow-versus-curve, arrow-versus-guide and
+      arrow-versus-arrow would catch the whole class.
+
 ## Engine
 
 - [x] ~~A schedule-shift widget draws four red arrows: one per schedule row at

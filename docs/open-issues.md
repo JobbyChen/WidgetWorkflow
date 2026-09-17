@@ -70,6 +70,12 @@ or "unattainable" dot) whose exact coordinates are not the lesson.
 
 ## Prompt v6
 
+- [ ] **A PPF's frontier cannot reach an axis unless the intercepts are
+      stated.** The bowed-out chai/burrito frontier is drawn only between the
+      stated points, so it floats rather than meeting either axis. Extending a
+      *curve* to invented intercepts breaks rule 3; v6 permits extending a
+      straight line along itself but says nothing about curves. Worth a ruling
+      in v7.
 - [ ] **Word is not a listed input.** v6's four modes are PDF, notes HTML,
       transcript (where Word *is* named) and change-by-message. Notes supplied as
       a .docx are not covered, and are being handled as mode (a). Worth adding

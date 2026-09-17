@@ -1,0 +1,1519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tradeoffs, Comparative Advantage, and the Market System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://smokinnotes.s3.us-east-1.amazonaws.com/content/sn25-v6.css">
+    <script src="https://smokinnotes.s3.us-east-1.amazonaws.com/content/sn25-v6.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async></script>
+<style>
+.sdg { --navy:#002060; --ink:#1c2a44; --red:#d62828; --teal:#1a8a8a; --orange:#d8641c; --grey:#8a94a6; --rule:#c9d2e3; --paper:#f6f8fc; --plot:#eef3fd;
+  font-family:"Red Hat Display","Segoe UI",system-ui,sans-serif; color:var(--ink);
+  border:1px solid var(--navy); background:var(--paper); padding:18px 20px 16px; width:80%; margin:24px auto; }
+@media (max-width:640px){ .sdg { width:100%; } }
+.sdg, .sdg *, .sdg *::before, .sdg *::after { box-sizing:border-box; }
+.sdg h4 { margin:0 0 4px; color:var(--navy); font-size:1.05rem; font-weight:700; }
+.sdg .sdg-lede { margin:0 0 12px; font-size:.92rem; line-height:1.45; }
+.sdg .sdg-scen { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px; }
+.sdg .sdg-scen button { flex:1 1 200px; border:1px solid var(--navy); background:#fff; color:var(--navy); padding:8px 12px; font:inherit; font-size:.9rem; cursor:pointer; text-align:left; line-height:1.3; }
+.sdg .sdg-scen button[aria-pressed="true"] { background:var(--navy); color:#fff; }
+.sdg .sdg-body { display:grid; grid-template-columns:1fr; gap:14px; align-items:start; }
+.sdg .sdg-body:not(.has-table):not(.two) figure { max-width:460px; margin:0 auto; width:100%; }
+.sdg .sdg-body.has-table { grid-template-columns:minmax(150px,1fr) 2.2fr; }
+.sdg .sdg-body.two { grid-template-columns:1fr 34px 1fr; gap:8px; align-items:center; }
+.sdg .sdg-body.two:not(:has(.sdg-between)) { grid-template-columns:1fr 1fr; gap:14px; }
+.sdg .sdg-between svg { width:34px; height:34px; display:block; }
+.sdg .sdg-between path { fill:none; stroke:var(--ink); stroke-width:4; stroke-linecap:round; stroke-linejoin:round; }
+@media (max-width:640px){
+  .sdg .sdg-body.has-table, .sdg .sdg-body.two { grid-template-columns:1fr; }
+  .sdg .sdg-between svg { transform:rotate(90deg); margin:0 auto; }
+  .sdg .sdg-ctrl button, .sdg .sdg-scen button { min-height:44px; }
+}
+.sdg figure { margin:0; background:#fff; border:1px solid var(--rule); padding:8px 8px 2px; }
+.sdg figcaption { font-size:.9rem; font-weight:700; font-style:italic; color:var(--navy); text-align:center; margin:0 0 4px; }
+.sdg svg { width:100%; height:auto; display:block; }
+.sdg .sdg-table { border-collapse:collapse; width:100%; font-size:.9rem; background:#fff; border:1px solid var(--rule); }
+.sdg .sdg-table th { background:var(--navy); color:#fff; font-weight:700; padding:6px 8px; text-align:center; font-size:.82rem; }
+.sdg .sdg-table td { padding:6px 8px; text-align:center; border-top:1px solid var(--rule); }
+.sdg .sdg-table tr.hi td { background:#fdeadb; font-weight:700; }
+.sdg .plotbg { fill:var(--plot); }
+.sdg .grid { stroke:#b9c2d3; stroke-width:1; stroke-dasharray:4 4; }
+.sdg .ax { fill:none; stroke:var(--ink); stroke-width:1.6; }
+.sdg .tk { font-size:10.5px; fill:var(--navy); }
+.sdg .tk.strong { font-weight:700; }
+.sdg .axlbl { font-size:14px; font-weight:800; fill:var(--navy); }
+.sdg .curve { fill:none; stroke-width:3; stroke-linecap:round; }
+.sdg .curve.thin { stroke-width:2; }
+.sdg .clbl { font-size:13px; font-weight:800; }
+.sdg .guide { fill:none; stroke-width:1.1; stroke-dasharray:4 3; }
+.sdg .pt { fill:#fff; stroke-width:2; }
+.sdg .pt.hi { stroke:var(--orange); stroke-width:3; r:6; }
+.sdg .pt.mk { stroke-width:1.4; }
+.sdg .mktxt { font-size:7.5px; font-weight:800; fill:var(--ink); }
+.sdg .tag { font-size:12px; font-weight:700; }
+.sdg .arrow { fill:none; stroke-width:2; stroke-linejoin:round; }
+.sdg .arrow.shift { stroke-width:2.4; }
+.sdg .arrow.mv { stroke-width:2.4; stroke:var(--red); }
+.sdg .arrow.row { stroke-width:2.4; stroke:var(--red); }
+.sdg .hline { stroke-width:3; }
+.sdg .brace { fill:none; stroke-width:1.8; }
+.sdg .curve-g.dim .curve { stroke-width:2; opacity:.8; }
+.sdg .fade { transition:opacity .45s ease; }
+.sdg .move { transition:transform .6s ease, opacity .45s ease; }
+.sdg .off { opacity:0; pointer-events:none; }
+@media (prefers-reduced-motion:reduce){ .sdg .fade, .sdg .move { transition:none; } }
+.sdg .sdg-ctrl { display:flex; align-items:center; gap:10px; margin-top:12px; flex-wrap:wrap; }
+.sdg .sdg-ctrl button { border:1px solid var(--navy); background:#fff; color:var(--navy); padding:7px 14px; font:inherit; font-size:.9rem; cursor:pointer; }
+.sdg .sdg-ctrl button:disabled { opacity:.4; cursor:default; }
+.sdg .sdg-step { font-size:.85rem; color:var(--navy); font-weight:700; margin-left:auto; }
+.sdg .sdg-cap { margin:10px 0 0; padding:10px 12px; background:#fff; border-left:4px solid var(--red); font-size:.92rem; line-height:1.45; min-height:3.2em; }
+</style>
+<script>
+/* ===== sd-graph.js v2.4 — data-driven supply & demand widgets =====
+   Markup:  <div class="sdg"><script type="application/json">{ ...config... }<\/script></div>
+   Top-level config:
+     title, lede, caption         heading / intro / static caption (caption used only when there are no steps)
+     steps: [caption, ...]        index 0 = start state; elements use `at`/`until` (step indices) to appear/vanish
+     scenarios: {key:{label, ...overrides}}   one button per scenario; overrides merge over the base config
+     panels: [panelCfg, panelCfg]  two side-by-side graphs (two-market). Otherwise the panel keys live at top level.
+   Panel config:
+     heading                      title above the panel (two-market only)
+     axes: {x, y, xmax, ymax, xticks[], yticks[], money, cents, k, grid, bg:false}
+        x, y = axis titles, default 'Q' and 'P'. A word or two fits; they are never wrapped.
+     curves[]: {id, label, pts:[[q,p],...], color, at, until, from, arrowP, shiftArrow, curved, thin, dashed, lstart, ldx, ldy}
+        lstart = put the curve label at the first point instead of the last; ldx/ldy nudge it
+        label:"" draws no label at all (a lone PPF needs none); omitting label falls back to the id
+        from   = id of the curve this one shifts away from (animated shift + arrow); arrowP = price height of arrow
+        shiftArrow:false = animate and dim as usual but draw no shift arrow. Use it whenever the
+                 widget already shows per-row arrows (table.arrows), which say the same thing once per row.
+        curved = smooth through 3+ points (conceptual, non-linear look)
+     points[]: {id, q, p, label, marker, pl, ql, color, at, until, dx, dy, guides:false, showP:false, showQ:false}
+        marker = "1"/"2" numbered circle;  pl/ql = symbolic axis labels ("P₁","Q₁") instead of numbers
+     moves[]:  {from:[q,p], to:[q,p], at, until, color, offset}  arrow between two points, drawn `offset` px beside the curve (default 14; negative = other side)
+     hlines[]: {p, label, color, at, until}                       horizontal price line across the plot
+     braces[]: {p, q1, q2, label, at, until, below, color}        curly brace spanning a gap at price p
+     vbraces[]:{p1, p2, q, label, at, until, left, side, color}   the same brace turned upright, spanning a
+        price gap. left:true is the mirror of a brace's below:true: it sits outside the P axis, clear of the
+        plot and the tick numbers, with its label running up the axis, and widens the left margin to fit.
+        Without left it sits inside the plot at quantity q, opening right unless side:'left'.
+     table:    {cols[], series[], rows[[price,q,...]], arrows}    schedule beside the graph; arrows draws row shift arrows
+   Colors: 'ink' (default, black-navy), 'red' (shifted/new), 'teal', 'orange', 'grey'
+   Presets (symbolic graphs, P₁/P₂/Q₁/Q₂, no numbers) — a few keys expand into a full config:
+     {"preset":"shift", "shift":"D"|"S", "dir":"right"|"left", "good":"pasta", "event":"The price of pizza rises.", "why":"...", "static":true}
+     {"preset":"double", "demand":"right"|"left", "supply":"right"|"left", "dD":40, "dS":15, "note":"...", "static":true}
+     {"preset":"double", "demand":"right", "supply":"left", "compare":true}   two panels: larger supply shift vs larger demand shift
+     Presets can be combined with title/lede/caption/steps overrides and with scenarios (each scenario gives its own shift/dir).
+*/
+(function () {
+  var NS = 'http://www.w3.org/2000/svg';
+  var C = {ink: 'var(--ink)', red: 'var(--red)', teal: 'var(--teal)', orange: 'var(--orange)', grey: 'var(--grey)', navy: 'var(--navy)'};
+  function col(c) { return C[c || 'ink']; }
+  function el(tag, a, text) { var e = document.createElementNS(NS, tag); for (var k in a) if (a[k] != null) e.setAttribute(k, a[k]); if (text != null) e.textContent = text; return e; }
+  function h(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+  function fmtP(v, ax) { if (!ax.money) return String(v); if (ax.cents) return '$' + Number(v).toFixed(2); return '$' + (Number.isInteger(v) ? v : v.toFixed(2)); }
+  function fmtQ(v, ax) { if (ax.k && v >= 1000) return (v / 1000) + 'k'; return v.toLocaleString('en-US'); }
+  function merge(a, b) { var o = {}; for (var k in a) o[k] = a[k]; for (var k2 in b) o[k2] = b[k2]; return o; }
+
+  // ---------- one SVG panel ----------
+  function buildPanel(cfg) {
+    var ax = cfg.axes, W = 372, below = (cfg.braces || []).some(function (b) { return b.below; }), H = below ? 268 : 250;
+    // A brace outside the P axis needs margin to sit in, the way a brace below
+    // the Q axis needs the extra panel height above.
+    var vleft = (cfg.vbraces || []).some(function (b) { return b.left; });
+    var left = (ax.cents ? 62 : (ax.yticks && ax.yticks.length ? 54 : 40)) + (vleft ? 44 : 0);
+    var O = {x: left, y: 205}, PW = W - left - 36, PH = 178;
+    var X = function (q) { return O.x + (q / ax.xmax) * PW; }, Y = function (p) { return O.y - (p / ax.ymax) * PH; };
+    var svg = el('svg', {viewBox: '0 0 ' + W + ' ' + H, role: 'img', 'aria-label': cfg.heading || cfg.title || 'Supply and demand graph'});
+    var g = el('g', {}); svg.appendChild(g);
+    var parts = [], byId = {};
+    function reg(node, spec) { node.classList.add('fade'); parts.push({node: node, spec: spec}); if (spec.id) byId[spec.id] = {node: node, spec: spec}; return node; }
+
+    if (ax.bg !== false) g.appendChild(el('rect', {class: 'plotbg', x: O.x, y: 14, width: PW + 14, height: O.y - 14}));
+    if (ax.grid) {
+      (ax.xticks || []).forEach(function (q) { g.appendChild(el('line', {class: 'grid', x1: X(q), y1: 14, x2: X(q), y2: O.y})); });
+      (ax.yticks || []).forEach(function (p) { g.appendChild(el('line', {class: 'grid', x1: O.x, y1: Y(p), x2: O.x + PW + 14, y2: Y(p)})); });
+    }
+    g.appendChild(el('path', {class: 'ax', d: 'M' + O.x + ' 14 L' + O.x + ' ' + O.y + ' L' + (O.x + PW + 14) + ' ' + O.y}));
+    (ax.xticks || []).forEach(function (q) { g.appendChild(el('text', {class: 'tk', x: X(q), y: O.y + 15, 'text-anchor': 'middle'}, fmtQ(q, ax))); });
+    (ax.yticks || []).forEach(function (p) { g.appendChild(el('text', {class: 'tk', x: O.x - 6, y: Y(p) + 4, 'text-anchor': 'end'}, fmtP(p, ax))); });
+    // Axis titles. P and Q fit anywhere, but a PPF names its axes with words, so
+    // the x title is anchored to the right edge instead of running off it, and the
+    // y title sits in the headroom above the plot instead of inside its top-left
+    // corner. Keep axis titles to a word or two: nothing here can wrap them.
+    g.appendChild(el('text', {class: 'axlbl', x: W - 2, y: O.y + 16, 'text-anchor': 'end'}, ax.x || 'Q'));
+    g.appendChild(el('text', {class: 'axlbl', x: O.x - 2, y: 11}, ax.y || 'P'));
+
+    function arrow(x1, y1, x2, y2, c, cls) {
+      var dx = x2 - x1, dy = y2 - y1, len = Math.hypot(dx, dy), ux = dx / len, uy = dy / len, hh = 7, ww = 3.6, bx = x2 - ux * hh, by = y2 - uy * hh;
+      return el('path', {class: 'arrow ' + (cls || ''), stroke: c, d: 'M' + x1 + ' ' + y1 + ' L' + x2 + ' ' + y2 + ' M' + (bx - uy * ww) + ' ' + (by + ux * ww) + ' L' + x2 + ' ' + y2 + ' L' + (bx + uy * ww) + ' ' + (by - ux * ww)});
+    }
+    function pathD(pts, curved) {
+      var P = pts.map(function (p) { return [X(p[0]), Y(p[1])]; });
+      if (!curved || P.length < 3) return P.map(function (p, i) { return (i ? 'L' : 'M') + p[0] + ' ' + p[1]; }).join(' ');
+      var d = 'M' + P[0][0] + ' ' + P[0][1];
+      for (var i = 0; i < P.length - 1; i++) {
+        var p0 = P[i - 1] || P[i], p1 = P[i], p2 = P[i + 1], p3 = P[i + 2] || p2;
+        d += ' C' + (p1[0] + (p2[0] - p0[0]) / 6) + ' ' + (p1[1] + (p2[1] - p0[1]) / 6) + ' ' + (p2[0] - (p3[0] - p1[0]) / 6) + ' ' + (p2[1] - (p3[1] - p1[1]) / 6) + ' ' + p2[0] + ' ' + p2[1];
+      }
+      return d;
+    }
+    function qAt(pts, p) {
+      for (var i = 0; i < pts.length - 1; i++) { var a = pts[i], b = pts[i + 1]; if ((p - a[1]) * (p - b[1]) <= 0 && a[1] !== b[1]) return a[0] + (p - a[1]) * (b[0] - a[0]) / (b[1] - a[1]); }
+      var a2 = pts[0], b2 = pts[pts.length - 1]; return a2[0] + (p - a2[1]) * (b2[0] - a2[0]) / (b2[1] - a2[1]);
+    }
+
+    (cfg.curves || []).forEach(function (c) {
+      var cc = col(c.color), grp = el('g', {class: 'curve-g'});
+      var path = el('path', {class: 'curve' + (c.thin ? ' thin' : ''), d: pathD(c.pts, c.curved), stroke: cc});
+      if (c.dashed) path.setAttribute('stroke-dasharray', '6 4');
+      grp.appendChild(path);
+      var last = c.pts[c.pts.length - 1], up = last[1] > c.pts[0][1], lp = c.lstart ? c.pts[0] : last;
+      // label:"" draws nothing. A lone frontier needs no name -- the axis titles
+      // already say what it is -- but the id is still needed by table.series, and
+      // falling back to it parked "PPF" on the curve. Omitting label still uses the id.
+      grp.appendChild(el('text', {class: 'clbl', x: X(lp[0]) + (c.ldx || 6), y: Y(lp[1]) + (c.ldy || (up ? 2 : 6)), fill: cc}, c.label != null ? c.label : (c.id || '')));
+      if (c.from && byId[c.from]) {
+        var src = byId[c.from].spec, ap = c.arrowP != null ? c.arrowP : (c.pts[0][1] + last[1]) / 2;
+        var q0 = qAt(src.pts, ap), q1 = qAt(c.pts, ap), s = Math.sign(q1 - q0);
+        grp.dataset.dx = X(q1) - X(q0); grp.dataset.dy = 0; grp.classList.add('move');
+        // shiftArrow:false keeps the slide and the dimming but drops the arrow, for
+        // widgets whose per-row arrows already show the shift once per schedule row.
+        if (c.shiftArrow !== false) g.appendChild(reg(arrow(X(q0) + s * 8, Y(ap), X(q1) - s * 8, Y(ap), cc, 'shift'), {at: c.at || 0, until: c.until}));
+      }
+      g.appendChild(grp); reg(grp, c);
+    });
+
+    (cfg.hlines || []).forEach(function (l) {
+      var cc = col(l.color || 'red'), grp = el('g', {});
+      grp.appendChild(el('line', {class: 'hline', stroke: cc, x1: O.x, y1: Y(l.p), x2: O.x + PW + 8, y2: Y(l.p)}));
+      if ((ax.yticks || []).indexOf(l.p) < 0) grp.appendChild(el('text', {class: 'tk strong', x: O.x - 6, y: Y(l.p) + 4, 'text-anchor': 'end', fill: cc}, l.label || fmtP(l.p, ax)));
+      g.appendChild(grp); reg(grp, l);
+    });
+
+    (cfg.braces || []).forEach(function (b) {
+      var cc = col(b.color || 'red'), grp = el('g', {});
+      var x1 = X(Math.min(b.q1, b.q2)), x2 = X(Math.max(b.q1, b.q2)), y = b.below ? O.y + 22 : Y(b.p) - 8, dir = b.below ? 1 : -1, hh = 7, m = (x1 + x2) / 2;
+      var d = 'M' + x1 + ' ' + y + ' Q' + x1 + ' ' + (y + dir * hh) + ' ' + (x1 + hh) + ' ' + (y + dir * hh) + ' L' + (m - hh) + ' ' + (y + dir * hh) + ' Q' + m + ' ' + (y + dir * hh) + ' ' + m + ' ' + (y + dir * 2 * hh) +
+              ' Q' + m + ' ' + (y + dir * hh) + ' ' + (m + hh) + ' ' + (y + dir * hh) + ' L' + (x2 - hh) + ' ' + (y + dir * hh) + ' Q' + x2 + ' ' + (y + dir * hh) + ' ' + x2 + ' ' + y;
+      grp.appendChild(el('path', {class: 'brace', stroke: cc, d: d}));
+      grp.appendChild(el('text', {class: 'tag', x: m, y: y + dir * 2 * hh + (b.below ? 12 : -4), 'text-anchor': 'middle', fill: cc}, b.label));
+      if (!b.below) { [b.q1, b.q2].forEach(function (q) { grp.appendChild(el('line', {class: 'guide', stroke: cc, x1: X(q), y1: Y(b.p), x2: X(q), y2: O.y})); }); }
+      g.appendChild(grp); reg(grp, b);
+    });
+
+    // The brace turned upright, spanning a price gap. left:true mirrors the
+    // horizontal brace's below:true -- outside the P axis, clear of the plot and
+    // the tick numbers, label running up the axis because horizontal text does
+    // not fit in the margin.
+    (cfg.vbraces || []).forEach(function (b) {
+      var cc = col(b.color || 'red'), grp = el('g', {});
+      var y1 = Y(Math.max(b.p1, b.p2)), y2 = Y(Math.min(b.p1, b.p2));
+      var x = b.left ? O.x - 32 : X(b.q);
+      var dir = (b.left || b.side === 'left') ? -1 : 1, hh = 7, m = (y1 + y2) / 2;
+      var d = 'M' + x + ' ' + y1 +
+              ' Q' + (x + dir * hh) + ' ' + y1 + ' ' + (x + dir * hh) + ' ' + (y1 + hh) +
+              ' L' + (x + dir * hh) + ' ' + (m - hh) +
+              ' Q' + (x + dir * hh) + ' ' + m + ' ' + (x + dir * 2 * hh) + ' ' + m +
+              ' Q' + (x + dir * hh) + ' ' + m + ' ' + (x + dir * hh) + ' ' + (m + hh) +
+              ' L' + (x + dir * hh) + ' ' + (y2 - hh) +
+              ' Q' + (x + dir * hh) + ' ' + y2 + ' ' + x + ' ' + y2;
+      grp.appendChild(el('path', {class: 'brace', stroke: cc, d: d}));
+      if (b.left) {
+        var lx = x + dir * (2 * hh + 8);
+        grp.appendChild(el('text', {class: 'tag', x: lx, y: m, 'text-anchor': 'middle',
+          transform: 'rotate(-90 ' + lx + ' ' + m + ')', fill: cc}, b.label));
+      } else {
+        grp.appendChild(el('text', {class: 'tag', x: x + dir * (2 * hh + 6), y: m + 4,
+          'text-anchor': dir > 0 ? 'start' : 'end', fill: cc}, b.label));
+      }
+      g.appendChild(grp); reg(grp, b);
+    });
+
+    (cfg.moves || []).forEach(function (m) {
+      var x1 = X(m.from[0]), y1 = Y(m.from[1]), x2 = X(m.to[0]), y2 = Y(m.to[1]);
+      var off = m.offset != null ? m.offset : 14, len = Math.hypot(x2 - x1, y2 - y1), nx = -(y2 - y1) / len * off, ny = (x2 - x1) / len * off;
+      var a = arrow(x1 + nx, y1 + ny, x2 + nx, y2 + ny, col(m.color), 'mv');
+      g.appendChild(a); reg(a, m);
+    });
+
+    (cfg.points || []).forEach(function (p) {
+      var cc = col(p.color), grp = el('g', {class: 'ptg'});
+      if (p.guides !== false) grp.appendChild(el('path', {class: 'guide', stroke: cc, d: 'M' + O.x + ' ' + Y(p.p) + ' L' + X(p.q) + ' ' + Y(p.p) + ' L' + X(p.q) + ' ' + O.y}));
+      grp.appendChild(el('circle', {class: 'pt' + (p.marker ? ' mk' : ''), cx: X(p.q), cy: Y(p.p), r: p.marker ? 6 : 4.2, stroke: cc}));
+      if (p.marker) grp.appendChild(el('text', {class: 'mktxt', x: X(p.q), y: Y(p.p) + 2.6, 'text-anchor': 'middle'}, p.marker));
+      if (p.label) grp.appendChild(el('text', {class: 'tag', x: X(p.q) + (p.dx != null ? p.dx : 9), y: Y(p.p) + (p.dy != null ? p.dy : -9), fill: cc}, p.label));
+      var pl = p.pl || ((p.showP !== false && (ax.yticks || []).indexOf(p.p) < 0 && !(cfg.hlines || []).some(function (l) { return l.p === p.p; })) ? fmtP(p.p, ax) : null);
+      var ql = p.ql || ((p.showQ !== false && (ax.xticks || []).indexOf(p.q) < 0) ? fmtQ(p.q, ax) : null);
+      if (pl) grp.appendChild(el('text', {class: 'tk strong', x: O.x - 6, y: Y(p.p) + 4, 'text-anchor': 'end', fill: cc}, pl));
+      if (ql) grp.appendChild(el('text', {class: 'tk strong', x: X(p.q), y: O.y + 15, 'text-anchor': 'middle', fill: cc}, ql));
+      g.appendChild(grp); reg(grp, p);
+    });
+
+    var rowHooks = [];
+    if (cfg.table) {
+      var t = cfg.table;
+      t.rows.forEach(function (row) {
+        var dots = [], p = row[0];
+        (t.series || []).forEach(function (sid, si) {
+          var sc = byId[sid] && byId[sid].spec, q = row[si + 1];
+          var dot = el('circle', {class: 'pt sched', cx: X(q), cy: Y(p), r: 3.8, stroke: col(sc && sc.color)});
+          g.appendChild(dot); reg(dot, {at: (sc && sc.at) || 0}); dots.push(dot);
+          if (t.arrows && si > 0) { var q0 = row[si], s = Math.sign(q - q0); g.appendChild(reg(arrow(X(q0) + s * 6, Y(p), X(q) - s * 6, Y(p), col('ink'), 'row'), {at: (sc && sc.at) || 0})); }
+        });
+        rowHooks.push(dots);
+      });
+    }
+    return {svg: svg, parts: parts, byId: byId, rowHooks: rowHooks, cfg: cfg};
+  }
+
+  // ---------- widget ----------
+  function Widget(host, cfg) { this.host = host; this.cfg = cfg; this.step = 0; this.build(); }
+  Widget.prototype.build = function () {
+    var cfg = this.cfg, self = this, host = this.host; host.innerHTML = '';
+    if (cfg.title) host.appendChild(h('h4', null, cfg.title));
+    if (cfg.lede) host.appendChild(h('p', 'sdg-lede', cfg.lede));
+    if (cfg.scenarios) {
+      var sc = h('div', 'sdg-scen'); sc.setAttribute('role', 'group');
+      Object.keys(cfg.scenarios).forEach(function (k) {
+        var b = h('button', null, cfg.scenarios[k].label); b.type = 'button';
+        b.setAttribute('aria-pressed', k === cfg.activeScenario ? 'true' : 'false');
+        b.addEventListener('click', function () { host.dispatchEvent(new CustomEvent('sdg-scenario', {detail: k})); });
+        sc.appendChild(b);
+      });
+      host.appendChild(sc);
+    }
+    var panels = cfg.panels || [cfg];
+    this.panels = panels.map(buildPanel);
+    var body = h('div', 'sdg-body' + (cfg.table ? ' has-table' : '') + (panels.length > 1 ? ' two' : ''));
+    this.panels.forEach(function (pn, i) {
+      var fig = h('figure');
+      if (pn.cfg.heading) fig.appendChild(h('figcaption', null, pn.cfg.heading));
+      fig.appendChild(pn.svg); body.appendChild(fig);
+      if (i === 0 && panels.length > 1 && cfg.link !== false) { var a = h('div', 'sdg-between'); a.innerHTML = '<svg viewBox="0 0 40 40" aria-hidden="true"><path d="M4 20 H26 M18 11 L28 20 L18 29" /></svg>'; body.appendChild(a); }
+    });
+    if (cfg.table) {
+      var t = cfg.table, ax = cfg.axes, tbl = h('table', 'sdg-table'), thead = h('thead'), tr = h('tr');
+      t.cols.forEach(function (c) { tr.appendChild(h('th', null, c)); }); thead.appendChild(tr); tbl.appendChild(thead);
+      var tbody = h('tbody'), hooks = this.panels[0].rowHooks;
+      t.rows.forEach(function (row, ri) {
+        var r = h('tr');
+        row.forEach(function (v, i) { r.appendChild(h('td', null, i === 0 ? fmtP(v, ax) : fmtQ(v, ax))); });
+        r.addEventListener('mouseenter', function () { r.classList.add('hi'); hooks[ri].forEach(function (d) { d.classList.add('hi'); }); });
+        r.addEventListener('mouseleave', function () { r.classList.remove('hi'); hooks[ri].forEach(function (d) { d.classList.remove('hi'); }); });
+        tbody.appendChild(r);
+      });
+      tbl.appendChild(tbody); var wrap = h('div', 'sdg-tablewrap'); wrap.appendChild(tbl); body.insertBefore(wrap, body.firstChild);
+    }
+    host.appendChild(body);
+    if (cfg.steps && cfg.steps.length > 1) {
+      var ctrl = h('div', 'sdg-ctrl'), prev = h('button', null, 'Back'), next = h('button', null, 'Next step'), reset = h('button', null, 'Start over'), lbl = h('span', 'sdg-step');
+      prev.type = next.type = reset.type = 'button';
+      [prev, next, reset, lbl].forEach(function (x) { ctrl.appendChild(x); }); host.appendChild(ctrl);
+      var cap = h('p', 'sdg-cap'); cap.setAttribute('aria-live', 'polite'); host.appendChild(cap);
+      this.ui = {prev: prev, next: next, lbl: lbl, cap: cap};
+      var n = cfg.steps.length;
+      prev.addEventListener('click', function () { if (self.step > 0) { self.step--; self.render(); } });
+      next.addEventListener('click', function () { if (self.step < n - 1) { self.step++; self.render(); } });
+      reset.addEventListener('click', function () { self.step = 0; self.render(); });
+    } else if (cfg.caption) host.appendChild(h('p', 'sdg-cap', cfg.caption));
+    this.render();
+  };
+  Widget.prototype.render = function () {
+    var s = this.step, cfg = this.cfg;
+    this.panels.forEach(function (pn) {
+      pn.parts.forEach(function (pt) {
+        var at = pt.spec.at || 0, until = pt.spec.until, on = s >= at && (until == null || s < until);
+        pt.node.classList.toggle('off', !on);
+        if (pt.node.dataset.dx != null) pt.node.style.transform = on ? 'translate(0,0)' : 'translate(' + (-pt.node.dataset.dx) + 'px,0)';
+      });
+      (pn.cfg.curves || []).forEach(function (c) { if (c.from && pn.byId[c.from]) pn.byId[c.from].node.classList.toggle('dim', s >= (c.at || 0)); });
+    });
+    if (this.ui) {
+      var n = cfg.steps.length;
+      this.ui.cap.textContent = cfg.steps[s];
+      this.ui.lbl.textContent = 'Step ' + (s + 1) + ' of ' + n;
+      this.ui.prev.disabled = s === 0; this.ui.next.disabled = s === n - 1;
+    }
+  };
+
+
+  // ---------- presets: symbolic (no-number) graphs from a few settings ----------
+  function clipLine(intercept, slope, lo, hi) { // p = intercept + slope*q, return pts with p in [lo,hi] and q in [4,104]
+    var pts = [];
+    [4, 104].forEach(function (q) { var p = intercept + slope * q; if (p < lo) { p = lo; } if (p > hi) { p = hi; } pts.push([(p - intercept) / slope, p]); });
+    return pts;
+  }
+  function shiftPanel(o) { // o: {shift:'D'|'S', dir:'left'|'right', size, static, heading, labels}
+    var d = (o.size || 20) * (o.dir === 'left' ? -1 : 1), D = o.shift === 'D', at1 = o.static ? 0 : 1, at3 = o.static ? 0 : 3;
+    var S = clipLine(0, 1, 8, 100), Dl = clipLine(100, -1, 8, 100);
+    var S2 = clipLine(-d, 1, 8, 100), D2 = clipLine(100 + d, -1, 8, 100);
+    var e2 = D ? [50 + d / 2, 50 + d / 2] : [50 + d / 2, 50 - d / 2];
+    var gap = D ? [50, 50 + d] : [50, 50 + d]; // quantity at P1 on the shifted curve
+    var curves = D ? [{id: 'S', label: 'S', pts: S}, {id: 'D1', label: 'D₁', pts: Dl, thin: true}, {id: 'D2', label: 'D₂', pts: D2, color: 'red', from: 'D1', at: at1, arrowP: 88}]
+                   : [{id: 'D', label: 'D', pts: Dl}, {id: 'S1', label: 'S₁', pts: S, thin: true}, {id: 'S2', label: 'S₂', pts: S2, color: 'red', from: 'S1', at: at1, arrowP: 88}];
+    var isShort = (D && d > 0) || (!D && d < 0);
+    var pn = {heading: o.heading, axes: {xmax: 110, ymax: 110}, curves: curves,
+      points: [{q: 50, p: 50, pl: 'P₁', ql: 'Q₁'}, {q: e2[0], p: e2[1], pl: 'P₂', ql: 'Q₂', color: 'red', at: at3}]};
+    if (!o.static) { pn.points.push({q: 50 + d, p: 50, color: 'red', at: 2, until: 3, showP: false, showQ: false});
+      pn.braces = [{p: 50, q1: 50, q2: 50 + d, label: isShort ? 'Shortage' : 'Surplus', at: 2, until: 3}]; }
+    return pn;
+  }
+  function shiftSteps(o) {
+    var D = o.shift === 'D', right = o.dir !== 'left', good = o.good ? ' for ' + o.good : '';
+    var isShort = (D && right) || (!D && !right), pUp = isShort, qUp = right;
+    var why = o.why || (D ? (right ? 'Buyers want more at every price' : 'Buyers want less at every price') : (right ? 'Selling is more profitable at every price' : 'Selling is less profitable at every price'));
+    var ev = o.event ? o.event + ' ' : '';
+    return [
+      'The market' + good + ' is in equilibrium at P₁ and Q₁.',
+      ev + why + ', so ' + (D ? 'demand' : 'supply') + ' shifts ' + (right ? 'right' : 'left') + ', from ' + (D ? 'D₁ to D₂' : 'S₁ to S₂') + '.',
+      'At the old price P₁ there is now a ' + (isShort ? 'shortage: buyers want more than sellers offer, so the price rises.' : 'surplus: sellers offer more than buyers want, so the price falls.'),
+      'The market settles at P₂ and Q₂. Price ' + (pUp ? 'up' : 'down') + ', quantity ' + (qUp ? 'up' : 'down') + '.'];
+  }
+  function doublePanel(o) { // o: {demand:'left'|'right', supply:'left'|'right', dD, dS, heading, static}
+    var dD = (o.dD || 20) * (o.demand === 'left' ? -1 : 1), dS = (o.dS || 20) * (o.supply === 'left' ? -1 : 1);
+    var q2 = (100 + dD + dS) / 2, p2 = q2 - dS, a1 = o.static ? 0 : 1, a2 = o.static ? 0 : 2, a3 = o.static ? 0 : 3;
+    return {heading: o.heading, axes: {xmax: 110, ymax: 110},
+      curves: [{id: 'D1', label: 'D₁', pts: clipLine(100, -1, 8, 100), thin: true}, {id: 'S1', label: 'S₁', pts: clipLine(0, 1, 8, 100), thin: true},
+               {id: 'D2', label: 'D₂', pts: clipLine(100 + dD, -1, 8, 100), color: 'red', from: 'D1', at: a1, arrowP: 32},
+               {id: 'S2', label: 'S₂', pts: clipLine(-dS, 1, 8, 100), color: 'red', from: 'S1', at: a2, arrowP: 88}],
+      points: [{q: 50, p: 50, pl: 'P₁', ql: 'Q₁', marker: '1'}, {q: q2, p: p2, pl: 'P₂', ql: 'Q₂', color: 'red', marker: '2', at: a3}]};
+  }
+  function doubleSteps(o, q2, p2) {
+    var dr = o.demand !== 'left', sr = o.supply !== 'left';
+    return ['Equilibrium at P₁ and Q₁ (Point 1).',
+      'Demand shifts ' + (dr ? 'right' : 'left') + ', from D₁ to D₂.',
+      'Supply shifts ' + (sr ? 'right' : 'left') + ', from S₁ to S₂.',
+      'The new equilibrium is Point 2: price ' + (p2 > 50 ? 'up' : p2 < 50 ? 'down' : 'unchanged') + ', quantity ' + (q2 > 50 ? 'up' : q2 < 50 ? 'down' : 'unchanged') + '. ' + (o.note || '')];
+  }
+  function expand(cfg) {
+    if (!cfg.preset) return cfg;
+    var out = merge(cfg, {}); delete out.preset;
+    if (cfg.preset === 'shift') {
+      var pn = shiftPanel(cfg); for (var k in pn) out[k] = pn[k];
+      if (!cfg.static && !cfg.steps) out.steps = shiftSteps(cfg);
+    } else if (cfg.preset === 'double') {
+      if (cfg.compare) { // two panels: bigger supply shift vs bigger demand shift
+        var big = cfg.big || 40, small = cfg.small || 15;
+        out.link = false; out.panels = [doublePanel(merge(cfg, {dD: small, dS: big, heading: cfg.headings ? cfg.headings[0] : 'Larger shift of supply'})),
+                      doublePanel(merge(cfg, {dD: big, dS: small, heading: cfg.headings ? cfg.headings[1] : 'Larger shift of demand'}))];
+        if (!cfg.static && !cfg.steps) { var s = doubleSteps(cfg, 50, 50); s[3] = 'Each panel ends at a new Point 2. ' + (cfg.note || 'Compare them: one of price or quantity moves the same way in both; the other depends on which shift is larger.'); out.steps = s; }
+      } else {
+        var one = doublePanel(cfg); for (var k2 in one) out[k2] = one[k2];
+        var e = one.points[1]; if (!cfg.static && !cfg.steps) out.steps = doubleSteps(cfg, e.q, e.p);
+      }
+    }
+    return out;
+  }
+
+  function mount(root) {
+    var script = root.querySelector('script[type="application/json"]'); if (!script) return;
+    var base; try { base = JSON.parse(script.textContent); } catch (e) { root.textContent = 'Widget config error: ' + e.message; return; }
+    function draw(key) {
+      var cfg = base;
+      if (base.scenarios) { key = key || base.activeScenario || Object.keys(base.scenarios)[0]; cfg = merge(base, base.scenarios[key]); cfg.activeScenario = key; }
+      new Widget(root, expand(cfg));
+    }
+    root.addEventListener('sdg-scenario', function (e) { draw(e.detail); });
+    draw();
+  }
+  function init() { document.querySelectorAll('.sdg').forEach(mount); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+})();
+</script>
+</head>
+<body>
+
+<p class="date">Monday, 8/24/26</p>
+
+<p>Dr. Knight devoted the entire class on Monday, August 24th to a review of the course syllabus and course mechanics.</p>
+
+<h1>Intro to ECO2013</h1>
+
+<p>Your grade in ECO2013 will be based on three non-cumulative examinations (worth 25% each) and 11 quizzes in MyEconLab (worth a total of 25%).  Your two lowest quiz scores will be dropped automatically at the end of the semester, so your quiz average will be the average of your 9 highest scores.  Quizzes usually open on Wednesday at 3:00 PM and are due the following Monday at 8:00 AM.  They are open-book and open-note, and they are not timed, but each quiz must be completed in one sitting.  The exam dates are as follows:</p>
+
+<table>
+<tr><th>Exam</th><th>Date and time</th><th>Material</th></tr>
+<tr><td>Exam 1</td><td>Monday, September 28th at 8:20 PM</td><td>Module 1</td></tr>
+<tr><td>Exam 2</td><td>Monday, November 2nd at 8:20 PM</td><td>Module 2</td></tr>
+<tr><td>Exam 3</td><td>Saturday, December 5th at 5:30 PM</td><td>Module 3</td></tr>
+</table>
+
+<p>Students in on-campus sections will take the exams on campus, and Dr. Knight will email exam locations about one week before each exam.  Only students who are enrolled in a fully online section (UF Online, PaCE, or dual enrollment) will take the exams online.  Everyone takes each exam at the same time, and you will not be allowed to take an exam if you start more than 15 minutes late.  Each of the three exams will last 75 minutes and consist of 40 questions, most of which are multiple choice (there may be a few true/false questions).  At least three questions will come directly from your quizzes, and the last question will be a &ldquo;freebie&rdquo; joke question.  If the class average on an exam is below 74, Dr. Knight will curve the scores up so that the average is 74.</p>
+
+<h1>How to Succeed in ECO2013</h1>
+
+<p>ECO2013 is a manageable course, but you have to keep up with the material.  <b>Smokin&rsquo;Notes study guides, practice exams, and flash cards for the previous week are available every weekend.</b>  For best results, be sure to review these materials every weekend so that you do well on your quizzes and are familiar with the material when you start to study for your exams.</p>
+
+<p><b>The best way to study for exams in ECO2013 is to do practice questions.</b>  Dr. Knight will post the actual exams from the previous three semesters on the Canvas website, and you should be sure to go through all of these questions.  In addition, <b>Check Your Progress quizzes and three full practice exams will be posted at SmokinNotes.com.</b>  These exams will help you test your knowledge of the material, and they will give you an idea of what to expect on the actual exam.</p>
+
+<p>Finally, Dr. Knight allows students to create a 3&rdquo; x 5&rdquo; index card to use during the exam.  You can put anything on the index card, as long as you make it yourself and write it by hand (both sides are fine).  You may also bring a basic four-function or scientific calculator, but graphing calculators and phone calculator apps are not allowed, so it is a good idea to buy an inexpensive calculator online well before the first exam.  The Smokin&rsquo;Notes Quick Reference Guide corresponding with each exam provides some ideas of the kinds of things that you might include on your index card.</p>
+
+<p>Here are some of our top tips for success in ECO2013:</p>
+
+<ul>
+<li><b>Go through all of Dr. Knight&rsquo;s practice exams!</b>  Dr. Knight will post three actual exams given in previous semesters for each of your three exams this semester.  Going through these questions is important for a couple of reasons.  First, it will give you a sense of what his question-writing style is.  (He doesn&rsquo;t use questions from the MyEconLab site on the actual exam, and looking at old exams is the best way to get information about his question-writing style.)  Second, many of the old exam questions have appeared in a slightly altered format on the current semester&rsquo;s exams.</li>
+<li><b>Make your own index card.</b>  You can use a 3&rdquo;x 5&rdquo; index card that has anything that you write on it on the exam.  Making this index card <em>you</em>rself is important because it requires you to review the material and determine what you need to be reminded of the most.  (You should resist the temptation to copy suggestions from someone else&rsquo;s card.  First, only handwritten cards are allowed.  Second, the value of an index card comes from you creating it. After creating the card yourself, you may not need to refer to it at all!)</li>
+<li><b>Strive for understanding rather than memorization.</b>  For example, you could simply <em>remember</em> that the demand curve for a good shifts to the right when the price of a substitute increases.  However, it would be a much better use of your time (and brain) to simply think about an example.  If you could eat McDonald&rsquo;s or Burger King and the price of McDonald&rsquo;s doubles, your demand for Burger King increases because you&rsquo;re more likely to eat Burger King.  It&rsquo;s that simple!</li>
+</ul>
+
+<p class="date">Wednesday, 8/26/26</p>
+
+<h1>What Is Economics?</h1>
+
+<div class="exam-tip"><h4>EXAM TIP: Scarcity</h4><p>Remember that people must make economic decisions because of scarcity, a situation in which unlimited wants are met with limited resources.</p></div>
+
+<p><strong>Economics</strong> is the study of the allocation of scarce resources.  Economic agents (including individuals, firms, households, and entire societies) face economic decisions because of <strong>scarcity</strong>, the existence of limited resources alongside unlimited wants.</p>
+
+<p>Economists assume that everyone has unlimited wants.  In other words, no one can ever be satiated&mdash;no matter how much a person has, he or she will still want more.  Dr. Knight noted that this assumption is one way in which economics differs from many other social sciences.  For example, even the richest person in the world wants to have more money.  Individuals will never reach a point where they have no wants.</p>
+
+<p>This is a course in <strong>macroeconomics</strong>, which studies the &ldquo;big picture&rdquo; of the macroeconomy, with a focus on things like gross domestic product, unemployment, and inflation.  Before we discuss macroeconomic topics, we have to cover a bit of material from <strong>microeconomics</strong>, the study of decision making by individuals, households, and firms.  We will spend the first third of the course discussing microeconomic topics like supply and demand, and then we will transition into macroeconomic topics for Exam 2 and Exam 3.</p>
+
+<h2>Rationality and Decision Making</h2>
+
+<p>Economists assume that individuals, firms, and other economic agents are <strong>rational and self-interested</strong>.  This does not necessarily mean that every decision will be the <em>best</em> decision, or even that every decision will ultimately make the economic actor better off.  Rather, an economic actor makes rational decisions when it makes the best decision given the information that&rsquo;s available and the constraints that it faces.  For example, if you decided to read these notes, economists would assume that you did so because you believe it is the best possible use of your time.  This doesn&rsquo;t necessarily mean that you <em>enjoy</em> reading notes about economics; rather, you&rsquo;re reading notes about economics because you think that doing so will lead to a desired outcome&mdash;a better grade on your exam.</p>
+
+<p>Rational decision making doesn&rsquo;t always <em>end</em> in the best outcome, and you don&rsquo;t have to <em>like</em> a decision for it to be rational.  For example, suppose that you buy a new car and decide to wait a month or two before purchasing collision insurance because you have never had an accident and money is tight.  If you then get into an accident and total the car, you will regret that decision&mdash;but it may still have been the rational choice given the information you had at the time.  Likewise, you may be sitting in class even though you would rather be somewhere else.  You are there because you believe that the benefits of attending (a better grade, your preferred major, a better job) are worth the cost.</p>
+
+<h2>Economic Models</h2>
+
+<p>Economists make certain assumptions (such as the assumption that people will act to make themselves as well off as possible), and they use those assumptions to develop economic <strong>models</strong>&mdash;simplified versions of reality&mdash;that predict how people will behave.  For example, the production possibilities frontier (PPF) and the supply and demand model are two economic models that we will discuss for Exam 1.  &ldquo;Good&rdquo; economic models are simple enough to observe the relationship between two variables but robust enough to produce results that are broadly applicable in the real world.</p>
+
+<h1>Introduction to Opportunity Costs</h1>
+
+<div class="exam-tip"><h4>EXAM TIP: The next-best alternative</h4><p>Remember that the opportunity cost of an action is the value of the single, next-best alternative.</p></div>
+
+<p>The <strong>opportunity cost</strong> of an action or decision is the <em>single</em> highest-valued alternative.  That is, it is what you have to give up in order to pursue an alternative activity or get something else.  A general definition for the opportunity cost of any decision is as follows:</p>
+
+<p>\[\text{Opportunity Cost} = \frac{\text{What You Lose}}{\text{What You Gain}}\]</p>
+
+<p>Note that the opportunity cost is always expressed in terms of what you lose, or give up.  It is the <em>second-</em>best alternative.  For example, suppose that you could spend an hour of your time going to class, sleeping, or studying.  You rank your options (from most preferred to least preferred) as follows:</p>
+
+<ol>
+<li>Going to class</li>
+<li>Playing basketball</li>
+<li>Getting lunch</li>
+</ol>
+
+<p>If you decide to go to class, the opportunity cost of spending your hour doing so would be the <em>single</em> next-best alternative&mdash;playing basketball.  It would <b>not</b> be <em>both</em> playing basketball and getting lunch because you could only do <b>one</b> of these rather than using the hour to go to class.</p>
+
+<p>Opportunity costs do not have to be monetary, and they include both <strong>explicit costs</strong> (money that you actually pay or give up) and <strong>implicit costs</strong> (the value of something you forgo without any money changing hands).  Economists tend to emphasize implicit costs because they are easy to overlook.  For example, Dr. Knight and his husband own a house in Quito, Ecuador, that they choose not to rent out.  They never write a check for that decision, but they do give up the rental income they could have earned&mdash;an implicit cost.  Similarly, many Florida families whose orange groves were wiped out by disease have had to decide whether to keep farming, let the land sit idle, or sell it to developers.  A family that keeps its land is giving up the money it could have received by selling, even though that cost never shows up on an accounting statement.</p>
+
+<p>Just as you face opportunity costs and have to make choices involving trade-offs, nations do so, as well.  For example, a country that uses its grapes to produce wine cannot use the same grapes to produce grape juice.  Therefore, a country has to choose between producing more wine or producing more grape juice.  Likewise, a country that decides to have a lot of doctors and teachers will have fewer workers in other sectors.</p>
+
+<p>In the specific context of a nation&rsquo;s production, the opportunity cost of one additional unit of Good X is defined as follows:</p>
+
+<p>\[\text{Per-Unit Opportunity Cost of Good X} = \frac{\text{# of Units of Good Y Lost}}{\text{# of Units of Good X Gained}}\]</p>
+
+<p>The concept of opportunity costs is extremely important for economists, and professional economics educators rank it as one of the most important concepts in any economics class.  Below, we will develop a model that illustrates the concept of opportunity costs and trade-offs with graphs.</p>
+
+<h1>The Production Possibilities Frontier (PPF)</h1>
+
+<p>A <strong>production possibilities frontier (PPF)</strong> is a graphical representation of the trade-off between two productive activities, such as the production of <strong>two goods</strong>.  That is, it shows the maximum possible combinations of two goods that can be produced with current technology and available resources.  A PPF could be drawn for an individual, a household, a firm, or an entire society.  We will simplify our analysis by assuming that an economic actor can only produce two goods and that its resources and available technology are both fixed.  (The basic ideas that we will extract from the model can be widely applied to a &ldquo;real&rdquo; economy with millions of goods, however.)  As we will see, this model illustrates the concepts of scarcity, choice, and opportunity cost.</p>
+
+<h2>The Basics of the PPF</h2>
+
+<p>You can think of the PPF as a frontier between points that are attainable (or <em>feasible)</em> and those that are not attainable.  A <strong>productively efficient</strong> point is one at which society is using all of its available scarce resources.  Points inside the PPF are attainable but production-inefficient, points along the PPF are attainable and production-efficient, and points beyond the PPF are simply not attainable.  A nation would usually like to produce at a point beyond its PPF, but it is limited by resources and technology.</p>
+
+<!-- IMAGE POSITION: below-referenced paragraph -->
+<div class="sdg"><script type="application/json">
+{
+ "title": "The production possibilities frontier",
+ "lede": "Step through the five kinds of point on and around a frontier.",
+ "axes": {
+  "x": "Good 1",
+  "y": "Good 2",
+  "xmax": 232,
+  "ymax": 464,
+  "xticks": [
+   0,
+   200
+  ],
+  "yticks": [
+   0,
+   400
+  ]
+ },
+ "curves": [
+  {
+   "id": "PPF",
+   "label": "",
+   "pts": [
+    [
+     0,
+     400
+    ],
+    [
+     200,
+     0
+    ]
+   ],
+   "ldx": -44,
+   "ldy": -10
+  }
+ ],
+ "points": [
+  {
+   "q": 0,
+   "p": 400,
+   "label": "A",
+   "dx": 8,
+   "dy": -6
+  },
+  {
+   "q": 200,
+   "p": 0,
+   "label": "B",
+   "dx": 10,
+   "dy": -4
+  },
+  {
+   "q": 95,
+   "p": 210,
+   "label": "D",
+   "at": 1,
+   "dx": 10,
+   "dy": -8,
+   "showP": false,
+   "showQ": false
+  },
+  {
+   "q": 50,
+   "p": 100,
+   "label": "C",
+   "at": 2,
+   "dx": 10,
+   "dy": 6,
+   "showP": false,
+   "showQ": false
+  },
+  {
+   "q": 200,
+   "p": 400,
+   "label": "E",
+   "at": 3,
+   "dx": -18,
+   "dy": 16
+  }
+ ],
+ "steps": [
+  "At Point A the nation puts every resource into Good 2 and produces 400 units of it and none of Good 1. At Point B it does the reverse, producing 200 units of Good 1 and no Good 2. These are the points of specialisation.",
+  "Point D lies on the frontier. Every resource is in use, so it is both attainable and production-efficient.",
+  "Point C lies inside the frontier. It is attainable, but resources are idle or badly used, so it is production-inefficient.",
+  "Point E lies beyond the frontier, at 200 units of Good 1 and 400 units of Good 2 together. The nation would prefer it, but with current resources and technology it is simply unattainable."
+ ]
+}
+</script></div>
+
+<p>Points A and B are called points of <strong>specialization</strong>.  At these points, the nation uses all of its productive resources to produce <em>one</em> of the two goods and <em>none</em> of the other.  In this case, the firm can use all of its productive resources to produce <em>either</em> 200 units of Good 1 or 400 units of Good 2, but not both.  The nation would be better off if it could produce a combination outside the PPF, such as 200 units of Good 1 and 400 units of Good 2.  However, this point is simply <em>unattainable</em>.  There is not enough time in the day, money in the bank, or workers in the shop to produce more of Good 1 without reducing the production of Good 2.</p>
+
+<p>At points within the PPF, resources are being used inefficiently or are underutilized.  For example, workers may be unemployed or factories may be idle at these points.  Nevertheless, these points represent <em>possible</em> production points in the sense that the country is capable of producing them.  Points along the PPF represent situations in which resources are being fully utilized.  These are the most production-efficient points that the country can achieve using current resources and technology.</p>
+
+<p>Again, note that the production possibilities frontier discussed above describes a simple economy in which only two goods are produced.  We could, in theory, extend this analysis to multiple goods, but it would make the drawings more complicated.</p>
+
+<h2>The Production Possibilities Frontier: An Example</h2>
+
+<p>Suppose that a nation can produce two goods: boxes of tissues and Lego sets.  The widget below shows the maximum combinations of boxes of tissues and Lego sets that this country can produce with its current resources and technology.  Step through it to compare three particular combinations.</p>
+
+<!-- IMAGE POSITION: beside-referenced paragraph -->
+<div class="sdg"><script type="application/json">
+{
+ "title": "Producing boxes of tissues and Lego sets",
+ "lede": "Each row of the table is one point on the frontier.",
+ "axes": {
+  "x": "Lego Sets",
+  "y": "Boxes of Tissues",
+  "xmax": 54,
+  "ymax": 116,
+  "xticks": [
+   0,
+   10,
+   20,
+   30,
+   40
+  ],
+  "yticks": [
+   0,
+   25,
+   50,
+   75,
+   100
+  ],
+  "grid": true
+ },
+ "curves": [
+  {
+   "id": "PPF",
+   "label": "",
+   "pts": [
+    [
+     0,
+     100
+    ],
+    [
+     40,
+     0
+    ]
+   ],
+   "ldx": -32,
+   "ldy": -10
+  }
+ ],
+ "points": [
+  {
+   "q": 0,
+   "p": 100,
+   "label": "A",
+   "dx": 9,
+   "dy": -9
+  },
+  {
+   "q": 10,
+   "p": 75,
+   "label": "B",
+   "dx": 9,
+   "dy": -9
+  },
+  {
+   "q": 20,
+   "p": 50,
+   "label": "C",
+   "dx": 9,
+   "dy": -9
+  },
+  {
+   "q": 30,
+   "p": 25,
+   "label": "D",
+   "dx": 9,
+   "dy": -9
+  },
+  {
+   "q": 40,
+   "p": 0,
+   "label": "E",
+   "dx": 9,
+   "dy": -9
+  },
+  {
+   "q": 10,
+   "p": 25,
+   "at": 1,
+   "guides": false
+  },
+  {
+   "q": 10,
+   "p": 100,
+   "at": 2,
+   "guides": false
+  }
+ ],
+ "table": {
+  "cols": [
+   "Boxes of Tissues",
+   "Lego Sets"
+  ],
+  "series": [
+   "PPF"
+  ],
+  "rows": [
+   [
+    100,
+    0
+   ],
+   [
+    75,
+    10
+   ],
+   [
+    50,
+    20
+   ],
+   [
+    25,
+    30
+   ],
+   [
+    0,
+    40
+   ]
+  ]
+ },
+ "steps": [
+  "The nation can produce 100 boxes of tissues and no Lego sets, 40 Lego sets and no tissues, or any combination between them. At Point B it produces 75 boxes of tissues and 10 Lego sets, and every resource is in use.",
+  "Producing 25 boxes of tissues alongside those same 10 Lego sets is attainable, but it leaves resources idle, so it is production-inefficient.",
+  "Producing 100 boxes of tissues alongside 10 Lego sets is not attainable at all: it lies beyond what current resources and technology allow."
+ ]
+}
+</script></div>
+
+<p>Consider the following three points:</p>
+
+<ul>
+<li><em>75 Boxes of Tissues, 10 Lego Sets</em> &ndash; This point is attainable and production-efficient.</li>
+<li><em>25 Boxes of Tissues, 10 Lego Sets</em> &ndash; This point is attainable but not productively efficient.</li>
+<li><em>100 Boxes of Tissues, 10 Lego Sets</em> &ndash; This point is not attainable.</li>
+</ul>
+
+<p>Note that we will assume that the goods that we consider are infinitely divisible.  For example, we can produce 2 Lego sets, 1.9 Lego sets, 1.99 Lego sets, etc. This may not be a reasonable assumption in every case; however, it makes our economic analysis easier.</p>
+
+<p>Note that all of the points along the PPF are <b>productively efficient</b>, meaning that they represent points at which society is using all of its scarce resources as efficiently as possible.  Only one of the points along the PPF is <em>allocatively efficient</em>, meaning that it represents the combination of two goods that society values most.  For example, if society values boxes of tissues more than Lego sets, the allocatively efficient point may correspond to a lot of tissue production and a small amount of Lego set production.</p>
+
+<p>Dr. Knight will not emphasize the distinction between production efficiency and allocative efficiency in this class, so when a point is described as &ldquo;efficient,&rdquo; you can assume that it is &ldquo;production-efficient.&rdquo;</p>
+
+<h2>An Important Note About PPFs</h2>
+
+<p>Note that the production possibilities frontier tells us the maximum combinations of two goods that a society can <em>produce</em>; it does not necessarily tell us the maximum combinations of two goods that a society can <em>consume</em>.  As we will see later in this section, a society may be able to consume more than it could possibly produce on its own if it takes advantage of gains from trade.</p>
+
+<h2>The PPF and Opportunity Costs</h2>
+
+<div class="exam-tip"><h4>EXAM TIP: Calculating opportunity cost</h4><p>Be sure you can calculate opportunity costs between two points along a linear PPF.</p></div>
+
+<p>If an economic actor is producing along its PPF, it cannot increase the production of one good without giving up production of another good.  In this sense, the PPF illustrates the concept of <em>trade-offs</em> and <em>opportunity costs</em>.  The opportunity cost of producing more of one good is the production of the other good that must be given up to do so.  That is, the opportunity cost of one additional unit of Good X is calculated as follows:</p>
+
+<p>\[\frac{\text{# Units Lost of Good Y}}{\text{# Units Gained of Good X}}\]</p>
+
+<p>Let&rsquo;s reconsider the PPF that shows the production possibilities for tissues and Lego sets:</p>
+
+<!-- IMAGE POSITION: below-referenced paragraph -->
+<div class="sdg"><script type="application/json">
+{
+ "title": "Opportunity cost along a straight-line frontier",
+ "lede": "The cost of a Lego set, measured in boxes of tissues.",
+ "axes": {
+  "x": "Lego Sets",
+  "y": "Boxes of Tissues",
+  "xmax": 54,
+  "ymax": 116,
+  "xticks": [
+   0,
+   10,
+   20,
+   30,
+   40
+  ],
+  "yticks": [
+   0,
+   25,
+   50,
+   75,
+   100
+  ]
+ },
+ "curves": [
+  {
+   "id": "PPF",
+   "label": "",
+   "pts": [
+    [
+     0,
+     100
+    ],
+    [
+     40,
+     0
+    ]
+   ],
+   "ldx": -32,
+   "ldy": -10
+  }
+ ],
+ "points": [
+  {
+   "q": 0,
+   "p": 100,
+   "label": "A",
+   "dx": 8,
+   "dy": -6
+  },
+  {
+   "q": 10,
+   "p": 75,
+   "label": "B",
+   "dx": -22,
+   "dy": 15
+  },
+  {
+   "q": 20,
+   "p": 50,
+   "label": "C",
+   "dx": -22,
+   "dy": 15
+  },
+  {
+   "q": 30,
+   "p": 25,
+   "label": "D",
+   "dx": -22,
+   "dy": 15
+  },
+  {
+   "q": 40,
+   "p": 0,
+   "label": "E",
+   "dx": 8,
+   "dy": -6
+  }
+ ],
+ "moves": [
+  {
+   "from": [
+    10,
+    75
+   ],
+   "to": [
+    20,
+    50
+   ],
+   "at": 1,
+   "offset": -15
+  },
+  {
+   "from": [
+    20,
+    50
+   ],
+   "to": [
+    30,
+    25
+   ],
+   "at": 2,
+   "offset": -15
+  }
+ ],
+ "braces": [
+  {
+   "p": 6,
+   "q1": 10,
+   "q2": 20,
+   "label": "10 Lego sets gained",
+   "below": true,
+   "at": 1,
+   "until": 2
+  },
+  {
+   "p": 6,
+   "q1": 20,
+   "q2": 30,
+   "label": "10 Lego sets gained",
+   "below": true,
+   "at": 2
+  }
+ ],
+ "vbraces": [
+  {
+   "p1": 50,
+   "p2": 75,
+   "label": "25 boxes given up",
+   "left": true,
+   "at": 1,
+   "until": 2
+  },
+  {
+   "p1": 25,
+   "p2": 50,
+   "label": "25 boxes given up",
+   "left": true,
+   "at": 2
+  }
+ ],
+ "steps": [
+  "The frontier is a straight line, so its slope is the same everywhere.",
+  "Moving from Point B to Point C the nation gains 10 Lego sets and gives up 25 boxes of tissues, so each Lego set costs 2.5 boxes of tissues.",
+  "Moving from Point C to Point D it gains another 10 Lego sets and gives up another 25 boxes of tissues. The cost per Lego set is 2.5 boxes again, because a straight-line frontier means the opportunity cost never changes."
+ ]
+}
+</script></div>
+
+<p>We will use this PPF to illustrate several points about opportunity costs:</p>
+
+<ul>
+<li>If the PPF is linear&mdash;that is, if it is a straight line rather than a curved line&mdash;the marginal opportunity costs are constant.  For example, moving from Point <em>B</em> to Point <em>C</em>, the country gains 10 Lego sets, but it loses 25 boxes of tissues.  The opportunity cost of an additional Lego set, moving from Point <em>B</em> to Point <em>C,</em> is calculated as follows:
+<p>OC<sub>Lego Sets</sub> = \(\frac{\text{25 boxes of tissues}}{\text{10 Lego sets}}\) = <b>2.5 boxes of tissues per Lego set</b></p>
+<p>Moving from Point <em>C</em> to Point <em>D</em>, the country gains 10 Lego sets, and it gives up another 25 boxes of tissues.  The opportunity cost of a Lego set, moving from Point <em>C</em> to Point <em>D,</em> is calculated as follows:</p>
+<p>OC<sub>Lego Sets</sub> = \(\frac{\text{25 boxes of tissues}}{\text{10 Lego sets}}\) = <b>2.5 boxes of tissues per Lego set</b></p>
+<p>As you can see, the opportunity cost of an additional Lego set does not change as more Lego sets are produced.  This is because the PPF is linear.</p></li>
+<li>Opportunity costs are always expressed in terms of another good.  For example, the opportunity cost of producing more Lego sets is the number of boxes of tissues that must be given up to produce one more Lego set, as we move along the PPF.</li>
+<li>The opportunity cost of one good is simply the reciprocal of the opportunity cost of the other good.  For example, let&rsquo;s calculate the opportunity cost of producing additional boxes of tissues as we move from Point <em>C</em> to Point <em>B</em>:
+<p>OC<sub>Boxes of Tissues</sub> = \(\frac{\text{10 Lego sets}}{\text{25 boxes of tissues}}\) = <b>2/5 Lego set per box of tissues</b></p>
+<p>Note that this is simply the inverse of the opportunity cost of producing more Lego sets.</p></li>
+<li>Our simple example uses two specific goods, but we could expand our analysis to describe general categories of goods or multiple goods.</li>
+<li>If an economic actor is operating <em>within</em> its PPF, it could increase production of one good <em>without</em> giving up production of another good.  It could do so, for example, by using its resources more efficiently.  For example, if the country were producing 10 Lego sets and 25 boxes of tissues, it could theoretically produce more boxes of tissues without giving up any Lego set production, simply by using its resources more efficiently.  Likewise, it could theoretically produce more Lego sets without giving up any tissue production. Therefore, if a country is operating within its PPF, there are no opportunity costs associated with producing more of either good.</li>
+<li>If an economic actor is operating <em>on</em> its PPF, it cannot increase production of one good without giving up production of another good.  For example, if the country is producing 10 Lego sets and 75 boxes of tissues, it cannot produce more boxes of tissues without giving up Lego set production.</li>
+<li>PPFs have negative slopes because they illustrate situations in which economic actors face trade-offs.  Specifically, a nation must give up production of one good to produce more of the other.</li>
+</ul>
+
+<h1>Increasing Opportunity Costs and Bowed-Out PPFs</h1>
+
+<p>Thus far, we have restricted our analysis to PPFs that are straight lines.  When we explore comparative advantage and trade, we will use straight-line PPFs to make our analysis easier because straight-line PPFs have constant opportunity costs.  However, in the &ldquo;real world,&rdquo; PPFs are almost always <em>not</em> straight lines.  Rather, they are <strong>concave</strong> to the origin.  The fact that the slope of a concave PPF changes as you move along the PPF means that the opportunity cost changes as you move along the PPF, as well.</p>
+
+<p>For example, suppose that an economy uses its resources to produce two goods: chai lattes and burritos.  Some resources are particularly well-suited for producing chai lattes, while other resources are particularly well-suited for producing burritos.</p>
+
+<!-- IMAGE POSITION: below-referenced paragraph -->
+<div class="sdg"><script type="application/json">
+{
+ "title": "A bowed-out frontier: chai lattes and burritos",
+ "lede": "Opportunity cost rises as more burritos are produced.",
+ "axes": {
+  "x": "Burritos",
+  "y": "Chai Lattes",
+  "xmax": 72,
+  "ymax": 100,
+  "xticks": [
+   20,
+   40,
+   60
+  ],
+  "yticks": [
+   50,
+   80,
+   90
+  ]
+ },
+ "curves": [
+  {
+   "id": "PPF",
+   "label": "",
+   "pts": [
+    [
+     20,
+     90
+    ],
+    [
+     40,
+     80
+    ],
+    [
+     60,
+     50
+    ]
+   ],
+   "curved": true,
+   "ldx": 8,
+   "ldy": 10
+  }
+ ],
+ "points": [
+  {
+   "q": 20,
+   "p": 90,
+   "label": "A",
+   "dx": -18,
+   "dy": -8
+  },
+  {
+   "q": 40,
+   "p": 80,
+   "label": "B",
+   "dx": -22,
+   "dy": 16
+  },
+  {
+   "q": 60,
+   "p": 50,
+   "label": "C",
+   "dx": 8,
+   "dy": -10
+  }
+ ],
+ "moves": [
+  {
+   "from": [
+    20,
+    90
+   ],
+   "to": [
+    40,
+    80
+   ],
+   "at": 1,
+   "offset": -14
+  },
+  {
+   "from": [
+    40,
+    80
+   ],
+   "to": [
+    60,
+    50
+   ],
+   "at": 2,
+   "offset": -14
+  }
+ ],
+ "steps": [
+  "Some resources suit chai lattes and others suit burritos, so the frontier bows outward instead of running straight.",
+  "Moving from Point A to Point B, 20 more burritos cost 10 chai lattes, which is half a chai latte per burrito.",
+  "Moving from Point B to Point C, another 20 burritos cost 30 chai lattes, or one and a half chai lattes each. The cost per burrito has risen, because the resources still available are the ones least suited to making burritos."
+ ]
+}
+</script></div>
+
+<p>If the country begins by producing a lot of chai lattes and no burritos, it may be able to increase the production of burritos by taking some of the workers that were making chai lattes and having them produce burritos instead.  The rational decision would be to allocate the workers who are best at burrito production (and worst at chai latte production) to the production of burritos.  As the economy continues to add more and more burrito production, however, it will have to allocate increasingly good resources for producing chai lattes (and increasingly bad resources for producing burritos) to the production of burritos.  As a result, the opportunity cost of producing additional burritos will increase, and the PPF will become steeper to the right.</p>
+
+<p>Let&rsquo;s calculate the opportunity cost of producing burritos as we move from Point <em>A</em> to Point <em>B</em> in the <em>PPF</em> above:</p>
+
+<p>OC<sub>Burritos</sub> = \(\frac{\text{10 chai lattes}}{\text{20 burritos}}\) = <b>0.5 chai latte per burrito</b></p>
+
+<p>Let&rsquo;s calculate the opportunity cost of producing burritos as we move from Point <em>B</em> to Point <em>C</em> in the PPF above:</p>
+
+<p>OC<sub>Burritos</sub> = \(\frac{\text{30 chai lattes}}{\text{20 burritos}}\) = <b>1.5 chai latte per burrito</b></p>
+
+<p>As you can see, the opportunity cost of producing burritos increases as more burritos are produced.</p>
+
+<div class="exam-tip"><h4>EXAM TIP: Bowed-out PPFs</h4><p>If a PPF is &ldquo;bowed-out,&rdquo; opportunity costs are increasing as more of a good is produced.</p></div>
+
+<p>Concave PPFs reflect the concept of <strong>increasing opportunity costs</strong>: As a nation increases production of one good, it must give up more and more production of the other good.  The PPF is concave to the origin (or &ldquo;<strong>bow-shaped</strong>&rdquo;) when workers have different skills, or when inputs are not equally productive.  That is, not all resources are equally suited to produce all goods.  In the example above, the same increase in the production of burritos requires larger and larger reductions in the production of chai lattes as we move to the right along the PPF.</p>
+
+<p>The law of increasing opportunity costs also applies as we move from right to left along the PPF.  As we do so, society is producing more chai lattes and fewer burritos.  Let&rsquo;s calculate the opportunity cost of producing chai lattes as we move from Point <em>C</em> to Point <em>B</em> in the PPF above:</p>
+
+<p>OC<sub>Chai Lattes</sub> = \(\frac{\text{20 burritos}}{\text{30 chai lattes}}\) = <b>0.67 burritos per chai latte</b></p>
+
+<p>Let&rsquo;s calculate the opportunity cost of producing chai lattes as we move from Point <em>B</em> to Point <em>A</em> in the PPF above:</p>
+
+<p>OC<sub>Chai Lattes</sub> = \(\frac{\text{20 burritos}}{\text{10 chai lattes}}\) = <b>2 burritos per chai latte</b></p>
+
+<p>As you can see, the opportunity cost of producing chai lattes increases as more chai lattes are produced.</p>
+
+<p>Dr. Knight used an example from his own kitchen to illustrate why opportunity costs increase.  He is very good at grilling steaks but a terrible baker, while his husband is an excellent baker who cannot grill a good steak.  Now suppose that an economy has 10 workers&mdash;five like Dr. Knight and five like his husband&mdash;and that it starts by producing nothing but steaks.  If the economy wants to start producing cookies, it should send the best bakers (who are also the worst grillers) into the kitchen first, so very little steak is given up for the first few cookies.  As the economy keeps increasing cookie production, however, it eventually has to pull its best grillers off the grill to bake, and it gives up more and more (and better) steaks for each additional cookie.  In general, a PPF is bowed-out and opportunity costs are increasing when <em>not all</em> resources are equally suited to producing both goods.  A PPF is linear and opportunity costs are constant only when <em>all</em> resources are equally suited to producing both goods.  Dr. Knight noted that this is fairly rare in the real world; one possible example would be dividing a fixed amount of study time between two classes, if each additional hour of studying raises your grade by the same amount in either class.</p>
+
+<p>Note that a PPF can never be <em>bowed-in</em> because that would reflect <em>decreasing</em> opportunity costs.  This could not occur if resources were rationally allocated.  In the steak and cookie example, <em>decreasing</em> opportunity costs would exist if the economy increased cookie production by sending its worst bakers (and best grillers) into the kitchen to make the first cookies.  This is not economically rational, so we assume that opportunity costs cannot decrease (and therefore the PPF cannot be bowed-in).</p>
+
+<p>Also, note that because the opportunity cost of one good is the reciprocal of the opportunity cost of the other, there will never be a scenario in which opportunity costs are increasing for one good and constant for the other.  That is, opportunity costs are either constant for both goods (and the PPF is a straight line) or they are increasing for both goods (and the PPF is bowed-out).  Note that opportunity costs are still reciprocals of one another along a bowed-out PPF, but only between the same two points.  For example, the opportunity cost of a burrito moving from Point A to Point B is the reciprocal of the opportunity cost of a chai latte moving from Point B to Point A, but it is not the reciprocal of the opportunity cost of a chai latte moving from Point C to Point B.</p>
+
+<p class="date">Monday, 8/31/26</p>
+
+<h1>Economic Growth and Shifts of the PPF</h1>
+
+<p><strong>Economic growth</strong> is an increase in the productive capacity of the economy.  Note that to an economist, economic growth is an increase in what the economy <em>could</em> produce&mdash;not an increase in what it actually produces.  This is different from the way the term is used on the news or in the newspapers, where &ldquo;economic growth&rdquo; typically refers to an increase in GDP (the amount that the economy actually produces).</p>
+
+<p>We can illustrate economic growth using the production possibilities frontier as an outward shift of the PPF such that a country can produce more of both goods given its resources and technology.  That is, economic growth is an expansion of a country&rsquo;s production possibilities.</p>
+
+<p>The following factors can cause the PPF to shift outward:</p>
+
+<ul>
+<li><b><em>Increase in the number of available workers</em></b> &ndash; Population growth and immigration (the most common example) increase the size of the labor force, which increases a country&rsquo;s productive capacity.  More workers mean that the economy can produce more total output, though not necessarily more output <em>per person</em>.  Note that a reduction in the nation&rsquo;s unemployment rate is <em>not</em> a factor that shifts the PPF, for reasons that we will discuss below.</li>
+<li><b><em>Technological progress that increases the productivity of productive resources</em></b> &ndash; Technological advances in the production of a good allow the country to produce more of it with the same amount of time and resources.  Technological innovation refers to something <em>new</em>, whereas physical capital accumulation (discussed below) simply means that workers have <em>more</em> tools, machinery, and factories available to them.</li>
+<li><b><em>Increase in physical capital</em></b> &ndash; In economics, when we refer to <strong>capital</strong>, we are referring to <em>physical capital</em>&mdash;productive goods like machines and factories.  An increase in productive capital allows countries to produce more goods with the same raw materials.  (As we will discuss later in the semester, <strong>investment</strong> specifically refers to an increase in the stock of physical capital, which should make a country more productive.)</li>
+<li><b><em>Increases in human capital</em></b> &ndash; <strong>Human capital</strong> refers to the skills, knowledge, and experience of humans.  An increase in human capital increases productivity and therefore leads to economic growth.  Human capital essentially increases the <em>quality</em> of the existing labor force.</li>
+<li><b><em>Increase in the amount of available productive natural resources</em></b> &ndash; While the amount of natural resources on the Earth is fixed, the amount of <em>available</em> natural resources can change due to discoveries of new natural resources.</li>
+</ul>
+
+<p>If the increase in resources or technology affects the production of both goods, economic growth is shown as an outward shift of the entire PPF.  If the increase in resources or technology affects the production of just one of the two goods, economic growth is shown as a &ldquo;pivotal shift&rdquo; (or rotation) that makes the PPF flatter or steeper.</p>
+
+<p>Below, we have shown each of these possibilities using PPFs for a country that produces two goods: pizza and burritos.  Use the buttons to compare them.</p>
+
+<!-- IMAGE POSITION: below-referenced paragraph -->
+<div class="sdg"><script type="application/json">
+{
+ "title": "Economic growth and shifts of the frontier",
+ "lede": "Pick a source of growth, then step through it.",
+ "axes": {
+  "x": "Burritos",
+  "y": "Pizza",
+  "xmax": 125,
+  "ymax": 125
+ },
+ "scenarios": {
+  "both": {
+   "label": "More resources or productivity for both pizza and burritos",
+   "curves": [
+    {
+     "id": "PPF1",
+     "label": "PPF₁",
+     "pts": [
+      [
+       0,
+       90
+      ],
+      [
+       90,
+       0
+      ]
+     ],
+     "thin": true,
+     "ldx": -38,
+     "ldy": -8
+    },
+    {
+     "id": "PPF2",
+     "label": "PPF₂",
+     "pts": [
+      [
+       0,
+       115
+      ],
+      [
+       115,
+       0
+      ]
+     ],
+     "color": "red",
+     "from": "PPF1",
+     "at": 1,
+     "arrowP": 45,
+     "ldx": 8,
+     "ldy": -8
+    }
+   ],
+   "steps": [
+    "The nation can produce any combination on its current frontier.",
+    "Growth in both industries pushes the whole frontier outward. The slope does not change, so the opportunity cost of each good stays the same."
+   ]
+  },
+  "burritos": {
+   "label": "More resources or productivity for burritos but not pizza",
+   "curves": [
+    {
+     "id": "PPF1",
+     "label": "PPF₁",
+     "pts": [
+      [
+       0,
+       90
+      ],
+      [
+       90,
+       0
+      ]
+     ],
+     "thin": true,
+     "ldx": -38,
+     "ldy": -8
+    },
+    {
+     "id": "PPF2",
+     "label": "PPF₂",
+     "pts": [
+      [
+       0,
+       90
+      ],
+      [
+       115,
+       0
+      ]
+     ],
+     "color": "red",
+     "from": "PPF1",
+     "at": 1,
+     "arrowP": 20,
+     "ldx": 8,
+     "ldy": -8
+    }
+   ],
+   "steps": [
+    "The nation can produce any combination on its current frontier.",
+    "Growth in burritos alone swings the horizontal intercept outward and leaves the vertical intercept where it was. The frontier gets flatter, so burritos become cheaper and pizza becomes dearer."
+   ]
+  },
+  "pizza": {
+   "label": "More resources or productivity for pizza but not burritos",
+   "curves": [
+    {
+     "id": "PPF1",
+     "label": "PPF₁",
+     "pts": [
+      [
+       0,
+       90
+      ],
+      [
+       90,
+       0
+      ]
+     ],
+     "thin": true,
+     "lstart": true,
+     "ldx": 8,
+     "ldy": 30
+    },
+    {
+     "id": "PPF2",
+     "label": "PPF₂",
+     "pts": [
+      [
+       0,
+       115
+      ],
+      [
+       90,
+       0
+      ]
+     ],
+     "color": "red",
+     "from": "PPF1",
+     "at": 1,
+     "arrowP": 80,
+     "lstart": true,
+     "ldx": 8,
+     "ldy": -6
+    }
+   ],
+   "steps": [
+    "The nation can produce any combination on its current frontier.",
+    "Growth in pizza alone swings the vertical intercept outward and leaves the horizontal intercept where it was. The frontier gets steeper, so pizza becomes cheaper and burritos become dearer."
+   ]
+  }
+ }
+}
+</script></div>
+
+<p>When the horizontal intercept shifts outward and the vertical intercept does not change, the opportunity cost of producing burritos decreases and the opportunity cost of producing pizza increases.  Likewise, when the vertical intercept shifts outward and the horizontal intercept does not change, the opportunity cost of producing pizza decreases and the opportunity cost of producing burritos increases.  (In general, when a PPF gets flatter, the opportunity cost of the good on the vertical axis increases and the opportunity cost of the good on the horizontal axis decreases.  When a PPF gets steeper, the opportunity cost of the good on the vertical axis decreases and the opportunity cost of the good on the horizontal axis increases.)</p>
+
+<p>Sector-specific growth (illustrated by a &ldquo;pivotal&rdquo; shift) may still allow the country to produce more of the good in the industry that did not benefit from the shift.  For example, advances in the production of pizza may allow the country to continue producing the same amount of pizza while devoting some extra resources to the production of burritos.</p>
+
+<p>Above, we showed a parallel shift of the PPF when there was growth in the production possibilities for both goods.  When a linear PPF shifts outward in a parallel fashion, its slope does not change, so opportunity costs do not change either.  A parallel shift does not have to be the case, however; general productivity growth could affect one good more than the other.  When the entire PPF shifts outward (indicating an increase in the ability to produce both goods), the PPF may become flatter or steeper, depending on which good was impacted most.  For example, if production of the good listed along the horizontal axis increases by a little and production of the good listed along the vertical axis increases by a lot, the PPF becomes steeper.  As a result, the opportunity cost of producing the good on the vertical axis decreases and the opportunity cost of producing the good on the horizontal axis increases.  Alternatively, if production of the good listed along the horizontal axis increases by a lot more than production of the good listed along the vertical axis, the PPF becomes flatter, the opportunity cost of producing the good on the horizontal axis decreases, and the opportunity cost of producing the good on the vertical axis increases.</p>
+
+<p>Most nations experience gradual economic growth, so their PPFs shift outward over time. PPFs normally shift outward because economies generally grow over time.  However, some economies experience temporary setbacks that cause the PPF to shift inward.  Examples include economies that are negatively impacted by wars, diseases, or natural disasters.  For example, World War II caused a temporary inward shift of the PPF for most of Europe because it decimated Europe&rsquo;s physical capital.  The explanation that most inward shifts of the PPF are temporary applies best to high-income countries; many low-income countries that experience devastating natural disasters or wars do not recover for quite a while after those events.</p>
+
+<h2>The Impact of Reducing Unemployment</h2>
+
+<p>Remember that points along the PPF are <em>production-efficient</em>, as they represent situations in which the economy&rsquo;s resources are fully and efficiently utilized.  Unemployment represents a situation in which an economy&rsquo;s resources are not being used efficiently.  When there is unemployment, the country is operating at a point <em>within</em> its PPF.  For this reason, reducing unemployment would <em>not</em> cause a shift of the PPF.  Rather, it would cause a movement from a point within the PPF to a point closer to the PPF.</p>
+
+<!-- IMAGE POSITION: below-referenced paragraph -->
+<div class="sdg"><script type="application/json">
+{
+ "title": "Reducing unemployment does not shift the frontier",
+ "axes": {
+  "x": "Good 1",
+  "y": "Good 2",
+  "xmax": 115,
+  "ymax": 115
+ },
+ "curves": [
+  {
+   "id": "PPF",
+   "label": "",
+   "pts": [
+    [
+     0,
+     95
+    ],
+    [
+     95,
+     0
+    ]
+   ],
+   "ldx": -34,
+   "ldy": -10
+  }
+ ],
+ "points": [
+  {
+   "q": 30,
+   "p": 30,
+   "label": "A",
+   "dx": -20,
+   "dy": 16,
+   "showP": false,
+   "showQ": false
+  },
+  {
+   "q": 50,
+   "p": 45,
+   "label": "B",
+   "at": 1,
+   "dx": 10,
+   "dy": -8,
+   "showP": false,
+   "showQ": false
+  }
+ ],
+ "moves": [
+  {
+   "from": [
+    30,
+    30
+   ],
+   "to": [
+    50,
+    45
+   ],
+   "at": 1,
+   "offset": -14
+  }
+ ],
+ "steps": [
+  "When workers are unemployed and factories sit idle, the nation produces inside its frontier, at a point such as A.",
+  "Putting those resources back to work moves production from A towards the frontier, to a point such as B. The frontier itself has not moved, because the nation's resources and technology are unchanged."
+ ]
+}
+</script></div>
+
+<h1>The PPF, Comparative Advantage, and the Gains From Trade</h1>
+
+<p>A country or an individual has an <strong>absolute advantage</strong> in producing a particular good or service if it can produce more of that good or service than the other country or individual.  Absolute advantage says nothing about quality or efficiency; it simply asks which country could produce more if it devoted all of its resources to that good.  For this reason, large countries with more resources usually have absolute advantages over smaller countries.  For example, the United States has an absolute advantage over France in producing cheese&mdash;not because it is better at making cheese, but because it has more cows, more land, and more workers.</p>
+
+<p>It is not hard to understand why economic units would trade when they each have an absolute advantage in the production of different goods.  For example, suppose that you type faster than your roommate and your roommate is faster at cleaning.  It would make sense that you would trade your typing service for your roommate&rsquo;s cleaning services.  However, economic theory holds that two economic actors can benefit from trade even if one economic actor has an absolute advantage in the production of <em>all</em> goods.  As long as the economic actors have different <em>opportunity costs</em>, they can benefit from specialization and trade.</p>
+
+<p>A country or individual has a <strong>comparative advantage</strong> in producing a particular good or service if it can produce that good or service at a lower opportunity cost than another country or individual.  The <strong>theory of comparative advantage</strong> holds that economic units can gain from trade by specializing in the production of the good for which they have the lowest opportunity cost and trading with one another.</p>
+
+<div class="exam-tip"><h4>EXAM TIP: Absolute advantage is not required</h4><p>Absolute advantage is not necessary for countries to gain from trade. Countries can gain from trade even without an absolute advantage, as long as they have a comparative advantage.</p></div>
+
+<div class="exam-tip"><h4>EXAM TIP: Only one comparative advantage</h4><p>A country can have a comparative advantage in only one of the two goods it produces.</p></div>
+
+<p>The key difference between absolute advantage and comparative advantage lies in how the cost of production is measured.  Absolute advantage considers only the costs of the inputs required to produce the good in question.  Comparative advantage, on the other hand, measures costs in terms of the <em>opportunity cost</em>&mdash;the amount of the other good that must be foregone to produce one more unit of the good in question.  For example, consider a country that produces only bananas and coffee.  The opportunity cost of a banana is equal to the number of units of coffee that the nation must give up to produce one more banana.</p>
+
+<p>If we&rsquo;re considering a simple world in which there are two countries that produce two goods, a single country can have an absolute advantage in the production of none, one, or both of the goods.  A country can only have a <em>comparative</em> advantage in the production of one of the goods, however.  If a country has a comparative advantage in the production of one good, the other country must have a comparative advantage in the production of the other good.</p>
+
+<h2>An Example Demonstrating Gains From Trade for Two Nations</h2>
+
+<div class="exam-tip"><h4>EXAM TIP: Producing versus consuming</h4><p>A country can never produce outside of its PPF, but it can consume outside of its PPF with specialization and trade.</p></div>
+
+<p>The concept of comparative advantage explains how nations can benefit from specialization and trade.  For example, suppose that the United States and Mexico produce only strawberries and apples. Their production possibilities frontiers are shown below.  Step through the widget to follow them from production to specialization to trade.</p>
+
+<!-- IMAGE POSITION: below-referenced paragraph -->
+<div class="sdg"><script type="application/json">
+{
+ "title": "Gains from trade: the United States and Mexico",
+ "lede": "Both nations produce on their own frontier, and both consume beyond it.",
+ "link": false,
+ "panels": [
+  {
+   "heading": "United States",
+   "axes": {
+    "x": "Apples",
+    "y": "Strawberries",
+    "xmax": 345,
+    "ymax": 230,
+    "xticks": [
+     0,
+     200,
+     300
+    ],
+    "yticks": [
+     0,
+     100,
+     200
+    ]
+   },
+   "curves": [
+    {
+     "id": "US",
+     "label": "",
+     "pts": [
+      [
+       0,
+       200
+      ],
+      [
+       300,
+       0
+      ]
+     ],
+     "ldx": -44,
+     "ldy": -12
+    }
+   ],
+   "points": [
+    {
+     "q": 300,
+     "p": 0,
+     "at": 1
+    },
+    {
+     "q": 200,
+     "p": 100,
+     "label": "Consumes",
+     "at": 2,
+     "dx": 10,
+     "dy": -8
+    }
+   ]
+  },
+  {
+   "heading": "Mexico",
+   "axes": {
+    "x": "Apples",
+    "y": "Strawberries",
+    "xmax": 132,
+    "ymax": 175,
+    "xticks": [
+     0,
+     50,
+     100
+    ],
+    "yticks": [
+     0,
+     50,
+     150
+    ]
+   },
+   "curves": [
+    {
+     "id": "MX",
+     "label": "",
+     "pts": [
+      [
+       0,
+       150
+      ],
+      [
+       100,
+       0
+      ]
+     ],
+     "ldx": -44,
+     "ldy": -12
+    }
+   ],
+   "points": [
+    {
+     "q": 0,
+     "p": 150,
+     "at": 1
+    },
+    {
+     "q": 100,
+     "p": 50,
+     "label": "Consumes",
+     "at": 2,
+     "dx": -58,
+     "dy": -8
+    }
+   ]
+  }
+ ],
+ "steps": [
+  "The United States can produce 200 strawberries or 300 apples; Mexico can produce 150 strawberries or 100 apples. The United States can make more of both, yet Mexico gives up less to grow a strawberry.",
+  "Each nation specialises where its opportunity cost is lower. The United States puts everything into apples and produces 300; Mexico puts everything into strawberries and produces 150.",
+  "They trade 100 apples for 100 strawberries. The United States ends up with 200 apples and 100 strawberries, and Mexico with 100 apples and 50 strawberries — both beyond what either could have produced alone."
+ ]
+}
+</script></div>
+
+<p>As you can see, the United States has an <em>absolute</em> advantage in the production of strawberries because it can produce more strawberries than Mexico.  Likewise, the United States has an absolute advantage in the production of apples because it can produce more apples than Mexico.</p>
+
+<p>In order to determine which country has a <em>comparative</em> advantage in producing strawberries and which country has a <em>comparative</em> advantage in producing apples, we have to calculate opportunity costs.</p>
+
+<p>The opportunity costs of producing strawberries and apples are as follows:</p>
+
+<p><b>The United States</b></p>
+
+<p>OC<sub>Strawberries</sub> = \(\frac{\text{300 apples}}{\text{200 strawberries}}\) = <b>1.5 apples per strawberry</b></p>
+
+<p>OC<sub>Apples</sub> = \(\frac{\text{200 strawberries}}{\text{300 apples}}\) = <b>0.67 strawberry per apple</b></p>
+
+<p><b>Mexico</b></p>
+
+<p>OC<sub>Strawberries</sub> = \(\frac{\text{100 apples}}{\text{150 strawberries}}\) = <b>0.67 apple per strawberry</b></p>
+
+<p>OC<sub>Apples</sub> = \(\frac{\text{150 strawberries}}{\text{100 apples}}\) = <b>1.5 strawberry per apple</b></p>
+
+<p>According to the theory of comparative advantage, a nation or individual should specialize in the production of the good for which it has the lower opportunity cost.  As you can see, Mexico has a lower opportunity cost in the production of strawberries (0.67 apples per strawberry vs. 1.5 apples per strawberry) and the United States has a lower opportunity cost in the production of apples (0.67 strawberry per apple vs. 1.5 strawberry per apple).  Therefore, Mexico should specialize in producing strawberries, the United States should specialize in producing apples, and they should trade with one another.  If they do so at terms of trade that benefit both of them, they will both be able to <em>consume</em> at points outside of their PPFs.  (They will continue to <em>produce</em> on their PPFs, however.)</p>
+
+<p>For example, suppose that the United States produces 300 apples, Mexico produces 150 strawberries, and they strike a deal in which they trade 100 apples for 100 strawberries.  The final step of the widget above places their <em>consumption points</em> on the PPFs.</p>
+
+<p>As you can see, the United States would be able to <em>consume</em> 100 strawberries and 200 apples&mdash;more than it could before.  Likewise, Mexico would be able to <em>consume</em> 50 strawberries and 100 apples&mdash;more than it could before.</p>
+
+<p>Again, note that specialization and trade don&rsquo;t allow Mexico or the United States to <b>produce</b> outside their PPFs, but they do allow these nations to <b>consume</b> outside their PPFs.</p>
+
+<p>Finally, note that the terms of trade (the ratio at which the two goods are exchanged) must fall between the two countries&rsquo; opportunity costs, or one of the countries would not voluntarily agree to trade.  In the example above, one apple per strawberry lies between each country&rsquo;s opportunity cost of a strawberry (0.67 apples and 1.5 apples), so both countries benefit.  Comparative advantage determines the <em>direction</em> of trade&mdash;who specializes in what and which good gets shipped where&mdash;but the <em>volume</em> of trade depends on the preferences of the people in each country, which this model tells us nothing about.  Dr. Knight may use different countries and goods in class, but the method for identifying comparative advantages is identical.</p>
+
+</body>
+</html>

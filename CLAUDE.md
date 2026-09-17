@@ -27,6 +27,7 @@ docs/
   archive/                    ← prompt-variant conventions
 examples/
   ECO2013-263-SupplyAndDemand.html ← FINISHED OUTPUT (Fall '26, transcript-only, 9 widgets)
+  ECO2013-263-TradeoffsComparativeAdvantageTheMarketSystem.html ← FINISHED OUTPUT (Exam 1 ch. 1, 7 widgets)
   ECO2013-Widgets-All.html    ← the 9/11/26 prototype: 20 widgets, the JSON shape reference
 reference-images/             ← the source PNGs (empty — see open issues)
 scripts/
@@ -125,13 +126,19 @@ not enough to reproduce an implementation.
   `embed_engine.py`'s paths reproduce the delivered file byte-for-byte; all 20
   prototype widgets render with no engine errors; `check_file.py` runs the
   geometric label test over 74 labels in the 263 file with no overlaps.
-* **Engine is v2.3.** `shiftArrow: false` drops the redundant shift arrow in a
+* **Engine is v2.4.** `shiftArrow: false` drops the redundant shift arrow in a
   schedule-shift widget — the per-row arrows already say it once per row — while
   keeping the slide and the dimming, and every arrow is one weight (2.4px).
   Prompt v6 step 5 changed with it. Axis titles take a word (`x` anchored to the
   right edge, `y` in the headroom above the plot) so a PPF can name its axes.
   `vbraces` add the upright brace: `left: true` puts it outside the P axis,
-  mirroring a horizontal brace's `below: true`.
+  mirroring a horizontal brace's `below: true`. `label: ""` on a curve draws no
+  label, for a lone frontier that needs no name.
+* **PPF works.** The first chapter of Exam 1 material converted to seven widgets
+  with no engine gaps hit: frontiers, a combinations table, points on/inside/
+  outside, opportunity cost with both braces, a bowed-out frontier, three growth
+  cases as scenarios, and two-country gains from trade. Only three panels in one
+  figure had to be restructured, into scenario buttons.
 * **PPF is feasible without new architecture.** Probed against the real engine:
   the frontier, its combinations table, points on/inside/outside, movement along
   it, and outward/inward/pivot shifts all work unchanged — a frontier shift is

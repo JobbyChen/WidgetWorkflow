@@ -113,3 +113,25 @@ and drops the wrong season with it. Say the word and I will put it back.
   immediately caught three collisions that had passed inspection by eye —
   including a "CS" label sitting on the demand curve. `scripts/test_check_file.py`
   is 0 failing.
+
+## Second review round
+
+* **Labels on the axis lines.** `check_file.py` tested labels against curves,
+  ticks, guides, arrows and axis titles — not against the axis lines themselves,
+  so a curve running down to the axis parked its name on it. Now tested. The
+  axis *titles* are exempt, because the engine anchors each to its own axis and
+  every panel ever drawn would otherwise report it. Five instances here, all
+  moved; two more in shipped files (`D` in the elasticity spectrum, point `B` on
+  the PPF) fixed at the same time. Only the 9/11 prototype still has one, which
+  stays as delivered.
+* **`= MSB` and `= MSC` throughout.** Figures 1–3 keep the full `D = MB = MSB`
+  and `S = MC = MSC` the printed pages use where they define the terms; every
+  figure after them now reads `D = MSB` and `S = MSC` rather than a bare D and S.
+* **`Qᴇꜰꜰ = Q*` on the pizza example**, matching the printed total-surplus
+  figure, which also carries nothing on the price axis. Everywhere else the
+  symbolic graphs stay `Q*`.
+* **P\* removed from the two numeric graphs.** The pizza walkthrough carries real
+  $4 and $12 ticks and the deadweight example carries real quantities, and
+  neither source states an equilibrium price — so those points draw their guides
+  and label nothing, rather than printing a symbol the figure does not have or a
+  number nobody stated.

@@ -98,7 +98,14 @@ itself still forbids questions outright.
    changelog so it is reviewed before publication. Note the checker only sees a
    name that carries a title: a person named by surname alone passes silently,
    so read the prose too.
-5. **No label touches a curve — including a curve's own label.**
+5. **No label touches a curve, an axis line, or a curve's own name.**
+   The axis lines were the last thing on a panel that nothing tested against,
+   and a curve that runs down to the axis parks its label right on it — which
+   is where `D` sat in the Piesanos figure. They are tested now; the axis
+   *titles* are exempt, since the engine anchors each one to its own axis by
+   design and every panel ever drawn would report it.
+
+   The other half of the same rule:
    `check_file.py` used to skip a curve's label against its own curve, on the
    grounds that it sits at its own end. True of the default offset, false the
    moment `ldx`/`ldy` move it: pull a label back along its own line and the

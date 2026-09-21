@@ -632,6 +632,16 @@ def exempt(desc_a, desc_b, box_a=None, box_b=None):
     # label -- two points at the same price both print it.
     if desc_a == desc_b and box_a and box_b and same_spot(box_a, box_b):
         return True
+    # An axis title sits on its own axis by design: the engine anchors the y
+    # title at the top of the P axis and the x title at the right end of the Q
+    # axis. Every panel ever drawn would report it.
+    if ("axis title" in desc_a and "axis lines" in desc_b) or \
+       ("axis title" in desc_b and "axis lines" in desc_a):
+        return True
+    # A tick number is printed just outside its own axis, for the same reason.
+    if ("tick on" in desc_a and "axis lines" in desc_b) or \
+       ("tick on" in desc_b and "axis lines" in desc_a):
+        return True
     # An x tick and a y tick only ever meet in the origin corner, where both
     # belong.
     if ("tick on Q" in desc_a and "tick on P" in desc_b) or \
@@ -648,6 +658,13 @@ def guide_segments(pn, X, Y, ox, oy):
     crowded, so these are tested too, and only ever warn."""
     out = []
     pw = W - ox - 36.0
+    # The two axis lines. They are solid, not dashed, and they were the last
+    # thing drawn on every panel that nothing tested against: a curve label
+    # parked at the end of a curve that runs down to the axis lands on the axis
+    # itself, which is exactly where "D" sat in the Piesanos figure. Always on
+    # screen, so no visibility window.
+    out.append(([(ox, 14.0), (ox, oy), (ox + pw + 14, oy)], "the axis lines",
+                (0, None)))
     for p in pn.get("points") or []:
         if p.get("guides") is False:
             continue

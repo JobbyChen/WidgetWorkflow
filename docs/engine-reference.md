@@ -145,6 +145,30 @@ pixel apart. `scripts/check_file.py` tests for this.
   any point brings it forward and turns its label orange, the same way hovering
   a schedule row already highlighted its dots.
 
+### `areas`
+
+```json
+{"pts": [[0,11],[0,21],[8,11]], "label": "CS", "color": "teal", "at": 2}
+```
+
+A shaded polygon, named by its corners in `[q, p]` like everything else. Added
+in **v2.11**, because surplus and deadweight loss *are* areas and the engine
+could not draw one.
+
+A polygon is enough for this chapter: demand and supply are straight lines
+here, so consumer surplus, producer surplus, total surplus and a deadweight
+wedge all have straight edges. A region bounded by a `curved` pair is still not
+possible — `pts` are joined with straight segments, never splines.
+
+Areas draw **after the axes and before the curves**, so a fill never hides a
+line, a point, a guide or a label. The wash is `opacity: .18`, which is why the
+colour names matter more than usual: `teal` for consumer surplus, `orange` for
+producer surplus, `red` for a loss. Default `ink`.
+
+`label` goes at the polygon's centroid, which keeps it inside a triangle. A
+thin wedge has no room for one, so `lp: [q, p]` places it by hand — outside the
+shape if that is what fits — and `ldx`/`ldy` nudge it in pixels.
+
 ### `moves`
 
 ```json
@@ -284,5 +308,9 @@ that catches a curve mid-slide.
   `axes` throws `Cannot read properties of undefined (reading 'cents')` in
   `buildPanel`, and nothing renders. See `docs/open-issues.md`.
 - **Collision avoidance.** Labels go where you put them.
-- Elasticity, surplus shading, tax wedges, area fills of any kind.
-- Three or more panels.
+- Elasticity and tax wedges. Surplus shading arrived in v2.11 — see `areas` —
+  but only as straight-edged polygons: a region bounded by a `curved` pair
+  still cannot be filled.
+- Three or more panels. A three-panel figure becomes three scenario buttons
+  (CLAUDE.md rule 8), which is how the efficiency chapter's elasticity
+  comparison and its three deadweight cases are drawn.

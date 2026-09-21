@@ -698,6 +698,24 @@ def check_labels(cfgs, r):
                                  "start" if d > 0 else "end")
                     boxes.append((bx, "upright brace label %r" % b["label"], win))
 
+                # An area's label is drawn text like any other, and it was the
+                # one category this test did not know about: v2.11 added
+                # `areas`, and a "Total surplus" label landed squarely on the
+                # equilibrium guide with the whole file still reporting PASS.
+                for a in pn.get("areas") or []:
+                    if not a.get("label"):
+                        continue
+                    pts = a.get("pts") or []
+                    if not pts:
+                        continue
+                    lp = a.get("lp") or [sum(q[0] for q in pts) / float(len(pts)),
+                                         sum(q[1] for q in pts) / float(len(pts))]
+                    boxes.append((box(X(lp[0]) + a.get("ldx", 0),
+                                      Y(lp[1]) + a.get("ldy", 0),
+                                      a["label"], 11, "middle"),
+                                  "area label %r" % a["label"],
+                                  (a.get("at", 0), a.get("until"))))
+
                 checked += len(boxes)
 
                 arrows = arrow_segments(pn, X, Y)

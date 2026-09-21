@@ -3,11 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Elasticity</title>
+    <title>ECO2023 Spring26 Exam1 - Allocative Efficiency</title>
     <link rel="stylesheet" href="https://smokinnotes.s3.us-east-1.amazonaws.com/content/sn25-v6.css">
     <link rel="preconnect" href="https://fonts.googleapis.com"> <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet">
-    <script src="https://smokinnotes.s3.us-east-1.amazonaws.com/content/sn25-v6.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async></script>
+    <script>
+    MathJax = {
+        tex: {
+            displayMath: [['\\[','\\]']],
+            inlineMath: [['\\(','\\)']]
+        }
+    };
+    </script>
+    <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    <script src="https://smokinnotes.s3.us-east-1.amazonaws.com/studyguide/sn25-v2.js"></script>
 <style>
 .sdg { --navy:#002060; --ink:#1c2a44; --red:#d62828; --teal:#1a8a8a; --orange:#d8641c; --grey:#8a94a6; --rule:#c9d2e3; --paper:#f6f8fc; --plot:#eef3fd; --fig:580px;
   font-family:"Red Hat Display","Segoe UI",system-ui,sans-serif; color:var(--ink);
@@ -534,268 +542,491 @@
 </head>
 <body>
 
-<p class="date">Monday, 9/7/26</p>
+  <p class="date">Monday, 9/14/26</p>
 
-<details class="toc-box">
-<summary><strong>📘 Table of Contents</strong></summary>
-<nav>
-<ul style="line-height: 1.8">
-<li><a href="#introduction-to-elasticity" style="font-weight: bold">Introduction to Elasticity</a>
+<h1>Introduction to Efficiency</h1>
+
+<p>Allocative efficiency occurs when we produce the most highly valued combination of goods and services possible. In this chapter, we will see how buyers and sellers interact in markets in a way that achieves the allocatively efficient result for society.</p>
+
+<h2>Marginal Analysis</h2>
+
+<p>The word <strong>marginal</strong> means "additional." <strong>Marginal benefit (MB)</strong> is the benefit from one more unit. It's not the same as the total benefit, which is the benefit you get from the entire action. <strong>Marginal cost (MC)</strong> is the cost of one more unit. It's not the same as the total cost, which is the cost incurred from the entire action.</p>
+
+<p>Marginal analysis compares the additional benefit of an action (marginal benefit) to the additional cost of the action (marginal cost). The rules of marginal analysis are as follows:</p>
+
 <ul>
-<li><a href="#example-the-price-elasticity-of-demand-for-pizza">Example: The Price Elasticity of Demand for Pizza</a></li>
-<li><a href="#describing-the-price-elasticity-of-demand">Describing the Price Elasticity of Demand</a></li>
-<li><a href="#elasticity-examples">Elasticity Examples</a></li>
-<li><a href="#the-midpoint-formula">The Midpoint Formula</a></li>
-<li><a href="#calculating-elasticity-at-a-point">Calculating Elasticity at a Point</a></li>
-<li><a href="#elasticity-examples">Elasticity Examples</a></li>
+  <li>If \(MB > MC\), then you do the action.</li>
+  <li>If \(MB < MC\), then you don't do the action.</li>
 </ul>
-</li>
-<li><a href="#the-total-revenue-test" style="font-weight: bold">The Total Revenue Test</a></li>
-<li><a href="#determinants-of-the-price-elasticity-of-demand" style="font-weight: bold">Determinants of the Price Elasticity of Demand</a></li>
-<li><a href="#other-elasticity-measures" style="font-weight: bold">Other Elasticity Measures</a></li>
-</ul>
-</nav>
-</details>
 
-<h1 id="introduction-to-elasticity">Introduction to Elasticity</h1>
+<div class="example-box">
+  <h4>Example: Marginal Analysis and the Director</h4>
+  
+  <p>Suppose the director has already eaten five Big Macs and is now thinking about eating a sixth. The price of a Big Mac is $6, so the marginal cost of the sixth Big Mac to the director is $6. If the additional benefit of that Big Mac is greater than $6, the director will buy it. If the additional benefit of that Big Mac is less than $6, the director will not buy it.</p>
+  
+  <p>Notice that it's not the <em>total</em> cost that the director worries about; it is the <em>additional</em> cost of the sixth Big Mac. For example, the total cost of six Big Macs is $36, but the <strong>marginal</strong> cost of the sixth Big Mac is $6. It's the <strong>marginal</strong> cost that we use, and not the <strong>total</strong> cost, when deciding whether the director will buy another Big Mac.</p>
+</div>
 
-<p><strong>Elasticity</strong> measures responsiveness to change.  There are many different elasticity measures, but we will primarily focus on the <strong>price elasticity of demand</strong>, which is defined as the absolute value of the percent change in the quantity demanded, divided by the percent change in the price.</p>
+<p>Dr. Rush emphasized that marginal analysis is very important in economics and in life. We will implicitly use marginal analysis throughout the rest of this course when we decide such things as whether a firm should produce more or less of a good and whether a firm should stay open or shut down. You could also use marginal analysis to make better everyday decisions in life.</p>
 
-<h2 id="example-the-price-elasticity-of-demand-for-pizza">Example: The Price Elasticity of Demand for Pizza</h2>
+<h2>Marginal Benefit and Marginal Cost Curves</h2>
 
-<p>In the diagrams below, the demand curves have different slopes.  Therefore, the same shift in the supply curve causes a different change in quantity demanded and price for both curves.</p>
+<p>The <strong>marginal benefit curve (MB)</strong> is the same as the demand curve. For example, the marginal benefit associated with the consumption of pizza is shown below. This curve tells us that $15 is the maximum price that someone will pay for the 4 millionth pizza. Therefore, this is the marginal benefit that that consumer receives from consuming the 4 millionth pizza. This is also the <strong>marginal social benefit (MSB)</strong> because the consumer is a member of society. (There are no external costs or benefits in this case, so the marginal private benefit is the same as the marginal social benefit. When we discuss externalities later in the course, we will see that this isn't always the case.)</p>
 
-<!-- IMAGE POSITION: beside-referenced paragraph -->
+<!-- IMAGE POSITION: inline with marginal benefit description -->
 <div class="sdg"><script type="application/json">
 {
- "title": "The same shift, two different demand curves",
- "lede": "How far price and quantity move depends on the slope of demand.",
- "link": false,
- "panels": [
+ "title": "The marginal benefit curve is the demand curve",
+ "lede": "What the next pizza is worth to society, pizza by pizza.",
+ "axes": {
+  "x": "Q",
+  "y": "P",
+  "xmax": 20,
+  "ymax": 18,
+  "money": true,
+  "xticks": [
+   4,
+   12
+  ],
+  "yticks": [
+   12,
+   15
+  ],
+  "grid": true
+ },
+ "curves": [
   {
-   "heading": "Strong response",
-   "axes": {
-    "xmax": 110,
-    "ymax": 110
-   },
-   "curves": [
-    {
-     "id": "D",
-     "label": "D",
-     "pts": [
-      [
-       10,
-       70
-      ],
-      [
-       100,
-       25
-      ]
-     ]
-    },
-    {
-     "id": "S1",
-     "label": "S",
-     "pts": [
-      [
-       8,
-       8
-      ],
-      [
-       100,
-       100
-      ]
-     ],
-     "thin": true
-    },
-    {
-     "id": "S2",
-     "label": "S₂",
-     "pts": [
-      [
-       8,
-       44
-      ],
-      [
-       64,
-       100
-      ]
-     ],
-     "color": "red",
-     "from": "S1",
-     "at": 1,
-     "arrowP": 88
-    }
+   "id": "D",
+   "label": "D = MB = MSB",
+   "pts": [
+    [
+     0,
+     16.5
+    ],
+    [
+     20,
+     9
+    ]
    ],
-   "points": [
-    {
-     "q": 50,
-     "p": 50,
-     "pl": "P₁",
-     "ql": "Q₁",
-     "marker": "1"
-    },
-    {
-     "q": 26,
-     "p": 62,
-     "pl": "P₂",
-     "ql": "Q₂",
-     "color": "red",
-     "marker": "2",
-     "at": 2
-    }
-   ]
+   "ldx": -96,
+   "ldy": -8
+  }
+ ],
+ "points": [
+  {
+   "q": 4,
+   "p": 15,
+   "at": 1
   },
   {
-   "heading": "Weak response",
-   "axes": {
-    "xmax": 110,
-    "ymax": 110
-   },
-   "curves": [
-    {
-     "id": "D",
-     "label": "D",
-     "pts": [
-      [
-       34,
-       98
-      ],
-      [
-       64,
-       8
-      ]
-     ]
-    },
-    {
-     "id": "S1",
-     "label": "S",
-     "pts": [
-      [
-       8,
-       8
-      ],
-      [
-       100,
-       100
-      ]
-     ],
-     "thin": true
-    },
-    {
-     "id": "S2",
-     "label": "S₂",
-     "pts": [
-      [
-       8,
-       44
-      ],
-      [
-       64,
-       100
-      ]
-     ],
-     "color": "red",
-     "from": "S1",
-     "at": 1,
-     "arrowP": 88
-    }
-   ],
-   "points": [
-    {
-     "q": 50,
-     "p": 50,
-     "pl": "P₁",
-     "ql": "Q₁",
-     "marker": "1"
-    },
-    {
-     "q": 41,
-     "p": 77,
-     "pl": "P₂",
-     "ql": "Q₂",
-     "color": "red",
-     "marker": "2",
-     "at": 2
-    }
-   ]
+   "q": 12,
+   "p": 12,
+   "at": 2
   }
  ],
  "steps": [
-  "Both markets start at the same price and quantity. The only difference between them is how steep the demand curve is.",
-  "Now supply shifts left by the same amount in both.",
-  "The flat curve on the left gives a small rise in price and a large fall in quantity; the steep curve on the right gives a large rise in price and a small fall in quantity. That difference in responsiveness is what elasticity measures."
+  "The curve slopes down, and its height at any quantity is what one more pizza is worth.",
+  "$15 is the most anyone will pay for the 4 millionth pizza, so that is the marginal benefit society gets from it.",
+  "By the 12 millionth pizza the most anyone will pay is $12. Each further pizza is worth less than the one before, which is why the marginal benefit curve slopes downward."
  ]
 }
 </script></div>
 
-<p>This phenomenon is known as <strong>elasticity</strong>.  Elasticity is a measure of <b>responsiveness</b> to change.  How strongly do people respond to a change in price?  Slope is sometimes used to measure elasticity.  This is problematic, however, because we have to express the slope in units.</p>
+<p>Notice that as quantity demanded increases, the marginal benefit associated with an additional pizza decreases. The 12 millionth pizza, for example, is only worth $12 to society. This is logical; if you're really hungry, the first pizza is much more valuable to you than the fifth pizza.</p>
 
-<p>For example, the diagram below shows two demand curves that are the same, except one shows the price in terms of dollars, while the other shows price in terms of cents.  The slope for the left graph (rise/run) is &minus;0.5 but the slope for the right graph is &minus;50.  It&rsquo;s obvious that the graphs are expressing the same thing, but because we are expressing the units differently, we cannot use just a number for the elasticity.  We have to use units (e.g., $19 per pizza or 1,900&cent; per pizza).  The same problem exists when expressing the quantities in different ways.</p>
+<p>The <strong>marginal cost curve (MC)</strong> is the same as the supply curve. For example, the marginal cost associated with the production of pizza is shown below. This curve tells us that $8 is the minimum price for which someone is willing to produce and sell the 2 millionth pizza. This is a good measure of the marginal cost of producing the 2 millionth pizza (which includes a little profit as incentive for production). This is also a good measure of the <strong>marginal social cost (MSC)</strong> of producing the pizza because the producer is a member of society. (Again, there are no externalities, so the marginal private cost is the same as the marginal social cost.)</p>
 
-<!-- IMAGE POSITION: beside-referenced paragraph -->
+<!-- IMAGE POSITION: inline with marginal cost description -->
 <div class="sdg"><script type="application/json">
 {
- "title": "Why slope will not do as a measure",
- "lede": "One demand curve, two sets of units, two different slopes.",
- "link": false,
- "panels": [
+ "title": "The marginal cost curve is the supply curve",
+ "lede": "What the next pizza costs society to make.",
+ "axes": {
+  "x": "Q",
+  "y": "P",
+  "xmax": 10,
+  "ymax": 20,
+  "money": true,
+  "xticks": [
+   2,
+   6
+  ],
+  "yticks": [
+   8,
+   14
+  ],
+  "grid": true
+ },
+ "curves": [
   {
-   "heading": "Priced in dollars",
-   "axes": {
-    "xmax": 14,
-    "ymax": 24,
-    "money": true,
-    "xticks": [
-     8,
-     12
+   "id": "S",
+   "label": "S = MC = MSC",
+   "pts": [
+    [
+     0,
+     5
     ],
-    "yticks": [
-     19,
-     21
+    [
+     9,
+     18.5
     ]
-   },
-   "curves": [
-    {
-     "id": "D",
-     "label": "D",
-     "pts": [
-      [
-       8,
-       21
-      ],
-      [
-       12,
-       19
-      ]
-     ],
-     "ldy": 16
-    }
    ],
-   "points": [
-    {
-     "q": 8,
-     "p": 21
-    },
-    {
-     "q": 12,
-     "p": 19
-    }
-   ]
+   "ldx": -92,
+   "ldy": -6
+  }
+ ],
+ "points": [
+  {
+   "q": 2,
+   "p": 8,
+   "at": 1
   },
   {
-   "heading": "Priced in cents",
-   "axes": {
-    "xmax": 14,
-    "ymax": 2500,
-    "xticks": [
-     8,
-     12
+   "q": 6,
+   "p": 14,
+   "at": 2
+  }
+ ],
+ "steps": [
+  "The curve slopes up, and its height at any quantity is what one more pizza costs to produce.",
+  "$8 is the least anyone will accept to produce the 2 millionth pizza, so that is the marginal cost of making it.",
+  "By the 6 millionth pizza the least anyone will accept is $14. Producing more of a good raises the cost of each additional unit, which is why the marginal cost curve slopes upward."
+ ]
+}
+</script></div>
+
+<p>Note that the marginal cost increases as more units are produced. This reflects the law of increasing opportunity cost—as we produce more of a good, the opportunity cost of producing an additional unit increases.</p>
+
+<h2>Using Marginal Analysis to Find the Allocatively Efficient Quantity</h2>
+
+<p>We can use marginal analysis to find the allocatively efficient quantity, or the quantity of a good that society should produce to maximize welfare. Specifically, the allocatively efficient quantity is the quantity for which the marginal social benefit equals the marginal social cost. In the absence of externalities, this quantity is determined by the intersection of the demand curve and supply curve.</p>
+
+<!-- IMAGE POSITION: inline with allocatively efficient quantity explanation -->
+<div class="sdg"><script type="application/json">
+{
+ "title": "The efficient quantity is the equilibrium quantity",
+ "lede": "Where marginal social benefit meets marginal social cost.",
+ "axes": {
+  "xmax": 110,
+  "ymax": 110
+ },
+ "curves": [
+  {
+   "id": "D",
+   "label": "D = MSB",
+   "pts": [
+    [
+     4,
+     96
     ],
-    "yticks": [
-     1900,
-     2100
+    [
+     92,
+     8
     ]
+   ],
+   "ldx": -58,
+   "ldy": 14
+  },
+  {
+   "id": "S",
+   "label": "S = MSC",
+   "pts": [
+    [
+     8,
+     8
+    ],
+    [
+     100,
+     100
+    ]
+   ],
+   "ldx": -58,
+   "ldy": 2
+  }
+ ],
+ "points": [
+  {
+   "q": 50,
+   "p": 50,
+   "pl": "P*",
+   "ql": "Q*",
+   "at": 1
+  }
+ ],
+ "steps": [
+  "Marginal social benefit falls as quantity rises; marginal social cost rises.",
+  "They are equal where the two curves cross. That quantity is both the efficient quantity and the equilibrium quantity, so the amount the market actually produces is the amount that is best for society."
+ ]
+}
+</script></div>
+
+<p>Note that at the point where the marginal social cost is equal to the marginal social benefit, \(Q_{EFF} = Q*\) (the efficient quantity produced is also the equilibrium quantity). This says that the amount that will actually be produced will also be the amount that is best for society. An "invisible" hand causes equilibrium to automatically be the same point as the most efficient point.</p>
+
+<div class="example-box">
+  <h4>Example: Allocative Efficiency and Pizza</h4>
+  
+  <p>The diagram below shows the marginal social benefit and marginal social cost curves associated with the worldwide consumption of pizza. At a level of one pizza, we're not at a socially efficient level of production and consumption. This is because \(MSB > MSC\). At this level, the additional benefit of producing that extra pizza is greater than the costs involved. From a social perspective, we definitely want to produce that pizza. This is because we have a surplus of $8. The pizza has a benefit to society that exceeds the costs to society by $8.</p>
+  
+  <!-- IMAGE POSITION: inline with first diagram description -->
+  <!-- figure drawn by the widget below -->
+  
+  <p>It turns out that we would <em>definitely</em> want to produce all of the pizzas right up to the equilibrium point. This is because each point left of the equilibrium price involves a surplus. That is, marginal social benefit is greater than marginal social cost. Even though the added surplus decreases as you produce more, you will still produce the extra pizza because the surplus you get is added surplus. Thus, your total surplus is still increasing. Total surplus is the shaded region in the diagram below.</p>
+  
+  <!-- IMAGE POSITION: inline with second diagram description -->
+  <div class="sdg"><script type="application/json">
+{
+ "title": "Every pizza up to equilibrium adds surplus",
+ "lede": "Start at one pizza and work rightward.",
+ "axes": {
+  "x": "Q",
+  "y": "P",
+  "xmax": 10,
+  "ymax": 15,
+  "money": true,
+  "xticks": [
+   1
+  ],
+  "yticks": [
+   4,
+   12
+  ]
+ },
+ "curves": [
+  {
+   "id": "D",
+   "label": "D = MSB",
+   "pts": [
+    [
+     0,
+     12.8
+    ],
+    [
+     10,
+     4.8
+    ]
+   ],
+   "ldx": -56,
+   "ldy": 14
+  },
+  {
+   "id": "S",
+   "label": "S = MSC",
+   "pts": [
+    [
+     0,
+     3.2
+    ],
+    [
+     10,
+     11.2
+    ]
+   ],
+   "ldx": -56,
+   "ldy": 2
+  }
+ ],
+ "areas": [
+  {
+   "pts": [
+    [
+     0,
+     12.8
+    ],
+    [
+     6,
+     8
+    ],
+    [
+     0,
+     3.2
+    ]
+   ],
+   "color": "teal",
+   "at": 3
+  }
+ ],
+ "points": [
+  {
+   "q": 1,
+   "p": 12,
+   "guides": false,
+   "showP": false,
+   "showQ": false,
+   "at": 1
+  },
+  {
+   "q": 1,
+   "p": 4,
+   "guides": false,
+   "showP": false,
+   "showQ": false,
+   "at": 1
+  },
+  {
+   "q": 6,
+   "p": 8,
+   "pl": "P*",
+   "ql": "Q*",
+   "at": 2
+  }
+ ],
+ "vbraces": [
+  {
+   "p1": 4,
+   "p2": 12,
+   "q": 1,
+   "label": "$8",
+   "at": 1,
+   "until": 2
+  }
+ ],
+ "steps": [
+  "Marginal social benefit and marginal social cost for pizza worldwide.",
+  "At one pizza, that pizza is worth $12 to society and costs $4 to make. Society gains $8 by producing it, so it should be produced.",
+  "The same is true of every pizza up to the crossing point, though each one adds a little less than the one before. Past it the cost would exceed the benefit.",
+  "Adding up every one of those gains gives the total surplus, the whole area between the two curves up to the equilibrium quantity."
+ ]
+}
+</script></div>
+  
+  <p>This supports our marginal analysis theory. When marginal benefit exceeds marginal cost, you continue to do the activity. That is, you produce. When marginal benefit is less than the marginal cost, you don't produce the pizza. Your optimal production point will be at equilibrium, where \(MSB = MSC\). This is the quantity at which the total net surplus to society is maximized, also called the <strong>allocatively efficient point</strong>.</p>
+  
+  <p>Here, we see that people acting in their own self-interest are led, as if by an invisible hand, to do what's best for society. Adam Smith, the father of economics, came up with a theory in his 1776 book, <em>The Wealth of Nations</em>, called the <strong>invisible hand theory</strong>. This states that people looking out for only their own self-interest are led, as if by an invisible hand, to do what's best for society. Consumers will behave in a way that makes them as well-off as possible, and producers will do the same. In the absence of externalities, the interaction of self-interested consumers and self-interested producers will lead society to allocate resources in a way that maximizes total surplus to society.</p>
+</div>
+
+<h1>Consumer Surplus, Producer Surplus, and Total Surplus</h1>
+
+<p>We have discussed that \(Q_{EFF}\) is the most efficient point—the point at which there will be maximum surplus to society. In that case, producing at \(Q_{EFF}\) will cause the total surplus to be the area between the demand curve and supply curve, up to the equilibrium quantity. How is that divided?</p>
+<!-- IMAGE POSITION: inline with surplus explanation -->
+<div class="sdg"><script type="application/json">
+{
+ "title": "Total surplus splits into consumer surplus and producer surplus",
+ "lede": "The price is the line between them.",
+ "axes": {
+  "xmax": 110,
+  "ymax": 110
+ },
+ "curves": [
+  {
+   "id": "D",
+   "label": "D",
+   "pts": [
+    [
+     4,
+     96
+    ],
+    [
+     92,
+     8
+    ]
+   ],
+   "ldx": -6,
+   "ldy": 14
+  },
+  {
+   "id": "S",
+   "label": "S",
+   "pts": [
+    [
+     8,
+     8
+    ],
+    [
+     100,
+     100
+    ]
+   ],
+   "ldx": -6,
+   "ldy": 2
+  }
+ ],
+ "areas": [
+  {
+   "pts": [
+    [
+     0,
+     50
+    ],
+    [
+     0,
+     100
+    ],
+    [
+     50,
+     50
+    ]
+   ],
+   "label": "CS",
+   "color": "teal",
+   "lp": [
+    13,
+    67
+   ],
+   "at": 2
+  },
+  {
+   "pts": [
+    [
+     0,
+     50
+    ],
+    [
+     0,
+     0
+    ],
+    [
+     50,
+     50
+    ]
+   ],
+   "label": "PS",
+   "color": "orange",
+   "lp": [
+    13,
+    33
+   ],
+   "at": 3
+  }
+ ],
+ "points": [
+  {
+   "q": 50,
+   "p": 50,
+   "pl": "P*",
+   "ql": "Q*"
+  }
+ ],
+ "steps": [
+  "The market settles at P* and Q*.",
+  "Above the price and below the demand curve is consumer surplus: what buyers were willing to pay, less what they actually paid.",
+  "Below the price and above the supply curve is producer surplus: what sellers received, less the least they would have accepted.",
+  "The two together are the total surplus, and it is largest exactly at the equilibrium quantity."
+ ]
+}
+</script></div>
+<ul>
+  <li><strong>Consumer surplus</strong> is the maximum amount someone is willing to pay minus the actual price. \((MSB - Price)\)</li>
+  <li><strong>Producer surplus</strong> is the price actually received for the product minus the minimum price for which the producer will sell it. \((Price - MSC)\)</li>
+  <li><strong>Total surplus</strong> is equal to consumer surplus plus producer surplus \((CS + PS)\)</li>
+</ul>
+
+
+
+<p>Note that we maximize total surplus at the point where the marginal social cost is equal to the marginal social benefit—that is, where \(Q_{EFF} = Q*\) (the efficient quantity produced is also the equilibrium quantity).</p>
+
+<p>Above, we showed a situation in which the consumer surplus was approximately equal to the producer surplus. This doesn't have to be the case. The relative amount of consumer surplus and producer surplus depends on the elasticities of supply and demand, as is shown below:</p>
+
+<!-- IMAGE POSITION: below elasticity explanation -->
+<div class="sdg"><script type="application/json">
+{
+ "lede": "Same equilibrium each time; only the slopes change.",
+ "scenarios": {
+  "ind": {
+   "label": "Demand less elastic than supply",
+   "title": "A steep demand curve leaves consumers the larger share",
+   "axes": {
+    "xmax": 110,
+    "ymax": 110
    },
    "curves": [
     {
@@ -804,250 +1035,309 @@
      "pts": [
       [
        0,
-       2500
+       105
       ],
       [
-       14,
-       1800
+       95,
+       0.5
       ]
      ],
-     "ldx": -18,
-     "ldy": 16
+     "ldx": -6,
+     "ldy": 14
+    },
+    {
+     "id": "S",
+     "label": "S",
+     "pts": [
+      [
+       0,
+       27.5
+      ],
+      [
+       110,
+       77
+      ]
+     ],
+     "ldx": -14,
+     "ldy": -8
+    }
+   ],
+   "areas": [
+    {
+     "pts": [
+      [
+       0,
+       50
+      ],
+      [
+       0,
+       105
+      ],
+      [
+       50,
+       50
+      ]
+     ],
+     "label": "CS",
+     "color": "teal",
+     "lp": [
+      12,
+      70
+     ]
+    },
+    {
+     "pts": [
+      [
+       0,
+       50
+      ],
+      [
+       0,
+       27.5
+      ],
+      [
+       50,
+       50
+      ]
+     ],
+     "label": "PS",
+     "color": "orange",
+     "lp": [
+      12,
+      40
+     ]
     }
    ],
    "points": [
     {
-     "q": 8,
-     "p": 2100
+     "q": 50,
+     "p": 50,
+     "pl": "P*",
+     "ql": "Q*"
+    }
+   ],
+   "caption": "When demand is the less elastic of the two, buyers would have paid far more than they do, so consumer surplus is the bigger area and producer surplus the smaller one."
+  },
+  "same": {
+   "label": "Similar elasticities",
+   "title": "Similar slopes split the surplus evenly",
+   "axes": {
+    "xmax": 110,
+    "ymax": 110
+   },
+   "curves": [
+    {
+     "id": "D",
+     "label": "D",
+     "pts": [
+      [
+       0,
+       95
+      ],
+      [
+       105,
+       0.5
+      ]
+     ],
+     "ldx": -6,
+     "ldy": 14
     },
     {
-     "q": 12,
-     "p": 1900
-    }
-   ]
-  }
- ],
- "caption": "These are the same two points on the same demand curve, priced first in dollars and then in cents. Measured as rise over run the left curve has a slope of −0.5 and the right one −50, so slope changes with the units even though nothing about the market has changed. That is why elasticity is expressed as a ratio of percentages instead, which comes out as a pure number."
-}
-</script></div>
-
-<p class="date">Wednesday, 9/9/26</p>
-
-<p>For this course, we will express elasticity as a &ldquo;pure number.&rdquo;  Elasticity is not expressed in terms of units.  We can do this by expressing elasticity as a <b>ratio of percentages</b>.</p>
-
-<p>Numerically, we can define the <em>price elasticity of demand</em> as the absolute value of the percentage change in the quantity demanded divided by the percentage change in the price:</p>
-
-<p>\[E_D = \left| \frac{\%\Delta Q_D}{\%\Delta P} \right|\]</p>
-
-<p>Expressing the elasticity as a percentage allows us to easily compare elasticities across countries without running into different units and money values.</p>
-
-<h2 id="describing-the-price-elasticity-of-demand">Describing the Price Elasticity of Demand</h2>
-
-<p>The price elasticity of demand can range from zero to infinity.</p>
-
-<ul>
-<li>Demand is <strong>perfectly elastic</strong> if <em>E</em><sub>D</sub> = &infin;.  This means that price is fixed; changing the price would completely eliminate any demand.  An example of something very close to a perfectly elastic good is one farmer&rsquo;s milk (and other agricultural goods).</li>
-<li>Demand is <strong>elastic</strong> if <em>E</em><sub>D</sub> &gt; 1.  This means that the quantity demanded is very responsive to a change in price.</li>
-<li>Demand is <strong>unit elastic</strong> if <em>E</em><sub>D</sub> = 1.  This means that a 1% change in price causes a 1% change in the quantity demanded.</li>
-<li>Demand is <strong>inelastic</strong> if <em>E</em><sub>D</sub> &lt; 1.  This means that the quantity demanded is <em>not</em> very responsive to changes in price.</li>
-<li>Demand is <strong>perfectly inelastic</strong> if <em>E</em><sub>D</sub> = 0.  This means that the demand is fixed&mdash;a change in price will not change the quantity demanded at all.  Examples of goods with demand curves that are close to being perfectly inelastic include life-saving drugs like insulin or drugs used to treat AIDS.</li>
-</ul>
-
-<p>This spectrum of elasticities can be shown as follows:</p>
-
-<!-- IMAGE POSITION: below-referenced paragraph -->
-<div class="sdg"><script type="application/json">
-{
- "title": "The spectrum of elasticities",
- "lede": "From least elastic to most elastic, the curve rotates from vertical to horizontal.",
- "axes": {
-  "xmax": 110,
-  "ymax": 110
- },
- "scenarios": {
-  "pinel": {
-   "label": "Perfectly inelastic (E = 0)",
-   "curves": [
-    {
-     "id": "D",
-     "label": "D",
+     "id": "S",
+     "label": "S",
      "pts": [
       [
-       50,
-       8
+       0,
+       5
       ],
       [
-       50,
-       100
-      ]
-     ]
-    }
-   ],
-   "caption": "A perfectly inelastic demand curve is vertical: whatever the price does, the quantity demanded does not move at all. Life-saving drugs such as insulin come close to this. Capital I is vertical, which is a way to remember that Inelastic means the steeper curve."
-  },
-  "inel": {
-   "label": "Inelastic (E < 1)",
-   "curves": [
-    {
-     "id": "D",
-     "label": "D",
-     "pts": [
-      [
-       30,
-       100
-      ],
-      [
-       36,
-       65
-      ],
-      [
-       42,
-       35
-      ],
-      [
-       48,
-       10
+       110,
+       104
       ]
      ],
-     "curved": true
+     "ldx": -6,
+     "ldy": 2
     }
    ],
-   "caption": "An inelastic demand curve is steep. A change in price moves the quantity demanded, but by proportionally less than the price itself moved."
-  },
-  "unit": {
-   "label": "Unit elastic (E = 1)",
-   "curves": [
+   "areas": [
     {
-     "id": "D",
-     "label": "D",
      "pts": [
       [
-       10,
-       90
-      ],
-      [
-       20,
-       45
-      ],
-      [
-       30,
-       30
-      ],
-      [
-       45,
-       20
-      ],
-      [
-       90,
-       10
-      ]
-     ],
-     "curved": true
-    }
-   ],
-   "caption": "A unit elastic demand curve sits between the two: a one per cent change in price brings exactly a one per cent change in the quantity demanded."
-  },
-  "el": {
-   "label": "Elastic (E > 1)",
-   "curves": [
-    {
-     "id": "D",
-     "label": "D",
-     "pts": [
-      [
-       8,
-       55
-      ],
-      [
-       25,
-       40
-      ],
-      [
-       50,
-       32
-      ],
-      [
-       100,
-       26
-      ]
-     ],
-     "curved": true
-    }
-   ],
-   "caption": "An elastic demand curve is flat. A change in price moves the quantity demanded by proportionally more than the price itself moved."
-  },
-  "pel": {
-   "label": "Perfectly elastic (E = ∞)",
-   "curves": [
-    {
-     "id": "D",
-     "label": "D",
-     "pts": [
-      [
-       8,
+       0,
        50
       ],
       [
-       100,
+       0,
+       95
+      ],
+      [
+       50,
        50
       ]
+     ],
+     "label": "CS",
+     "color": "teal",
+     "lp": [
+      13,
+      66
+     ]
+    },
+    {
+     "pts": [
+      [
+       0,
+       50
+      ],
+      [
+       0,
+       5
+      ],
+      [
+       50,
+       50
+      ]
+     ],
+     "label": "PS",
+     "color": "orange",
+     "lp": [
+      13,
+      34
      ]
     }
    ],
-   "caption": "A perfectly elastic demand curve is horizontal: the price is fixed, and any attempt to raise it would wipe out demand altogether. One farmer's milk comes close to this."
+   "points": [
+    {
+     "q": 50,
+     "p": 50,
+     "pl": "P*",
+     "ql": "Q*"
+    }
+   ],
+   "caption": "When the two curves are about equally elastic the areas come out about equal, which is the case drawn earlier. Nothing requires it."
+  },
+  "eld": {
+   "label": "Demand more elastic than supply",
+   "title": "A flat demand curve leaves producers the larger share",
+   "axes": {
+    "xmax": 110,
+    "ymax": 110
+   },
+   "curves": [
+    {
+     "id": "D",
+     "label": "D",
+     "pts": [
+      [
+       0,
+       77.5
+      ],
+      [
+       110,
+       17
+      ]
+     ],
+     "ldx": -14,
+     "ldy": 12
+    },
+    {
+     "id": "S",
+     "label": "S",
+     "pts": [
+      [
+       0,
+       5
+      ],
+      [
+       110,
+       104
+      ]
+     ],
+     "ldx": -6,
+     "ldy": 2
+    }
+   ],
+   "areas": [
+    {
+     "pts": [
+      [
+       0,
+       50
+      ],
+      [
+       0,
+       77.5
+      ],
+      [
+       50,
+       50
+      ]
+     ],
+     "label": "CS",
+     "color": "teal",
+     "lp": [
+      9,
+      61
+     ]
+    },
+    {
+     "pts": [
+      [
+       0,
+       50
+      ],
+      [
+       0,
+       5
+      ],
+      [
+       50,
+       50
+      ]
+     ],
+     "label": "PS",
+     "color": "orange",
+     "lp": [
+      13,
+      34
+     ]
+    }
+   ],
+   "points": [
+    {
+     "q": 50,
+     "p": 50,
+     "pl": "P*",
+     "ql": "Q*"
+    }
+   ],
+   "caption": "When demand is the more elastic of the two, buyers would not have paid much more than they do, so consumer surplus is the smaller area and producer surplus the bigger one."
   }
  }
 }
 </script></div>
 
-<p>A good way to remember the difference between a perfectly elastic curve and a perfectly inelastic curve is that the capital letter <b>I</b> is vertical, so a perfectly <b>I</b>nelastic demand curve is completely vertical.</p>
-
-<h2 id="elasticity-examples">Elasticity Examples</h2>
-
-<p>Assume that a 10% price hike leads to a 5% decrease in quantity demanded.  What is the price elasticity of demand?</p>
-
-<p>\[E_D = \left| \frac{\%\Delta Q_D}{\%\Delta P} \right| = \left| \frac{-5\%}{10\%} \right| = 0.5 \quad \text{(weak response)}\]</p>
-
-<p>Now, assume that a 10% increase in price leads to a 20% decrease in quantity demanded.  What is the price elasticity of demand?</p>
-
-<p>\[E_D = \left| \frac{\%\Delta Q_D}{\%\Delta P} \right| = \left| \frac{-20\%}{10\%} \right| = 2.0 \quad \text{(strong response)}\]</p>
-
-<p>Now, assume that a 10% increase in price leads to a 10% decrease in quantity demanded.  What is the price elasticity of demand?</p>
-
-<p>\[E_D = \left| \frac{\%\Delta Q_D}{\%\Delta P} \right| = \left| \frac{-10\%}{10\%} \right| = 1.0 \quad \text{(intermediate response)}\]</p>
-
-<div class="example-box"><h4>Why Do We Use Percentages?</h4>
-<p>We use percentage changes when calculating the price elasticity of demand because it is the percentage change and not the absolute change in price that influences consumer behavior.  For example, if the price of a Big Mac increases by $1, from $5 to $6, consumers may perceive this as a relatively large change.  As a result, they may switch to alternatives, such as Burger King&rsquo;s Whopper.</p>
-<p>Now, suppose that the price of a BMW increases by $1, from $50,000 to $50,001.  This will probably not have much of a change at all on the quantity demanded.  This is because the percentage change in the price was not very large.</p>
-</div>
-
-<h2 id="the-midpoint-formula">The Midpoint Formula</h2>
-
-<p>You calculate elasticity over an interval by calculating the percentage change in price and the percentage change in quantity.  That is,</p>
-
-<p>\[E_D = \left| \frac{\%\Delta Q_D}{\%\Delta P} \right| = \left| \frac{\dfrac{Q_2 - Q_1}{Q_{\text{Midpoint}}}}{\dfrac{P_2 - P_1}{P_{\text{Midpoint}}}} \right|\]</p>
-
-<div class="exam-tip"><h4>EXAM TIP: Midpoint Formula</h4><p>You will almost definitely have a question that asks you to use the midpoint formula on the exam.  Be sure this equation is on your notecard!</p></div>
-
-<p>Note that, in this class, we use the <b>midpoint</b> of the starting and ending values in the denominator when calculating the percentage change.</p>
-
-<p>So, for example, in the diagram below, the price elasticity of demand between points <em>A</em> and <em>B</em> can be calculated as follows:</p>
-
-<!-- IMAGE POSITION: beside-referenced paragraph -->
-<div class="sdg"><script type="application/json">
+<div class="example-box">
+  <h4>Example: Calculating Total Surplus</h4>
+  
+  <p>Let's look at just who gets the surplus generated by the sale of Piesanos' pizza. Given the demand and supply curves below, let's assume that the equilibrium price of a pizza is $11.</p>
+  
+  <!-- IMAGE POSITION: inline with calculation example -->
+  <div class="sdg"><script type="application/json">
 {
- "title": "The midpoint formula between two points",
- "lede": "Price and quantity changes are both measured against the midpoint of the interval.",
+ "title": "Calculating the surplus on Piesanos' pizza",
+ "lede": "Two triangles, each one half base times height.",
  "axes": {
-  "xmax": 14,
-  "ymax": 25,
+  "x": "Q",
+  "y": "P",
+  "xmax": 17,
+  "ymax": 24,
   "money": true,
   "xticks": [
-   8,
-   12
+   8
   ],
   "yticks": [
-   19,
+   1,
+   11,
    21
   ]
  },
@@ -1058,191 +1348,444 @@
    "pts": [
     [
      0,
-     25
+     21
     ],
     [
-     14,
-     18
+     16,
+     1
     ]
    ],
-   "ldx": -20,
-   "ldy": 16
-  }
- ],
- "points": [
-  {
-   "q": 8,
-   "p": 21,
-   "label": "A",
-   "dx": -20,
-   "dy": -8
+   "ldx": -6,
+   "ldy": 14
   },
   {
-   "q": 12,
-   "p": 19,
-   "label": "B",
-   "dx": -18,
-   "dy": 18
-  }
- ],
- "braces": [
-  {
-   "p": 0,
-   "q1": 8,
-   "q2": 12,
-   "label": "4 more, a 40% rise",
-   "below": true,
-   "at": 1
-  }
- ],
- "vbraces": [
-  {
-   "p1": 19,
-   "p2": 21,
-   "q": 8,
-   "label": "$2 less, a 10% fall",
-   "side": "left",
-   "at": 2
-  }
- ],
- "steps": [
-  "Point A is 8 units at $21 and Point B is 12 units at $19. The elasticity between them is worked out over the whole interval.",
-  "Quantity rises by 4. The midpoint of 8 and 12 is 10, so that is a 40% rise in the quantity demanded.",
-  "Price falls by $2. The midpoint of $19 and $21 is $20, so that is a 10% fall in the price.",
-  "Dividing 40% by 10% and taking the absolute value gives an elasticity of 4. Demand is elastic between these two points, because quantity responded proportionally more than price."
- ]
-}
-</script></div>
-
-<p>\[\%\Delta Q_D = \frac{Q_2 - Q_1}{Q_{\text{Midpoint}}} = \frac{12 - 8}{10} = 40\%\]</p>
-
-<p>\[\%\Delta P = \frac{P_2 - P_1}{P_{\text{Midpoint}}} = \frac{\$19 - \$21}{\$20} = -10\%\]</p>
-
-<p>\[E_D = \left| \frac{\%\Delta Q_D}{\%\Delta P} \right| = \left| \frac{40\%}{-10\%} \right| = 4\]</p>
-
-<p>As you can see, the elasticity of demand is 4, so demand is <em>elastic</em> between these two points.</p>
-
-<h2 id="calculating-elasticity-at-a-point">Calculating Elasticity at a Point</h2>
-
-<p>So far, we have considered only elasticity over an interval.  It is also possible to determine elasticity at a point along a demand curve.  The formula for calculating the elasticity of demand at a point along the demand curve is as follows:</p>
-
-<p>\[E_D = \left| \frac{1}{\text{Slope}} \times \frac{P}{Q_D} \right|\]</p>
-
-<div class="exam-tip"><h4>EXAM TIP: Point Elasticity</h4><p>Dr. Rush does not typically ask questions that require you to use this equation.  He introduces it to show that the price elasticity of demand falls as you move down a straight-line demand curve.</p></div>
-
-<p>We could use this equation to show that the price elasticity of demand falls as we move down a straight-line demand curve.  Consider the following demand curve:</p>
-
-<!-- IMAGE POSITION: beside-referenced paragraph -->
-<div class="sdg"><script type="application/json">
-{
- "title": "Elasticity falls as you move down a straight line",
- "lede": "One demand curve, three points, three very different elasticities.",
- "axes": {
-  "xmax": 11,
-  "ymax": 11,
-  "money": true,
-  "xticks": [
-   1,
-   5,
-   9
-  ],
-  "yticks": [
-   1,
-   5,
-   9
-  ]
- },
- "curves": [
-  {
-   "id": "D",
-   "label": "D",
+   "id": "S",
+   "label": "S",
    "pts": [
     [
      0,
-     10
+     1
     ],
     [
-     10,
-     0
+     16,
+     21
     ]
    ],
-   "lstart": true,
-   "ldx": 10,
-   "ldy": -6
+   "ldx": -6,
+   "ldy": 2
+  }
+ ],
+ "areas": [
+  {
+   "pts": [
+    [
+     0,
+     11
+    ],
+    [
+     0,
+     21
+    ],
+    [
+     8,
+     11
+    ]
+   ],
+   "label": "CS",
+   "color": "teal",
+   "lp": [
+    2.5,
+    14.5
+   ],
+   "at": 2
+  },
+  {
+   "pts": [
+    [
+     0,
+     11
+    ],
+    [
+     0,
+     1
+    ],
+    [
+     8,
+     11
+    ]
+   ],
+   "label": "PS",
+   "color": "orange",
+   "lp": [
+    2.5,
+    7.5
+   ],
+   "at": 3
   }
  ],
  "points": [
   {
-   "q": 1,
-   "p": 9,
-   "at": 1
-  },
-  {
-   "q": 5,
-   "p": 5,
-   "at": 2
-  },
-  {
-   "q": 9,
-   "p": 1,
-   "at": 3
+   "q": 8,
+   "p": 11
   }
  ],
  "steps": [
-  "This demand curve is a straight line that meets both axes. The elasticity of demand is different at every point along it.",
-  "High on the curve, at 1 unit and $9, demand is elastic: the elasticity here is 9. Moving toward the vertical intercept, it rises without limit.",
-  "At the midpoint, 5 units and $5, the elasticity is exactly 1, so demand is unit elastic.",
-  "Low on the curve, at 9 units and $1, demand is inelastic: the elasticity here is 1/9. Moving toward the horizontal intercept, it falls to zero. So elasticity falls steadily as the price falls and the quantity rises."
+  "The equilibrium price is $11 and the equilibrium quantity is 8 million pizzas. Demand reaches $21 where it meets the price axis, and supply starts at $1.",
+  "Consumer surplus is the triangle below demand and above the price: one half of 8 million, times $21 less $11, which is $40 million.",
+  "Producer surplus is the triangle above supply and below the price: one half of 8 million, times $11 less $1, which is $40 million as well.",
+  "Together they make a total surplus of $80 million. The two halves happen to be equal here, and that is a feature of these particular curves rather than a rule."
  ]
 }
 </script></div>
+  
+  <p>The consumer surplus is the area below the demand curve and above the price, to the left of the equilibrium quantity. The producer surplus is the area below the price and above the supply curve, to left of the equilibrium quantity.</p>
+  
+  <p>The total consumer surplus can be calculated as follows:</p>
+<p style="text-align: center;">
+  <strong>CS</strong> = \(\frac{1}{2} \times \text{Base} \times \text{Height}\)<br>
+  = \(\frac{1}{2} (8M) \times (\$21 - \$11)\) = <strong>$40 million</strong>
+</p>
 
-<p>As you can see, the price elasticity of demand along a straight-line demand curve varies from 0 (at the horizontal intercept) to infinity (at the vertical intercept).  At the vertical intercept, elasticity approaches infinity.  At the horizontal intercept, elasticity is zero.</p>
+  
+  <p>The total producer surplus can be calculated as follows:</p>
+<p style="text-align: center;">
+  <strong>PS</strong> = \(\frac{1}{2} \times \text{Base} \times \text{Height}\)<br>
+  = \(\frac{1}{2} (8M) \times (\$11 - \$1)\) = <strong>$40 million</strong>
+</p>
 
-<p>Technically, elasticity of demand is only defined at a point.  However, we speak in general terms about how &ldquo;elastic&rdquo; entire curves are.  Just know that there is a distinction.</p>
+  
+  <p>The total surplus is the sum of the consumer surplus and the producer surplus, or <strong>$80 million</strong>.</p>
+  
+  <p>In this example, the consumer surplus was equal to the producer surplus. This isn't always the case, however. The consumer surplus could be greater than, equal to, or less than the producer surplus, depending on the elasticities of demand and supply.</p>
+  
+  <p>It's important to note that, when you produce at the equilibrium price and quantity (the efficient price and quantity), you maximize <em>total</em> surplus. The concept of deadweight loss will illustrate why this is so.</p>
+</div>
 
-<h2 id="elasticity-examples">Elasticity Examples</h2>
+<h1>Deadweight Loss</h1>
 
-<p>On an exam, you might be asked to calculate the price elasticity of demand given the percentage change in price and the percentage change in quantity.  Alternatively, you might be asked to calculate the percentage change in quantity given the elasticity and the percentage change in price, or you might be asked to calculate the percentage change in price given the elasticity and the percentage change in quantity.  Let&rsquo;s explore each of these three possibilities.</p>
+<p>Total surplus to society is maximized when society produces the efficient quantity, which is also the equilibrium quantity in the absence of externalities. If society underproduces or overproduces with respect to the equilibrium quantity, the total surplus to society is smaller than if the efficient quantity were produced. The <strong>deadweight loss</strong> to society is the loss of total surplus due to underproduction or overproduction. Nobody gains from this loss; it is a total waste to society.</p>
 
-<p><b>Suppose that a 5% increase in the price causes a 15% decrease in the quantity demanded.  What is the price elasticity of demand over this interval?</b></p>
+<p>The following diagrams summarize the three possibilities:</p>
 
-<p>\[E_D = \left| \frac{\%\Delta Q_D}{\%\Delta P} \right| = \left| \frac{-15\%}{5\%} \right| = 3\]</p>
-
-<p>Demand is elastic over this interval because the price elasticity of demand is greater than one.</p>
-
-<p><b>Suppose that the price elasticity of demand is 2 and the price increases by 10%.  What will happen to the quantity demanded as a result?</b></p>
-
-<p>\[E_D = \left| \frac{\%\Delta Q_D}{\%\Delta P} \right| \qquad \Rightarrow \qquad 2 = \left| \frac{\%\Delta Q_D}{10\%} \right|\]</p>
-
-<p>\[\%\Delta Q_D = 2 \times 10\% = -20\%\]</p>
-
-<p>We know that an increase in price caused quantity demanded to <em>fall</em> because the law of demand states that the quantity demanded decreases when the price increases.</p>
-
-<p><b>Suppose that you know that the price elasticity of demand is 0.2 and that the quantity demanded rises by 10%.  What happens to the price?</b></p>
-
-<p>\[E_D = \left| \frac{\%\Delta Q_D}{\%\Delta P} \right| \qquad \Rightarrow \qquad 0.2 = \left| \frac{10\%}{\%\Delta P} \right|\]</p>
-
-<p>\[\%\Delta P = \frac{10\%}{0.2} = -50\%\]</p>
-
-<p>We know that an increase in quantity demanded caused the price to fall because the law of demand states that the quantity demanded <em>increases</em> when the price decreases.</p>
-
-<h1 id="the-total-revenue-test">The Total Revenue Test</h1>
-
-<p>Elasticity of demand is technically only defined at a point along the demand curve.  The price elasticity of demand varies along a given demand curve.  Along a given straight-line demand curve that intersects both the vertical and horizontal axes, the price elasticity of demand varies from zero (at the horizontal intercept) to infinity (at the vertical intercept).  Revenues are always maximized at the midpoint of a straight-line demand curve, where the price elasticity of demand is equal to one.  This relationship is shown in the figure below.</p>
-
-<!-- IMAGE POSITION: beside-referenced paragraph -->
+<!-- IMAGE POSITION: inline with deadweight loss explanation -->
 <div class="sdg"><script type="application/json">
 {
- "title": "The total revenue test",
- "lede": "Revenue is highest where demand is unit elastic.",
- "link": false,
- "panels": [
-  {
-   "heading": "Demand",
+ "lede": "Produce the wrong amount in either direction and society loses.",
+ "scenarios": {
+  "under": {
+   "label": "Underproduction",
+   "title": "Producing less than the efficient quantity",
    "axes": {
-    "xmax": 120,
-    "ymax": 120
+    "xmax": 110,
+    "ymax": 110
+   },
+   "curves": [
+    {
+     "id": "D",
+     "label": "D",
+     "pts": [
+      [
+       4,
+       96
+      ],
+      [
+       92,
+       8
+      ]
+     ],
+     "ldx": -6,
+     "ldy": 14
+    },
+    {
+     "id": "S",
+     "label": "S",
+     "pts": [
+      [
+       8,
+       8
+      ],
+      [
+       100,
+       100
+      ]
+     ],
+     "ldx": -6,
+     "ldy": 2
+    }
+   ],
+   "areas": [
+    {
+     "pts": [
+      [
+       30,
+       70
+      ],
+      [
+       30,
+       30
+      ],
+      [
+       50,
+       50
+      ]
+     ],
+     "label": "DWL",
+     "color": "red",
+     "lp": [
+      30,
+      62
+     ],
+     "ldx": -24
+    }
+   ],
+   "points": [
+    {
+     "q": 50,
+     "p": 50,
+     "pl": "P*",
+     "ql": "Q*"
+    },
+    {
+     "q": 30,
+     "p": 70,
+     "guides": false,
+     "showP": false,
+     "showQ": false,
+     "ql": "Q",
+     "color": "red"
+    },
+    {
+     "q": 30,
+     "p": 30,
+     "guides": false,
+     "showP": false,
+     "showQ": false,
+     "color": "red"
+    }
+   ],
+   "caption": "Between the quantity produced and the efficient quantity, every unit was worth more to society than it would have cost. None of those gains happen, and the triangle of surplus that is never created is the deadweight loss."
+  },
+  "over": {
+   "label": "Overproduction",
+   "title": "Producing more than the efficient quantity",
+   "axes": {
+    "xmax": 110,
+    "ymax": 110
+   },
+   "curves": [
+    {
+     "id": "D",
+     "label": "D",
+     "pts": [
+      [
+       4,
+       96
+      ],
+      [
+       92,
+       8
+      ]
+     ],
+     "ldx": -6,
+     "ldy": 14
+    },
+    {
+     "id": "S",
+     "label": "S",
+     "pts": [
+      [
+       8,
+       8
+      ],
+      [
+       100,
+       100
+      ]
+     ],
+     "ldx": -6,
+     "ldy": 2
+    }
+   ],
+   "areas": [
+    {
+     "pts": [
+      [
+       70,
+       30
+      ],
+      [
+       70,
+       70
+      ],
+      [
+       50,
+       50
+      ]
+     ],
+     "label": "DWL",
+     "color": "red",
+     "lp": [
+      70,
+      38
+     ],
+     "ldx": 24
+    }
+   ],
+   "points": [
+    {
+     "q": 50,
+     "p": 50,
+     "pl": "P*",
+     "ql": "Q*"
+    },
+    {
+     "q": 70,
+     "p": 30,
+     "guides": false,
+     "showP": false,
+     "showQ": false,
+     "ql": "Q",
+     "color": "red"
+    },
+    {
+     "q": 70,
+     "p": 70,
+     "guides": false,
+     "showP": false,
+     "showQ": false,
+     "color": "red"
+    }
+   ],
+   "caption": "Past the efficient quantity every extra unit costs society more than it is worth. Making them destroys surplus, and the triangle of surplus destroyed is the deadweight loss."
+  },
+  "eff": {
+   "label": "The efficient quantity",
+   "title": "Producing exactly the efficient quantity",
+   "axes": {
+    "xmax": 110,
+    "ymax": 110
+   },
+   "curves": [
+    {
+     "id": "D",
+     "label": "D",
+     "pts": [
+      [
+       4,
+       96
+      ],
+      [
+       92,
+       8
+      ]
+     ],
+     "ldx": -6,
+     "ldy": 14
+    },
+    {
+     "id": "S",
+     "label": "S",
+     "pts": [
+      [
+       8,
+       8
+      ],
+      [
+       100,
+       100
+      ]
+     ],
+     "ldx": -6,
+     "ldy": 2
+    }
+   ],
+   "areas": [
+    {
+     "pts": [
+      [
+       0,
+       50
+      ],
+      [
+       0,
+       100
+      ],
+      [
+       50,
+       50
+      ]
+     ],
+     "label": "CS",
+     "color": "teal",
+     "lp": [
+      13,
+      67
+     ]
+    },
+    {
+     "pts": [
+      [
+       0,
+       50
+      ],
+      [
+       0,
+       0
+      ],
+      [
+       50,
+       50
+      ]
+     ],
+     "label": "PS",
+     "color": "orange",
+     "lp": [
+      13,
+      33
+     ]
+    }
+   ],
+   "points": [
+    {
+     "q": 50,
+     "p": 50,
+     "pl": "P*",
+     "ql": "Q*"
+    }
+   ],
+   "caption": "At the efficient quantity there is nothing left over. Every unit worth making has been made and none that was not worth making, so total surplus is as large as it can be and the deadweight loss is nothing at all."
+  }
+ }
+}
+</script></div>
+
+<div class="example-box">
+  <h4>Example: Deadweight Loss and Pizza</h4>
+  
+  <p>Suppose that the equilibrium quantity of pizzas is 15 million and society, for some reason, only produces 10 million. The result will be a deadweight loss because society failed to produce 5 million pizzas for which the marginal social benefit exceeded the marginal social cost. Society could increase total surplus by producing more pizzas.</p>
+  
+  <!-- IMAGE POSITION: inline with underproduction example -->
+  <!-- figure drawn by the widget below -->
+  
+  <p>Now, suppose that society produces 20 million pizzas. Again, there will be a deadweight loss to society. This time, the deadweight loss results because society is producing 5 million pizzas for which the marginal social cost exceeds the marginal social benefit. Society could increase total surplus by producing fewer pizzas.</p>
+  
+  <!-- IMAGE POSITION: inline with overproduction example -->
+  <div class="sdg"><script type="application/json">
+{
+ "lede": "Equilibrium is 15 million pizzas. Pick what society produces instead.",
+ "scenarios": {
+  "under": {
+   "label": "Only 10 million produced",
+   "title": "Underproducing pizza by 5 million",
+   "axes": {
+    "x": "Q",
+    "y": "P",
+    "xmax": 24,
+    "ymax": 110,
+    "xticks": [
+     10,
+     15
+    ]
    },
    "curves": [
     {
@@ -1251,210 +1794,212 @@
      "pts": [
       [
        0,
-       110
+       95
       ],
       [
-       110,
-       0
+       24,
+       23
       ]
      ],
-     "ldx": -44,
-     "ldy": -2
-    }
-   ],
-   "points": [
-    {
-     "q": 0,
-     "p": 110,
-     "label": "E = ∞",
-     "dx": 9,
-     "dy": -4,
-     "guides": false,
-     "showP": false,
-     "showQ": false
+     "ldx": -6,
+     "ldy": 14
     },
     {
-     "q": 110,
-     "p": 0,
-     "label": "E = 0",
-     "dx": 9,
-     "dy": -6,
-     "guides": false,
-     "showP": false,
-     "showQ": false
-    },
-    {
-     "q": 55,
-     "p": 55,
-     "label": "E = 1",
-     "at": 1,
-     "dx": 10,
-     "dy": -10,
-     "guides": false,
-     "showP": false,
-     "showQ": false
-    },
-    {
-     "q": 30,
-     "p": 80,
-     "label": "E > 1",
-     "at": 2,
-     "dx": 10,
-     "dy": -10,
-     "guides": false,
-     "showP": false,
-     "showQ": false
-    },
-    {
-     "q": 80,
-     "p": 30,
-     "label": "E < 1",
-     "at": 3,
-     "dx": 10,
-     "dy": -10,
-     "guides": false,
-     "showP": false,
-     "showQ": false
-    }
-   ]
-  },
-  {
-   "heading": "Total revenue",
-   "axes": {
-    "x": "Q",
-    "y": "TR",
-    "xmax": 120,
-    "ymax": 120
-   },
-   "curves": [
-    {
-     "id": "TR",
-     "label": "",
+     "id": "S",
+     "label": "S",
      "pts": [
       [
        0,
-       0
+       5
       ],
       [
-       20,
-       65.5
-      ],
-      [
-       40,
-       101.8
-      ],
-      [
-       55,
-       110
-      ],
-      [
-       70,
-       101.8
-      ],
-      [
-       90,
-       65.5
-      ],
-      [
-       110,
-       0
+       24,
+       77
       ]
      ],
-     "curved": true
+     "ldx": -6,
+     "ldy": 2
+    }
+   ],
+   "areas": [
+    {
+     "pts": [
+      [
+       10,
+       65
+      ],
+      [
+       10,
+       35
+      ],
+      [
+       15,
+       50
+      ]
+     ],
+     "label": "DWL",
+     "color": "red",
+     "lp": [
+      10,
+      58
+     ],
+     "ldx": -22
     }
    ],
    "points": [
     {
-     "q": 55,
-     "p": 110,
-     "at": 1,
+     "q": 15,
+     "p": 50,
+     "pl": "P*"
+    },
+    {
+     "q": 10,
+     "p": 65,
      "guides": false,
      "showP": false,
-     "showQ": false
+     "showQ": false,
+     "color": "red"
+    },
+    {
+     "q": 10,
+     "p": 35,
+     "guides": false,
+     "showP": false,
+     "showQ": false,
+     "color": "red"
     }
-   ]
+   ],
+   "caption": "Society produces 10 million pizzas when 15 million is the efficient amount. The 5 million never made were each worth more than they would have cost, so the surplus in the red triangle is never created and is lost to everyone."
+  },
+  "over": {
+   "label": "20 million produced",
+   "title": "Overproducing pizza by 5 million",
+   "axes": {
+    "x": "Q",
+    "y": "P",
+    "xmax": 24,
+    "ymax": 110,
+    "xticks": [
+     15,
+     20
+    ]
+   },
+   "curves": [
+    {
+     "id": "D",
+     "label": "D",
+     "pts": [
+      [
+       0,
+       95
+      ],
+      [
+       24,
+       23
+      ]
+     ],
+     "ldx": -6,
+     "ldy": 14
+    },
+    {
+     "id": "S",
+     "label": "S",
+     "pts": [
+      [
+       0,
+       5
+      ],
+      [
+       24,
+       77
+      ]
+     ],
+     "ldx": -6,
+     "ldy": 2
+    }
+   ],
+   "areas": [
+    {
+     "pts": [
+      [
+       20,
+       35
+      ],
+      [
+       20,
+       65
+      ],
+      [
+       15,
+       50
+      ]
+     ],
+     "label": "DWL",
+     "color": "red",
+     "lp": [
+      20,
+      42
+     ],
+     "ldx": 24
+    }
+   ],
+   "points": [
+    {
+     "q": 15,
+     "p": 50,
+     "pl": "P*"
+    },
+    {
+     "q": 20,
+     "p": 35,
+     "guides": false,
+     "showP": false,
+     "showQ": false,
+     "color": "red"
+    },
+    {
+     "q": 20,
+     "p": 65,
+     "guides": false,
+     "showP": false,
+     "showQ": false,
+     "color": "red"
+    }
+   ],
+   "caption": "Society produces 20 million pizzas when 15 million is the efficient amount. Each of the extra 5 million cost more to make than it was worth, so producing them destroys surplus, and the red triangle is what society throws away."
   }
- ],
- "steps": [
-  "Elasticity varies along a straight-line demand curve: it is infinite at the vertical intercept and zero at the horizontal one. Total revenue, price times quantity, traces a hump as quantity rises.",
-  "Revenue peaks at the midpoint of the demand curve, which is exactly where demand is unit elastic. At that point a price change leaves total revenue alone, because the percentage change in quantity offsets the percentage change in price.",
-  "Above the midpoint demand is elastic. Raising the price here loses more in quantity than it gains in price, so total revenue falls; cutting the price raises it.",
-  "Below the midpoint demand is inelastic. Raising the price here gains more in price than it loses in quantity, so total revenue rises; cutting the price lowers it."
- ]
+ }
 }
 </script></div>
-
-<p>This relationship has important implications for firms wanting to raise their prices:</p>
-
-<ul>
-<li><em>If demand is elastic</em>, a firm will <em>reduce</em> its total revenues if it raises its price.  It will <em>increase</em> its total revenues if it reduces its price.</li>
-<li><em>If demand is inelastic</em>, a firm will <em>increase</em> its total revenues if it raises its price.  It will <em>decrease</em> its total revenues if it reduces its price.</li>
-<li><em>If demand is unit elastic</em>, a firm&rsquo;s total revenues will not change if it raises or reduces its price, because the percentage change in the quantity demanded exactly offsets the percentage change in the price.</li>
-</ul>
-
-<div class="exam-tip"><h4>EXAM TIP: Total Revenue Test</h4>
-<p>The best way to remember the total revenue test is to remember just one relationship and change it up:</p>
-<p>&ldquo;If demand is <b>inelastic</b>, then <b>increasing</b> the price <b>increases</b> the total revenue.&rdquo;</p>
-<p>This can be changed any number of ways.  For example, if you remember that rule, you can develop a rule for when demand is elastic:</p>
-<p>&ldquo;If demand is <b>elastic</b>, then <b>increasing</b> the price <b>decreases</b> the total revenue.&rdquo;</p>
-<p>You could also change this rule to reflect a <em>decrease</em> in the price and not an increase:</p>
-<p>&ldquo;If demand is <b>elastic</b>, then <b>decreasing</b> the price <b>increases</b> the total revenue.&rdquo;</p>
-<p>While the total revenue test may be confusing at first, if you just remember one simple rule and learn to change it so that it applies to different situations, you&rsquo;ll be able to handle any question dealing with it on the exam.</p>
+  
+  <p>In both of these cases, the area that represents the difference between the maximum possible surplus (surplus achieved when producing at equilibrium) and the actual surplus (surplus achieved at the point where we produce) is called the <strong>deadweight loss</strong>.</p>
 </div>
 
-<div class="example-box"><h4>Example: Elasticity and Piesanos</h4>
-<p>Elasticity is important because it helps companies decide whether they should raise prices.  For example, let&rsquo;s say that Piesanos is selling 1,000 pizzas at $10 per pizza, for a total revenue of $10,000, and that it is considering raising its price to $15 per pizza.  The effect on Piesanos&rsquo; total revenue depends on how responsive customers are to the price hike.  Piesanos would want to know what would happen to the quantity demanded if it took this action.</p>
-<p>For example, there might be a strong response, and it might only sell 500 pizzas.  If this happens, its new total revenue will be $15 &times; 500 = $7,500.  In this case, Piesanos would probably not want to raise its price.  However, there may not be a very large response at all.  For example, Piesanos might sell 800 pizzas at $15 each, for a total revenue of $15 &times; 800 = $12,000.  In this case, Piesanos probably would want to raise its price.</p>
-<p>This is a simple example that illustrates how businesses use the concept of elasticity in the &ldquo;real world.&rdquo;  Companies like Ford, Procter &amp; Gamble, and Pfizer have teams of economists who do nothing but collect data to try to estimate elasticities!</p>
+<div class="other-box">
+  <h4>From-the-Book Topics NOT Covered in Class</h4>
+  
+  <p>Here are some concepts covered in the textbook but not covered in class:</p>
+  
+  <ul>
+    <li>In the United States, we allocate resources through <strong>markets</strong>. There are alternatives, however. Examples include the command system, majority rule, contests, lotteries, personal characteristics, first-come/first-served systems, and force.</li>
+    
+    <li><strong>Utilitarianism</strong> is a principle that states that we should strive to achieve "the greatest happiness for the greatest number." Utilitarians argue that income must be transferred from the rich to the poor, up to the point of complete equality, in order to achieve this end.</li>
+    
+    <li>The <strong>big trade-off</strong> refers to the trade-off between efficiency and fairness. John Rawls, in his <em>A Theory of Justice</em> (1971), argued that the fairest distribution of the economic pie is one that makes the poorest person as well off as possible.</li>
+    
+    <li>The idea that it's not fair if the rules aren't fair is based on the <strong>symmetry principle</strong>, which is the requirement that people in similar situations be treated similarly. In economic life, this principle translates into equality of opportunity.</li>
+  </ul>
 </div>
 
-<h1 id="determinants-of-the-price-elasticity-of-demand">Determinants of the Price Elasticity of Demand</h1>
-
-<p>The following factors determine the extent to which demand is elastic:</p>
-
-<ul>
-<li><b>Number of close substitutes</b> &ndash; <em>The larger the number of close substitutes the product has, the more elastic the demand for it will be.</em>  This is the key factor.  For example, to a diabetic, there are no good substitutes for insulin (a life-saving drug).  Therefore, his or her demand for insulin will be very inelastic.  On the other hand, the demand for an individual farmer&rsquo;s wheat is extremely elastic, because there are many substitutes (other farmers&rsquo; wheat).
-<p>Three factors that influence how many close substitutes there are for a good are as follows:</p>
-<ul>
-<li><b>How much time has passed since the change in price</b> &ndash; <em>The more time that has passed since the price changed, the more substitutes people will have discovered, and thus the more elastic the demand will be.</em>  For example, in the short run, gas may have an elasticity of demand of 0.2; you&rsquo;re not going to change your life because of a short-run change in the price of gas.  In the long run, gas may have an elasticity of demand of 0.6 because you may plan your life more around the change in the price of gas, such as by living closer to school or work, not using a car, or using a more fuel-efficient car.</li>
-<li><b>How broadly or narrowly defined the good is</b> &ndash; <em>The more narrowly a good is defined, the more substitutes it has, and thus the more elastic the demand for it will be.</em>  For example, the demand for Pepsi Zero is a lot more elastic than the demand for soda in general.  You can replace Pepsi with other kinds of soda, so there are many substitutes for this item.  On the other hand, there are fewer substitutes for soda in general.</li>
-<li><b>Luxury goods vs. necessities</b> &ndash; <em>The demand for luxury goods tends to be more elastic than the demand for necessities.</em>  For example, if the price of a Caribbean cruise doubles, your response would be stronger than your response to a doubling of the price of toothpaste.  You <em>need</em> to have toothpaste if you want clean teeth; you don&rsquo;t <em>need</em> to go on a cruise.</li>
-</ul>
-</li>
-
-<li><b>The fraction of budget spent on the good</b> &ndash; <em>The larger the fraction of a person&rsquo;s budget spent on a good, the larger its elasticity of demand</em> because there is more incentive to look for alternatives.  For example, the demand for rent is more elastic than the demand for salt.  Rent takes up much more of your income than salt, so you would notice a doubling in rent more than you would a doubling in the price of salt.  In a snowy city like Rochester, New York, on the other hand, salt is a big part of the budget because the city has to salt the roads (around 4 or 5% of the city budget).  These cities will pay more attention to the price of salt, and their demand for it will be more elastic.</li>
-</ul>
-
-<h1 id="other-elasticity-measures">Other Elasticity Measures</h1>
-
-<p>Recall that <em>elasticity</em> is a measure of responsiveness.  Thus far, we&rsquo;ve only examined the price elasticity of demand, which measures responsiveness of the quantity demanded to a change in the price.  There are other elasticity measures, as well:</p>
-
-<ul>
-<li><strong>Income elasticity of demand</strong> (<em>E</em><sub>INC</sub>) &ndash; The income elasticity of demand measures the responsiveness of the quantity demanded to a change in income.  It is calculated as follows:
-
-<p>\[E_{INC} = \frac{\%\Delta Q_D}{\%\Delta \text{Income}}\]</p>
-
-<p>Here, notice that the sign is meaningful&mdash;that is why we don&rsquo;t take the absolute value (as we do with the price elasticity of demand).  The income elasticity of demand is <b>negative for inferior goods</b> and <b>positive for normal goods</b>.  For example, rental housing is an inferior good&mdash;the quantity of rental housing demanded falls as income rises because richer people tend to own their homes.</p>
-</li>
-
-<li><strong>Cross-price elasticity of demand</strong> &ndash; The cross-price elasticity of demand measures the impact of a change in the price of one good on the quantity demanded of a related good.  That is, the cross-price elasticity of demand between goods A and B is defined as follows:
-
-<p>\[E_{\text{CROSS}} = \frac{\%\Delta Q_{D,\text{Good A}}}{\%\Delta P_{\text{Good B}}}\]</p>
-
-<p>Here, the sign matters, as well.  The cross-price elasticity of demand is <b>positive for substitutes</b> and <b>negative for complements</b>, by definition.  Consider the following examples:</p>
-<ul>
-<li><em>Hamburgers and hot dogs</em> &ndash; Hamburgers and hot dogs are substitutes, so the cross-price elasticity of demand between these goods is positive.</li>
-<li><em>Hamburger meat and hamburger buns</em> &ndash; Hamburger meat and hamburger buns are complements, so the cross-price elasticity of demand between these goods is negative.</li>
-</ul>
-</li>
-
-<li><strong>Price elasticity of supply</strong> &ndash; The price elasticity of supply is a measure of the sensitivity of quantity supplied to a change in price.  It is defined as follows:
-
-<p>\[E_S = \frac{\%\Delta Q_S}{\%\Delta P}\]</p>
-
-<p>Note that the elasticity of supply will always be positive, as the law of supply says that the quantity supplied increases with positive increases in price.  Thus, there is no need to take an absolute value.  The price elasticity of supply is described in the same way we describe the price elasticity of demand.  Supply is <b>elastic</b> if <em>E</em> &gt; 1, <b>inelastic</b> if <em>E</em> &lt; 1, and <b>unit elastic</b> if <em>E</em> = 1.  Likewise, supply is <b>perfectly inelastic</b> if <em>E</em> = 0 and <b>perfectly elastic</b> if <em>E</em> = &infin;.</p>
-</li>
-</ul>
+<!-- IMAGE AUDIT: All images placed per PDF reading order; ambiguous alignment resolved as centered/inline -->
+<!-- FORMAT AUDIT: All italic, bold, and underline text visually verified -->
+<!-- STRUCTURE AUDIT: All ordered and unordered lists preserved exactly as in PDF -->
+<!-- MATHJAX AUDIT: MathJax applied ONLY to equations, operator-based expressions, and chemical reactions -->
+<!-- GEO AUDIT: Verified no coordinates or degree symbols incorrectly wrapped in MathJax -->
+<!-- LIST INTEGRITY AUDIT: Verified no <ol> or <li> elements were prematurely closed due to images, boxes, equations, or tables -->
+<!-- INDENTATION AUDIT: Verified all visually indented continuation paragraphs remain inside their owning indentation container (<ul>/<ol>), with or without <li> -->
+<!-- BOX IMAGE AUDIT: Verified all images inside Exam Tip, Example, Question, and Other boxes were extracted and placed inside their owning box -->
+<!-- TABLE AUDIT: All data tables verified as semantic HTML, not images -->
 
 </body>
 </html>

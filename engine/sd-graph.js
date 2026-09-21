@@ -1,4 +1,4 @@
-/* ===== sd-graph.js v2.10 — data-driven supply & demand widgets =====
+/* ===== sd-graph.js v2.11 — data-driven supply & demand widgets =====
    Markup:  <div class="sdg"><script type="application/json">{ ...config... }<\/script></div>
    Top-level config:
      title, lede, caption         heading / intro / static caption (caption used only when there are no steps)
@@ -10,6 +10,7 @@
      axes: {x, y, xmax, ymax, xticks[], yticks[], money, cents, k, grid, bg:false}
         x, y = axis titles, default 'Q' and 'P'. A word or two fits; they are never wrapped.
      curves[]: {id, label, pts:[[q,p],...], color, at, until, from, arrowP, shiftArrow, curved, thin, dashed, lstart, ldx, ldy}
+     areas[]:  {pts:[[q,p],...], label, color, lp, ldx, ldy, at, until}   a shaded polygon under the curves (CS, PS, deadweight loss)
         lstart = put the curve label at the first point instead of the last; ldx/ldy nudge it
         label:"" draws no label at all (a lone PPF needs none); omitting label falls back to the id
         from   = id of the curve this one shifts away from (animated shift + arrow); arrowP = price height of arrow
@@ -71,6 +72,31 @@
     // corner. Keep axis titles to a word or two: nothing here can wrap them.
     g.appendChild(el('text', {class: 'axlbl', x: W - 2, y: O.y + 16, 'text-anchor': 'end'}, ax.x || 'Q'));
     g.appendChild(el('text', {class: 'axlbl', x: O.x - 2, y: 11}, ax.y || 'P'));
+
+    // Surplus and deadweight loss ARE areas, and before v2.11 the engine drew
+    // none: "area fills of any kind" was on the list of things it does not do,
+    // which left an entire chapter unconvertible. A polygon is enough. These
+    // graphs draw demand and supply as straight lines, so every region the
+    // chapter needs -- consumer surplus, producer surplus, total surplus, a
+    // deadweight wedge -- has straight edges and is named by its corners.
+    // Drawn here, after the axes and before the curves, so a fill never hides a
+    // line, a point or a label.
+    (cfg.areas || []).forEach(function (a) {
+      var cc = col(a.color), grp = el('g', {class: 'area-g'});
+      grp.appendChild(el('polygon', {class: 'area', fill: cc,
+        points: a.pts.map(function (p) { return X(p[0]) + ',' + Y(p[1]); }).join(' ')}));
+      if (a.label) {
+        // The centroid keeps a label inside its own shape, which is right for
+        // the triangles this draws. A thin wedge has no room for one, so `lp`
+        // places it by hand instead -- outside the shape if that is what fits.
+        var n = a.pts.length,
+            lp = a.lp || [a.pts.reduce(function (t, p) { return t + p[0]; }, 0) / n,
+                          a.pts.reduce(function (t, p) { return t + p[1]; }, 0) / n];
+        grp.appendChild(el('text', {class: 'arlbl', x: X(lp[0]) + (a.ldx || 0),
+          y: Y(lp[1]) + (a.ldy || 0), 'text-anchor': 'middle', fill: cc}, a.label));
+      }
+      g.appendChild(reg(grp, a));
+    });
 
     function arrow(x1, y1, x2, y2, c, cls) {
       var dx = x2 - x1, dy = y2 - y1, len = Math.hypot(dx, dy), ux = dx / len, uy = dy / len, hh = 7, ww = 3.6, bx = x2 - ux * hh, by = y2 - uy * hh;

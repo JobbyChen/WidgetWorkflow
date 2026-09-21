@@ -1,4 +1,4 @@
-/* ===== sd-graph.js v2.9 — data-driven supply & demand widgets =====
+/* ===== sd-graph.js v2.10 — data-driven supply & demand widgets =====
    Markup:  <div class="sdg"><script type="application/json">{ ...config... }<\/script></div>
    Top-level config:
      title, lede, caption         heading / intro / static caption (caption used only when there are no steps)
@@ -86,6 +86,36 @@
       }
       return d;
     }
+    // Where does the *drawn* curve sit? For a curved pair the spline bows away
+    // from the polyline through its points, so a shift arrow whose ends were
+    // computed from the polyline was inset from the wrong place and landed on
+    // the curve. Sample the same Catmull-Rom the renderer draws.
+    function samplePx(pts, curved) {
+      var P = pts.map(function (q) { return [X(q[0]), Y(q[1])]; });
+      if (!curved || P.length < 3) return P;
+      var out = [P[0]], N = 24;
+      for (var i = 0; i < P.length - 1; i++) {
+        var p0 = P[i - 1] || P[i], p1 = P[i], p2 = P[i + 1], p3 = P[i + 2] || p2;
+        var c1 = [p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6];
+        var c2 = [p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6];
+        for (var k = 1; k <= N; k++) {
+          var t = k / N, u = 1 - t;
+          out.push([u * u * u * p1[0] + 3 * u * u * t * c1[0] + 3 * u * t * t * c2[0] + t * t * t * p2[0],
+                    u * u * u * p1[1] + 3 * u * u * t * c1[1] + 3 * u * t * t * c2[1] + t * t * t * p2[1]]);
+        }
+      }
+      return out;
+    }
+    function xAtPx(pts, curved, y) {
+      var S = samplePx(pts, curved);
+      for (var i = 0; i < S.length - 1; i++) {
+        var a = S[i], b = S[i + 1];
+        if ((y - a[1]) * (y - b[1]) <= 0 && a[1] !== b[1])
+          return a[0] + (y - a[1]) * (b[0] - a[0]) / (b[1] - a[1]);
+      }
+      var f = S[0], l = S[S.length - 1];
+      return f[1] === l[1] ? f[0] : f[0] + (y - f[1]) * (l[0] - f[0]) / (l[1] - f[1]);
+    }
     function qAt(pts, p) {
       for (var i = 0; i < pts.length - 1; i++) { var a = pts[i], b = pts[i + 1]; if ((p - a[1]) * (p - b[1]) <= 0 && a[1] !== b[1]) return a[0] + (p - a[1]) * (b[0] - a[0]) / (b[1] - a[1]); }
       var a2 = pts[0], b2 = pts[pts.length - 1]; return a2[0] + (p - a2[1]) * (b2[0] - a2[0]) / (b2[1] - a2[1]);
@@ -103,11 +133,14 @@
       grp.appendChild(el('text', {class: 'clbl', x: X(lp[0]) + (c.ldx || 6), y: Y(lp[1]) + (c.ldy || (up ? 2 : 6)), fill: cc}, c.label != null ? c.label : (c.id || '')));
       if (c.from && byId[c.from]) {
         var src = byId[c.from].spec, ap = c.arrowP != null ? c.arrowP : (c.pts[0][1] + last[1]) / 2;
-        var q0 = qAt(src.pts, ap), q1 = qAt(c.pts, ap), s = Math.sign(q1 - q0);
-        grp.dataset.dx = X(q1) - X(q0); grp.dataset.dy = 0; grp.classList.add('move');
+        var yA = Y(ap);
+        var x0 = xAtPx(src.pts, src.curved, yA), x1 = xAtPx(c.pts, c.curved, yA), s = Math.sign(x1 - x0);
+        grp.dataset.dx = x1 - x0; grp.dataset.dy = 0; grp.classList.add('move');
         // shiftArrow:false keeps the slide and the dimming but drops the arrow, for
         // widgets whose per-row arrows already show the shift once per schedule row.
-        if (c.shiftArrow !== false) g.appendChild(reg(arrow(X(q0) + s * 8, Y(ap), X(q1) - s * 8, Y(ap), cc, 'shift'), {at: c.at || 0, until: c.until}));
+        // The 11px inset is measured off the drawn curves, so the arrow clears
+        // both of them however far the spline bows.
+        if (c.shiftArrow !== false) g.appendChild(reg(arrow(x0 + s * 11, yA, x1 - s * 11, yA, cc, 'shift'), {at: c.at || 0, until: c.until}));
       }
       g.appendChild(grp); reg(grp, c);
     });
@@ -319,8 +352,13 @@
     var q2 = (100 + dD + dS) / 2, p2 = q2 - dS, a1 = o.static ? 0 : 1, a2 = o.static ? 0 : 2, a3 = o.static ? 0 : 3;
     return {heading: o.heading, axes: {xmax: 110, ymax: 110},
       curves: [{id: 'D1', label: 'D₁', pts: clipLine(100, -1, 8, 100), thin: true}, {id: 'S1', label: 'S₁', pts: clipLine(0, 1, 8, 100), thin: true},
-               {id: 'D2', label: 'D₂', pts: clipLine(100 + dD, -1, 8, 100), color: 'red', from: 'D1', at: a1, arrowP: 32},
-               {id: 'S2', label: 'S₂', pts: clipLine(-dS, 1, 8, 100), color: 'red', from: 'S1', at: a2, arrowP: 88}],
+               // A shift arrow only clears the pair it belongs to. The other
+               // pair can still lie across it, so arrowD/arrowS let a config
+               // move it: at price p the demand arrow spans q = 100+dD-p to
+               // 100-p, and S1 sits at q = p, which is inside that span
+               // whenever (100+dD)/2 < p < 100 - dD/2 for a leftward shift.
+               {id: 'D2', label: 'D₂', pts: clipLine(100 + dD, -1, 8, 100), color: 'red', from: 'D1', at: a1, arrowP: o.arrowD != null ? o.arrowD : 32},
+               {id: 'S2', label: 'S₂', pts: clipLine(-dS, 1, 8, 100), color: 'red', from: 'S1', at: a2, arrowP: o.arrowS != null ? o.arrowS : 88}],
       points: [{q: 50, p: 50, pl: 'P₁', ql: 'Q₁', marker: '1'}, {q: q2, p: p2, pl: 'P₂', ql: 'Q₂', color: 'red', marker: '2', at: a3}]};
   }
   function doubleSteps(o, q2, p2) {

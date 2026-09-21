@@ -233,7 +233,7 @@ thing.
  "good": "pasta", "event": "…", "why": "…", "static": true}
 
 {"preset": "double", "demand": "right", "supply": "left",
- "dD": 40, "dS": 15, "note": "…", "static": true}
+ "dD": 40, "dS": 15, "arrowD": 20, "arrowS": 88, "note": "…", "static": true}
 
 {"preset": "double", "demand": "right", "supply": "left", "compare": true,
  "big": 40, "small": 15, "headings": ["…", "…"]}
@@ -246,6 +246,12 @@ equilibrium at `[50,50]`. `shift` writes its own four step captions from `good`,
 crosses that price.
 `static:true` collapses everything to step 0 and draws **no brace**, which is
 what makes the four-cases-in-one-widget scenario set work.
+
+`arrowD` and `arrowS` move the two shift arrows of a `double`. A shift arrow is
+inset from the pair it belongs to, but the *other* pair can still lie across it,
+and the defaults (32 and 88) put the demand arrow through S₁ for some shift
+sizes. `scripts/render_widgets.py` measures every arrow against every curve and
+reports anything closer than 4px, which is how that gets caught.
 
 Presets combine with `title`/`lede`/`caption`/`steps` overrides and with
 scenarios, each scenario supplying its own `shift`/`dir`.

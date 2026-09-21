@@ -32,6 +32,54 @@ def find_chromium():
     return None  # fall back to Playwright's own download
 
 
+
+# The one defect a screenshot review keeps missing, because a 1px gap and a
+# touch look identical at a glance: a shift or movement arrow grazing a curve.
+# Measured off the rendered geometry, which is also the only way to catch it on
+# a `curved` pair, where the drawn spline is nowhere near the polyline through
+# its points.
+MIN_ARROW_GAP = 4.0
+# A schedule's per-row arrow spans two dots at one price and is inset only 6px,
+# so it legitimately runs closer to its own curves than a shift arrow does.
+MIN_ROW_GAP = 2.0
+
+TOUCH_JS = """(n, args) => {
+  var i = args[0], lim = args[1], rowLim = args[2], bad = [], w = n[i];
+  w.querySelectorAll('svg').forEach(function (svg) {
+    var arrows = [].slice.call(svg.querySelectorAll('path.arrow'))
+      .filter(function (a) { return !a.closest('.off'); });
+    arrows.forEach(function (a) {
+      var mine = a.classList.contains('row') ? rowLim : lim;
+      var L = a.getTotalLength(), pts = [];
+      for (var k = 0; k <= 120; k++) { var q = a.getPointAtLength(L * k / 120); pts.push([q.x, q.y]); }
+      svg.querySelectorAll('g.curve-g').forEach(function (g) {
+        if (g.classList.contains('off')) return;
+        var c = g.querySelector('path.curve'); if (!c) return;
+        var CL = c.getTotalLength(), best = 1e9;
+        for (var m = 0; m <= 300; m++) {
+          var q2 = c.getPointAtLength(CL * m / 300);
+          for (var j = 0; j < pts.length; j++) {
+            var d = Math.hypot(q2.x - pts[j][0], q2.y - pts[j][1]);
+            if (d < best) best = d;
+          }
+        }
+        if (best < mine) {
+          var t = g.querySelector('text.clbl');
+          bad.push([Math.round(best * 10) / 10, (t && t.textContent) || '?']);
+        }
+      });
+    });
+  });
+  return bad;
+}"""
+
+
+def touching(page, wi):
+    """Every arrow/curve pair closer than MIN_ARROW_GAP, in the current state."""
+    return page.eval_on_selector_all("div.sdg", TOUCH_JS,
+                                     [wi, MIN_ARROW_GAP, MIN_ROW_GAP])
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -94,6 +142,10 @@ def main():
                     widget = page.query_selector_all("div.sdg")[wi]
                     widget.screenshot(path=str(out / ("w%02d-%s-step%02d.png" % (wi + 1, slug, step))))
                     shots += 1
+                    for gap, lbl in touching(page, wi):
+                        problems.append("widget %d (%s) step %d: an arrow comes "
+                                        "within %.1fpx of curve %s"
+                                        % (wi + 1, label, step, gap, lbl))
                     # .sdg-ctrl is [Back, Next step, Start over]
                     more = page.eval_on_selector_all(
                         "div.sdg",

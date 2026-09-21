@@ -224,6 +224,21 @@ or "unattainable" dot) whose exact coordinates are not the lesson.
       curl to the span. Found on the midpoint widget in
       `examples/ECO2023-263-Elasticity.html`.
 
+- [x] **A shift arrow could land on a curve.** `qAt` interpolated the polyline
+      through a curve's points, but a `curved` curve is a spline that bows away
+      from it, so the 8px inset was measured from the wrong place. Engine v2.10
+      samples the drawn spline instead and insets 11px.
+      `scripts/render_widgets.py` now measures every arrow against every curve
+      from the rendered geometry and reports anything under 4px — which caught
+      a second case the screenshots had not: a `double` preset's demand arrow
+      ending on S1, since a shift arrow is only inset from its own pair.
+      `arrowD`/`arrowS` move it.
+- [ ] **The arrow-gap check reports 10 row arrows in the delivered
+      `ECO2013-263-SupplyAndDemand.html`.** A schedule's per-row arrow is inset
+      only 6px and legitimately runs about 3.2px from its curves, so the 4px
+      threshold is wrong for them; they need their own, lower one. Reported
+      rather than changed.
+
 ## Workflow
 
 - [ ] **No list of who may be named, by choice.** Hard rule 4 covers the policy:

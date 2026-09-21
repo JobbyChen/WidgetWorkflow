@@ -88,6 +88,14 @@ saw them. Only `render_widgets.py` and a person catch this class of defect.
 - **Dr. Rush is named once**, for his description of equilibrium as "a
   situation in which there is no automatic tendency for change". Kept verbatim;
   `check_file.py` raises its one WARN on it.
+- **The six exam tips carry the source's wording verbatim, and each sits under
+  the passage it comments on**, not at the end of the section: the expected
+  future price tip goes directly under supply factor 6 rather than below the
+  review table, and the index card tip under the demand factors for the same
+  reason. Their **titles are written**, because the source's boxes are headed
+  only "Exam Tip" — they name the topic, in the house convention: The Most
+  Important Chapter, Index Card, Expected Future Price, Jet Fuel, The Pizza
+  Question (the one title the source does give), When One Shift Is Bigger.
 - **"From-the-Book Topic Not Covered in Class" is retitled** "From the Textbook:
   Topic Not Covered". Hard rule 4 forbids student-facing text that points at the
   class, and `check_file.py` fails the original wording.

@@ -88,6 +88,14 @@ saw them. Only `render_widgets.py` and a person catch this class of defect.
 - **Dr. Rush is named once**, for his description of equilibrium as "a
   situation in which there is no automatic tendency for change". Kept verbatim;
   `check_file.py` raises its one WARN on it.
+- **The two-factor widget sits after both examples it works, not before them.**
+  Its buttons name markets, so ahead of the examples they named markets the
+  reader had not met. One widget rather than one per example, because chicken
+  wings and oil shift the same two curves the same two ways — the pair of
+  diagrams is identical and only the story differs, which is the duplication
+  hard rule 8 exists to prevent. The six one-curve examples still lead with
+  their widget; there the lead-in sentence says so explicitly and moving it
+  would stack it against the review widget.
 - **The six exam tips carry the source's wording verbatim, and each sits under
   the passage it comments on**, not at the end of the section: the expected
   future price tip goes directly under supply factor 6 rather than below the

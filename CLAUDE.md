@@ -98,24 +98,52 @@ itself still forbids questions outright.
    changelog so it is reviewed before publication. Note the checker only sees a
    name that carries a title: a person named by surname alone passes silently,
    so read the prose too.
-5. **Match the printed artwork.** Black original curve, red shifted curve, every
+5. **No label touches a curve — including a curve's own label.**
+   `check_file.py` used to skip a curve's label against its own curve, on the
+   grounds that it sits at its own end. True of the default offset, false the
+   moment `ldx`/`ldy` move it: pull a label back along its own line and the
+   line runs straight through the text. "D = MB = MSB" shipped struck through
+   by its own demand curve with the file reporting PASS. Nothing is exempt now,
+   and removing the exemption flagged nothing in any other example — so it was
+   covering defects, not preventing false alarms. Anchor a long label at the
+   curve's other end with `lstart` when the near end has no room.
+6. **Match the printed artwork.** Black original curve, red shifted curve, every
    arrow red, curved D/S with numbered markers on conceptual graphs, straight
    lines with hollow dots on numeric ones, dashed grid on schedules, P and Q as
    axis labels, nothing else. No label may touch a curve, point, arrow, or
    another label (step 5 has the placement rules — read them before writing any
    config).
-6. **House HTML format is fixed** (prompt step 0): `<title>` = chapter name only,
+7. **House HTML format is fixed** (prompt step 0): `<title>` = chapter name only,
    with no course code, term code, season or year; the Red Hat Display font link,
-   then `sn25-v6.css` and `sn25-v6.js` from
-   `https://smokinnotes.s3.us-east-1.amazonaws.com/content/` (never v5), then
-   `<!--SDG-ENGINE-->`; `<p class="date">` per class date, `<h1>`/`<h2>` only
+   `sn25-v6.css` from
+   `https://smokinnotes.s3.us-east-1.amazonaws.com/content/`, the house script,
+   then `<!--SDG-ENGINE-->`;
+
+   **The house script lives under one of two paths, and they version
+   separately.** `content/sn25-v6.js` is what this file used to demand, and it
+   returns **403** from S3 — a page carrying only that runs no house script at
+   all. `studyguide/sn25-v2.js` is live, is what the chapter files Ian sends
+   carry, and is the one he confirmed correct on 2026-09-21. It builds the
+   table of contents in the browser (the same `<details class="toc-box">` that
+   `add_toc.py` writes) and gives every heading an id. So a chapter carrying it
+   needs no TOC markup in the file, and `check_file.py` compares version
+   numbers **inside** a path, never across the two — matching a bare
+   `sn25-v[0-5]` failed the current script twice over, once for being absent
+   and once for looking old. `<p class="date">` per class date, `<h1>`/`<h2>` only
    (never `<h3>`), `.exam-tip` with an `<h4>`, plain tables; `<strong>` for
    vocabulary terms only, `<b>` for emphasis and labels, never `<u>`; keep every
    `<!-- IMAGE POSITION: … -->` comment where the image was.
-7. **Captions are prose:** 1–3 complete sentences ending with the P and Q change
+8. **A step must change the drawing.** Ian's rule, and he has had to give it
+   twice: a caption that advances while the picture holds still reads as a
+   broken button. The usual cause is off-by-one rather than carelessness —
+   `at` is a step index and index 0 is the opening state, so "curves, then CS,
+   then PS" needs `at:1` and `at:2`; `at:2` and `at:3` leave step 2 showing
+   step 1's picture. `check_file.py` now fails on it, and a figure that is
+   genuinely one static diagram takes a `caption` instead of `steps`.
+9. **Captions are prose:** 1–3 complete sentences ending with the P and Q change
    in words. No "Before –/After –", no fragments, no colon punchlines, no "Price
    up, quantity up".
-8. **Group cases of one lesson into one widget with scenario buttons** (four
+10. **Group cases of one lesson into one widget with scenario buttons** (four
    apple shifts; surplus + shortage; increase + decrease of one schedule;
    substitutes + complements in production).
 

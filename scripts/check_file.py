@@ -5,13 +5,14 @@
 
 Groups, in order:
 
+  steps     every step changes the drawing, not just the caption
   head      house format -- <title> is the chapter name alone, the Red Hat
             Display link, sn25-v6.css and sn25-v6.js, nothing older
   engine    <!--SDG-ENGINE--> exactly once, or an engine already embedded whose
             bytes match engine/; and no <link>/<script src> to a hosted copy
   markup    no <u>, no <h3>, <strong> used for vocabulary terms only
   toc       the house table of contents, and whether its links reach the
-            headings -- the script that would build it is not public
+            headings -- unless studyguide/sn25-v2.js builds it in the browser
   json      every <div class="sdg"> holds one parseable JSON config
   escape    no literal </script> inside a config
   schema    steps (>=2) or a caption or a static preset with scenarios; at/until
@@ -188,6 +189,69 @@ def walk(node, fn):
             walk(x, fn)
 
 
+
+# ------------------------------------------------------------------ steps ----
+
+# Everything a step can reveal or retire. `table` is not here: its per-row
+# arrows follow the curves that carry them, so a step that changes nothing else
+# changes nothing there either.
+STEPPABLE = ("curves", "areas", "points", "hlines", "braces", "vbraces", "moves")
+
+
+def check_steps(cfgs, r):
+    """Every step must change the drawing, not just the caption.
+
+    Ian's rule, twice over: "steps should only exist when the graph changes"
+    and "step 1 and 2 just change text". A caption that advances while the
+    picture holds still reads as a broken button -- the student presses Next,
+    watches nothing happen, and stops trusting the control.
+
+    Off-by-one is the usual cause rather than carelessness. `at` is a step
+    index and index 0 is the opening state, so a walkthrough written as
+    "curves, then CS, then PS" needs at:1 and at:2; writing at:2 and at:3
+    leaves step 2 showing exactly what step 1 showed.
+    """
+    checked = flagged = 0
+    for n, cfg, _ in cfgs:
+        if cfg.get("preset"):
+            continue
+        for label, v in variants(cfg):
+            # A preset's curves, braces and points are built inside the engine,
+            # so the raw config lists none of them and every step would look
+            # identical here. Skipping them is the same trade check_labels
+            # makes, for the same reason.
+            if v.get("preset"):
+                continue
+            steps = v.get("steps") or []
+            if len(steps) < 2:
+                continue
+            where = "widget %d%s" % (n, " (%s)" % label if label else "")
+            checked += 1
+            # One signature per step: which elements are on screen, across
+            # every panel, identified by position in their own list.
+            sigs = []
+            for i in range(len(steps)):
+                on = []
+                for pi, pn in enumerate(panels(v)):
+                    for key in STEPPABLE:
+                        for ei, e in enumerate(pn.get(key) or []):
+                            if not isinstance(e, dict):
+                                continue
+                            at = e.get("at", 0)
+                            un = e.get("until")
+                            if at <= i and (un is None or i < un):
+                                on.append((pi, key, ei))
+                sigs.append(tuple(sorted(on)))
+            for i in range(1, len(sigs)):
+                if sigs[i] == sigs[i - 1]:
+                    flagged += 1
+                    r.fail("steps", "%s: step %d changes nothing on the drawing "
+                                    "that step %d did not already show"
+                                    % (where, i + 1, i))
+    if checked and not flagged:
+        r.ok("steps", "every step of %d walkthrough(s) changes the drawing" % checked)
+
+
 # ------------------------------------------------------------------- head ----
 
 def check_head(src, r):
@@ -204,13 +268,38 @@ def check_head(src, r):
             r.ok("head", "<title> is %r" % t)
 
     for needle, what in [("Red+Hat+Display", "the Red Hat Display font link"),
-                         ("sn25-v6.css", "sn25-v6.css"),
-                         ("sn25-v6.js", "sn25-v6.js")]:
+                         ("sn25-v6.css", "sn25-v6.css")]:
         (r.ok if needle in src else r.fail)("head", ("links %s" if needle in src else
                                                      "does not link %s") % what)
-    old = re.findall(r"sn25-v[0-5]\.(?:css|js)", src)
-    if old:
-        r.fail("head", "references an older house asset: %s" % ", ".join(sorted(set(old))))
+
+    # The house script lives under one of two paths, and they version
+    # separately. This used to demand content/sn25-v6.js and fail anything
+    # matching sn25-v[0-5], which failed studyguide/sn25-v2.js twice over --
+    # once for being absent, once for looking old. It is neither: it is the
+    # current study-guide script, it is what the chapter files Ian sends carry,
+    # and on 2026-09-21 it was the one that answered. content/sn25-v6.js
+    # returns 403 from S3, so a page carrying only that runs no house script at
+    # all. Version numbers are compared inside a path, never across two.
+    SCRIPTS = [("content/sn25-v", 6), ("studyguide/sn25-v", 2)]
+    found = []
+    for path, current in SCRIPTS:
+        for v in re.findall(re.escape(path) + r"(\d+)\.js", src):
+            found.append((path, int(v), current))
+    if not found:
+        r.fail("head", "links no house script (content/sn25-v%d.js or "
+                       "studyguide/sn25-v%d.js)" % (SCRIPTS[0][1], SCRIPTS[1][1]))
+    else:
+        for path, v, current in found:
+            if v < current:
+                r.fail("head", "references an older house asset: %s%d.js "
+                               "(current is v%d)" % (path, v, current))
+            else:
+                r.ok("head", "links %s%d.js" % (path, v))
+
+    stale = re.findall(r"sn25-v[0-5]\.css", src)
+    if stale:
+        r.fail("head", "references an older house stylesheet: %s"
+               % ", ".join(sorted(set(stale))))
 
     # Ian's instruction of 2026-09-17 puts the house stylesheet first and the
     # three font links after it, on one line, as the current notes files carry
@@ -287,10 +376,17 @@ def check_toc(src, r):
     block = re.search(r'<details class="toc-box">(.*?)</details>', body, re.S)
 
     if not block:
-        if hs:
+        if hs and not re.search(r"studyguide/sn25-v\d+\.js", src):
             r.warn("toc", "no table of contents; the house script cannot supply "
                           "one while content/sn25-v6.js is not public "
                           "(run scripts/add_toc.py)")
+        elif hs:
+            # studyguide/sn25-v2.js builds the box on DOMContentLoaded -- the
+            # same <details class="toc-box"> with the same summary that
+            # add_toc.py writes -- and gives every heading an id on the way. A
+            # page carrying it needs no markup in the file.
+            r.ok("toc", "the study-guide script builds the table of contents "
+                        "in the browser")
         return
 
     linked = re.findall(r'href="#([^"]*)"', block.group(1))
@@ -733,8 +829,16 @@ def check_labels(cfgs, r):
                         if len(pts) < 2:
                             continue
                         cid = c.get("label") or c.get("id")
-                        if what.endswith("%r" % cid) and "curve label" in what:
-                            continue  # a curve's own label sits at its end
+                        # A curve's own label used to be skipped outright here,
+                        # on the grounds that it sits at its own end. That is
+                        # true of the default offset, which puts the text clear
+                        # to the right of the last point, and false the moment
+                        # ldx/ldy move it: a label pulled back along its own
+                        # curve lands squarely on the line. "D = MB = MSB"
+                        # shipped struck through by its own demand curve with
+                        # this file reporting PASS, so nothing is exempt now --
+                        # a line through your own name is still a line through
+                        # your own name.
                         if curve_hits(bx, pts, X, Y):
                             r.fail("labels", "%s: %s sits on curve %s" % (where, what, cid))
                     for seg, desc, _aw in arrows:
@@ -1013,6 +1117,7 @@ def main():
     check_schema(cfgs, r)
     check_labels(cfgs, r)
     check_tick_emphasis(cfgs, r)
+    check_steps(cfgs, r)
     check_arrows(cfgs, r)
     check_captions(cfgs, r)
     check_source(src, cfgs, r)

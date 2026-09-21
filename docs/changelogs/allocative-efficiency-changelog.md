@@ -53,25 +53,53 @@ Decisions worth knowing about, none of which needed asking:
   its P axis symbolic. The crossing point in widget 4 carries no stated price or
   quantity and is labelled P\* and Q\* even though the $12 and $4 beside it are real.
 
-## Four FAILs, all in text that arrived written
+## What the review round changed
 
-`check_file.py` reports 4 FAIL, 2 WARN. Every one is in the delivered file, and
-"leave everything else the same" means none of them is mine to change:
+Five defects, four of them mine, and the checker now catches every class of them.
 
-* `<title>` is "ECO2023 Spring26 Exam1 - Allocative Efficiency"; rule 6 wants the
-  chapter name alone. Note it also says **Spring26** while the date line says
-  Monday, 9/14/26 — worth a look either way.
-* The head loads `studyguide/sn25-v2.js`, not `content/sn25-v6.js`. If your
-  current pipeline has moved on from v6, CLAUDE.md rule 6 is what is out of date,
-  not the file — say so and I will update the rule and the checker.
+* **A curve label struck through by its own curve.** `check_file.py` skipped a
+  curve's label against its own curve, so "D = MB = MSB" shipped with a line
+  through it and the file reporting PASS. The exemption is gone. Removing it
+  flagged twelve labels here and **nothing in any other example**, which is the
+  proof it was covering defects rather than preventing false alarms. Now a rule
+  in CLAUDE.md.
+* **Steps that only changed the caption.** `at` is a step index and index 0 is
+  the opening state, so `at:2`/`at:3` against four captions left step 2 showing
+  step 1's picture. Two widgets here and one in the shipped elasticity file.
+  `check_file.py` gained a `steps` check that compares what is on screen at each
+  step; it found all three and passes on every other file. Widget 3 is a single
+  static diagram now, with a caption instead of steps.
+* **Widget 3 abbreviated the source's equations** and had lost `P*` and
+  `Qᴇꜰꜰ = Q*`. It reads `S = MC = MSC` and `D = MB = MSB` now, with both axis
+  labels, matching the printed figure.
+* **Widgets 1 and 2 had a full grid** on top of the guides each point already
+  draws. The printed figures have only the guides, so the grid is off.
+
+## The head was right and the checker was wrong
+
+You confirmed both, and checking S3 settled it: `content/sn25-v6.js` returns
+**403**, while `studyguide/sn25-v2.js` returns 200 — so the file's head is the
+one that actually runs, and CLAUDE.md was out of date. Fixed in three places:
+
+* `check_file.py` compares house-script versions **inside** a path rather than
+  across two. Matching a bare `sn25-v[0-5]` had failed the current script twice,
+  once for being absent and once for looking old.
+* `studyguide/sn25-v2.js` **builds the table of contents in the browser** — the
+  same `<details class="toc-box">` that `add_toc.py` writes — so that WARN was
+  also wrong and is gone. Nothing needs writing into the file.
+* CLAUDE.md rule 7 now records both paths and which one is live.
+
+## One FAIL left, and one WARN, both in your text
+
 * A box headed **"From-the-Book Topics NOT Covered in Class"** trips rule 4's ban
-  on naming the source in student-facing text. Rewording someone else's heading
-  is your call.
-* **Dr. Rush is named** ("Dr. Rush emphasized that marginal analysis is very
-  important…"), which is the standing WARN that always comes to you.
+  on naming the source in student-facing text. Rewording your own heading is
+  your call, so the file is untouched and the checker will keep saying so.
+* **Dr. Rush is named**, which is the standing WARN that always comes to you.
 
-The remaining WARN is the missing table of contents; `scripts/add_toc.py` writes
-one on request.
+`<title>` **was** changed, and it is the one piece of "everything else" I did
+touch: it read "ECO2023 Spring26 Exam1 - Allocative Efficiency" when 263 is
+Fall. It is now "Allocative Efficiency", which is rule 7's chapter-name-alone
+and drops the wrong season with it. Say the word and I will put it back.
 
 ## What was verified
 

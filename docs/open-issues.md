@@ -51,8 +51,11 @@ mechanic as a shift of supply. What is missing:
       D and S never do. Needs a "label at fraction t" option.
 - [ ] **No `vlines`** (a vertical reference line at a quantity). Guides cover
       most of it; low priority.
-- [ ] Area fills of any kind, so the attainable region cannot be shaded. This one
-      is real work, not a small addition. Only needed if the source shades it.
+- [x] ~~Area fills of any kind, so the attainable region cannot be shaded.~~
+      Engine v2.11 adds `areas` (solid, hatched or checked polygons in data
+      units, drawn under the curves), built for the trade chapter, whose five
+      figures are all about shaded surplus. A PPF's attainable region is the
+      same thing: the polygon under the frontier.
 - [ ] The schedule table's first column is always the y-axis good, because rows
       are read as `[price, q, …]`. A PPF table therefore lists the vertical good
       first. Documented rather than changed: renaming would break every config.
@@ -188,10 +191,26 @@ or "unattainable" dot) whose exact coordinates are not the lesson.
       it short is to fake the `to` coordinate (the gumballs widget's D→E arrow
       ends at `[3.8, 0.9]`). An explicit trim or a `shorten` would be honest.
 
-- [ ] **No area fill in the engine.** The total revenue figure in
-      `ECO2023-263-Elasticity.html` shades the price-times-quantity rectangle
-      under the demand curve; the widget marks the midpoint and shows the
-      revenue hump beside it instead.
+- [x] ~~**No area fill in the engine.**~~ `areas` since v2.11. The total
+      revenue figure in `ECO2023-263-Elasticity.html` still marks the midpoint
+      and shows the revenue hump beside it rather than shading the
+      price-times-quantity rectangle; it could now be redrawn with one `check`
+      area, but that is a change to shipped work and is left for Ian to call.
+- [ ] **Nothing computes an area.** A surplus polygon is written vertex by
+      vertex, so a numeric widget whose curves move needs its areas rewritten
+      with them. A `between: ["D", "Pw"]` shorthand would remove that, but
+      every trade widget so far is symbolic, so it has not been needed.
+- [ ] **Prompt v6's engine reference is behind the engine.** It lists neither
+      `vbraces` (v2.3), `areas` (v2.11) nor `guides:"p"`/`"q"` (v2.11). A
+      Cowork run of v6 cannot use any of them. Belongs in the v7 bump with the
+      other prompt items above.
+- [ ] **The movement-arrow rule was narrowed on 2026-09-21.** It used to fire
+      on any stepped widget with an `hline`; a world price with an Exports or
+      Imports brace is a level the market settles at, not one it converges
+      from, so it now takes both the line and a brace labelled surplus or
+      shortage. Every earlier file reports the same as before, and
+      `test_check_file.py` holds the Exports case. If a walkthrough ever draws
+      a disequilibrium price without such a brace, this rule will not see it.
 - [ ] **`check_file.py` skips preset widgets**, because the engine computes
       their geometry, so its label test never sees them. The v2.7 brace defect
       lived in the repo unnoticed for exactly that reason and only a render

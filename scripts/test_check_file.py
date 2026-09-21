@@ -89,6 +89,10 @@ case("label sitting on a movement arrow", lambda r: C.check_labels(widget(
     or r.has("FAIL", "labels", "sits on a movement arrow")
     or r.has("FAIL", "labels", "sits on the movement"))
 
+case("area label sitting on the curve that bounds it", lambda r: C.check_labels(widget(
+    areas=[{"pts": [[0, 100], [0, 50], [50, 50]], "label": "CS", "lq": 25, "lp": 75}]), r)
+    or r.has("FAIL", "labels", "area label 'CS' sits on curve"))
+
 case("axis title overlapping a tick", lambda r: C.check_labels(widget(
     axes={"x": "Boxes of Tissues", "y": "P", "xmax": 110, "ymax": 110,
           "xticks": [105], "yticks": [50]}), r)
@@ -128,6 +132,23 @@ case("surplus walkthrough with no movement arrows", lambda r: C.check_arrows(wid
     braces=[{"p": 70, "q1": 20, "q2": 80, "label": "Surplus"}],
     steps=["one.", "two."]), r)
     or r.has("FAIL", "arrows", "two movement arrows"))
+
+case("a world-price line with an exports brace is not a surplus walkthrough",
+     lambda r: C.check_arrows(widget(
+         hlines=[{"p": 70}],
+         braces=[{"p": 70, "q1": 20, "q2": 80, "label": "Exports"}],
+         steps=["one.", "two."]), r)
+     or not r.has("FAIL", "arrows", "two movement arrows"))
+
+case("a label under a point's guide to the Q axis, with guides:'p' set",
+     lambda r: C.check_labels(widget(
+         points=[{"q": 50, "p": 50, "label": "E", "dx": -4, "dy": 30, "guides": "p"}]), r)
+     or not r.has("WARN", "labels", "close to the guides"))
+
+case("color:'ink' on a price line is a choice, not a default",
+     lambda r: C.check_schema(widget(
+         hlines=[{"p": 70, "color": "ink"}], caption="x"), r)
+     or not r.has("WARN", "schema", "default value"))
 
 # ---- captions --------------------------------------------------------------
 

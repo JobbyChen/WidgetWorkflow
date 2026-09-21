@@ -29,6 +29,7 @@ examples/
   ECO2013-263-SupplyAndDemand.html ← FINISHED OUTPUT (Fall '26, transcript-only, 9 widgets)
   ECO2013-263-TradeoffsComparativeAdvantageTheMarketSystem.html ← FINISHED OUTPUT (Exam 1 ch. 1, 7 widgets)
   ECO2013-Widgets-All.html    ← the 9/11/26 prototype: 20 widgets, the JSON shape reference
+  ECO2023-263-ThePPF.html, -SupplyAndDemand.html, -Elasticity.html, -Trade.html ← FINISHED OUTPUT (Exam 1, Word/HTML sources)
 reference-images/             ← the source PNGs (empty — see open issues)
 scripts/
   embed_engine.py             ← inline engine/ into a notes file's <head> (prompt step 7)
@@ -132,7 +133,13 @@ not enough to reproduce an implementation.
   `embed_engine.py`'s paths reproduce the delivered file byte-for-byte; all 20
   prototype widgets render with no engine errors; `check_file.py` runs the
   geometric label test over 74 labels in the 263 file with no overlaps.
-* **Engine is v2.6.** `shiftArrow: false` drops the redundant shift arrow in a
+* **Engine is v2.11.** `areas` (2026-09-21) shade a polygon in data units —
+  solid, hatched or checked, under the curves, with an optional label — which
+  is what the trade chapter's surplus, gains-from-trade, tariff-revenue and
+  deadweight-loss figures needed; `guides:"p"`/`"q"` draw one of a point's two
+  dashed guides. Before that: v2.7–v2.10 fixed the preset gap brace, sized
+  brace curls to their span and measured shift arrows off the drawn spline.
+  From v2.6, `shiftArrow: false` drops the redundant shift arrow in a
   schedule-shift widget — the per-row arrows already say it once per row — while
   keeping the slide and the dimming, and every arrow is one weight (2.4px).
   Prompt v6 step 5 changed with it. Axis titles take a word (`x` anchored to the

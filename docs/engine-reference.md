@@ -1,4 +1,4 @@
-# Engine reference — `engine/sd-graph.js` v2.6
+# Engine reference — `engine/sd-graph.js` v2.11
 
 Written from the engine source. The conversion prompt carries a shorter version
 of this in its own "Engine reference" section; that one is what the model needs
@@ -122,6 +122,10 @@ pixel apart. `scripts/check_file.py` tests for this.
 ```
 
 - Draws a hollow dot with dashed guides to both axes, unless `guides:false`.
+  `guides:"p"` draws only the line to the P axis and `guides:"q"` only the drop
+  to the Q axis — the printed trade graphs mark P* on the price axis and leave
+  the no-trade quantity unmarked, and a full drop from the equilibrium would
+  run through the gains-from-trade triangle below it.
 - `marker:"1"`/`"2"` makes it a larger numbered circle — the Point 1 / Point 2
   convention of the conceptual graphs.
 - **The axis labels are automatic.** Unless `showP:false`, the point prints its
@@ -200,6 +204,40 @@ height. Its label runs up the axis, because horizontal text does not fit in a
 Without `left`, it sits inside the plot at quantity `q`, opening right unless
 `side: "left"`. Inside the plot it competes with the curves for space, so prefer
 `left` unless the gap has to be shown at a particular quantity.
+
+### `areas`
+
+A filled region: consumer or producer surplus, a gain from trade, tariff
+revenue, a deadweight loss. Added in v2.11 for the trade chapter, whose every
+figure is about the size of a shaded area.
+
+```json
+{"pts": [[0,100],[0,70],[30,70]], "fill": "hatch", "label": "CS",
+ "lq": 10, "lp": 80, "color": "orange", "opacity": 0.8, "at": 2, "until": 4}
+```
+
+- `pts` is the polygon in data units, closed automatically. Every vertex is a
+  point you can name from the curves and price lines it is bounded by — a
+  surplus triangle's corners are an intercept, a price on the axis and the
+  point where that price meets the curve.
+- `fill` is `"solid"` (the default, at `opacity` 0.35), `"hatch"` (diagonal
+  lines, the printed consumer-surplus look) or `"check"` (a checkerboard, the
+  printed tariff-revenue look). All three take the area's `color`; a deadweight
+  loss is a solid `ink` fill at `opacity` 0.8.
+- Areas are drawn **under** the axes, curves, guides and points, so every line
+  stays crisp over them.
+- `label` is drawn centred at data point `[lq, lp]`, or at the polygon's
+  centroid when those are omitted, with a white halo so it stays readable over
+  a hatch. It is ordinary drawn text: `check_file.py` tests it against every
+  curve, arrow, guide and other label, and the centroid of a triangle bounded
+  by a curve is often too close to that curve, so expect to set `lq`/`lp`.
+  Keep it to a word or an abbreviation (`CS`, `PS`, `Gains`, `Revenue`) and
+  spell it out in the lede: "Consumer surplus" is wider than any triangle on a
+  372-unit panel.
+- When a walkthrough replaces one area with another (the no-trade surplus with
+  the with-trade surplus), give the old one `until` and the new one `at`, and
+  put both labels in the **same** spot so the label does not jump between
+  steps.
 
 ### `table`
 
@@ -284,5 +322,6 @@ that catches a curve mid-slide.
   `axes` throws `Cannot read properties of undefined (reading 'cents')` in
   `buildPanel`, and nothing renders. See `docs/open-issues.md`.
 - **Collision avoidance.** Labels go where you put them.
-- Elasticity, surplus shading, tax wedges, area fills of any kind.
+- Elasticity as a number. Areas can now be shaded (`areas`, v2.11), but nothing
+  computes one: a surplus polygon is written out vertex by vertex.
 - Three or more panels.

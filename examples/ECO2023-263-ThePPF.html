@@ -82,6 +82,10 @@
 .sdg .arrow.mv { stroke-width:2.4; stroke:var(--red); }
 .sdg .arrow.row { stroke-width:2.4; stroke:var(--red); }
 .sdg .hline { stroke-width:3; }
+.sdg .area { stroke:none; }
+/* An area's label sits on its own fill, so it gets a white halo to stay
+   readable over a hatch or a checkerboard. */
+.sdg .area-g .tag { paint-order:stroke; stroke:#fff; stroke-width:3px; stroke-linejoin:round; }
 .sdg .brace { fill:none; stroke-width:1.8; }
 .sdg .curve-g.dim .curve { stroke-width:2; opacity:.8; }
 .sdg .fade { transition:opacity .45s ease; }
@@ -95,7 +99,7 @@
 .sdg .sdg-cap { margin:10px 0 0; padding:10px 12px; background:#fff; border-left:4px solid var(--red); font-size:.92rem; line-height:1.45; min-height:3.2em; }
 </style>
 <script>
-/* ===== sd-graph.js v2.10 — data-driven supply & demand widgets =====
+/* ===== sd-graph.js v2.11 — data-driven supply & demand widgets =====
    Markup:  <div class="sdg"><script type="application/json">{ ...config... }<\/script></div>
    Top-level config:
      title, lede, caption         heading / intro / static caption (caption used only when there are no steps)
@@ -115,6 +119,7 @@
         curved = smooth through 3+ points (conceptual, non-linear look)
      points[]: {id, q, p, label, marker, pl, ql, color, at, until, dx, dy, guides:false, showP:false, showQ:false}
         marker = "1"/"2" numbered circle;  pl/ql = symbolic axis labels ("P₁","Q₁") instead of numbers
+        guides:false draws no dashed guides; guides:"p" only the one to the P axis, "q" only the one to the Q axis
      moves[]:  {from:[q,p], to:[q,p], at, until, color, offset}  arrow between two points, drawn `offset` px beside the curve (default 14; negative = other side)
      hlines[]: {p, label, color, at, until}                       horizontal price line across the plot
      braces[]: {p, q1, q2, label, at, until, below, color}        curly brace spanning a gap at price p
@@ -122,6 +127,11 @@
         price gap. left:true is the mirror of a brace's below:true: it sits outside the P axis, clear of the
         plot and the tick numbers, with its label running up the axis, and widens the left margin to fit.
         Without left it sits inside the plot at quantity q, opening right unless side:'left'.
+     areas[]:  {pts:[[q,p],...], color, fill, opacity, label, lq, lp, at, until}   a filled region under the curves:
+        consumer or producer surplus, a gain from trade, tax revenue, a deadweight loss. pts is the polygon in
+        data units. fill is 'solid' (default), 'hatch' (diagonal lines) or 'check' (a checkerboard), all in the
+        area's colour; opacity (default .35) darkens a solid fill. label is drawn at data point [lq, lp], or at
+        the polygon's centroid when those are omitted. Areas sit under everything else, so lines stay crisp.
      table:    {cols[], series[], rows[[price,q,...]], arrows}    schedule beside the graph; arrows draws row shift arrows
    Colors: 'ink' (default, black-navy), 'red' (shifted/new), 'teal', 'orange', 'grey'
    Presets (symbolic graphs, P₁/P₂/Q₁/Q₂, no numbers) — a few keys expand into a full config:
@@ -139,6 +149,9 @@
   function fmtP(v, ax) { if (!ax.money) return String(v); if (ax.cents) return '$' + Number(v).toFixed(2); return '$' + (Number.isInteger(v) ? v : v.toFixed(2)); }
   function fmtQ(v, ax) { if (ax.k && v >= 1000) return (v / 1000) + 'k'; return v.toLocaleString('en-US'); }
   function merge(a, b) { var o = {}; for (var k in a) o[k] = a[k]; for (var k2 in b) o[k2] = b[k2]; return o; }
+  // Pattern fills are looked up by id across the whole document, so every
+  // panel's hatch and check get ids of their own.
+  var patSeq = 0;
 
   // ---------- one SVG panel ----------
   function buildPanel(cfg) {
@@ -159,6 +172,28 @@
       (ax.xticks || []).forEach(function (q) { g.appendChild(el('line', {class: 'grid', x1: X(q), y1: 14, x2: X(q), y2: O.y})); });
       (ax.yticks || []).forEach(function (p) { g.appendChild(el('line', {class: 'grid', x1: O.x, y1: Y(p), x2: O.x + PW + 14, y2: Y(p)})); });
     }
+    // Filled regions -- surplus, gains from trade, revenue, deadweight loss --
+    // go in before the axes and curves so every line is drawn over them.
+    (cfg.areas || []).forEach(function (a) {
+      var cc = col(a.color), grp = el('g', {class: 'area-g'}), fillRef = cc;
+      if (a.fill === 'hatch' || a.fill === 'check') {
+        var pid = 'sdg-' + a.fill + '-' + (++patSeq), defs = el('defs', {});
+        var pat = el('pattern', {id: pid, patternUnits: 'userSpaceOnUse', width: 6, height: 6});
+        pat.appendChild(el('rect', {width: 6, height: 6, fill: cc, 'fill-opacity': a.fill === 'hatch' ? 0.12 : 0.18}));
+        if (a.fill === 'hatch') pat.appendChild(el('path', {d: 'M0 6 L6 0', stroke: cc, 'stroke-width': 1.2, 'stroke-opacity': 0.85}));
+        else { pat.appendChild(el('rect', {width: 3, height: 3, fill: cc, 'fill-opacity': 0.7})); pat.appendChild(el('rect', {x: 3, y: 3, width: 3, height: 3, fill: cc, 'fill-opacity': 0.7})); }
+        defs.appendChild(pat); grp.appendChild(defs); fillRef = 'url(#' + pid + ')';
+      }
+      var poly = el('polygon', {class: 'area', points: a.pts.map(function (q) { return X(q[0]) + ',' + Y(q[1]); }).join(' '), fill: fillRef});
+      if (a.fill !== 'hatch' && a.fill !== 'check') poly.setAttribute('fill-opacity', a.opacity != null ? a.opacity : 0.35);
+      grp.appendChild(poly);
+      if (a.label) {
+        var cx = 0, cy = 0; a.pts.forEach(function (q) { cx += q[0]; cy += q[1]; });
+        var lq = a.lq != null ? a.lq : cx / a.pts.length, lp = a.lp != null ? a.lp : cy / a.pts.length;
+        grp.appendChild(el('text', {class: 'tag', x: X(lq), y: Y(lp) + 4, 'text-anchor': 'middle', fill: cc}, a.label));
+      }
+      g.appendChild(grp); reg(grp, a);
+    });
     g.appendChild(el('path', {class: 'ax', d: 'M' + O.x + ' 14 L' + O.x + ' ' + O.y + ' L' + (O.x + PW + 14) + ' ' + O.y}));
     (ax.xticks || []).forEach(function (q) { g.appendChild(el('text', {class: 'tk', x: X(q), y: O.y + 15, 'text-anchor': 'middle'}, fmtQ(q, ax))); });
     (ax.yticks || []).forEach(function (p) { g.appendChild(el('text', {class: 'tk', x: O.x - 6, y: Y(p) + 4, 'text-anchor': 'end'}, fmtP(p, ax))); });
@@ -302,7 +337,12 @@
 
     (cfg.points || []).forEach(function (p) {
       var cc = col(p.color), grp = el('g', {class: 'ptg'});
-      if (p.guides !== false) grp.appendChild(el('path', {class: 'guide', stroke: cc, d: 'M' + O.x + ' ' + Y(p.p) + ' L' + X(p.q) + ' ' + Y(p.p) + ' L' + X(p.q) + ' ' + O.y}));
+      // guides:"p" draws only the dashed line to the P axis and "q" only the
+      // one to the Q axis -- the printed trade graphs mark P* on the price
+      // axis and leave the equilibrium quantity unmarked.
+      if (p.guides !== false) grp.appendChild(el('path', {class: 'guide', stroke: cc,
+        d: (p.guides !== 'q' ? 'M' + O.x + ' ' + Y(p.p) + ' L' + X(p.q) + ' ' + Y(p.p) : '') +
+           (p.guides !== 'p' ? ' M' + X(p.q) + ' ' + Y(p.p) + ' L' + X(p.q) + ' ' + O.y : '')}));
       grp.appendChild(el('circle', {class: 'halo', cx: X(p.q), cy: Y(p.p), r: p.marker ? 10.5 : 8.5}));
       grp.appendChild(el('circle', {class: 'pt' + (p.marker ? ' mk' : ''), cx: X(p.q), cy: Y(p.p), r: p.marker ? 6 : 4.2, stroke: cc}));
       if (p.marker) grp.appendChild(el('text', {class: 'mktxt', x: X(p.q), y: Y(p.p) + 2.6, 'text-anchor': 'middle'}, p.marker));

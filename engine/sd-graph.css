@@ -72,6 +72,10 @@
 .sdg .arrow.mv { stroke-width:2.4; stroke:var(--red); }
 .sdg .arrow.row { stroke-width:2.4; stroke:var(--red); }
 .sdg .hline { stroke-width:3; }
+.sdg .area { stroke:none; }
+/* An area's label sits on its own fill, so it gets a white halo to stay
+   readable over a hatch or a checkerboard. */
+.sdg .area-g .tag { paint-order:stroke; stroke:#fff; stroke-width:3px; stroke-linejoin:round; }
 .sdg .brace { fill:none; stroke-width:1.8; }
 .sdg .curve-g.dim .curve { stroke-width:2; opacity:.8; }
 .sdg .fade { transition:opacity .45s ease; }

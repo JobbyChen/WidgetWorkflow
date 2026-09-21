@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Elasticity</title>
+    <title>Trade</title>
     <link rel="stylesheet" href="https://smokinnotes.s3.us-east-1.amazonaws.com/content/sn25-v6.css">
     <link rel="preconnect" href="https://fonts.googleapis.com"> <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet">
     <script src="https://smokinnotes.s3.us-east-1.amazonaws.com/content/sn25-v6.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async></script>
 <style>
 .sdg { --navy:#002060; --ink:#1c2a44; --red:#d62828; --teal:#1a8a8a; --orange:#d8641c; --grey:#8a94a6; --rule:#c9d2e3; --paper:#f6f8fc; --plot:#eef3fd; --fig:580px;
   font-family:"Red Hat Display","Segoe UI",system-ui,sans-serif; color:var(--ink);
@@ -544,927 +543,1495 @@
 </head>
 <body>
 
-<p class="date">Monday, 9/7/26</p>
+<p class="date">Monday, 9/21/26</p>
 
 <details class="toc-box">
 <summary><strong>📘 Table of Contents</strong></summary>
 <nav>
 <ul style="line-height: 1.8">
-<li><a href="#introduction-to-elasticity" style="font-weight: bold">Introduction to Elasticity</a>
+<li><a href="#introduction-to-global-trade" style="font-weight: bold">Introduction to Global Trade</a>
 <ul>
-<li><a href="#example-the-price-elasticity-of-demand-for-pizza">Example: The Price Elasticity of Demand for Pizza</a></li>
-<li><a href="#describing-the-price-elasticity-of-demand">Describing the Price Elasticity of Demand</a></li>
-<li><a href="#elasticity-examples">Elasticity Examples</a></li>
-<li><a href="#the-midpoint-formula">The Midpoint Formula</a></li>
-<li><a href="#calculating-elasticity-at-a-point">Calculating Elasticity at a Point</a></li>
-<li><a href="#elasticity-examples">Elasticity Examples</a></li>
+<li><a href="#how-to-determine-whether-a-country-is-a-net-importer-or-exporter">How to Determine Whether a Country Is a Net Importer or Exporter</a></li>
+<li><a href="#focus-on-exports">Focus on Exports</a></li>
+<li><a href="#focus-on-imports">Focus on Imports</a></li>
+<li><a href="#the-winners-and-losers-from-trade">The Winners and Losers from Trade</a></li>
 </ul>
 </li>
-<li><a href="#the-total-revenue-test" style="font-weight: bold">The Total Revenue Test</a></li>
-<li><a href="#determinants-of-the-price-elasticity-of-demand" style="font-weight: bold">Determinants of the Price Elasticity of Demand</a></li>
-<li><a href="#other-elasticity-measures" style="font-weight: bold">Other Elasticity Measures</a></li>
+<li><a href="#tariffs-and-quotas" style="font-weight: bold">Tariffs and Quotas</a>
+<ul>
+<li><a href="#tariffs">Tariffs</a></li>
+<li><a href="#quotas">Quotas</a></li>
+<li><a href="#why-do-protectionist-policies-persist">Why Do Protectionist Policies Persist?</a></li>
+</ul>
+</li>
 </ul>
 </nav>
 </details>
 
-<h1 id="introduction-to-elasticity">Introduction to Elasticity</h1>
+<h1 id="introduction-to-global-trade">Introduction to Global Trade</h1>
 
-<p><strong>Elasticity</strong> measures responsiveness to change.  There are many different elasticity measures, but we will primarily focus on the <strong>price elasticity of demand</strong>, which is defined as the absolute value of the percent change in the quantity demanded, divided by the percent change in the price.</p>
+<p>A country's <strong>exports</strong> are those goods that it sends to other countries, whereas its <strong>imports</strong> are those goods that it takes in from the rest of the world. In a trade relationship between two countries, one country exports goods, and another imports them. For example, the United States imports goods from the rest of the world, and it exports goods to the rest of the world.</p>
 
-<h2 id="example-the-price-elasticity-of-demand-for-pizza">Example: The Price Elasticity of Demand for Pizza</h2>
+<p>The <strong>balance of trade</strong> is the difference between the value of exports and the value of imports. Since 1981, the United States has imported more than it has exported. (The balance of trade deficit was about -$950 billion in 2025.) It has financed this differential by borrowing from the rest of the world. As a result, the United States is now one of the world's largest net debtor nations. This issue and others (including exchange rates) are primarily macroeconomic issues that we will not discuss in this class. We will, however, analyze how international trade affects domestic markets.</p>
 
-<p>In the diagrams below, the demand curves have different slopes.  Therefore, the same shift in the supply curve causes a different change in quantity demanded and price for both curves.</p>
+<p>The major reason for world trade is <strong>comparative advantage</strong>. Some countries are better at producing certain goods than others. That is, one country might be able to produce a good at a lower opportunity cost than another country. All countries benefit when they specialize in producing the goods that they're good at producing and then trade with each other. What a country is good at producing depends, in part, on its endowments (in land, technology, natural resources, cheap labor, etc.).</p>
 
-<!-- IMAGE POSITION: beside-referenced paragraph -->
+<p>When a good's world price is greater than its domestic price, the domestic country will benefit from exporting the good. When a good's world price is less than its domestic price, the domestic country will benefit from importing the good.</p>
+
+<p>As we will see in this section, economists generally favor international trade because it increases the total surplus to society.</p>
+
+<h2 id="how-to-determine-whether-a-country-is-a-net-importer-or-exporter">How to Determine Whether a Country Is a Net Importer or Exporter</h2>
+
+<p>When a nation opens its borders to trade, we can tell whether it will be a net importer or a net exporter of a good by comparing the world price with the domestic price.</p>
+
+<ul>
+    <li>When the domestic price is greater than the world price, the nation will be a net importer of the good. The quantity that the country will import is equal to the difference between the domestic quantity demanded and the domestic quantity supplied at the world price.</li>
+    <li>When the domestic price is less than the world price, the nation will be a net exporter of the good. The quantity that the country will export is equal to the difference between the domestic quantity supplied and the domestic quantity demanded at the world price.</li>
+</ul>
+
+<!-- IMAGE POSITION: referenced in text above -->
 <div class="sdg"><script type="application/json">
 {
- "title": "The same shift, two different demand curves",
- "lede": "How far price and quantity move depends on the slope of demand.",
+ "title": "Net exporter or net importer?",
+ "lede": "Compare the world price with the domestic price. Step through both markets at once.",
  "link": false,
  "panels": [
   {
-   "heading": "Strong response",
+   "heading": "Net exporter",
    "axes": {
     "xmax": 110,
     "ymax": 110
    },
    "curves": [
     {
-     "id": "D",
-     "label": "D",
-     "pts": [
-      [
-       10,
-       70
-      ],
-      [
-       100,
-       25
-      ]
-     ]
-    },
-    {
-     "id": "S1",
+     "id": "S",
      "label": "S",
      "pts": [
       [
-       8,
-       8
+       0,
+       0
       ],
       [
        100,
        100
-      ]
-     ],
-     "thin": true
-    },
-    {
-     "id": "S2",
-     "label": "S₂",
-     "pts": [
-      [
-       8,
-       44
-      ],
-      [
-       64,
-       100
-      ]
-     ],
-     "color": "red",
-     "from": "S1",
-     "at": 1,
-     "arrowP": 88
-    }
-   ],
-   "points": [
-    {
-     "q": 50,
-     "p": 50,
-     "pl": "P₁",
-     "ql": "Q₁",
-     "marker": "1"
-    },
-    {
-     "q": 26,
-     "p": 62,
-     "pl": "P₂",
-     "ql": "Q₂",
-     "color": "red",
-     "marker": "2",
-     "at": 2
-    }
-   ]
-  },
-  {
-   "heading": "Weak response",
-   "axes": {
-    "xmax": 110,
-    "ymax": 110
-   },
-   "curves": [
-    {
-     "id": "D",
-     "label": "D",
-     "pts": [
-      [
-       34,
-       98
-      ],
-      [
-       64,
-       8
       ]
      ]
     },
-    {
-     "id": "S1",
-     "label": "S",
-     "pts": [
-      [
-       8,
-       8
-      ],
-      [
-       100,
-       100
-      ]
-     ],
-     "thin": true
-    },
-    {
-     "id": "S2",
-     "label": "S₂",
-     "pts": [
-      [
-       8,
-       44
-      ],
-      [
-       64,
-       100
-      ]
-     ],
-     "color": "red",
-     "from": "S1",
-     "at": 1,
-     "arrowP": 88
-    }
-   ],
-   "points": [
-    {
-     "q": 50,
-     "p": 50,
-     "pl": "P₁",
-     "ql": "Q₁",
-     "marker": "1"
-    },
-    {
-     "q": 41,
-     "p": 77,
-     "pl": "P₂",
-     "ql": "Q₂",
-     "color": "red",
-     "marker": "2",
-     "at": 2
-    }
-   ]
-  }
- ],
- "steps": [
-  "Both markets start at the same price and quantity. The only difference between them is how steep the demand curve is.",
-  "Now supply shifts left by the same amount in both.",
-  "The flat curve on the left gives a small rise in price and a large fall in quantity; the steep curve on the right gives a large rise in price and a small fall in quantity. That difference in responsiveness is what elasticity measures."
- ]
-}
-</script></div>
-
-<p>This phenomenon is known as <strong>elasticity</strong>.  Elasticity is a measure of <b>responsiveness</b> to change.  How strongly do people respond to a change in price?  Slope is sometimes used to measure elasticity.  This is problematic, however, because we have to express the slope in units.</p>
-
-<p>For example, the diagram below shows two demand curves that are the same, except one shows the price in terms of dollars, while the other shows price in terms of cents.  The slope for the left graph (rise/run) is &minus;0.5 but the slope for the right graph is &minus;50.  It&rsquo;s obvious that the graphs are expressing the same thing, but because we are expressing the units differently, we cannot use just a number for the elasticity.  We have to use units (e.g., $19 per pizza or 1,900&cent; per pizza).  The same problem exists when expressing the quantities in different ways.</p>
-
-<!-- IMAGE POSITION: beside-referenced paragraph -->
-<div class="sdg"><script type="application/json">
-{
- "title": "Why slope will not do as a measure",
- "lede": "One demand curve, two sets of units, two different slopes.",
- "link": false,
- "panels": [
-  {
-   "heading": "Priced in dollars",
-   "axes": {
-    "xmax": 14,
-    "ymax": 24,
-    "money": true,
-    "xticks": [
-     8,
-     12
-    ],
-    "yticks": [
-     19,
-     21
-    ]
-   },
-   "curves": [
-    {
-     "id": "D",
-     "label": "D",
-     "pts": [
-      [
-       8,
-       21
-      ],
-      [
-       12,
-       19
-      ]
-     ],
-     "ldy": 16
-    }
-   ],
-   "points": [
-    {
-     "q": 8,
-     "p": 21
-    },
-    {
-     "q": 12,
-     "p": 19
-    }
-   ]
-  },
-  {
-   "heading": "Priced in cents",
-   "axes": {
-    "xmax": 14,
-    "ymax": 2500,
-    "xticks": [
-     8,
-     12
-    ],
-    "yticks": [
-     1900,
-     2100
-    ]
-   },
-   "curves": [
     {
      "id": "D",
      "label": "D",
      "pts": [
       [
        0,
-       2500
-      ],
-      [
-       14,
-       1800
-      ]
-     ],
-     "ldx": -18,
-     "ldy": 16
-    }
-   ],
-   "points": [
-    {
-     "q": 8,
-     "p": 2100
-    },
-    {
-     "q": 12,
-     "p": 1900
-    }
-   ]
-  }
- ],
- "caption": "These are the same two points on the same demand curve, priced first in dollars and then in cents. Measured as rise over run the left curve has a slope of −0.5 and the right one −50, so slope changes with the units even though nothing about the market has changed. That is why elasticity is expressed as a ratio of percentages instead, which comes out as a pure number."
-}
-</script></div>
-
-<p class="date">Wednesday, 9/9/26</p>
-
-<p>For this course, we will express elasticity as a &ldquo;pure number.&rdquo;  Elasticity is not expressed in terms of units.  We can do this by expressing elasticity as a <b>ratio of percentages</b>.</p>
-
-<p>Numerically, we can define the <em>price elasticity of demand</em> as the absolute value of the percentage change in the quantity demanded divided by the percentage change in the price:</p>
-
-<p>\[E_D = \left| \frac{\%\Delta Q_D}{\%\Delta P} \right|\]</p>
-
-<p>Expressing the elasticity as a percentage allows us to easily compare elasticities across countries without running into different units and money values.</p>
-
-<h2 id="describing-the-price-elasticity-of-demand">Describing the Price Elasticity of Demand</h2>
-
-<p>The price elasticity of demand can range from zero to infinity.</p>
-
-<ul>
-<li>Demand is <strong>perfectly elastic</strong> if <em>E</em><sub>D</sub> = &infin;.  This means that price is fixed; changing the price would completely eliminate any demand.  An example of something very close to a perfectly elastic good is one farmer&rsquo;s milk (and other agricultural goods).</li>
-<li>Demand is <strong>elastic</strong> if <em>E</em><sub>D</sub> &gt; 1.  This means that the quantity demanded is very responsive to a change in price.</li>
-<li>Demand is <strong>unit elastic</strong> if <em>E</em><sub>D</sub> = 1.  This means that a 1% change in price causes a 1% change in the quantity demanded.</li>
-<li>Demand is <strong>inelastic</strong> if <em>E</em><sub>D</sub> &lt; 1.  This means that the quantity demanded is <em>not</em> very responsive to changes in price.</li>
-<li>Demand is <strong>perfectly inelastic</strong> if <em>E</em><sub>D</sub> = 0.  This means that the demand is fixed&mdash;a change in price will not change the quantity demanded at all.  Examples of goods with demand curves that are close to being perfectly inelastic include life-saving drugs like insulin or drugs used to treat AIDS.</li>
-</ul>
-
-<p>This spectrum of elasticities can be shown as follows:</p>
-
-<!-- IMAGE POSITION: below-referenced paragraph -->
-<div class="sdg"><script type="application/json">
-{
- "title": "The spectrum of elasticities",
- "lede": "From least elastic to most elastic, the curve rotates from vertical to horizontal.",
- "axes": {
-  "xmax": 110,
-  "ymax": 110
- },
- "scenarios": {
-  "pinel": {
-   "label": "Perfectly inelastic (E = 0)",
-   "curves": [
-    {
-     "id": "D",
-     "label": "D",
-     "pts": [
-      [
-       50,
-       8
-      ],
-      [
-       50,
        100
+      ],
+      [
+       92,
+       8
       ]
      ]
     }
    ],
-   "caption": "A perfectly inelastic demand curve is vertical: whatever the price does, the quantity demanded does not move at all. Life-saving drugs such as insulin come close to this. Capital I is vertical, which is a way to remember that Inelastic means the steeper curve."
+   "points": [
+    {
+     "q": 50,
+     "p": 50,
+     "pl": "P*",
+     "showQ": false,
+     "guides": "p"
+    },
+    {
+     "q": 30,
+     "p": 70,
+     "ql": "Qᴅ",
+     "showP": false,
+     "at": 2
+    },
+    {
+     "q": 70,
+     "p": 70,
+     "ql": "Qₛ",
+     "showP": false,
+     "at": 2
+    }
+   ],
+   "hlines": [
+    {
+     "p": 70,
+     "label": "Pᴡ",
+     "at": 1
+    }
+   ],
+   "braces": [
+    {
+     "p": 70,
+     "q1": 30,
+     "q2": 70,
+     "label": "Exports",
+     "at": 2
+    }
+   ]
   },
-  "inel": {
-   "label": "Inelastic (E < 1)",
+  {
+   "heading": "Net importer",
+   "axes": {
+    "xmax": 110,
+    "ymax": 110
+   },
    "curves": [
+    {
+     "id": "S",
+     "label": "S",
+     "pts": [
+      [
+       0,
+       0
+      ],
+      [
+       100,
+       100
+      ]
+     ]
+    },
     {
      "id": "D",
      "label": "D",
      "pts": [
       [
-       30,
+       0,
        100
       ],
       [
-       36,
-       65
-      ],
-      [
-       42,
-       35
-      ],
-      [
-       48,
-       10
+       92,
+       8
       ]
-     ],
-     "curved": true
+     ]
     }
    ],
-   "caption": "An inelastic demand curve is steep. A change in price moves the quantity demanded, but by proportionally less than the price itself moved."
-  },
-  "unit": {
-   "label": "Unit elastic (E = 1)",
+   "points": [
+    {
+     "q": 50,
+     "p": 50,
+     "pl": "P*",
+     "showQ": false,
+     "guides": "p"
+    },
+    {
+     "q": 30,
+     "p": 30,
+     "ql": "Qₛ",
+     "showP": false,
+     "at": 2
+    },
+    {
+     "q": 70,
+     "p": 30,
+     "ql": "Qᴅ",
+     "showP": false,
+     "at": 2
+    }
+   ],
+   "hlines": [
+    {
+     "p": 30,
+     "label": "Pᴡ",
+     "at": 1
+    }
+   ],
+   "braces": [
+    {
+     "p": 30,
+     "q1": 30,
+     "q2": 70,
+     "label": "Imports",
+     "below": true,
+     "at": 2
+    }
+   ]
+  }
+ ],
+ "steps": [
+  "With no trade, each domestic market clears where its curves cross, at the domestic price P*.",
+  "The world price Pᴡ is drawn in. In the left market it sits above P*, and in the right market it sits below P*.",
+  "At Pᴡ domestic buyers demand Qᴅ and domestic sellers supply Qₛ. Where Pᴡ is above P*, sellers offer more than buyers want and the difference is exported. Where Pᴡ is below P*, buyers want more than sellers offer and the difference is imported."
+ ]
+}
+</script></div>
+
+<p>Of course, if the domestic price equals the world price, the nation will be neither a net importer nor a net exporter of the good.</p>
+
+<h2 id="focus-on-exports">Focus on Exports</h2>
+
+<p>Consider a case in which the domestic price without trade is less than the world price. As the discussion above indicates, the nation in this case would be a net exporter of the good to the rest of the world. For example, the United States might export financial services to the rest of the world if it can provide those services at a lower price than the rest of the world.</p>
+
+<p>The following diagrams compare the consumer surplus and producer surplus for the domestic country without trade and with trade:</p>
+
+<!-- IMAGE POSITION: directly below referenced paragraph -->
+<div class="sdg"><script type="application/json">
+{
+ "title": "Consumer and producer surplus when the country exports",
+ "lede": "CS is consumer surplus, the hatched area between the demand curve and the price. PS is producer surplus, the orange area between the price and the supply curve.",
+ "link": false,
+ "panels": [
+  {
+   "heading": "No trade",
+   "axes": {
+    "xmax": 110,
+    "ymax": 110
+   },
    "curves": [
+    {
+     "id": "S",
+     "label": "S",
+     "pts": [
+      [
+       0,
+       0
+      ],
+      [
+       100,
+       100
+      ]
+     ]
+    },
     {
      "id": "D",
      "label": "D",
      "pts": [
       [
-       10,
-       90
+       0,
+       100
       ],
       [
-       20,
-       45
+       92,
+       8
+      ]
+     ]
+    }
+   ],
+   "areas": [
+    {
+     "pts": [
+      [
+       0,
+       100
       ],
+      [
+       0,
+       50
+      ],
+      [
+       50,
+       50
+      ]
+     ],
+     "fill": "hatch",
+     "label": "CS"
+    },
+    {
+     "pts": [
+      [
+       0,
+       50
+      ],
+      [
+       0,
+       0
+      ],
+      [
+       50,
+       50
+      ]
+     ],
+     "color": "orange",
+     "label": "PS"
+    }
+   ],
+   "points": [
+    {
+     "q": 50,
+     "p": 50,
+     "pl": "P*",
+     "ql": "Qᴅ = Qₛ"
+    }
+   ]
+  },
+  {
+   "heading": "With trade",
+   "axes": {
+    "xmax": 110,
+    "ymax": 110
+   },
+   "curves": [
+    {
+     "id": "S",
+     "label": "S",
+     "pts": [
+      [
+       0,
+       0
+      ],
+      [
+       100,
+       100
+      ]
+     ]
+    },
+    {
+     "id": "D",
+     "label": "D",
+     "pts": [
+      [
+       0,
+       100
+      ],
+      [
+       92,
+       8
+      ]
+     ]
+    }
+   ],
+   "areas": [
+    {
+     "pts": [
+      [
+       0,
+       100
+      ],
+      [
+       0,
+       50
+      ],
+      [
+       50,
+       50
+      ]
+     ],
+     "fill": "hatch",
+     "label": "CS",
+     "until": 2,
+     "lq": 10,
+     "lp": 80
+    },
+    {
+     "pts": [
+      [
+       0,
+       50
+      ],
+      [
+       0,
+       0
+      ],
+      [
+       50,
+       50
+      ]
+     ],
+     "color": "orange",
+     "label": "PS",
+     "until": 2
+    },
+    {
+     "pts": [
+      [
+       0,
+       100
+      ],
+      [
+       0,
+       70
+      ],
+      [
+       30,
+       70
+      ]
+     ],
+     "fill": "hatch",
+     "label": "CS",
+     "at": 2,
+     "lq": 10,
+     "lp": 80
+    },
+    {
+     "pts": [
+      [
+       0,
+       70
+      ],
+      [
+       0,
+       0
+      ],
+      [
+       70,
+       70
+      ]
+     ],
+     "color": "orange",
+     "label": "PS",
+     "at": 2,
+     "lq": 20,
+     "lp": 40
+    }
+   ],
+   "points": [
+    {
+     "q": 50,
+     "p": 50,
+     "pl": "P*",
+     "showQ": false,
+     "guides": "p"
+    },
+    {
+     "q": 30,
+     "p": 70,
+     "ql": "Qᴅ",
+     "showP": false,
+     "at": 1
+    },
+    {
+     "q": 70,
+     "p": 70,
+     "ql": "Qₛ",
+     "showP": false,
+     "at": 1
+    }
+   ],
+   "hlines": [
+    {
+     "p": 70,
+     "label": "Pᴡ",
+     "at": 1
+    }
+   ],
+   "braces": [
+    {
+     "p": 70,
+     "q1": 30,
+     "q2": 70,
+     "label": "Exports",
+     "at": 3
+    }
+   ]
+  }
+ ],
+ "steps": [
+  "Without trade, the market clears at P*, where the quantity demanded equals the quantity supplied. Consumers keep the surplus above that price and producers keep the surplus below it.",
+  "The world price Pᴡ is above the domestic price, so opening the market to trade pulls the domestic price up to Pᴡ. Consumers now buy only Qᴅ, while producers sell Qₛ.",
+  "At the higher price consumer surplus shrinks to the smaller triangle, while producer surplus grows to the larger one. Producers gain more than consumers lose, so total surplus rises.",
+  "The gap between Qₛ and Qᴅ is the quantity exported. The price at home rises, the quantity domestic producers sell rises, and the quantity domestic consumers buy falls."
+ ]
+}
+</script></div>
+
+<p>Remember that we assumed that a country can sell as many units as it wants at the world price. Allowing trade therefore drives the domestic price up to the world price, and it forces domestic consumers to pay higher prices for their units. At the higher price, the domestic quantity supplied is higher, and the domestic quantity demanded is lower. The difference between the domestic quantity supplied and the domestic quantity demanded is the number of units that the country will export.</p>
+
+<p>Here is a summary of the impacts of allowing trade in this market:</p>
+
+<ul>
+    <li><strong>Impact on domestic consumers</strong> – Domestic consumers are worse off with trade. Their consumer surplus decreases for two reasons: (1) Fewer consumers get the good, and (2) consumers are forced to buy the good at the higher world price.</li>
+    <li><strong>Impact on domestic producers</strong> – Domestic producers are better off with trade. Their producer surplus increases for two reasons: (1) They sell more units, and (2) they can charge the higher world price.</li>
+    <li><strong>Impact on society as a whole</strong> – Society as a whole is better off with trade. The gain in producer surplus exceeds the loss in consumer surplus, so total surplus—the sum of producer and consumer surplus—increases in this market after trade.</li>
+</ul>
+
+<h2 id="focus-on-imports">Focus on Imports</h2>
+
+<p>Consider a case in which the domestic price without trade is greater than the world price. As the discussion above indicates, the nation in this case would be a net importer of the good from the rest of the world. For example, the United States is a net importer of smart phones from the rest of the world. We could certainly make smart phones ourselves, but we import these goods because other countries can make smart phones at a lower price. In this sense, the world price is less than the domestic price.</p>
+
+<p>The following diagrams compare the consumer surplus and producer surplus for the domestic country without trade and with trade:</p>
+
+<!-- IMAGE POSITION: directly below referenced paragraph -->
+<div class="sdg"><script type="application/json">
+{
+ "title": "Consumer and producer surplus when the country imports",
+ "lede": "CS is consumer surplus, the hatched area between the demand curve and the price. PS is producer surplus, the orange area between the price and the supply curve.",
+ "link": false,
+ "panels": [
+  {
+   "heading": "No trade",
+   "axes": {
+    "xmax": 110,
+    "ymax": 110
+   },
+   "curves": [
+    {
+     "id": "S",
+     "label": "S",
+     "pts": [
+      [
+       0,
+       0
+      ],
+      [
+       100,
+       100
+      ]
+     ]
+    },
+    {
+     "id": "D",
+     "label": "D",
+     "pts": [
+      [
+       0,
+       100
+      ],
+      [
+       92,
+       8
+      ]
+     ]
+    }
+   ],
+   "areas": [
+    {
+     "pts": [
+      [
+       0,
+       100
+      ],
+      [
+       0,
+       50
+      ],
+      [
+       50,
+       50
+      ]
+     ],
+     "fill": "hatch",
+     "label": "CS"
+    },
+    {
+     "pts": [
+      [
+       0,
+       50
+      ],
+      [
+       0,
+       0
+      ],
+      [
+       50,
+       50
+      ]
+     ],
+     "color": "orange",
+     "label": "PS"
+    }
+   ],
+   "points": [
+    {
+     "q": 50,
+     "p": 50,
+     "pl": "P*",
+     "ql": "Qᴅ = Qₛ"
+    }
+   ]
+  },
+  {
+   "heading": "With trade",
+   "axes": {
+    "xmax": 110,
+    "ymax": 110
+   },
+   "curves": [
+    {
+     "id": "S",
+     "label": "S",
+     "pts": [
+      [
+       0,
+       0
+      ],
+      [
+       100,
+       100
+      ]
+     ]
+    },
+    {
+     "id": "D",
+     "label": "D",
+     "pts": [
+      [
+       0,
+       100
+      ],
+      [
+       92,
+       8
+      ]
+     ]
+    }
+   ],
+   "areas": [
+    {
+     "pts": [
+      [
+       0,
+       100
+      ],
+      [
+       0,
+       50
+      ],
+      [
+       50,
+       50
+      ]
+     ],
+     "fill": "hatch",
+     "label": "CS",
+     "until": 2
+    },
+    {
+     "pts": [
+      [
+       0,
+       50
+      ],
+      [
+       0,
+       0
+      ],
+      [
+       50,
+       50
+      ]
+     ],
+     "color": "orange",
+     "label": "PS",
+     "until": 2,
+     "lq": 10,
+     "lp": 20
+    },
+    {
+     "pts": [
+      [
+       0,
+       100
+      ],
+      [
+       0,
+       30
+      ],
+      [
+       70,
+       30
+      ]
+     ],
+     "fill": "hatch",
+     "label": "CS",
+     "at": 2,
+     "lq": 20,
+     "lp": 60
+    },
+    {
+     "pts": [
+      [
+       0,
+       30
+      ],
+      [
+       0,
+       0
+      ],
+      [
+       30,
+       30
+      ]
+     ],
+     "color": "orange",
+     "label": "PS",
+     "at": 2,
+     "lq": 10,
+     "lp": 20
+    }
+   ],
+   "points": [
+    {
+     "q": 50,
+     "p": 50,
+     "pl": "P*",
+     "showQ": false,
+     "guides": "p"
+    },
+    {
+     "q": 30,
+     "p": 30,
+     "ql": "Qₛ",
+     "showP": false,
+     "at": 1
+    },
+    {
+     "q": 70,
+     "p": 30,
+     "ql": "Qᴅ",
+     "showP": false,
+     "at": 1
+    }
+   ],
+   "hlines": [
+    {
+     "p": 30,
+     "label": "Pᴡ",
+     "at": 1
+    }
+   ],
+   "braces": [
+    {
+     "p": 30,
+     "q1": 30,
+     "q2": 70,
+     "label": "Imports",
+     "below": true,
+     "at": 3
+    }
+   ]
+  }
+ ],
+ "steps": [
+  "Without trade, the market clears at P*, where the quantity demanded equals the quantity supplied. Consumers keep the surplus above that price and producers keep the surplus below it.",
+  "The world price Pᴡ is below the domestic price, so opening the market to trade pushes the domestic price down to Pᴡ. Consumers now buy Qᴅ, while domestic producers sell only Qₛ.",
+  "At the lower price consumer surplus grows to the larger triangle, while producer surplus shrinks to the smaller one. Consumers gain more than producers lose, so total surplus rises.",
+  "The gap between Qᴅ and Qₛ is the quantity imported. The price at home falls, the quantity domestic consumers buy rises, and the quantity domestic producers sell falls."
+ ]
+}
+</script></div>
+
+<p>Remember that we assumed that a country can buy as many units as it wants at the world price. Allowing trade therefore drives the domestic price down to the world price, and it forces domestic producers to accept the lower world price for their units. At the lower price, the domestic quantity supplied is lower and the domestic quantity demanded is higher. The difference between the domestic quantity demanded and the domestic quantity supplied is the number of units that the country will import.</p>
+
+<p>Here is a summary of the impacts of allowing trade in this market:</p>
+
+<ul>
+    <li><strong>Impact on domestic consumers</strong> – Domestic consumers are better off with trade. Their consumer surplus increases for two reasons: (1) More consumers get the good, and (2) consumers are able to buy the good at the lower world price.</li>
+    <li><strong>Impact on domestic producers</strong> – Domestic producers are worse off with trade. Their producer surplus decreases for two reasons: (1) They sell fewer units, and (2) they have to accept the lower world price.</li>
+    <li><strong>Impact on society as a whole</strong> – Society as a whole is better off with trade. The gain in consumer surplus exceeds the loss in producer surplus, so total surplus—the sum of producer and consumer surplus—increases in this market after trade.</li>
+</ul>
+
+<h2 id="the-winners-and-losers-from-trade">The Winners and Losers from Trade</h2>
+
+<p>The following table shows the effects of allowing trade in an import market and an export market, as compared to a situation in which there is no trade:</p>
+
+<table>
+    <tr>
+        <th></th>
+        <th>Import Market<br>(vs. No Trade)</th>
+        <th>Export Market<br>(vs. No Trade)</th>
+    </tr>
+    <tr>
+        <td><strong>Price paid by domestic consumers</strong></td>
+        <td>Lower</td>
+        <td>Higher</td>
+    </tr>
+    <tr>
+        <td><strong>Domestic quantity demanded</strong></td>
+        <td>Higher</td>
+        <td>Lower</td>
+    </tr>
+    <tr>
+        <td><strong>Domestic quantity supplied</strong></td>
+        <td>Lower</td>
+        <td>Higher</td>
+    </tr>
+    <tr>
+        <td><strong>Domestic consumer surplus</strong></td>
+        <td>Higher</td>
+        <td>Lower</td>
+    </tr>
+    <tr>
+        <td><strong>Domestic producer surplus</strong></td>
+        <td>Lower</td>
+        <td>Higher</td>
+    </tr>
+    <tr>
+        <td><strong>Total domestic surplus</strong></td>
+        <td>Higher</td>
+        <td>Higher</td>
+    </tr>
+</table>
+
+<p>Note that the impacts are all opposite of one another with one key exception: Total surplus is higher after trade whether the country is a net importer or a net exporter.</p>
+
+<p>We can graphically show the gains from trade—the net increases in total surplus due to trade—as follows:</p>
+
+<!-- IMAGE POSITION: directly below referenced paragraph -->
+<div class="sdg"><script type="application/json">
+{
+ "title": "The gains from trade",
+ "lede": "The shaded triangle is the net increase in total surplus that trade brings, whichever way the goods flow.",
+ "link": false,
+ "panels": [
+  {
+   "heading": "Net exporter",
+   "axes": {
+    "xmax": 110,
+    "ymax": 110
+   },
+   "curves": [
+    {
+     "id": "S",
+     "label": "S",
+     "pts": [
+      [
+       0,
+       0
+      ],
+      [
+       100,
+       100
+      ]
+     ]
+    },
+    {
+     "id": "D",
+     "label": "D",
+     "pts": [
+      [
+       0,
+       100
+      ],
+      [
+       92,
+       8
+      ]
+     ]
+    }
+   ],
+   "areas": [
+    {
+     "pts": [
+      [
+       30,
+       70
+      ],
+      [
+       70,
+       70
+      ],
+      [
+       50,
+       50
+      ]
+     ],
+     "color": "teal",
+     "label": "Gains",
+     "lq": 50,
+     "lp": 63,
+     "at": 1
+    }
+   ],
+   "points": [
+    {
+     "q": 50,
+     "p": 50,
+     "pl": "P*",
+     "showQ": false,
+     "guides": "p"
+    },
+    {
+     "q": 30,
+     "p": 70,
+     "ql": "Qᴅ",
+     "showP": false
+    },
+    {
+     "q": 70,
+     "p": 70,
+     "ql": "Qₛ",
+     "showP": false
+    }
+   ],
+   "hlines": [
+    {
+     "p": 70,
+     "label": "Pᴡ"
+    }
+   ],
+   "braces": [
+    {
+     "p": 70,
+     "q1": 30,
+     "q2": 70,
+     "label": "Exports"
+    }
+   ]
+  },
+  {
+   "heading": "Net importer",
+   "axes": {
+    "xmax": 110,
+    "ymax": 110
+   },
+   "curves": [
+    {
+     "id": "S",
+     "label": "S",
+     "pts": [
+      [
+       0,
+       0
+      ],
+      [
+       100,
+       100
+      ]
+     ]
+    },
+    {
+     "id": "D",
+     "label": "D",
+     "pts": [
+      [
+       0,
+       100
+      ],
+      [
+       92,
+       8
+      ]
+     ]
+    }
+   ],
+   "areas": [
+    {
+     "pts": [
       [
        30,
        30
       ],
       [
-       45,
-       20
-      ],
-      [
-       90,
-       10
-      ]
-     ],
-     "curved": true
-    }
-   ],
-   "caption": "A unit elastic demand curve sits between the two: a one per cent change in price brings exactly a one per cent change in the quantity demanded."
-  },
-  "el": {
-   "label": "Elastic (E > 1)",
-   "curves": [
-    {
-     "id": "D",
-     "label": "D",
-     "pts": [
-      [
-       8,
-       55
-      ],
-      [
-       25,
-       40
+       70,
+       30
       ],
       [
        50,
-       32
+       50
+      ]
+     ],
+     "color": "teal",
+     "label": "Gains",
+     "lq": 50,
+     "lp": 37,
+     "at": 1
+    }
+   ],
+   "points": [
+    {
+     "q": 50,
+     "p": 50,
+     "pl": "P*",
+     "showQ": false,
+     "guides": "p"
+    },
+    {
+     "q": 30,
+     "p": 30,
+     "ql": "Qₛ",
+     "showP": false
+    },
+    {
+     "q": 70,
+     "p": 30,
+     "ql": "Qᴅ",
+     "showP": false
+    }
+   ],
+   "hlines": [
+    {
+     "p": 30,
+     "label": "Pᴡ"
+    }
+   ],
+   "braces": [
+    {
+     "p": 30,
+     "q1": 30,
+     "q2": 70,
+     "label": "Imports",
+     "below": true
+    }
+   ]
+  }
+ ],
+ "steps": [
+  "Whether a country exports or imports, trade moves its domestic price from P* to the world price Pᴡ, and the gap between Qᴅ and Qₛ is the quantity traded.",
+  "The shaded triangle in each market is the gain from trade, the net increase in total surplus. A net exporter gains by selling abroad at a price above its domestic price, and a net importer gains by buying from abroad at a price below its domestic price."
+ ]
+}
+</script></div>
+
+<p>Remember that trade does not universally benefit everyone. For example, free trade reduces domestic consumer surplus in export industries and reduces domestic producer surplus in import industries. However, the net effect of trade on society as a whole is positive in both import and export industries. In theory, policymakers should be able to redistribute the gains from trade in a way that makes everyone better off. Unfortunately, this rarely occurs.</p>
+
+<h1 id="tariffs-and-quotas">Tariffs and Quotas</h1>
+
+<p>As we have discussed, trade has winners and losers. The "losers" often lobby the government for <strong>trade protection</strong>—a mechanism that restricts trade in an attempt to protect certain constituencies. In this section, we will focus on cases in which the domestic price is higher than the world price and the country is a net importer of the good. When this is the case, free trade harms domestic producers, who often lobby the government for protection. This protection comes in many forms, but we will focus on tariffs and quotas. (Note that there are other non-tariff barriers that restrict trade, as well. For example, excessive paperwork or inspection requirements can effectively increase the cost of imports without explicitly applying a tariff.)</p>
+
+<h2 id="tariffs">Tariffs</h2>
+
+<p>A <strong>tariff</strong> is a tax that the government imposes on every unit that is imported. The imposition of a tariff effectively increases the domestic price relative to the world price. This reduces the domestic quantity demanded, increases the domestic quantity supplied, and reduces the amount that the nation imports.</p>
+
+<p>We could show the resulting changes in consumer surplus, producer surplus, total surplus, tariff revenue, and deadweight loss as follows:</p>
+
+<!-- IMAGE POSITION: directly below referenced paragraph -->
+<div class="sdg"><script type="application/json">
+{
+ "title": "The effect of a tariff",
+ "lede": "CS is consumer surplus (hatched) and PS is producer surplus (orange). The checked rectangle is the government's tariff revenue, and the two black triangles are the deadweight loss.",
+ "link": false,
+ "panels": [
+  {
+   "heading": "Before the tariff",
+   "axes": {
+    "xmax": 110,
+    "ymax": 110
+   },
+   "curves": [
+    {
+     "id": "S",
+     "label": "S",
+     "pts": [
+      [
+       0,
+       0
       ],
       [
        100,
-       26
+       100
       ]
-     ],
-     "curved": true
-    }
-   ],
-   "caption": "An elastic demand curve is flat. A change in price moves the quantity demanded by proportionally more than the price itself moved."
-  },
-  "pel": {
-   "label": "Perfectly elastic (E = ∞)",
-   "curves": [
+     ]
+    },
     {
      "id": "D",
      "label": "D",
      "pts": [
       [
-       8,
-       50
+       0,
+       100
       ],
       [
-       100,
-       50
+       92,
+       8
       ]
      ]
     }
    ],
-   "caption": "A perfectly elastic demand curve is horizontal: the price is fixed, and any attempt to raise it would wipe out demand altogether. One farmer's milk comes close to this."
-  }
- }
-}
-</script></div>
-
-<p>A good way to remember the difference between a perfectly elastic curve and a perfectly inelastic curve is that the capital letter <b>I</b> is vertical, so a perfectly <b>I</b>nelastic demand curve is completely vertical.</p>
-
-<h2 id="elasticity-examples">Elasticity Examples</h2>
-
-<p>Assume that a 10% price hike leads to a 5% decrease in quantity demanded.  What is the price elasticity of demand?</p>
-
-<p>\[E_D = \left| \frac{\%\Delta Q_D}{\%\Delta P} \right| = \left| \frac{-5\%}{10\%} \right| = 0.5 \quad \text{(weak response)}\]</p>
-
-<p>Now, assume that a 10% increase in price leads to a 20% decrease in quantity demanded.  What is the price elasticity of demand?</p>
-
-<p>\[E_D = \left| \frac{\%\Delta Q_D}{\%\Delta P} \right| = \left| \frac{-20\%}{10\%} \right| = 2.0 \quad \text{(strong response)}\]</p>
-
-<p>Now, assume that a 10% increase in price leads to a 10% decrease in quantity demanded.  What is the price elasticity of demand?</p>
-
-<p>\[E_D = \left| \frac{\%\Delta Q_D}{\%\Delta P} \right| = \left| \frac{-10\%}{10\%} \right| = 1.0 \quad \text{(intermediate response)}\]</p>
-
-<div class="example-box"><h4>Why Do We Use Percentages?</h4>
-<p>We use percentage changes when calculating the price elasticity of demand because it is the percentage change and not the absolute change in price that influences consumer behavior.  For example, if the price of a Big Mac increases by $1, from $5 to $6, consumers may perceive this as a relatively large change.  As a result, they may switch to alternatives, such as Burger King&rsquo;s Whopper.</p>
-<p>Now, suppose that the price of a BMW increases by $1, from $50,000 to $50,001.  This will probably not have much of a change at all on the quantity demanded.  This is because the percentage change in the price was not very large.</p>
-</div>
-
-<h2 id="the-midpoint-formula">The Midpoint Formula</h2>
-
-<p>You calculate elasticity over an interval by calculating the percentage change in price and the percentage change in quantity.  That is,</p>
-
-<p>\[E_D = \left| \frac{\%\Delta Q_D}{\%\Delta P} \right| = \left| \frac{\dfrac{Q_2 - Q_1}{Q_{\text{Midpoint}}}}{\dfrac{P_2 - P_1}{P_{\text{Midpoint}}}} \right|\]</p>
-
-<div class="exam-tip"><h4>EXAM TIP: Midpoint Formula</h4><p>You will almost definitely have a question that asks you to use the midpoint formula on the exam.  Be sure this equation is on your notecard!</p></div>
-
-<p>Note that, in this class, we use the <b>midpoint</b> of the starting and ending values in the denominator when calculating the percentage change.</p>
-
-<p>So, for example, in the diagram below, the price elasticity of demand between points <em>A</em> and <em>B</em> can be calculated as follows:</p>
-
-<!-- IMAGE POSITION: beside-referenced paragraph -->
-<div class="sdg"><script type="application/json">
-{
- "title": "The midpoint formula between two points",
- "lede": "Price and quantity changes are both measured against the midpoint of the interval.",
- "axes": {
-  "xmax": 14,
-  "ymax": 25,
-  "money": true,
-  "xticks": [
-   8,
-   12
-  ],
-  "yticks": [
-   19,
-   21
-  ]
- },
- "curves": [
-  {
-   "id": "D",
-   "label": "D",
-   "pts": [
-    [
-     0,
-     25
-    ],
-    [
-     14,
-     18
-    ]
+   "areas": [
+    {
+     "pts": [
+      [
+       0,
+       100
+      ],
+      [
+       0,
+       26
+      ],
+      [
+       74,
+       26
+      ]
+     ],
+     "fill": "hatch",
+     "label": "CS",
+     "lq": 20,
+     "lp": 60
+    },
+    {
+     "pts": [
+      [
+       0,
+       26
+      ],
+      [
+       0,
+       0
+      ],
+      [
+       26,
+       26
+      ]
+     ],
+     "color": "orange",
+     "label": "PS",
+     "lq": 6,
+     "lp": 15
+    }
    ],
-   "ldx": -20,
-   "ldy": 16
-  }
- ],
- "points": [
-  {
-   "q": 8,
-   "p": 21,
-   "label": "A",
-   "dx": -20,
-   "dy": -8
-  },
-  {
-   "q": 12,
-   "p": 19,
-   "label": "B",
-   "dx": -18,
-   "dy": 18
-  }
- ],
- "braces": [
-  {
-   "p": 0,
-   "q1": 8,
-   "q2": 12,
-   "label": "4 more, a 40% rise",
-   "below": true,
-   "at": 1
-  }
- ],
- "vbraces": [
-  {
-   "p1": 19,
-   "p2": 21,
-   "q": 8,
-   "label": "$2 less, a 10% fall",
-   "side": "left",
-   "at": 2
-  }
- ],
- "steps": [
-  "Point A is 8 units at $21 and Point B is 12 units at $19. The elasticity between them is worked out over the whole interval.",
-  "Quantity rises by 4. The midpoint of 8 and 12 is 10, so that is a 40% rise in the quantity demanded.",
-  "Price falls by $2. The midpoint of $19 and $21 is $20, so that is a 10% fall in the price.",
-  "Dividing 40% by 10% and taking the absolute value gives an elasticity of 4. Demand is elastic between these two points, because quantity responded proportionally more than price."
- ]
-}
-</script></div>
-
-<p>\[\%\Delta Q_D = \frac{Q_2 - Q_1}{Q_{\text{Midpoint}}} = \frac{12 - 8}{10} = 40\%\]</p>
-
-<p>\[\%\Delta P = \frac{P_2 - P_1}{P_{\text{Midpoint}}} = \frac{\$19 - \$21}{\$20} = -10\%\]</p>
-
-<p>\[E_D = \left| \frac{\%\Delta Q_D}{\%\Delta P} \right| = \left| \frac{40\%}{-10\%} \right| = 4\]</p>
-
-<p>As you can see, the elasticity of demand is 4, so demand is <em>elastic</em> between these two points.</p>
-
-<h2 id="calculating-elasticity-at-a-point">Calculating Elasticity at a Point</h2>
-
-<p>So far, we have considered only elasticity over an interval.  It is also possible to determine elasticity at a point along a demand curve.  The formula for calculating the elasticity of demand at a point along the demand curve is as follows:</p>
-
-<p>\[E_D = \left| \frac{1}{\text{Slope}} \times \frac{P}{Q_D} \right|\]</p>
-
-<div class="exam-tip"><h4>EXAM TIP: Point Elasticity</h4><p>Dr. Rush does not typically ask questions that require you to use this equation.  He introduces it to show that the price elasticity of demand falls as you move down a straight-line demand curve.</p></div>
-
-<p>We could use this equation to show that the price elasticity of demand falls as we move down a straight-line demand curve.  Consider the following demand curve:</p>
-
-<!-- IMAGE POSITION: beside-referenced paragraph -->
-<div class="sdg"><script type="application/json">
-{
- "title": "Elasticity falls as you move down a straight line",
- "lede": "One demand curve, three points, three very different elasticities.",
- "axes": {
-  "xmax": 11,
-  "ymax": 11,
-  "money": true,
-  "xticks": [
-   1,
-   5,
-   9
-  ],
-  "yticks": [
-   1,
-   5,
-   9
-  ]
- },
- "curves": [
-  {
-   "id": "D",
-   "label": "D",
-   "pts": [
-    [
-     0,
-     10
-    ],
-    [
-     10,
-     0
-    ]
+   "points": [
+    {
+     "q": 50,
+     "p": 50,
+     "pl": "P*",
+     "showQ": false,
+     "guides": "p"
+    },
+    {
+     "q": 26,
+     "p": 26,
+     "ql": "Qₛ",
+     "showP": false
+    },
+    {
+     "q": 74,
+     "p": 26,
+     "ql": "Qᴅ",
+     "showP": false
+    }
    ],
-   "lstart": true,
-   "ldx": 10,
-   "ldy": -6
-  }
- ],
- "points": [
-  {
-   "q": 1,
-   "p": 9,
-   "at": 1
+   "hlines": [
+    {
+     "p": 26,
+     "label": "Pᴡ",
+     "color": "ink"
+    }
+   ],
+   "braces": [
+    {
+     "p": 26,
+     "q1": 26,
+     "q2": 74,
+     "label": "Imports",
+     "below": true
+    }
+   ]
   },
   {
-   "q": 5,
-   "p": 5,
-   "at": 2
-  },
-  {
-   "q": 9,
-   "p": 1,
-   "at": 3
-  }
- ],
- "steps": [
-  "This demand curve is a straight line that meets both axes. The elasticity of demand is different at every point along it.",
-  "High on the curve, at 1 unit and $9, demand is elastic: the elasticity here is 9. Moving toward the vertical intercept, it rises without limit.",
-  "At the midpoint, 5 units and $5, the elasticity is exactly 1, so demand is unit elastic.",
-  "Low on the curve, at 9 units and $1, demand is inelastic: the elasticity here is 1/9. Moving toward the horizontal intercept, it falls to zero. So elasticity falls steadily as the price falls and the quantity rises."
- ]
-}
-</script></div>
-
-<p>As you can see, the price elasticity of demand along a straight-line demand curve varies from 0 (at the horizontal intercept) to infinity (at the vertical intercept).  At the vertical intercept, elasticity approaches infinity.  At the horizontal intercept, elasticity is zero.</p>
-
-<p>Technically, elasticity of demand is only defined at a point.  However, we speak in general terms about how &ldquo;elastic&rdquo; entire curves are.  Just know that there is a distinction.</p>
-
-<h2 id="elasticity-examples">Elasticity Examples</h2>
-
-<p>On an exam, you might be asked to calculate the price elasticity of demand given the percentage change in price and the percentage change in quantity.  Alternatively, you might be asked to calculate the percentage change in quantity given the elasticity and the percentage change in price, or you might be asked to calculate the percentage change in price given the elasticity and the percentage change in quantity.  Let&rsquo;s explore each of these three possibilities.</p>
-
-<p><b>Suppose that a 5% increase in the price causes a 15% decrease in the quantity demanded.  What is the price elasticity of demand over this interval?</b></p>
-
-<p>\[E_D = \left| \frac{\%\Delta Q_D}{\%\Delta P} \right| = \left| \frac{-15\%}{5\%} \right| = 3\]</p>
-
-<p>Demand is elastic over this interval because the price elasticity of demand is greater than one.</p>
-
-<p><b>Suppose that the price elasticity of demand is 2 and the price increases by 10%.  What will happen to the quantity demanded as a result?</b></p>
-
-<p>\[E_D = \left| \frac{\%\Delta Q_D}{\%\Delta P} \right| \qquad \Rightarrow \qquad 2 = \left| \frac{\%\Delta Q_D}{10\%} \right|\]</p>
-
-<p>\[\%\Delta Q_D = 2 \times 10\% = -20\%\]</p>
-
-<p>We know that an increase in price caused quantity demanded to <em>fall</em> because the law of demand states that the quantity demanded decreases when the price increases.</p>
-
-<p><b>Suppose that you know that the price elasticity of demand is 0.2 and that the quantity demanded rises by 10%.  What happens to the price?</b></p>
-
-<p>\[E_D = \left| \frac{\%\Delta Q_D}{\%\Delta P} \right| \qquad \Rightarrow \qquad 0.2 = \left| \frac{10\%}{\%\Delta P} \right|\]</p>
-
-<p>\[\%\Delta P = \frac{10\%}{0.2} = -50\%\]</p>
-
-<p>We know that an increase in quantity demanded caused the price to fall because the law of demand states that the quantity demanded <em>increases</em> when the price decreases.</p>
-
-<h1 id="the-total-revenue-test">The Total Revenue Test</h1>
-
-<p>Elasticity of demand is technically only defined at a point along the demand curve.  The price elasticity of demand varies along a given demand curve.  Along a given straight-line demand curve that intersects both the vertical and horizontal axes, the price elasticity of demand varies from zero (at the horizontal intercept) to infinity (at the vertical intercept).  Revenues are always maximized at the midpoint of a straight-line demand curve, where the price elasticity of demand is equal to one.  This relationship is shown in the figure below.</p>
-
-<!-- IMAGE POSITION: beside-referenced paragraph -->
-<div class="sdg"><script type="application/json">
-{
- "title": "The total revenue test",
- "lede": "Revenue is highest where demand is unit elastic.",
- "link": false,
- "panels": [
-  {
-   "heading": "Demand",
+   "heading": "After the tariff",
    "axes": {
-    "xmax": 120,
-    "ymax": 120
+    "xmax": 110,
+    "ymax": 110
    },
    "curves": [
+    {
+     "id": "S",
+     "label": "S",
+     "pts": [
+      [
+       0,
+       0
+      ],
+      [
+       100,
+       100
+      ]
+     ]
+    },
     {
      "id": "D",
      "label": "D",
      "pts": [
       [
        0,
-       110
+       100
       ],
       [
-       110,
-       0
+       92,
+       8
       ]
-     ],
-     "ldx": -44,
-     "ldy": -2
+     ]
     }
    ],
-   "points": [
+   "areas": [
     {
-     "q": 0,
-     "p": 110,
-     "label": "E = ∞",
-     "dx": 9,
-     "dy": -4,
-     "guides": false,
-     "showP": false,
-     "showQ": false
-    },
-    {
-     "q": 110,
-     "p": 0,
-     "label": "E = 0",
-     "dx": 9,
-     "dy": -6,
-     "guides": false,
-     "showP": false,
-     "showQ": false
-    },
-    {
-     "q": 55,
-     "p": 55,
-     "label": "E = 1",
-     "at": 1,
-     "dx": 10,
-     "dy": -10,
-     "guides": false,
-     "showP": false,
-     "showQ": false
-    },
-    {
-     "q": 30,
-     "p": 80,
-     "label": "E > 1",
-     "at": 2,
-     "dx": 10,
-     "dy": -10,
-     "guides": false,
-     "showP": false,
-     "showQ": false
-    },
-    {
-     "q": 80,
-     "p": 30,
-     "label": "E < 1",
-     "at": 3,
-     "dx": 10,
-     "dy": -10,
-     "guides": false,
-     "showP": false,
-     "showQ": false
-    }
-   ]
-  },
-  {
-   "heading": "Total revenue",
-   "axes": {
-    "x": "Q",
-    "y": "TR",
-    "xmax": 120,
-    "ymax": 120
-   },
-   "curves": [
-    {
-     "id": "TR",
-     "label": "",
      "pts": [
+      [
+       0,
+       100
+      ],
+      [
+       0,
+       26
+      ],
+      [
+       74,
+       26
+      ]
+     ],
+     "fill": "hatch",
+     "label": "CS",
+     "lq": 20,
+     "lp": 60,
+     "until": 2
+    },
+    {
+     "pts": [
+      [
+       0,
+       26
+      ],
       [
        0,
        0
       ],
       [
-       20,
-       65.5
-      ],
-      [
-       40,
-       101.8
-      ],
-      [
-       55,
-       110
-      ],
-      [
-       70,
-       101.8
-      ],
-      [
-       90,
-       65.5
-      ],
-      [
-       110,
-       0
+       26,
+       26
       ]
      ],
-     "curved": true
+     "color": "orange",
+     "label": "PS",
+     "lq": 6,
+     "lp": 15,
+     "until": 2
+    },
+    {
+     "pts": [
+      [
+       0,
+       100
+      ],
+      [
+       0,
+       38
+      ],
+      [
+       62,
+       38
+      ]
+     ],
+     "fill": "hatch",
+     "label": "CS",
+     "lq": 20,
+     "lp": 63,
+     "at": 2
+    },
+    {
+     "pts": [
+      [
+       0,
+       38
+      ],
+      [
+       0,
+       0
+      ],
+      [
+       38,
+       38
+      ]
+     ],
+     "color": "orange",
+     "label": "PS",
+     "lq": 10,
+     "lp": 20,
+     "at": 2
+    },
+    {
+     "pts": [
+      [
+       38,
+       26
+      ],
+      [
+       62,
+       26
+      ],
+      [
+       62,
+       38
+      ],
+      [
+       38,
+       38
+      ]
+     ],
+     "fill": "check",
+     "color": "teal",
+     "label": "Revenue",
+     "lq": 50,
+     "lp": 32,
+     "at": 3
+    },
+    {
+     "pts": [
+      [
+       26,
+       26
+      ],
+      [
+       38,
+       38
+      ],
+      [
+       38,
+       26
+      ]
+     ],
+     "opacity": 0.8,
+     "at": 4
+    },
+    {
+     "pts": [
+      [
+       62,
+       26
+      ],
+      [
+       62,
+       38
+      ],
+      [
+       74,
+       26
+      ]
+     ],
+     "opacity": 0.8,
+     "at": 4
     }
    ],
    "points": [
     {
-     "q": 55,
-     "p": 110,
-     "at": 1,
-     "guides": false,
+     "q": 50,
+     "p": 50,
+     "pl": "P*",
+     "showQ": false,
+     "guides": "p"
+    },
+    {
+     "q": 26,
+     "p": 26,
+     "ql": "Qₛ",
      "showP": false,
-     "showQ": false
+     "until": 2
+    },
+    {
+     "q": 74,
+     "p": 26,
+     "ql": "Qᴅ",
+     "showP": false,
+     "until": 2
+    },
+    {
+     "q": 38,
+     "p": 38,
+     "ql": "Qₛ",
+     "showP": false,
+     "at": 2
+    },
+    {
+     "q": 62,
+     "p": 38,
+     "ql": "Qᴅ",
+     "showP": false,
+     "at": 2
+    }
+   ],
+   "hlines": [
+    {
+     "p": 26,
+     "label": "Pᴡ",
+     "color": "ink"
+    },
+    {
+     "p": 38,
+     "label": "Pᴡ+T",
+     "at": 1
+    }
+   ],
+   "braces": [
+    {
+     "p": 26,
+     "q1": 26,
+     "q2": 74,
+     "label": "Imports",
+     "below": true,
+     "until": 2
+    },
+    {
+     "p": 38,
+     "q1": 38,
+     "q2": 62,
+     "label": "Imports",
+     "below": true,
+     "at": 2
     }
    ]
   }
  ],
  "steps": [
-  "Elasticity varies along a straight-line demand curve: it is infinite at the vertical intercept and zero at the horizontal one. Total revenue, price times quantity, traces a hump as quantity rises.",
-  "Revenue peaks at the midpoint of the demand curve, which is exactly where demand is unit elastic. At that point a price change leaves total revenue alone, because the percentage change in quantity offsets the percentage change in price.",
-  "Above the midpoint demand is elastic. Raising the price here loses more in quantity than it gains in price, so total revenue falls; cutting the price raises it.",
-  "Below the midpoint demand is inelastic. Raising the price here gains more in price than it loses in quantity, so total revenue rises; cutting the price lowers it."
+  "With free trade the domestic price sits at the world price Pᴡ. Domestic producers supply Qₛ, consumers buy Qᴅ, and the difference is imported. Consumer surplus is the large triangle above Pᴡ and producer surplus is the small one below it.",
+  "A tariff of T on every imported unit raises the price inside the country to Pᴡ+T, because anything brought in now costs the world price plus the tax.",
+  "At the higher price domestic consumers buy less, so consumer surplus shrinks, while domestic producers sell more at a better price, so producer surplus grows. Fewer units are imported.",
+  "The government collects T on every unit still imported, so its tariff revenue is the checked rectangle: the tariff times the quantity imported.",
+  "Two triangles of the old consumer surplus go to nobody. They are the deadweight loss of the tariff, so society as a whole is worse off: the domestic price rises and the quantity imported falls."
  ]
 }
 </script></div>
 
-<p>This relationship has important implications for firms wanting to raise their prices:</p>
+<p>Note that tariffs that are too high will completely <em>eliminate</em> imports. Specifically, a tariff that is as large as or larger than the difference between the domestic price and the world price will completely wipe out all imports. When this is the case, the domestic market will exclusively provide the goods at the domestic equilibrium price.</p>
+
+<p>Here is a summary of the impacts of imposing a tariff in this market:</p>
 
 <ul>
-<li><em>If demand is elastic</em>, a firm will <em>reduce</em> its total revenues if it raises its price.  It will <em>increase</em> its total revenues if it reduces its price.</li>
-<li><em>If demand is inelastic</em>, a firm will <em>increase</em> its total revenues if it raises its price.  It will <em>decrease</em> its total revenues if it reduces its price.</li>
-<li><em>If demand is unit elastic</em>, a firm&rsquo;s total revenues will not change if it raises or reduces its price, because the percentage change in the quantity demanded exactly offsets the percentage change in the price.</li>
+    <li><strong>Impact on domestic consumers</strong> – Domestic consumers are made worse off by the tariff because they have to pay a higher price for the good, so they consume less of it. As a result, the domestic consumer surplus falls.</li>
+    <li><strong>Impact on domestic producers</strong> – Domestic producers are made better off by the tariff because they can charge a higher price for the good, so they sell more of it. As a result, the domestic producer surplus rises.</li>
+    <li><strong>Impact on the government</strong> – The government is made better off by the tariff because it gains tariff revenue. For example, if the tariff is $2 per unit and the quantity of goods imported is 20 million units, the government gains $40 million in tariff revenue.</li>
+    <li><strong>Impact on society as a whole</strong> – Society as a whole is made worse off by the imposition of the tariff. Specifically, society loses an area of economic surplus equal to the darkened areas in the graph above. These areas are referred to as the <strong>deadweight loss</strong> that results from the imposition of a tariff.</li>
 </ul>
 
-<div class="exam-tip"><h4>EXAM TIP: Total Revenue Test</h4>
-<p>The best way to remember the total revenue test is to remember just one relationship and change it up:</p>
-<p>&ldquo;If demand is <b>inelastic</b>, then <b>increasing</b> the price <b>increases</b> the total revenue.&rdquo;</p>
-<p>This can be changed any number of ways.  For example, if you remember that rule, you can develop a rule for when demand is elastic:</p>
-<p>&ldquo;If demand is <b>elastic</b>, then <b>increasing</b> the price <b>decreases</b> the total revenue.&rdquo;</p>
-<p>You could also change this rule to reflect a <em>decrease</em> in the price and not an increase:</p>
-<p>&ldquo;If demand is <b>elastic</b>, then <b>decreasing</b> the price <b>increases</b> the total revenue.&rdquo;</p>
-<p>While the total revenue test may be confusing at first, if you just remember one simple rule and learn to change it so that it applies to different situations, you&rsquo;ll be able to handle any question dealing with it on the exam.</p>
+<p>Tariffs are representative of other restraints on trade, such as quotas, in that they cause a net loss to society. This is why most economists tend to favor measures that promote free trade and stand against measures that impede it.</p>
+
+<p>If these restrictions on trade harm society, why do governments impose them? Critics of free trade often argue that importing goods costs domestic workers their jobs. This is a highly visible consequence of free trade, which tends to be emphasized in the media. An even more important consequence, as we have seen, is that domestic consumers benefit from lower prices. This is a less visible consequence of imports, however. Therefore, politicians have the incentive to listen more closely to opponents of free trade than to its proponents. Moreover, there are fewer suppliers than demanders, so they can more easily collaborate to lobby for tariffs.</p>
+
+<p>Those who argue for trade restrictions are often engaged in <strong>rent seeking</strong>—attempting to gain a larger share of the economic pie without increasing the size of the pie. When domestic producers argue for tariffs on imported goods, they are trying to gain producer surplus at the expense of the rest of society.</p>
+
+<p>For roughly 80 years after the Great Depression, the United States worked to reduce its tariffs. That trend has reversed over the past decade. Tariffs rose during President Trump's first administration, changed very little under President Biden, and rose again during President Trump's second administration. The average U.S. tariff is now roughly 12% to 14%, and even small tariffs can cause losses to society. For example, the United States currently imposes a tariff on Canadian steel: Steel produced in Canada is taxed the moment it crosses the border into the United States, whereas steel produced in the United States is not.</p>
+
+<div class="other-box">
+    <h4>The Smoot-Hawley Tarriff</h4>
+
+    <p>The Smoot-Hawley Tariff was a law that implemented protectionist trade policies in the United States, raising U.S. tariffs on more than 20,000 imported goods in 1930. This prompted retaliatory tariffs by other countries against the United States. As a result, American exports and imports fell by two-thirds during the Great Depression. While the Smoot-Hawley Tariff did not <em>cause</em> the Great Depression, it certainly made the Great Depression worse than it otherwise would have been.</p>
 </div>
 
-<div class="example-box"><h4>Example: Elasticity and Piesanos</h4>
-<p>Elasticity is important because it helps companies decide whether they should raise prices.  For example, let&rsquo;s say that Piesanos is selling 1,000 pizzas at $10 per pizza, for a total revenue of $10,000, and that it is considering raising its price to $15 per pizza.  The effect on Piesanos&rsquo; total revenue depends on how responsive customers are to the price hike.  Piesanos would want to know what would happen to the quantity demanded if it took this action.</p>
-<p>For example, there might be a strong response, and it might only sell 500 pizzas.  If this happens, its new total revenue will be $15 &times; 500 = $7,500.  In this case, Piesanos would probably not want to raise its price.  However, there may not be a very large response at all.  For example, Piesanos might sell 800 pizzas at $15 each, for a total revenue of $15 &times; 800 = $12,000.  In this case, Piesanos probably would want to raise its price.</p>
-<p>This is a simple example that illustrates how businesses use the concept of elasticity in the &ldquo;real world.&rdquo;  Companies like Ford, Procter &amp; Gamble, and Pfizer have teams of economists who do nothing but collect data to try to estimate elasticities!</p>
+
+<h2 id="quotas">Quotas</h2>
+
+<p>A <strong>quota</strong> is a government-imposed quantitative restriction on imported goods. Dr. Rush ran out of time, so he will not include quotas on Exam 1.  He will revisit them after the exam.</p>
+
+<h2 id="why-do-protectionist-policies-persist">Why Do Protectionist Policies Persist?</h2>
+
+<p>In this section, we have shown that free trade increases total surplus, but that there are winners and losers. For example, allowing imports increases domestic consumer surplus but it decreases domestic producer surplus. The increase in domestic consumer surplus exceeds the decrease in domestic producer surplus, so total domestic surplus increases as a result.</p>
+
+<p>Protectionist policies (such as tariffs and quotas) exist because certain groups have a greater incentive to lobby for those policies than others. For example, suppose that allowing imports in an industry increases consumer surplus by $350 million and reduces producer surplus by $100 million. Clearly, society would be better off to allow imports because the total gain to society is greater than the total loss to society by $250 million.</p>
+
+<p>However, suppose that there are 350 million consumers and only 10 large producers. The consumers stand to lose $1 each if trade is disallowed, while the producers stand to gain $10 million each if trade is disallowed. Clearly, producers have a greater incentive than consumers to lobby the government for protectionist policies that would disallow trade in this industry.</p>
+
+<div class="other-box">
+    <h4>From the Textbook: Topics Not Covered</h4>
+
+    <p>Here are some concepts the textbook covers that are not covered here:</p>
+
+    <ul>
+        <li><strong>Outsourcing</strong> occurs when U.S. firms buy finished goods, components, or services either from other U.S. firms or from firms in other countries. <strong>Offshoring</strong> occurs when U.S. firms produce in other countries using foreign labor or buy finished goods, components, or services from firms in other countries.</li>
+        <li>Three common arguments against free trade are as follows:
+            <ul>
+                <li>The <strong>infant-industry argument</strong> asserts that governments must protect new domestic industries from foreign competition so that those industries can properly develop.</li>
+                <li>The <strong>dumping argument</strong> points out that exporters can eliminate domestic producers by dumping—selling exports at a price below the cost of production.</li>
+                <li>The <strong>national defense argument</strong> asserts that certain industries (such as the steel or energy industries) are essential for a country's security and should be protected from foreign competition.</li>
+            </ul>
+        </li>
+    </ul>
 </div>
 
-<h1 id="determinants-of-the-price-elasticity-of-demand">Determinants of the Price Elasticity of Demand</h1>
+<div style="text-align:center;">
+<p style="font-size: 120%;"><strong><em>This is the end of the material for Exam 1</em></strong></p>
+<p style="font-size: 180%;"><strong><em>Good luck on the exam!</em></strong></p>
+</div>
 
-<p>The following factors determine the extent to which demand is elastic:</p>
-
-<ul>
-<li><b>Number of close substitutes</b> &ndash; <em>The larger the number of close substitutes the product has, the more elastic the demand for it will be.</em>  This is the key factor.  For example, to a diabetic, there are no good substitutes for insulin (a life-saving drug).  Therefore, his or her demand for insulin will be very inelastic.  On the other hand, the demand for an individual farmer&rsquo;s wheat is extremely elastic, because there are many substitutes (other farmers&rsquo; wheat).
-<p>Three factors that influence how many close substitutes there are for a good are as follows:</p>
-<ul>
-<li><b>How much time has passed since the change in price</b> &ndash; <em>The more time that has passed since the price changed, the more substitutes people will have discovered, and thus the more elastic the demand will be.</em>  For example, in the short run, gas may have an elasticity of demand of 0.2; you&rsquo;re not going to change your life because of a short-run change in the price of gas.  In the long run, gas may have an elasticity of demand of 0.6 because you may plan your life more around the change in the price of gas, such as by living closer to school or work, not using a car, or using a more fuel-efficient car.</li>
-<li><b>How broadly or narrowly defined the good is</b> &ndash; <em>The more narrowly a good is defined, the more substitutes it has, and thus the more elastic the demand for it will be.</em>  For example, the demand for Pepsi Zero is a lot more elastic than the demand for soda in general.  You can replace Pepsi with other kinds of soda, so there are many substitutes for this item.  On the other hand, there are fewer substitutes for soda in general.</li>
-<li><b>Luxury goods vs. necessities</b> &ndash; <em>The demand for luxury goods tends to be more elastic than the demand for necessities.</em>  For example, if the price of a Caribbean cruise doubles, your response would be stronger than your response to a doubling of the price of toothpaste.  You <em>need</em> to have toothpaste if you want clean teeth; you don&rsquo;t <em>need</em> to go on a cruise.</li>
-</ul>
-</li>
-
-<li><b>The fraction of budget spent on the good</b> &ndash; <em>The larger the fraction of a person&rsquo;s budget spent on a good, the larger its elasticity of demand</em> because there is more incentive to look for alternatives.  For example, the demand for rent is more elastic than the demand for salt.  Rent takes up much more of your income than salt, so you would notice a doubling in rent more than you would a doubling in the price of salt.  In a snowy city like Rochester, New York, on the other hand, salt is a big part of the budget because the city has to salt the roads (around 4 or 5% of the city budget).  These cities will pay more attention to the price of salt, and their demand for it will be more elastic.</li>
-</ul>
-
-<h1 id="other-elasticity-measures">Other Elasticity Measures</h1>
-
-<p>Recall that <em>elasticity</em> is a measure of responsiveness.  Thus far, we&rsquo;ve only examined the price elasticity of demand, which measures responsiveness of the quantity demanded to a change in the price.  There are other elasticity measures, as well:</p>
-
-<ul>
-<li><strong>Income elasticity of demand</strong> (<em>E</em><sub>INC</sub>) &ndash; The income elasticity of demand measures the responsiveness of the quantity demanded to a change in income.  It is calculated as follows:
-
-<p>\[E_{INC} = \frac{\%\Delta Q_D}{\%\Delta \text{Income}}\]</p>
-
-<p>Here, notice that the sign is meaningful&mdash;that is why we don&rsquo;t take the absolute value (as we do with the price elasticity of demand).  The income elasticity of demand is <b>negative for inferior goods</b> and <b>positive for normal goods</b>.  For example, rental housing is an inferior good&mdash;the quantity of rental housing demanded falls as income rises because richer people tend to own their homes.</p>
-</li>
-
-<li><strong>Cross-price elasticity of demand</strong> &ndash; The cross-price elasticity of demand measures the impact of a change in the price of one good on the quantity demanded of a related good.  That is, the cross-price elasticity of demand between goods A and B is defined as follows:
-
-<p>\[E_{\text{CROSS}} = \frac{\%\Delta Q_{D,\text{Good A}}}{\%\Delta P_{\text{Good B}}}\]</p>
-
-<p>Here, the sign matters, as well.  The cross-price elasticity of demand is <b>positive for substitutes</b> and <b>negative for complements</b>, by definition.  Consider the following examples:</p>
-<ul>
-<li><em>Hamburgers and hot dogs</em> &ndash; Hamburgers and hot dogs are substitutes, so the cross-price elasticity of demand between these goods is positive.</li>
-<li><em>Hamburger meat and hamburger buns</em> &ndash; Hamburger meat and hamburger buns are complements, so the cross-price elasticity of demand between these goods is negative.</li>
-</ul>
-</li>
-
-<li><strong>Price elasticity of supply</strong> &ndash; The price elasticity of supply is a measure of the sensitivity of quantity supplied to a change in price.  It is defined as follows:
-
-<p>\[E_S = \frac{\%\Delta Q_S}{\%\Delta P}\]</p>
-
-<p>Note that the elasticity of supply will always be positive, as the law of supply says that the quantity supplied increases with positive increases in price.  Thus, there is no need to take an absolute value.  The price elasticity of supply is described in the same way we describe the price elasticity of demand.  Supply is <b>elastic</b> if <em>E</em> &gt; 1, <b>inelastic</b> if <em>E</em> &lt; 1, and <b>unit elastic</b> if <em>E</em> = 1.  Likewise, supply is <b>perfectly inelastic</b> if <em>E</em> = 0 and <b>perfectly elastic</b> if <em>E</em> = &infin;.</p>
-</li>
-</ul>
+<!-- IMAGE AUDIT: All images placed per PDF reading order; ambiguous alignment resolved as centered/inline -->
+<!-- FORMAT AUDIT: All italic, bold, and underline text visually verified -->
+<!-- STRUCTURE AUDIT: All ordered and unordered lists preserved exactly as in PDF -->
+<!-- MATHJAX AUDIT: MathJax applied ONLY to equations, operator-based expressions, and chemical reactions -->
+<!-- GEO AUDIT: Verified no coordinates or degree symbols incorrectly wrapped in MathJax -->
+<!-- LIST INTEGRITY AUDIT: Verified no <ol> or <li> elements were prematurely closed due to images, boxes, equations, or tables -->
+<!-- INDENTATION AUDIT: Verified all visually indented continuation paragraphs remain inside their owning indentation container (<ul>/<ol>), with or without <li> -->
+<!-- BOX IMAGE AUDIT: Verified all images inside Exam Tip, Example, Question, and Other boxes were extracted and placed inside their owning box -->
+<!-- TABLE AUDIT: All data tables verified as semantic HTML, not images -->
 
 </body>
 </html>

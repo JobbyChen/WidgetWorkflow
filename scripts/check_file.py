@@ -314,7 +314,8 @@ def check_toc(src, r):
 # ----------------------------------------------------------------- schema ----
 
 DEFAULTS = {"at": 0, "color": "ink", "guides": True, "curved": False,
-            "thin": False, "dashed": False, "static": False, "grid": False}
+            "thin": False, "dashed": False, "static": False, "grid": False,
+            "fill": "solid"}
 
 
 def check_schema(cfgs, r):
@@ -345,11 +346,20 @@ def check_schema(cfgs, r):
 
         defaulted = set()
 
-        def scan_def(d):
-            for k, val in DEFAULTS.items():
-                if k in d and d[k] == val:
-                    defaulted.add(k)
-        walk(cfg, scan_def)
+        def scan_def(node, under=None):
+            # A price line or a brace is red unless told otherwise, so
+            # color:"ink" on one of those is a choice, not a default.
+            if isinstance(node, dict):
+                for k, val in DEFAULTS.items():
+                    if k in node and node[k] == val and not (
+                            k == "color" and under in ("hlines", "braces", "vbraces")):
+                        defaulted.add(k)
+                for k, x in node.items():
+                    scan_def(x, k if isinstance(x, list) else under)
+            elif isinstance(node, list):
+                for x in node:
+                    scan_def(x, under)
+        scan_def(cfg)
         if defaulted:
             r.warn("schema", "widget %d leaves key(s) at their default value: %s"
                    % (n, ", ".join(sorted(defaulted))))
@@ -553,10 +563,16 @@ def guide_segments(pn, X, Y, ox, oy):
     out = []
     pw = W - ox - 36.0
     for p in pn.get("points") or []:
-        if p.get("guides") is False:
+        gd = p.get("guides")
+        if gd is False:
             continue
-        out.append(([(ox, Y(p["p"])), (X(p["q"]), Y(p["p"])), (X(p["q"]), oy)],
-                    "the guides from (%s, %s)" % (p["q"], p["p"]),
+        # guides:"p" is only the line to the P axis, "q" only the drop to Q.
+        line = [(X(p["q"]), Y(p["p"]))]
+        if gd != "q":
+            line.insert(0, (ox, Y(p["p"])))
+        if gd != "p":
+            line.append((X(p["q"]), oy))
+        out.append((line, "the guides from (%s, %s)" % (p["q"], p["p"]),
                     (p.get("at", 0), p.get("until"))))
     for h in pn.get("hlines") or []:
         out.append(([(ox, Y(h["p"])), (ox + pw + 8, Y(h["p"]))],
@@ -697,6 +713,19 @@ def check_labels(cfgs, r):
                         bx = box(x + d * 20, m + 4, b["label"], 12,
                                  "start" if d > 0 else "end")
                     boxes.append((bx, "upright brace label %r" % b["label"], win))
+
+                # An area's label sits inside its polygon, at [lq, lp] or the
+                # centroid, and is ordinary drawn text: it can land on the
+                # curve that bounds the area just as easily as any other label.
+                for a in pn.get("areas") or []:
+                    pts = a.get("pts") or []
+                    if not a.get("label") or not pts:
+                        continue
+                    lq = a["lq"] if a.get("lq") is not None else sum(q for q, _ in pts) / len(pts)
+                    lp = a["lp"] if a.get("lp") is not None else sum(p for _, p in pts) / len(pts)
+                    boxes.append((box(X(lq), Y(lp) + 4, a["label"], 12, "middle"),
+                                  "area label %r" % a["label"],
+                                  (a.get("at", 0), a.get("until"))))
 
                 checked += len(boxes)
 
@@ -855,7 +884,14 @@ def check_arrows(cfgs, r):
             # is the pattern v6 step 4 templates without moves, so keying on
             # the brace label alone flags those wrongly.
             hlines = [h for pn in panels(v) for h in (pn.get("hlines") or [])]
-            if not hlines or not v.get("steps"):
+            # A price line alone is not a disequilibrium: a world price with
+            # an Exports or Imports brace is a level the market settles at,
+            # not one it moves away from, so nothing there should be
+            # converging. It takes both the line and a gap labelled surplus
+            # or shortage.
+            gap = any(re.search(r"surplus|shortage", str(b.get("label", "")), re.I)
+                      for pn in panels(v) for b in (pn.get("braces") or []))
+            if not hlines or not gap or not v.get("steps"):
                 continue
             n_checked += 1
             last = len(v["steps"]) - 1

@@ -302,3 +302,51 @@ including every kind of shift; the probe is throwaway and stayed out of the repo
     with nothing missing. MathJax could not be rendered here to confirm
     visually — the CDN is blocked in this environment — so the new LaTeX was
     checked mechanically for balanced braces and known commands instead.
+
+## 2026-09-21 — the trade chapter, and the first area fill
+
+25. **Areas went into the engine rather than around it.** Chapter 7 of the
+    ECO2023 Exam 1 material arrived as house HTML with five figures, and every
+    one of them is about the size of a shaded region: consumer and producer
+    surplus without and with trade, the gains-from-trade triangle, and a
+    tariff's revenue rectangle and deadweight-loss triangles. The engine had
+    no fill of any kind, recorded twice in the open issues as "real work, only
+    if the source shades it". The source shades it. Hard rule 2 rules out
+    hand-drawn SVG, and captions describing a triangle nobody can see are not
+    a widget, so v2.11 adds `areas`: a polygon in data units, solid, hatched or
+    checked, drawn under everything else, with an optional label. It is a
+    small addition once you accept that nothing computes the polygon — the
+    author names its corners, which on a symbolic graph are all round numbers
+    anyway. Every example was re-embedded and every one reports what it did
+    before.
+
+26. **The equilibrium point learned to draw half its guides.** The printed
+    trade graphs mark P* on the price axis and nothing on the quantity axis,
+    and a full drop from the equilibrium runs straight through the
+    gains-from-trade triangle and its label. `guides:"p"` and `"q"` draw one
+    line or the other. The checker follows: its guide segments are built the
+    same way.
+
+27. **The movement-arrow rule was firing on the wrong pattern.** It keyed on
+    "any stepped widget with a price line", which was every trade widget: a
+    world price is a level the market settles at, not one it converges from,
+    and there is nothing to draw an arrow toward. It now needs the line *and*
+    a brace labelled surplus or shortage. Narrowing a check is exactly what
+    entry 22 warns about, so it went in with a test that the Exports case is
+    clean and a run over every earlier file showing the same result as before.
+
+28. **Two of the checker's findings were about its own defaults.** `color:
+    "ink"` on a price line was reported as "left at its default" when the
+    default for a line is red, so the schema scan now knows which lists are
+    red by default. And an area label was landing on the world price line on
+    the one step where the old surplus and the new line are both on screen —
+    a real finding, fixed by putting the old and new labels in the same spot
+    so nothing jumps.
+
+29. **Ian's prose was left alone, with three exceptions.** The request was
+    "create the widgets and leave everything else the same", so the body is
+    the source's body apart from the five image blocks. The three edits are
+    the ones the earlier ECO2023 conversions already made for hard rule 4: the
+    textbook box's heading and opening line no longer say "in class", and
+    "in the lecture after the exam" is "after the exam". Dr. Rush is named
+    once and is listed in the changelog for Ian's call, as always.

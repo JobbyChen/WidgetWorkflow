@@ -239,3 +239,34 @@ including every kind of shift; the probe is throwaway and stayed out of the repo
     the source rules, and that no arrow or source finding appears on a real file.
     Then three checks were deliberately broken to confirm the tests fail; a test
     suite that has never failed is evidence of nothing.
+
+23. **The first semester swap turned out to be a no-op, and that is now
+    measurable.** Two ECO2013 transcripts arrived for a swap against
+    `examples/ECO2013-263-SupplyAndDemand.html`. Every schedule matched to the
+    dollar — the mocha rows 15/6, 12/13, 9/22, 6/38, 3/65; lemonade 150 at $3
+    and 300 at $4; iced coffee 100/150/200 with a 50-unit shift; chicken 20, 30,
+    40 lbs; chicken thighs clearing at $5 and 200, short 90 at $4 and long 270
+    at $8 — as did every good, and the file's own date lines read 9/2/26 and
+    9/9/26, which are the transcripts' dates. They are the transcripts the file
+    was built from, not a new term's.
+
+    Establishing that took a morning of reading and could have gone the other
+    way: the cheap failure is to swap a title, find the numbers "close enough"
+    and ship a stale schedule. So the reading became
+    `scripts/transcript_diff.py`. It splits a widget's numbers into the ones a
+    reader sees (ticks, schedule rows, the price a brace or guide sits at) and
+    the ones that only place a curve, checks the first against the transcript
+    text, and reports symbolic widgets as having no values at all — their
+    110-scale coordinates are the engine's convention, and rule 3 says that is
+    precisely what you draw when the source states no numbers. Before that split
+    the file scored 96/158 and read like a file full of invented numbers; after
+    it, 45/45 values and 38/38 names.
+
+    Matching is loose — digits, spelled-out, thousands separators — which
+    over-reports support on purpose, so an UNSUPPORTED line can be trusted and a
+    stated one only means "not obviously changed". Both directions were
+    controlled: the elasticity file, which these transcripts do not describe,
+    comes back 9/17 and 20/30, and moving one mocha tick from $15 to $17 is
+    caught (15/16, UNSUPPORTED: 17). `check_file.py` has always printed `SKIP
+    numbers — whether each number is the source's number needs the source`;
+    when the source is a transcript, this answers it.

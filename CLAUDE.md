@@ -36,6 +36,7 @@ scripts/
   doc_headings.py             ← a Word file's headings and their level. Run it BEFORE writing any.
   add_toc.py                  ← write the house table of contents into a notes file
   widget_text.py              ← every renamable string in a file's widgets; --apply writes them back
+  transcript_diff.py          ← does a new term's transcript change this file? Run it BEFORE swapping.
   test_check_file.py          ← tests for check_file.py. Run after changing it.
   render_widgets.py           ← Playwright: screenshot every widget × scenario × step for collision review
 .claude/commands/             ← /convert, /check, /render
@@ -207,6 +208,20 @@ Full list with checkboxes: `docs/open-issues.md`.
   usually means starting it a few units in from the point and keeping it short.
   Where a panel genuinely has nowhere else to put it, crossing a guide is
   allowed — but establish that from the measurement, not from a glance.
+* **Before a semester swap, find out whether there is one.** `python
+  scripts/transcript_diff.py <file> <transcript>...` reports, per widget,
+  which of its ticks, schedule rows and brace prices the transcripts state and
+  which of the nouns its titles and labels name they use. Symbolic widgets are
+  reported as having no values at all, because their 110-scale coordinates are
+  the engine's convention and rule 3 says that is exactly what you draw when the
+  source states no numbers. Everything stated means the transcripts do not
+  change the file, and the swap is finished before it starts — the delivered
+  `ECO2013-263-SupplyAndDemand.html` against the 9/2 and 9/9 transcripts is
+  45/45 values and 38/38 names, because those are the transcripts it was built
+  from. Matching is loose on purpose, so it over-reports support: an UNSUPPORTED
+  line is worth trusting, a stated one only means "not obviously changed". And
+  read it as a question — an unsupported number is a number to go look up in the
+  source, never one to edit to taste.
 * **A semester swap is `scripts/widget_text.py`, not a rewrite.** It lists every
   title, lede, caption, step, axis title, button label and column header under
   an address like `w4.scenarios.sub.steps[2]`, and `--apply` writes an edited

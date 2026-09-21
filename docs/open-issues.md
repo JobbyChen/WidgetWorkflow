@@ -201,11 +201,17 @@ or "unattainable" dot) whose exact coordinates are not the lesson.
       `soffice` fails on every Word file, `.doc` and `.docx` alike. `antiword`
       and `catdoc` read `.doc`; `.docx` is parsed directly. Worth installing
       the Writer module if figure rendering from Word is ever wanted.
-- [ ] **Heading levels come from the source's run formatting**, not from
-      structure: bold alone is `<h1>`, bold and underlined at size 23 is
-      `<h2>`. A binary `.doc` gives no such spans through `antiword`, so
-      document 3's levels were read from paragraph alignment (centred is
-      `<h1>`). Prompt v6 step 0 should state the rule.
+- [x] **Heading levels come from the source's run formatting**, not from
+      structure. `scripts/doc_headings.py` now prints them for `.docx` and
+      `.doc` alike, and all four Fall '26 outputs were verified against it:
+      8/8, 1/5, 5/13 and 4/6 h1/h2, every one matching its source. Prompt v6
+      step 0 should still state the rule and point at the script.
+- [x] **`antiword` drops every floating text box.** In
+      `03-ECO2023-Fall26-Exam1-SupplyDemand.doc` that was six exam tips, three
+      worked examples including a demand schedule with real numbers, and every
+      figure label -- none of which reached the first conversion. `catdoc`
+      reads them. A `.doc` needs both readers, reconciled; this is now in
+      CLAUDE.md and in `doc_headings.py`'s docstring.
 - [ ] **Exam tip titles are written, and go under the paragraph they belong
       to.** Ian's convention is a short topic phrase -- "Opportunity Costs
       Calculation", "PPF Shape" -- and the block sits *after* the paragraph it

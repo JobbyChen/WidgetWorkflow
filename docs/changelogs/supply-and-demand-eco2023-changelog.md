@@ -7,25 +7,40 @@ covering Exam 1). Converted 2026-09-17.
 
 A legacy binary `.doc`, handled as mode (a). LibreOffice is installed here but
 carries no Writer module (`libswlo.so` is absent), so it fails on every Word
-file, `.doc` and `.docx` alike; `antiword` reads this one. Its DocBook output
-gives bold and italic spans but no heading levels, so heading levels were read
-from the **alignment** in the fixed-width text dump: the five centred headings
-are `<h1>` and every left-aligned one is `<h2>`. That puts "Shifts Due to a
-Change in Two Factors" at `<h2>`, under "Illustrating Shifts of the Demand and
-Supply Curves", which is where it belongs.
+file, `.doc` and `.docx` alike.
 
-The body is a transcription. Two things could not be read from the binary and
-were reconstructed from the prose instead, both recorded below.
+**This file needs two readers, and the first conversion used only one.**
+`antiword` gives the body flow, and its PostScript output gives the formatting
+that fixes heading levels (`scripts/doc_headings.py`): five centred
+Helvetica-Bold 12 headings are `<h1>` and thirteen underlined Times-Bold ones
+are `<h2>`. But **`antiword` silently drops every floating text box**, and in
+this document that is where six exam tips, three worked examples and every
+figure label live. `catdoc` reads them. The first version of this file was
+missing all of it. The recovered content is:
 
-## Every graph is symbolic
+- the chapter exam tip, and five more (the index card, the only factor that
+  shifts both curves, the jet fuel example, The Pizza Question, and when one
+  shift is bigger);
+- **Example: The Demand for Pizza**, with a schedule — 23 million at $9, 20
+  million at $11, 10 million at $13;
+- **Example: The Demand for Pizza (Continued)**, the movement-along and
+  income-shift discussion;
+- **Example: The Market for Shoes**, three paragraphs;
+- the From-the-Book box on relative price versus money price, whose opening
+  sentence `catdoc` garbled and which was recovered from the raw stream.
 
-**The document states no price or quantity anywhere.** Hard rule 3 therefore
-makes every graph symbolic: 110 × 110 axes, equilibrium at [50,50], P₁/Q₁ and
-P₂/Q₂ via `pl`/`ql`, and the D and S shapes the delivered
+## Most graphs are symbolic; the pizza pair is not
+
+Outside the pizza example the document states no price or quantity, so those
+graphs are symbolic: 110 × 110 axes, equilibrium at [50,50], P₁/Q₁ and P₂/Q₂
+via `pl`/`ql`, and the D and S shapes the delivered
 `ECO2013-263-SupplyAndDemand.html` uses. Those give p = 100 − q on demand and
 p = q on supply, so a price of 70 has 30 demanded against 70 supplied and a
 price of 30 is the mirror image — which is why the surplus and the shortage are
-the same size.
+the same size. The equilibrium widget uses the source's own labels: P<sub>EQ</sub>,
+P<sub>HI</sub>, P<sub>LO</sub>, Q<sub>S</sub> and Q<sub>D</sub>.
+
+The pizza schedule is real data, so those two widgets are numeric.
 
 ## Graphs
 
@@ -36,12 +51,15 @@ at all, find the graphs in the prose instead").
 
 | widget | replaces |
 | --- | --- |
+| The demand for pizza | the pizza schedule and its curve — numeric |
+| Along the curve, and a shift of the curve | the movement-along and low/high income figures — numeric |
 | The demand curve | the demand curve, plus movement-along versus shift |
 | The supply curve | the supply curve, plus movement-along versus shift |
 | Equilibrium, surplus, and shortage | the surplus/shortage/equilibrium comparison, as three buttons |
 | Working through a shift of one curve | **all six** worked examples, as six buttons |
 | One curve shifts: the four possibilities | the four-panel review figure, as four buttons |
-| Both curves shift at once | **both** two-factor examples, each as a two-panel comparison |
+| Both curves shift at once | **both** two-factor examples, plus the case where one shift is known to be larger |
+| The Pizza Question: Figures A to D | the four labelled figures in that exam-tip box |
 
 The six worked examples are six cases of one lesson, so hard rule 8 makes them
 one widget with a button per market; each keeps its own heading and its own
@@ -70,6 +88,9 @@ saw them. Only `render_widgets.py` and a person catch this class of defect.
 - **Dr. Rush is named once**, for his description of equilibrium as "a
   situation in which there is no automatic tendency for change". Kept verbatim;
   `check_file.py` raises its one WARN on it.
+- **"From-the-Book Topic Not Covered in Class" is retitled** "From the Textbook:
+  Topic Not Covered". Hard rule 4 forbids student-facing text that points at the
+  class, and `check_file.py` fails the original wording.
 - **The two-curve table's arrows were reconstructed.** The source draws them in
   a symbol font that `antiword` renders as `(` and `?` indiscriminately, so the
   same glyph stands for both up and down. The four prose bullets immediately

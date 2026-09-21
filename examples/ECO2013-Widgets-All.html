@@ -4,7 +4,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://smokinnotes.s3.us-east-1.amazonaws.com/content/sn25-v6.css">
 <style>
-.sdg { --navy:#002060; --ink:#1c2a44; --red:#d62828; --teal:#1a8a8a; --orange:#d8641c; --grey:#8a94a6; --rule:#c9d2e3; --paper:#f6f8fc; --plot:#eef3fd;
+.sdg { --navy:#002060; --ink:#1c2a44; --red:#d62828; --teal:#1a8a8a; --orange:#d8641c; --grey:#8a94a6; --rule:#c9d2e3; --paper:#f6f8fc; --plot:#eef3fd; --fig:580px;
   font-family:"Red Hat Display","Segoe UI",system-ui,sans-serif; color:var(--ink);
   border:1px solid var(--navy); background:var(--paper); padding:18px 20px 16px; width:80%; margin:24px auto; }
 @media (max-width:640px){ .sdg { width:100%; } }
@@ -15,7 +15,8 @@
 .sdg .sdg-scen button { flex:1 1 200px; border:1px solid var(--navy); background:#fff; color:var(--navy); padding:8px 12px; font:inherit; font-size:.9rem; cursor:pointer; text-align:left; line-height:1.3; }
 .sdg .sdg-scen button[aria-pressed="true"] { background:var(--navy); color:#fff; }
 .sdg .sdg-body { display:grid; grid-template-columns:1fr; gap:14px; align-items:start; }
-.sdg .sdg-body:not(.has-table):not(.two) figure { max-width:460px; margin:0 auto; width:100%; }
+.sdg .sdg-body:not(.has-table):not(.two) figure { max-width:var(--fig); margin:0 auto; width:100%; }
+.sdg .sdg-body.has-table figure { max-width:var(--fig); width:100%; }
 .sdg .sdg-body.has-table { grid-template-columns:minmax(150px,1fr) 2.2fr; }
 .sdg .sdg-body.two { grid-template-columns:1fr 34px 1fr; gap:8px; align-items:center; }
 .sdg .sdg-body.two:not(:has(.sdg-between)) { grid-template-columns:1fr 1fr; gap:14px; }
@@ -55,6 +56,20 @@
 .sdg .guide { fill:none; stroke-width:1.1; stroke-dasharray:4 3; }
 .sdg .pt { fill:#fff; stroke-width:2; }
 .sdg .pt.hi { stroke:var(--orange); stroke-width:3; r:6; }
+/* What this step just revealed, and what an earlier one did. */
+.sdg .ptg, .sdg .ptg .pt, .sdg .ptg .tag { transition:opacity .35s ease, stroke-width .25s ease; }
+.sdg .ptg.new .pt { stroke-width:3.4; }
+.sdg .ptg.new .pt.mk { stroke-width:2.4; }
+.sdg .ptg.new .halo { opacity:1; }
+.sdg .halo { fill:none; stroke:var(--orange); stroke-width:2; opacity:0; transition:opacity .35s ease; }
+.sdg .ptg.prior { opacity:.6; }
+.sdg .ptg.hi { opacity:1; }
+.sdg .ptg.hi .pt { stroke:var(--orange); stroke-width:3.4; }
+.sdg .ptg.hi .tag { fill:var(--orange); }
+.sdg .ptg { cursor:default; }
+.sdg .curve-g.new .curve { stroke-width:3.6; }
+.sdg .arrow.new { stroke-width:3.4; }
+.sdg g.new > .brace, .sdg .brace.new { stroke-width:3; }
 .sdg .pt.mk { stroke-width:1.4; }
 .sdg .mktxt { font-size:7.5px; font-weight:800; fill:var(--ink); }
 .sdg .tag { font-size:12px; font-weight:700; }
@@ -76,7 +91,7 @@
 .sdg .sdg-cap { margin:10px 0 0; padding:10px 12px; background:#fff; border-left:4px solid var(--red); font-size:.92rem; line-height:1.45; min-height:3.2em; }
 </style>
 <script>
-/* ===== sd-graph.js v2.7 — data-driven supply & demand widgets =====
+/* ===== sd-graph.js v2.8 — data-driven supply & demand widgets =====
    Markup:  <div class="sdg"><script type="application/json">{ ...config... }<\/script></div>
    Top-level config:
      title, lede, caption         heading / intro / static caption (caption used only when there are no steps)
@@ -246,6 +261,7 @@
     (cfg.points || []).forEach(function (p) {
       var cc = col(p.color), grp = el('g', {class: 'ptg'});
       if (p.guides !== false) grp.appendChild(el('path', {class: 'guide', stroke: cc, d: 'M' + O.x + ' ' + Y(p.p) + ' L' + X(p.q) + ' ' + Y(p.p) + ' L' + X(p.q) + ' ' + O.y}));
+      grp.appendChild(el('circle', {class: 'halo', cx: X(p.q), cy: Y(p.p), r: p.marker ? 10.5 : 8.5}));
       grp.appendChild(el('circle', {class: 'pt' + (p.marker ? ' mk' : ''), cx: X(p.q), cy: Y(p.p), r: p.marker ? 6 : 4.2, stroke: cc}));
       if (p.marker) grp.appendChild(el('text', {class: 'mktxt', x: X(p.q), y: Y(p.p) + 2.6, 'text-anchor': 'middle'}, p.marker));
       if (p.label) grp.appendChild(el('text', {class: 'tag', x: X(p.q) + (p.dx != null ? p.dx : 9), y: Y(p.p) + (p.dy != null ? p.dy : -9), fill: cc}, p.label));
@@ -253,6 +269,8 @@
       var ql = p.ql || ((p.showQ !== false && (ax.xticks || []).indexOf(p.q) < 0) ? fmtQ(p.q, ax) : null);
       if (pl) grp.appendChild(el('text', {class: 'tk strong', x: O.x - 6, y: Y(p.p) + 4, 'text-anchor': 'end', fill: cc}, pl));
       if (ql) grp.appendChild(el('text', {class: 'tk strong', x: X(p.q), y: O.y + 15, 'text-anchor': 'middle', fill: cc}, ql));
+      grp.addEventListener('mouseenter', function () { grp.classList.add('hi'); });
+      grp.addEventListener('mouseleave', function () { grp.classList.remove('hi'); });
       g.appendChild(grp); reg(grp, p);
     });
 
@@ -331,6 +349,12 @@
       pn.parts.forEach(function (pt) {
         var at = pt.spec.at || 0, until = pt.spec.until, on = s >= at && (until == null || s < until);
         pt.node.classList.toggle('off', !on);
+        // Which element is this step's? Without that, a walkthrough that leaves
+        // earlier points on screen gives no clue which one the caption means.
+        // What this step brought in is highlighted; what an earlier step
+        // brought in stays, but steps back.
+        pt.node.classList.toggle('new', on && s > 0 && at === s);
+        pt.node.classList.toggle('prior', on && at > 0 && at < s);
         if (pt.node.dataset.dx != null) pt.node.style.transform = on ? 'translate(0,0)' : 'translate(' + (-pt.node.dataset.dx) + 'px,0)';
       });
       (pn.cfg.curves || []).forEach(function (c) { if (c.from && pn.byId[c.from]) pn.byId[c.from].node.classList.toggle('dim', s >= (c.at || 0)); });

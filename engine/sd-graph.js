@@ -1,4 +1,4 @@
-/* ===== sd-graph.js v2.7 — data-driven supply & demand widgets =====
+/* ===== sd-graph.js v2.8 — data-driven supply & demand widgets =====
    Markup:  <div class="sdg"><script type="application/json">{ ...config... }<\/script></div>
    Top-level config:
      title, lede, caption         heading / intro / static caption (caption used only when there are no steps)
@@ -168,6 +168,7 @@
     (cfg.points || []).forEach(function (p) {
       var cc = col(p.color), grp = el('g', {class: 'ptg'});
       if (p.guides !== false) grp.appendChild(el('path', {class: 'guide', stroke: cc, d: 'M' + O.x + ' ' + Y(p.p) + ' L' + X(p.q) + ' ' + Y(p.p) + ' L' + X(p.q) + ' ' + O.y}));
+      grp.appendChild(el('circle', {class: 'halo', cx: X(p.q), cy: Y(p.p), r: p.marker ? 10.5 : 8.5}));
       grp.appendChild(el('circle', {class: 'pt' + (p.marker ? ' mk' : ''), cx: X(p.q), cy: Y(p.p), r: p.marker ? 6 : 4.2, stroke: cc}));
       if (p.marker) grp.appendChild(el('text', {class: 'mktxt', x: X(p.q), y: Y(p.p) + 2.6, 'text-anchor': 'middle'}, p.marker));
       if (p.label) grp.appendChild(el('text', {class: 'tag', x: X(p.q) + (p.dx != null ? p.dx : 9), y: Y(p.p) + (p.dy != null ? p.dy : -9), fill: cc}, p.label));
@@ -175,6 +176,8 @@
       var ql = p.ql || ((p.showQ !== false && (ax.xticks || []).indexOf(p.q) < 0) ? fmtQ(p.q, ax) : null);
       if (pl) grp.appendChild(el('text', {class: 'tk strong', x: O.x - 6, y: Y(p.p) + 4, 'text-anchor': 'end', fill: cc}, pl));
       if (ql) grp.appendChild(el('text', {class: 'tk strong', x: X(p.q), y: O.y + 15, 'text-anchor': 'middle', fill: cc}, ql));
+      grp.addEventListener('mouseenter', function () { grp.classList.add('hi'); });
+      grp.addEventListener('mouseleave', function () { grp.classList.remove('hi'); });
       g.appendChild(grp); reg(grp, p);
     });
 
@@ -253,6 +256,12 @@
       pn.parts.forEach(function (pt) {
         var at = pt.spec.at || 0, until = pt.spec.until, on = s >= at && (until == null || s < until);
         pt.node.classList.toggle('off', !on);
+        // Which element is this step's? Without that, a walkthrough that leaves
+        // earlier points on screen gives no clue which one the caption means.
+        // What this step brought in is highlighted; what an earlier step
+        // brought in stays, but steps back.
+        pt.node.classList.toggle('new', on && s > 0 && at === s);
+        pt.node.classList.toggle('prior', on && at > 0 && at < s);
         if (pt.node.dataset.dx != null) pt.node.style.transform = on ? 'translate(0,0)' : 'translate(' + (-pt.node.dataset.dx) + 'px,0)';
       });
       (pn.cfg.curves || []).forEach(function (c) { if (c.from && pn.byId[c.from]) pn.byId[c.from].node.classList.toggle('dim', s >= (c.at || 0)); });

@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com"> <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet">
     <script src="https://smokinnotes.s3.us-east-1.amazonaws.com/content/sn25-v6.js"></script>
 <style>
-.sdg { --navy:#002060; --ink:#1c2a44; --red:#d62828; --teal:#1a8a8a; --orange:#d8641c; --grey:#8a94a6; --rule:#c9d2e3; --paper:#f6f8fc; --plot:#eef3fd;
+.sdg { --navy:#002060; --ink:#1c2a44; --red:#d62828; --teal:#1a8a8a; --orange:#d8641c; --grey:#8a94a6; --rule:#c9d2e3; --paper:#f6f8fc; --plot:#eef3fd; --fig:580px;
   font-family:"Red Hat Display","Segoe UI",system-ui,sans-serif; color:var(--ink);
   border:1px solid var(--navy); background:var(--paper); padding:18px 20px 16px; width:80%; margin:24px auto; }
 @media (max-width:640px){ .sdg { width:100%; } }
@@ -19,7 +19,8 @@
 .sdg .sdg-scen button { flex:1 1 200px; border:1px solid var(--navy); background:#fff; color:var(--navy); padding:8px 12px; font:inherit; font-size:.9rem; cursor:pointer; text-align:left; line-height:1.3; }
 .sdg .sdg-scen button[aria-pressed="true"] { background:var(--navy); color:#fff; }
 .sdg .sdg-body { display:grid; grid-template-columns:1fr; gap:14px; align-items:start; }
-.sdg .sdg-body:not(.has-table):not(.two) figure { max-width:460px; margin:0 auto; width:100%; }
+.sdg .sdg-body:not(.has-table):not(.two) figure { max-width:var(--fig); margin:0 auto; width:100%; }
+.sdg .sdg-body.has-table figure { max-width:var(--fig); width:100%; }
 .sdg .sdg-body.has-table { grid-template-columns:minmax(150px,1fr) 2.2fr; }
 .sdg .sdg-body.two { grid-template-columns:1fr 34px 1fr; gap:8px; align-items:center; }
 .sdg .sdg-body.two:not(:has(.sdg-between)) { grid-template-columns:1fr 1fr; gap:14px; }
@@ -59,6 +60,20 @@
 .sdg .guide { fill:none; stroke-width:1.1; stroke-dasharray:4 3; }
 .sdg .pt { fill:#fff; stroke-width:2; }
 .sdg .pt.hi { stroke:var(--orange); stroke-width:3; r:6; }
+/* What this step just revealed, and what an earlier one did. */
+.sdg .ptg, .sdg .ptg .pt, .sdg .ptg .tag { transition:opacity .35s ease, stroke-width .25s ease; }
+.sdg .ptg.new .pt { stroke-width:3.4; }
+.sdg .ptg.new .pt.mk { stroke-width:2.4; }
+.sdg .ptg.new .halo { opacity:1; }
+.sdg .halo { fill:none; stroke:var(--orange); stroke-width:2; opacity:0; transition:opacity .35s ease; }
+.sdg .ptg.prior { opacity:.6; }
+.sdg .ptg.hi { opacity:1; }
+.sdg .ptg.hi .pt { stroke:var(--orange); stroke-width:3.4; }
+.sdg .ptg.hi .tag { fill:var(--orange); }
+.sdg .ptg { cursor:default; }
+.sdg .curve-g.new .curve { stroke-width:3.6; }
+.sdg .arrow.new { stroke-width:3.4; }
+.sdg g.new > .brace, .sdg .brace.new { stroke-width:3; }
 .sdg .pt.mk { stroke-width:1.4; }
 .sdg .mktxt { font-size:7.5px; font-weight:800; fill:var(--ink); }
 .sdg .tag { font-size:12px; font-weight:700; }
@@ -80,7 +95,7 @@
 .sdg .sdg-cap { margin:10px 0 0; padding:10px 12px; background:#fff; border-left:4px solid var(--red); font-size:.92rem; line-height:1.45; min-height:3.2em; }
 </style>
 <script>
-/* ===== sd-graph.js v2.7 — data-driven supply & demand widgets =====
+/* ===== sd-graph.js v2.8 — data-driven supply & demand widgets =====
    Markup:  <div class="sdg"><script type="application/json">{ ...config... }<\/script></div>
    Top-level config:
      title, lede, caption         heading / intro / static caption (caption used only when there are no steps)
@@ -250,6 +265,7 @@
     (cfg.points || []).forEach(function (p) {
       var cc = col(p.color), grp = el('g', {class: 'ptg'});
       if (p.guides !== false) grp.appendChild(el('path', {class: 'guide', stroke: cc, d: 'M' + O.x + ' ' + Y(p.p) + ' L' + X(p.q) + ' ' + Y(p.p) + ' L' + X(p.q) + ' ' + O.y}));
+      grp.appendChild(el('circle', {class: 'halo', cx: X(p.q), cy: Y(p.p), r: p.marker ? 10.5 : 8.5}));
       grp.appendChild(el('circle', {class: 'pt' + (p.marker ? ' mk' : ''), cx: X(p.q), cy: Y(p.p), r: p.marker ? 6 : 4.2, stroke: cc}));
       if (p.marker) grp.appendChild(el('text', {class: 'mktxt', x: X(p.q), y: Y(p.p) + 2.6, 'text-anchor': 'middle'}, p.marker));
       if (p.label) grp.appendChild(el('text', {class: 'tag', x: X(p.q) + (p.dx != null ? p.dx : 9), y: Y(p.p) + (p.dy != null ? p.dy : -9), fill: cc}, p.label));
@@ -257,6 +273,8 @@
       var ql = p.ql || ((p.showQ !== false && (ax.xticks || []).indexOf(p.q) < 0) ? fmtQ(p.q, ax) : null);
       if (pl) grp.appendChild(el('text', {class: 'tk strong', x: O.x - 6, y: Y(p.p) + 4, 'text-anchor': 'end', fill: cc}, pl));
       if (ql) grp.appendChild(el('text', {class: 'tk strong', x: X(p.q), y: O.y + 15, 'text-anchor': 'middle', fill: cc}, ql));
+      grp.addEventListener('mouseenter', function () { grp.classList.add('hi'); });
+      grp.addEventListener('mouseleave', function () { grp.classList.remove('hi'); });
       g.appendChild(grp); reg(grp, p);
     });
 
@@ -335,6 +353,12 @@
       pn.parts.forEach(function (pt) {
         var at = pt.spec.at || 0, until = pt.spec.until, on = s >= at && (until == null || s < until);
         pt.node.classList.toggle('off', !on);
+        // Which element is this step's? Without that, a walkthrough that leaves
+        // earlier points on screen gives no clue which one the caption means.
+        // What this step brought in is highlighted; what an earlier step
+        // brought in stays, but steps back.
+        pt.node.classList.toggle('new', on && s > 0 && at === s);
+        pt.node.classList.toggle('prior', on && at > 0 && at < s);
         if (pt.node.dataset.dx != null) pt.node.style.transform = on ? 'translate(0,0)' : 'translate(' + (-pt.node.dataset.dx) + 'px,0)';
       });
       (pn.cfg.curves || []).forEach(function (c) { if (c.from && pn.byId[c.from]) pn.byId[c.from].node.classList.toggle('dim', s >= (c.at || 0)); });
@@ -471,6 +495,8 @@
 </nav>
 </details>
 
+<div class="exam-tip"><h4>EXAM TIP: Chapter 3</h4><p>Chapter 3 is, by far, the most important chapter in the book.  In fact, Dr. Rush will include questions from this chapter on all three of your exams in this class.  Be sure to spend plenty of time on this chapter.</p></div>
+
 <h1 id="introduction-to-supply-and-demand">Introduction to Supply and Demand</h1>
 
 <p>A <strong>market</strong> is an arrangement in which buyers and sellers can transact business.  A <strong>competitive market</strong> is one with lots of buyers and lots of sellers, so no one person or firm determines the price.  The best way to divide markets is between the demanders (buyers) and the suppliers (sellers).  For most goods and services, we think of households as the demanders and firms as the suppliers.  However, for some markets, like the labor market, it is just the opposite: Firms demand labor from households that supply it.</p>
@@ -485,14 +511,36 @@
 
 <p>Note that a change in demand is completely different from a change in quantity demanded (Q<sub>D</sub>).  A movement along the demand curve represents a change in quantity demanded.  A complete shift of the demand curve represents a change in demand.</p>
 
+<div class="example-box"><h4>Example: The Demand for Pizza</h4>
+<p>Assume you ask everyone in Florida how many pizzas they would buy in a month if the pizzas were priced at $9, $11, and $13.  This is the aggregate data you collect:</p>
+<table>
+<tr><th>Price</th><th>Quantity Demanded</th></tr>
+<tr><td>$9</td><td>23 million</td></tr>
+<tr><td>$11</td><td>20 million</td></tr>
+<tr><td>$13</td><td>10 million</td></tr>
+</table>
 <!-- IMAGE POSITION: beside-referenced paragraph -->
 <div class="sdg"><script type="application/json">
 {
- "title": "The demand curve",
- "lede": "A movement along the curve and a shift of the curve are different things.",
+ "title": "The demand for pizza",
+ "lede": "Each row of the schedule is one point on the curve.",
  "axes": {
-  "xmax": 110,
-  "ymax": 110
+  "x": "Q",
+  "y": "P",
+  "xmax": 26,
+  "ymax": 14,
+  "money": true,
+  "xticks": [
+   10,
+   20,
+   23
+  ],
+  "yticks": [
+   9,
+   11,
+   13
+  ],
+  "grid": true
  },
  "curves": [
   {
@@ -500,14 +548,99 @@
    "label": "D",
    "pts": [
     [
-     4,
-     96
+     10,
+     13
     ],
     [
-     92,
-     8
+     20,
+     11
+    ],
+    [
+     23,
+     9
     ]
    ],
+   "curved": true,
+   "ldx": 8,
+   "ldy": 16
+  }
+ ],
+ "table": {
+  "cols": [
+   "Price",
+   "Quantity demanded (millions)"
+  ],
+  "series": [
+   "D"
+  ],
+  "rows": [
+   [
+    9,
+    23
+   ],
+   [
+    11,
+    20
+   ],
+   [
+    13,
+    10
+   ]
+  ]
+ },
+ "caption": "Asked how many pizzas they would buy in a month, Floridians want 23 million at $9, 20 million at $11 and only 10 million at $13. The curve slopes down because a higher price always brings a smaller quantity demanded, which is the law of demand."
+}
+</script></div>
+</div>
+
+<div class="example-box"><h4>Example: The Demand for Pizza (Continued)</h4>
+<p>The negative slope of the demand curve indicates the law of demand: If the price of pizza increases, the quantity of pizza demanded decreases.</p>
+<p>There is only one way the quantity demanded of a good can change: if the price changes.  For instance, in our pizza example, if the price goes from $9 to $11, there will be a decrease in the quantity demanded from 23M to 20M.  This decrease in quantity demanded is a movement along the demand curve.</p>
+<p>Let&rsquo;s look at a factor other than price &ndash; income.  If people&rsquo;s incomes increase, they can buy more pizza than they could have before because they have more disposable income.  The demand curve for pizza will therefore shift to the right, meaning that the quantity demanded is higher at every price.  This is shown in the diagram below.</p>
+<!-- IMAGE POSITION: beside-referenced paragraph -->
+<div class="sdg"><script type="application/json">
+{
+ "title": "Along the curve, and a shift of the curve",
+ "lede": "Only a change in the price of pizza moves you along the curve.",
+ "axes": {
+  "x": "Q",
+  "y": "P",
+  "xmax": 30,
+  "ymax": 14,
+  "money": true,
+  "xticks": [
+   10,
+   20,
+   23
+  ],
+  "yticks": [
+   9,
+   11,
+   13
+  ],
+  "grid": true
+ },
+ "curves": [
+  {
+   "id": "D",
+   "label": "D",
+   "pts": [
+    [
+     10,
+     13
+    ],
+    [
+     20,
+     11
+    ],
+    [
+     23,
+     9
+    ]
+   ],
+   "curved": true,
+   "ldx": 8,
+   "ldy": 16,
    "until": 3
   },
   {
@@ -515,15 +648,23 @@
    "label": "D₁",
    "pts": [
     [
-     4,
-     96
+     10,
+     13
     ],
     [
-     92,
-     8
+     20,
+     11
+    ],
+    [
+     23,
+     9
     ]
    ],
+   "curved": true,
    "thin": true,
+   "lstart": true,
+   "ldx": -22,
+   "ldy": -6,
    "at": 3
   },
   {
@@ -531,36 +672,38 @@
    "label": "D₂",
    "pts": [
     [
-     20,
-     100
+     16,
+     13
     ],
     [
-     104,
-     16
+     26,
+     11
+    ],
+    [
+     29,
+     9
     ]
    ],
+   "curved": true,
    "color": "red",
    "from": "D1",
    "at": 3,
-   "arrowP": 88
+   "arrowP": 12,
+   "lstart": true,
+   "ldx": 8,
+   "ldy": -6
   }
  ],
  "points": [
   {
-   "q": 50,
-   "p": 50,
-   "pl": "P₁",
-   "ql": "Q₁",
-   "marker": "1",
+   "q": 23,
+   "p": 9,
    "at": 1,
    "until": 3
   },
   {
-   "q": 70,
-   "p": 30,
-   "pl": "P₂",
-   "ql": "Q₂",
-   "marker": "2",
+   "q": 20,
+   "p": 11,
    "at": 2,
    "until": 3
   }
@@ -568,12 +711,12 @@
  "moves": [
   {
    "from": [
-    52,
-    48
+    23,
+    9
    ],
    "to": [
-    68,
-    32
+    20,
+    11
    ],
    "at": 2,
    "until": 3,
@@ -581,13 +724,15 @@
   }
  ],
  "steps": [
-  "The law of demand says price and quantity demanded move in opposite directions, which is why the demand curve slopes down.",
-  "Read one point off it: at the price P₁ buyers want the quantity Q₁.",
-  "A fall in price to P₂ carries buyers down the curve to the larger quantity Q₂. The curve has not moved, so this is a change in quantity demanded, not a change in demand.",
-  "A change in demand is a different thing: the whole curve moves to D₂, so buyers want a different quantity at every price. Here quantity demanded is higher at each price, and the price itself has not changed."
+  "This is the same demand curve for pizza, drawn from the schedule.",
+  "At $9 a month, buyers want 23 million pizzas.",
+  "Raise the price to $11 and buyers want 20 million instead. Nothing about the curve has changed; the price moved, so this is a movement along the curve and a change in quantity demanded.",
+  "Now change something other than the price. Higher incomes let people buy more pizza at every price, so the whole curve shifts right, to D₂. That is a change in demand, and it raises the quantity demanded at each and every price."
  ]
 }
 </script></div>
+<p>Note that we represented these demand curves as straight lines.  Demand curves don&rsquo;t have to be straight &ndash; they can be curved.  In fact, in the relationships expressed above, the lines probably should be curved.  However, it&rsquo;s easier to analyze straight lines, so that&rsquo;s what we will be using in this course.</p>
+</div>
 
 <h2 id="factors-that-shift-the-demand-curve">Factors That Shift the Demand Curve</h2>
 
@@ -632,6 +777,8 @@
 <tr><td><b>Credit Conditions</b></td><td>Improve</td><td>Worsen</td></tr>
 <tr><td><b>Expected Future Price</b></td><td>Increases</td><td>Decreases</td></tr>
 </table>
+
+<div class="exam-tip"><h4>EXAM TIP: Your Index Card</h4><p>You should definitely include a list of the factors that shift the demand and supply curves on the 3&Prime; &times; 5&Prime; index card that you&rsquo;re allowed to bring to the exam.</p></div>
 
 <h1 id="supply">Supply</h1>
 
@@ -782,6 +929,8 @@
 <tr><td><b>Expected Future Price</b></td><td>Decreases</td><td>Increases</td></tr>
 </table>
 
+<div class="exam-tip"><h4>EXAM TIP: The Only Factor That Shifts Both</h4><p>Note that the only factor that can shift both the demand and supply curves is a change in the expected future price.  Changes in other factors affect either supply or demand, but not both.</p></div>
+
 <h1 id="equilibrium-shortages-and-surpluses">Equilibrium, Shortages, and Surpluses</h1>
 
 <p>Your textbook defines <strong>equilibrium</strong> as a situation in which opposing forces (like supply and demand) are in balance.  Dr. Rush describes equilibrium as &ldquo;a situation in which there is no automatic tendency for change.&rdquo;</p>
@@ -843,9 +992,8 @@
     {
      "q": 50,
      "p": 50,
-     "pl": "P₁",
-     "ql": "Q₁",
-     "marker": "1"
+     "pl": "Pₑₒ",
+     "ql": "Q"
     }
    ],
    "caption": "Where the two curves cross, the quantity demanded equals the quantity supplied. Nothing pushes the price either way, so this price and quantity are the equilibrium, and there is neither a surplus nor a shortage."
@@ -856,31 +1004,31 @@
     {
      "q": 50,
      "p": 50,
-     "pl": "P₁",
-     "ql": "Q₁",
-     "color": "grey"
+     "pl": "Pₑₒ",
+     "color": "grey",
+     "showQ": false
     },
     {
      "q": 30,
      "p": 70,
      "color": "red",
      "at": 1,
-     "showP": false,
-     "showQ": false
+     "ql": "Qᴅ",
+     "showP": false
     },
     {
      "q": 70,
      "p": 70,
      "color": "red",
      "at": 1,
-     "showP": false,
-     "showQ": false
+     "ql": "Qₛ",
+     "showP": false
     }
    ],
    "hlines": [
     {
      "p": 70,
-     "label": "P₂",
+     "label": "Pʜɪ",
      "at": 1
     }
    ],
@@ -934,31 +1082,31 @@
     {
      "q": 50,
      "p": 50,
-     "pl": "P₁",
-     "ql": "Q₁",
-     "color": "grey"
+     "pl": "Pₑₒ",
+     "color": "grey",
+     "showQ": false
     },
     {
      "q": 30,
      "p": 30,
      "color": "red",
      "at": 1,
-     "showP": false,
-     "showQ": false
+     "ql": "Qₛ",
+     "showP": false
     },
     {
      "q": 70,
      "p": 30,
      "color": "red",
      "at": 1,
-     "showP": false,
-     "showQ": false
+     "ql": "Qᴅ",
+     "showP": false
     }
    ],
    "hlines": [
     {
      "p": 30,
-     "label": "P₂",
+     "label": "Pʟᴏ",
      "at": 1
     }
    ],
@@ -1010,6 +1158,12 @@
  }
 }
 </script></div>
+
+<div class="example-box"><h4>Example: The Market for Shoes</h4>
+<p>Suppose that the price of shoes is set below the equilibrium price.  The result will be a temporary shortage, because quantity demanded will be greater than quantity supplied.  In this situation, buyers will rush to stores (for example, shoe stores at Butler Plaza) to try to purchase shoes at the low price.  However, because shoes are selling out quickly and many buyers are leaving empty-handed, suppliers will raise their prices.  They will continue to raise their prices as long as they are selling all of the shoes they have available.  That is, they will continue to raise the price until they reach market equilibrium &ndash; where quantity demanded is exactly equal to quantity supplied.</p>
+<p>Now, let&rsquo;s assume that profit-seeking shoe sellers set the price very high &ndash; at $200 per pair.  At that price, a lot of people just won&rsquo;t want to buy shoes &ndash; either they won&rsquo;t be able to afford them or they will be content with substitutes (such as waiting longer to replace their shoes or buying a different type of footwear).  In this case, we will observe a surplus, where the quantity supplied is greater than the quantity demanded.  Shoe sellers, seeing that their shoes are not being bought and inventory is piling up, will be forced to lower prices.  They will continue lowering the price until they reach the point where they are selling all of their shoes.  This is equilibrium, the point where quantity supplied equals quantity demanded.</p>
+<p>Finally, let&rsquo;s assume that the price of shoes is set at the equilibrium price.  At this point, there will be no surplus and no shortage.  Quantity supplied is exactly equal to quantity demanded.  Therefore, there will be no upward or downward pressure on the price.  Every pair of shoes that suppliers bring to the market will be bought by a buyer, and no buyer who is willing to pay the market price will be left without shoes.  What we are seeing is an equilibrium, where the opposing forces of supply and demand balance each other out.</p>
+</div>
 
 <h1 id="illustrating-shifts-of-the-demand-and-supply-curves">Illustrating Shifts of the Demand and Supply Curves</h1>
 
@@ -1194,6 +1348,87 @@
 
 <p>As you can see, the equilibrium price increases and the equilibrium quantity decreases as a result of the change in the cost of production.</p>
 
+<div class="exam-tip"><h4>EXAM TIP: The Jet Fuel Example</h4><p>This example (involving jet fuel) is one of Dr. Rush&rsquo;s favorite examples.  You&rsquo;re likely to see a question like this on one of your three midterm exams.</p></div>
+
+<div class="exam-tip"><h4>EXAM TIP: The Pizza Question</h4>
+<p>A common question on Exam 1 uses a series of graphs like the ones below and asks about the impact of some variable in the market for pizza.</p>
+<!-- IMAGE POSITION: below-referenced paragraph -->
+<div class="sdg"><script type="application/json">
+{
+ "title": "The Pizza Question: Figures A to D",
+ "lede": "Four ways the pizza market can move. Pick a figure.",
+ "scenarios": {
+  "a": {
+   "label": "Figure A",
+   "preset": "shift",
+   "shift": "D",
+   "dir": "right",
+   "size": 20,
+   "static": true,
+   "caption": "Figure A shifts the demand curve to the right, which is an increase in demand. The price of pizza rises and the quantity of pizza traded rises."
+  },
+  "b": {
+   "label": "Figure B",
+   "preset": "shift",
+   "shift": "D",
+   "dir": "left",
+   "size": 20,
+   "static": true,
+   "caption": "Figure B shifts the demand curve to the left, which is a decrease in demand. The price of pizza falls and the quantity of pizza traded falls."
+  },
+  "c": {
+   "label": "Figure C",
+   "preset": "shift",
+   "shift": "S",
+   "dir": "left",
+   "size": 20,
+   "static": true,
+   "caption": "Figure C shifts the supply curve to the left, which is a decrease in supply. The price of pizza rises and the quantity of pizza traded falls."
+  },
+  "d": {
+   "label": "Figure D",
+   "preset": "shift",
+   "shift": "S",
+   "dir": "right",
+   "size": 20,
+   "static": true,
+   "caption": "Figure D shifts the supply curve to the right, which is an increase in supply. The price of pizza falls and the quantity of pizza traded rises."
+  }
+ }
+}
+</script></div>
+<p><b>Figure A</b> represents a shift of the demand curve to the right.  This represents an increase in demand.  This can be caused by:</p>
+<ul>
+<li>An increase in income, if pizza is a normal good.</li>
+<li>A decrease in income, if pizza is an inferior good.</li>
+<li>An increase in the price of hot dogs, if hot dogs are substitutes.</li>
+<li>A decrease in the price of breadsticks, if breadsticks are complements.</li>
+<li>People&rsquo;s preferences changing so they like pizza more.</li>
+<li>An increase in the number of pizza eaters.</li>
+</ul>
+<p><b>Figure B</b> represents a shift in the demand curve to the left.  This represents a decrease in demand.  This can be caused by:</p>
+<ul>
+<li>A decrease in income, if pizza is a normal good.</li>
+<li>An increase in income, if pizza is an inferior good.</li>
+<li>A decrease in the price of hot dogs, if hot dogs are substitutes.</li>
+<li>An increase in the price of breadsticks, if breadsticks are complements.</li>
+<li>People&rsquo;s preferences changing so they like pizza less.</li>
+<li>A decrease in the number of pizza eaters.</li>
+</ul>
+<p><b>Figure C</b> represents a shift of the supply curve to the left.  This represents a decrease in supply.  This can be caused by:</p>
+<ul>
+<li>An increase in the cost of the cheese that goes into pizza.</li>
+<li>A decrease in the number of suppliers.</li>
+</ul>
+<p><b>Figure D</b> represents a shift of the supply curve to the right.  This represents an increase in supply.  This can be caused by:</p>
+<ul>
+<li>A decrease in the cost of the cheese that goes into pizza.</li>
+<li>An increase in the number of suppliers.</li>
+<li>A technological advance in pizza production.</li>
+</ul>
+<p>Dr. Rush can change the question around and ask about changes in costs, preferences, technology, the prices of related goods, etc.  Hopefully, by becoming familiar with the diagram and the possible questions beforehand, you will be better prepared to answer this question on a test.</p>
+</div>
+
 <h2 id="review-effects-of-a-shift-of-one-curve-on-equilibrium-price-and-quantity">Review: Effects of a Shift of One Curve on Equilibrium Price and Quantity</h2>
 
 <p>When either the demand curve or the supply curve shifts, you will always know what happens to the equilibrium price and quantity.  The four possibilities are as follows:</p>
@@ -1211,7 +1446,7 @@
    "dir": "right",
    "size": 20,
    "static": true,
-   "caption": "Demand shifts right, so at the old price buyers want more than sellers offer. The price is bid up and the quantity traded rises: both the equilibrium price and the equilibrium quantity increase."
+   "caption": "Demand shifts right, so at the old price buyers want more than sellers offer. The price is bid up and the quantity traded rises: both the equilibrium price and the equilibrium quantity increase. There is a shortage at the original, pre-shift price."
   },
   "dl": {
    "label": "Demand shifts left",
@@ -1220,7 +1455,7 @@
    "dir": "left",
    "size": 20,
    "static": true,
-   "caption": "Demand shifts left, so at the old price sellers offer more than buyers want. The price is cut and the quantity traded falls: both the equilibrium price and the equilibrium quantity decrease."
+   "caption": "Demand shifts left, so at the old price sellers offer more than buyers want. The price is cut and the quantity traded falls: both the equilibrium price and the equilibrium quantity decrease. There is a surplus at the original, pre-shift price."
   },
   "sr": {
    "label": "Supply shifts right",
@@ -1229,7 +1464,7 @@
    "dir": "right",
    "size": 20,
    "static": true,
-   "caption": "Supply shifts right, so at the old price sellers offer more than buyers want. The price is cut and the quantity traded rises: the equilibrium price decreases and the equilibrium quantity increases."
+   "caption": "Supply shifts right, so at the old price sellers offer more than buyers want. The price is cut and the quantity traded rises: the equilibrium price decreases and the equilibrium quantity increases. There is a surplus at the original, pre-shift price."
   },
   "sl": {
    "label": "Supply shifts left",
@@ -1238,7 +1473,7 @@
    "dir": "left",
    "size": 20,
    "static": true,
-   "caption": "Supply shifts left, so at the old price buyers want more than sellers offer. The price is bid up and the quantity traded falls: the equilibrium price increases and the equilibrium quantity decreases."
+   "caption": "Supply shifts left, so at the old price buyers want more than sellers offer. The price is bid up and the quantity traded falls: the equilibrium price increases and the equilibrium quantity decreases. There is a shortage at the original, pre-shift price."
   }
  }
 }
@@ -1257,7 +1492,9 @@
 
 <p>For cases when both the demand and supply curves shift and you are not told about the magnitude of either shift, you will know unambiguously about the effect on one of the two&mdash;price or quantity.  The effect on the other will be ambiguous.  If you know that one of the shifts is larger than the other, you will know unambiguously what happens to both price and quantity.</p>
 
-<p>Both of the examples that follow are worked in the widget below.</p>
+<div class="exam-tip"><h4>EXAM TIP: When One Shift Is Bigger</h4><p>On an exam, you might be told that one shift is bigger than the other.  In this case, you will be able to tell unambiguously how the price and quantity will change.  You will only have to draw one diagram.</p></div>
+
+<p>Both of the examples that follow are worked in the widget below, along with the case where one shift is known to be the larger.</p>
 
 <!-- IMAGE POSITION: below-referenced paragraph -->
 <div class="sdg"><script type="application/json">
@@ -1301,6 +1538,20 @@
     "A higher expected future price makes buyers want to buy now, so demand shifts right, from D₁ to D₂.",
     "It also makes sellers want to hold back and sell later, so supply shifts left, from S₁ to S₂. This is the one factor that moves both curves at once.",
     "Each panel reaches its own Point 2. The price is higher in both, so the price definitely rises; the quantity is higher in one panel and lower in the other, so which way it goes depends on which shift is larger."
+   ]
+  },
+  "bigger": {
+   "label": "When you are told one shift is bigger",
+   "preset": "double",
+   "demand": "left",
+   "supply": "left",
+   "dD": 40,
+   "dS": 12,
+   "steps": [
+    "Both curves start in equilibrium at P₁ and Q₁.",
+    "Demand shifts left by a lot, from D₁ to D₂.",
+    "Supply shifts left by just a little, from S₁ to S₂.",
+    "Because the fall in demand is the larger of the two, only one diagram is needed and nothing is left ambiguous: the equilibrium price falls and the equilibrium quantity falls."
    ]
   }
  }
@@ -1353,6 +1604,11 @@
 </table>
 
 <p>Note that you would unambiguously know what happens to price and quantity if you knew the relative magnitude of the shifts.  For example, suppose that you were told that the demand curve and the supply curve shifted to the left, and the impact of the leftward shift of the demand curve was greater than the impact of the leftward shift of the supply curve.  The supply curve still shifts to the left, and the demand curve still shifts to the left.  However, because the leftward shift of the demand curve is greater than the leftward shift of the supply curve, we can unambiguously tell that the equilibrium price will decrease and the equilibrium quantity will decrease.</p>
+
+<div class="other-box"><h4>From the Textbook: Topic Not Covered</h4>
+<p>The price listed on supply and demand diagrams is technically a <strong>relative price</strong>, or a price relative to the price of other goods.  This is different from a <strong>money price</strong>, or a price in terms of dollars.</p>
+<p>For example, suppose that the price of turkey is 24 cents per pound.  You may initially think this is cheap because the price of steak is currently much higher than that.  However, if you were told that the price of steak was just 6 cents per pound, you&rsquo;d probably think of turkey as being expensive!  (Interestingly, this is how it was in the 1800s.  The price of turkey was much higher than the price of steak, so the relative price of turkey was very high.)</p>
+</div>
 
 </body>
 </html>

@@ -33,6 +33,8 @@ reference-images/             ← the source PNGs (empty — see open issues)
 scripts/
   embed_engine.py             ← inline engine/ into a notes file's <head> (prompt step 7)
   check_file.py               ← mechanical step-8 checks (JSON, </script>, head, engine identity…)
+  doc_headings.py             ← a Word file's headings and their level. Run it BEFORE writing any.
+  add_toc.py                  ← write the house table of contents into a notes file
   test_check_file.py          ← tests for check_file.py. Run after changing it.
   render_widgets.py           ← Playwright: screenshot every widget × scenario × step for collision review
 .claude/commands/             ← /convert, /check, /render
@@ -172,6 +174,17 @@ Full list with checkboxes: `docs/open-issues.md`.
   movement-along vs shift, schedule shift with per-row arrows, surplus/shortage
   with hlines+braces+moves, two-market panels, symbolic presets). Copy those
   shapes; don't reinvent.
+* **Headings come from the source's formatting, not from what reads like a major
+  topic.** Run `python scripts/doc_headings.py <the Word file>` and use exactly
+  that list: bold alone is `<h1>`, bold + underline at size 23 is `<h2>`, and in
+  a binary `.doc` centred Helvetica-Bold 12 is `<h1>` and underlined Times-Bold
+  is `<h2>`. Never promote a section because it looks important, and never add a
+  heading the source does not have. Box and exam-tip titles are not headings.
+* **A `.doc` needs two readers.** `antiword` gives the body flow and, via its
+  PostScript output, the formatting; it silently drops every floating text box —
+  which in these files is where the exam tips, the worked examples and the
+  figure labels live. Always also run `catdoc` and reconcile the two, or the
+  conversion will quietly lose whole sections.
 * Coordinates come from the source, never from guesswork, and curves pass exactly
   through every numbered point. A point's axis labels are automatic: it prints
   its own price and quantity unless they are already ticks, and `pl`/`ql` replace

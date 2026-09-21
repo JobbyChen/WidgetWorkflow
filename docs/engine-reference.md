@@ -138,6 +138,12 @@ pixel apart. `scripts/check_file.py` tests for this.
   if the bold ones matter more. `check_file.py` warns on that mix.
 - `label` is separate from the axis labels and is offset by `dx`/`dy`
   (defaults `+9`, `−9`).
+- **The step a point belongs to shows on the drawing.** The engine rings
+  whatever the current step revealed (`at` equal to the step) and fades back to
+  45% whatever an earlier step revealed, so a walkthrough that keeps its earlier
+  points on screen still says which one the caption is talking about. Hovering
+  any point brings it forward and turns its label orange, the same way hovering
+  a schedule row already highlighted its dots.
 
 ### `moves`
 

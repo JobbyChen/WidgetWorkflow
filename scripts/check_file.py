@@ -376,16 +376,23 @@ W = 372.0
 
 def geom(pn, ax):
     left = 62.0 if ax.get("cents") else (54.0 if ax.get("yticks") else 40.0)
-    # A vbrace with left:true widens the engine's left margin. Miss this and
-    # every coordinate below is off by 44px.
+    # A price label of five or more characters widens the engine's margin by
+    # itself (12 + 6.6 per character, rounded), and a vbrace with left:true
+    # widens it by 44px. Miss either and every coordinate below is off.
+    longest = max([len(str(p["pl"])) for p in (pn.get("points") or []) if p.get("pl")]
+                  + [len(str(h["label"])) for h in (pn.get("hlines") or []) if h.get("label")]
+                  + [0])
+    left = max(left, float(round(12 + 6.6 * longest)))
     if any(b.get("left") for b in (pn.get("vbraces") or [])):
         left += 44.0
     ox, oy = left, 205.0
     pw, ph = W - left - 36.0, 178.0
+    xmin = float(ax.get("xmin") or 0)
+    ymin = float(ax.get("ymin") or 0)
     xmax = float(ax.get("xmax") or 1)
     ymax = float(ax.get("ymax") or 1)
-    return (lambda q: ox + (q / xmax) * pw,
-            lambda p: oy - (p / ymax) * ph, ox, oy)
+    return (lambda q: ox + ((q - xmin) / (xmax - xmin)) * pw,
+            lambda p: oy - ((p - ymin) / (ymax - ymin)) * ph, ox, oy)
 
 
 def fmt_p(v, ax):
@@ -714,6 +721,32 @@ def check_labels(cfgs, r):
                                  "start" if d > 0 else "end")
                     boxes.append((bx, "upright brace label %r" % b["label"], win))
 
+                # A price line's name sits just above its right end, and a
+                # movement arrow's label beside its midpoint. Both are drawn
+                # text with nothing to keep a curve out of them.
+                pw = W - ox - 36.0
+                for h in pn.get("hlines") or []:
+                    if h.get("name"):
+                        boxes.append((box(ox + pw + 8, Y(h["p"]) + (13 if h.get("nameBelow") else -5),
+                                          h["name"], 12, "end"),
+                                      "the %r line name" % h["name"],
+                                      (h.get("at", 0), h.get("until"))))
+                for m in pn.get("moves") or []:
+                    if not m.get("label") or not (isinstance(m.get("from"), list)
+                                                  and isinstance(m.get("to"), list)):
+                        continue
+                    x1, y1 = X(m["from"][0]), Y(m["from"][1])
+                    x2, y2 = X(m["to"][0]), Y(m["to"][1])
+                    off = m.get("offset", 14)
+                    ln = math.hypot(x2 - x1, y2 - y1) or 1
+                    nx, ny = -(y2 - y1) / ln * off, (x2 - x1) / ln * off
+                    ldx = m.get("ldx", 8)
+                    ldy = m.get("ldy", 4)
+                    boxes.append((box((x1 + x2) / 2 + nx + ldx, (y1 + y2) / 2 + ny + ldy,
+                                      m["label"], 12, "end" if ldx < 0 else "start"),
+                                  "arrow label %r" % m["label"],
+                                  (m.get("at", 0), m.get("until"))))
+
                 # An area's label sits inside its polygon, at [lq, lp] or the
                 # centroid, and is ordinary drawn text: it can land on the
                 # curve that bounds the area just as easily as any other label.
@@ -735,6 +768,9 @@ def check_labels(cfgs, r):
                 for bx, what, win in boxes:
                     for gpx, gdesc, gwin in guides:
                         if not coexist(win, gwin) or exempt(what, gdesc):
+                            continue
+                        # A line's name sits 5px above that line by design.
+                        if "line name" in what and gdesc.endswith("price line"):
                             continue
                         if poly_hits(inflate(bx, 3.0), gpx):
                             r.warn("labels", "%s: %s is close to %s"
@@ -883,12 +919,16 @@ def check_arrows(cfgs, r):
             # labelled Surplus/Shortage -- the gap at the old price -- but it
             # is the pattern v6 step 4 templates without moves, so keying on
             # the brace label alone flags those wrongly.
-            hlines = [h for pn in panels(v) for h in (pn.get("hlines") or [])]
             # A price line alone is not a disequilibrium: a world price with
             # an Exports or Imports brace is a level the market settles at,
             # not one it moves away from, so nothing there should be
             # converging. It takes both the line and a gap labelled surplus
-            # or shortage.
+            # or shortage. And a *named* line -- PRICE CEILING, RENT CEILING,
+            # PRICE FLOOR -- is a legal price the market is held at: the
+            # shortage or surplus persists by construction, and the point of
+            # the drawing is that the price cannot move.
+            hlines = [h for pn in panels(v) for h in (pn.get("hlines") or [])
+                      if not h.get("name")]
             gap = any(re.search(r"surplus|shortage", str(b.get("label", "")), re.I)
                       for pn in panels(v) for b in (pn.get("braces") or []))
             if not hlines or not gap or not v.get("steps"):

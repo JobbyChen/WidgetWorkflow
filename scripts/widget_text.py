@@ -32,7 +32,7 @@ import sys
 BLOCK = re.compile(r'(<script type="application/json">\n)(.*?)(\n</script>)', re.S)
 
 # What a semester can rename. Anything not on this list is geometry or wiring.
-KEYS = ("title", "lede", "caption", "heading", "label")
+KEYS = ("title", "lede", "caption", "heading", "label", "name")
 
 
 def visit(node, path, out):

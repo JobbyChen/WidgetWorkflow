@@ -29,7 +29,8 @@ examples/
   ECO2013-263-SupplyAndDemand.html ← FINISHED OUTPUT (Fall '26, transcript-only, 9 widgets)
   ECO2013-263-TradeoffsComparativeAdvantageTheMarketSystem.html ← FINISHED OUTPUT (Exam 1 ch. 1, 7 widgets)
   ECO2013-Widgets-All.html    ← the 9/11/26 prototype: 20 widgets, the JSON shape reference
-  ECO2023-263-ThePPF.html, -SupplyAndDemand.html, -Elasticity.html, -Trade.html ← FINISHED OUTPUT (Exam 1, Word/HTML sources)
+  ECO2023-263-ThePPF.html, -SupplyAndDemand.html, -Elasticity.html, -GovernmentIntervention.html, -Trade.html
+                              ← FINISHED OUTPUT (Exam 1, Word/HTML sources)
 reference-images/             ← the source PNGs (empty — see open issues)
 scripts/
   embed_engine.py             ← inline engine/ into a notes file's <head> (prompt step 7)
@@ -133,7 +134,12 @@ not enough to reproduce an implementation.
   `embed_engine.py`'s paths reproduce the delivered file byte-for-byte; all 20
   prototype widgets render with no engine errors; `check_file.py` runs the
   geometric label test over 74 labels in the 263 file with no overlaps.
-* **Engine is v2.11.** `areas` (2026-09-21) shade a polygon in data units —
+* **Engine is v2.12.** v2.12 (2026-09-21, the government intervention
+  chapter): `xmin`/`ymin` cut an axis above zero for a numeric graph whose
+  prices sit in a narrow band; an hline `name` writes PRICE CEILING above the
+  line's right end (`nameBelow` for a floor) and exempts it from the
+  movement-arrow rule; a `moves` arrow takes a `label`; and the left margin
+  grows by itself for a long P-axis label. v2.11: `areas` shade a polygon in data units —
   solid, hatched or checked, under the curves, with an optional label — which
   is what the trade chapter's surplus, gains-from-trade, tariff-revenue and
   deadweight-loss figures needed; `guides:"p"`/`"q"` draw one of a point's two

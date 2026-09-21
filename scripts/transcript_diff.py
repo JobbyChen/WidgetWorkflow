@@ -99,8 +99,9 @@ def collect(node, out, tier="value"):
     """
     if isinstance(node, dict):
         for k, v in node.items():
-            if k in ("at", "until", "ldx", "ldy", "lstart", "xmax", "ymax",
-                     "arrowP", "offset", "marker", "moves", "lq", "lp", "opacity"):
+            if k in ("at", "until", "ldx", "ldy", "lstart", "xmin", "xmax", "ymin",
+                     "ymax", "arrowP", "offset", "marker", "moves", "lq", "lp",
+                     "opacity"):
                 continue
             elif k == "pts":
                 collect(v, out, "draw")

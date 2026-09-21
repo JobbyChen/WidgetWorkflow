@@ -1,4 +1,4 @@
-# Engine reference — `engine/sd-graph.js` v2.11
+# Engine reference — `engine/sd-graph.js` v2.12
 
 Written from the engine source. The conversion prompt carries a shorter version
 of this in its own "Engine reference" section; that one is what the model needs
@@ -74,6 +74,13 @@ screen.
 `money` prefixes prices with `$`; `cents` forces two decimals; `k` renders
 quantities of 1000+ as `12k`. `grid` draws the dashed gridlines at every tick —
 the schedule-graph look. `bg:false` removes the tinted plot rectangle.
+
+`xmin` and `ymin` (default 0, v2.12) start an axis above zero. A numeric graph
+whose whole story happens in a narrow band — pizza at $11.50, $12.00, $12.50
+and $13.00 — is unreadable on a zero-based axis, where a dollar is eleven
+pixels and the tick labels overlap; with `ymin: 10, ymax: 14` a dollar is 44px.
+The printed figure is not to scale either. Coordinates, ticks, points and areas
+are all in data units, so nothing else in the config knows the axis was cut.
 
 `x` and `y` are the axis **titles**, defaulting to `P` and `Q`, which is what
 the printed artwork uses. A production possibilities frontier names its axes with
@@ -159,6 +166,13 @@ An arrow between two points, drawn `offset` px **beside** the line joining them
 so it never lies on the curve. A negative `offset` puts it on the other side —
 which side is correct depends on the geometry, so check it against a render.
 
+`label` (v2.12) writes a word beside the arrow's midpoint — "Tax" beside the
+vertical gap between S and S + Tax — nudged by `ldx`/`ldy` (defaults `+8`,
+`+4`) and anchored away from the arrow, so a negative `ldx` puts the text on
+the left, ending at that x. `offset: 0` with `from`/`to` chosen a few units
+short of each curve is how the tax arrow is drawn: the render script measures
+every arrow against every curve and wants 4px clear at both ends.
+
 ### `hlines`
 
 ```json
@@ -168,6 +182,19 @@ which side is correct depends on the geometry, so check it against a render.
 A thick horizontal price line across the plot — a price floor or ceiling, or any
 disequilibrium price. It prints its own label on the P axis when that price is
 not already a tick. Red by default.
+
+`name` (v2.12) writes the line's name — PRICE CEILING, RENT CEILING, PRICE
+FLOOR — just above its right end, the way the printed price controls do;
+`nameBelow: true` puts it just under the line instead, for a floor, where the
+supply curve runs through the space above. **A named line is a legal price the
+market is held at**, so `check_file.py`'s movement-arrow rule does not apply
+to it: the shortage or surplus persists, and the point of the drawing is that
+the price cannot move.
+
+**The left margin grows with the longest P-axis label** (v2.12): `12 + 6.6`
+per character of the longest `pl` or hline `label`, when that exceeds the
+usual 40/54/62. `Pᴏʟᴅ+Tax` and `$2,000` fit; `P₁` changes nothing. Both the
+engine and the checker compute it, so a config never sets it.
 
 ### `braces`
 
@@ -299,11 +326,11 @@ scenarios, each scenario supplying its own `shift`/`dir`.
 | | |
 | --- | --- |
 | viewBox | `372 × 250`, or `372 × 268` when any brace is `below` |
-| origin | `x = 40`, or `54` with `yticks`, or `62` with `cents`; `y = 205` |
+| origin | `x = 40`, or `54` with `yticks`, or `62` with `cents`, or wider for a long P label; `y = 205` |
 | plot width | `372 − left − 36` |
 | plot height | `178` |
-| `X(q)` | `left + (q / xmax) × PW` |
-| `Y(p)` | `205 − (p / ymax) × PH` |
+| `X(q)` | `left + ((q − xmin) / (xmax − xmin)) × PW` |
+| `Y(p)` | `205 − ((p − ymin) / (ymax − ymin)) × PH` |
 
 `ldx`/`ldy`/`dx`/`dy`/`offset` are all in these SVG units, and `dy` is positive
 downward. `scripts/check_file.py` replicates this geometry to test every label

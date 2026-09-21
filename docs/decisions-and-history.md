@@ -350,3 +350,50 @@ including every kind of shift; the probe is throwaway and stayed out of the repo
     textbook box's heading and opening line no longer say "in class", and
     "in the lecture after the exam" is "after the exam". Dr. Rush is named
     once and is listed in the changelog for Ian's call, as always.
+
+## 2026-09-21 — the government intervention chapter
+
+30. **Fourteen images became twelve widgets, and three of them asked for a
+    cut axis.** The pizza tax is stated at $12.00, $12.50, $11.50 and $13.00 on
+    4,000 and 5,000 pizzas: real numbers, so a numeric widget, and on a
+    zero-based axis a dollar is eleven pixels and the four tick labels overlap
+    outright. The printed figure is not to scale either — its origin is a
+    convention. Engine v2.12 adds `xmin`/`ymin`, and with the P axis starting
+    at $10 a dollar is 44px. Everything else in the config is in data units and
+    does not know.
+
+31. **A named price line is a different thing from a disequilibrium price.**
+    Every ceiling and floor drawing shows a shortage or surplus with no arrows
+    converging on the equilibrium, because the law holds the price where it
+    is; the checker's movement-arrow rule, already narrowed once this morning
+    for the world price, would have failed all four. Rather than another
+    label-text heuristic, the line got a `name` — PRICE CEILING, RENT CEILING,
+    PRICE FLOOR, which the printed figures write above the line's right end —
+    and a named line is exempt: the name is the statement that the price is
+    held. `nameBelow` followed when a floor's name landed on the supply curve.
+
+32. **The tax arrow is a labelled movement arrow, and it crosses no curve.** The
+    printed tax figures draw a vertical double arrow between S and S + Tax
+    marked "Tax". A `moves` arrow with `offset: 0` does it, `label` on a move is
+    new, and the ends stop a few units short of each curve because the render
+    script wants 4px of clearance at both ends. Placing the label took most of
+    the time: between two parallel diagonals 26 units apart there is about
+    28px of vertical room for a 13px label, and each placement was checked by
+    the geometry, not by eye, after the first three guesses were wrong.
+
+33. **Small capitals are wider than the margin thought.** `Pᴏʟᴅ+Tax` is what the
+    prose calls the price, and the automatic margin (new in v2.12: the longest
+    P-axis label sets it) clipped its first letter, because the fallback
+    font's small capitals run wider than 6.1px a character. The estimate is
+    now 6.6, in the engine and in the checker together, and no earlier file has
+    a label long enough to be moved by it — checked before the change, not
+    after.
+
+34. **Two images were merged and two filenames were wrong.** The pizza-tax
+    figure and its revenue-and-deadweight-loss twin are one walkthrough, and
+    the sale-illegal and purchase-illegal pair are two scenarios of one static
+    widget, so twelve widgets from fourteen images; the merged images' position
+    comments stay. Images 13 and 14 are named "subsidy-production-quota" and
+    "exam-tip-lightbulb-icon" on S3 but show the penalties-on-both figure and
+    the subsidy-and-quota figure, which is what their positions in the prose
+    call for. The widgets follow the pictures, not the filenames.

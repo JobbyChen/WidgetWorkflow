@@ -150,6 +150,27 @@ case("color:'ink' on a price line is a choice, not a default",
          hlines=[{"p": 70, "color": "ink"}], caption="x"), r)
      or not r.has("WARN", "schema", "default value"))
 
+case("a named price line (a ceiling) is held, not converged from",
+     lambda r: C.check_arrows(widget(
+         hlines=[{"p": 30, "label": "Pᴄ", "name": "PRICE CEILING"}],
+         braces=[{"p": 30, "q1": 30, "q2": 70, "label": "Shortage", "below": True}],
+         steps=["one.", "two."]), r)
+     or not r.has("FAIL", "arrows", "two movement arrows"))
+
+case("a price line's name landing on a curve", lambda r: C.check_labels(widget(
+    curves=[{"id": "S", "label": "S", "pts": [[8, 8], [100, 100]]}],
+    hlines=[{"p": 95, "label": "Pꜰ", "name": "PRICE FLOOR"}]), r)
+    or r.has("FAIL", "labels", "'PRICE FLOOR' line name sits on curve"))
+
+case("an arrow label landing on a curve", lambda r: C.check_labels(widget(
+    moves=[{"from": [40, 45], "to": [40, 65], "offset": 0, "label": "Tax", "ldx": 8}]), r)
+    or r.has("FAIL", "labels", "arrow label 'Tax' sits on curve"))
+
+case("a long price label widens the margin (label on the curve is still seen)",
+     lambda r: C.check_labels(widget(
+         points=[{"q": 50, "p": 50, "pl": "Pᴏʟᴅ+Tax", "label": "E", "dx": 2, "dy": 2}]), r)
+     or r.has("FAIL", "labels", "sits on curve"))
+
 # ---- captions --------------------------------------------------------------
 
 case("'Before -' caption prefix", lambda r: C.check_captions(

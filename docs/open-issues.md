@@ -50,7 +50,10 @@ mechanic as a shift of supply. What is missing:
       Both frontiers terminate on the same two axes, so end labels crowd in a way
       D and S never do. Needs a "label at fraction t" option.
 - [ ] **No `vlines`** (a vertical reference line at a quantity). Guides cover
-      most of it; low priority.
+      most of it; low priority. The production quota in
+      `ECO2023-263-GovernmentIntervention.html` is drawn as a red `curve` from
+      `[30,0]` to `[30,104]` whose label sits under the axis (`lstart`, `ldy`
+      19), which works but is a workaround.
 - [x] ~~Area fills of any kind, so the attainable region cannot be shaded.~~
       Engine v2.11 adds `areas` (solid, hatched or checked polygons in data
       units, drawn under the curves), built for the trade chapter, whose five
@@ -201,16 +204,29 @@ or "unattainable" dot) whose exact coordinates are not the lesson.
       with them. A `between: ["D", "Pw"]` shorthand would remove that, but
       every trade widget so far is symbolic, so it has not been needed.
 - [ ] **Prompt v6's engine reference is behind the engine.** It lists neither
-      `vbraces` (v2.3), `areas` (v2.11) nor `guides:"p"`/`"q"` (v2.11). A
-      Cowork run of v6 cannot use any of them. Belongs in the v7 bump with the
-      other prompt items above.
-- [ ] **The movement-arrow rule was narrowed on 2026-09-21.** It used to fire
-      on any stepped widget with an `hline`; a world price with an Exports or
-      Imports brace is a level the market settles at, not one it converges
+      `vbraces` (v2.3), `areas` and `guides:"p"`/`"q"` (v2.11), nor `xmin`/
+      `ymin`, hline `name` and moves `label` (v2.12). A Cowork run of v6 cannot
+      use any of them. Belongs in the v7 bump with the other prompt items above.
+- [ ] **The movement-arrow rule was narrowed twice on 2026-09-21.** It used to
+      fire on any stepped widget with an `hline`; a world price with an Exports
+      or Imports brace is a level the market settles at, not one it converges
       from, so it now takes both the line and a brace labelled surplus or
-      shortage. Every earlier file reports the same as before, and
-      `test_check_file.py` holds the Exports case. If a walkthrough ever draws
-      a disequilibrium price without such a brace, this rule will not see it.
+      shortage — and a line with a `name` (a ceiling, a floor, a minimum wage)
+      is exempt outright, because the price is held there by law. Every earlier
+      file reports the same as before, and `test_check_file.py` holds the
+      Exports and the ceiling cases. If a walkthrough ever draws a
+      disequilibrium price without such a brace, this rule will not see it.
+- [ ] **Two small labels in the tax widgets are P₁/P₂ a pixel apart, by the
+      economics.** With elastic demand, or inelastic supply, the price barely
+      rises, so the two axis labels crowd (two WARNs in
+      `ECO2023-263-GovernmentIntervention.html`). The lesson *is* the small
+      gap. A `vbraces` left brace could mark it instead, at the cost of 44px of
+      plot. Left as is.
+- [ ] **Three deadweight-loss triangles carry no label** in the same file (the
+      pizza tax and the before/after tax pair): a 12px "DWL" does not fit a
+      triangle 40px on a side once the equilibrium guide runs through it. The
+      captions and ledes name them. A smaller label size on `areas` would fix
+      it.
 - [ ] **`check_file.py` skips preset widgets**, because the engine computes
       their geometry, so its label test never sees them. The v2.7 brace defect
       lived in the repo unnoticed for exactly that reason and only a render

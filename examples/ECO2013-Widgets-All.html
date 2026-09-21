@@ -95,7 +95,7 @@
 .sdg .sdg-cap { margin:10px 0 0; padding:10px 12px; background:#fff; border-left:4px solid var(--red); font-size:.92rem; line-height:1.45; min-height:3.2em; }
 </style>
 <script>
-/* ===== sd-graph.js v2.11 — data-driven supply & demand widgets =====
+/* ===== sd-graph.js v2.12 — data-driven supply & demand widgets =====
    Markup:  <div class="sdg"><script type="application/json">{ ...config... }<\/script></div>
    Top-level config:
      title, lede, caption         heading / intro / static caption (caption used only when there are no steps)
@@ -104,8 +104,12 @@
      panels: [panelCfg, panelCfg]  two side-by-side graphs (two-market). Otherwise the panel keys live at top level.
    Panel config:
      heading                      title above the panel (two-market only)
-     axes: {x, y, xmax, ymax, xticks[], yticks[], money, cents, k, grid, bg:false}
+     axes: {x, y, xmin, xmax, ymin, ymax, xticks[], yticks[], money, cents, k, grid, bg:false}
         x, y = axis titles, default 'Q' and 'P'. A word or two fits; they are never wrapped.
+        xmin/ymin (default 0) start an axis above zero, for a numeric graph whose action all
+        happens in a narrow band of prices -- $11.50 to $13 on a pizza -- that a zero-based
+        axis would squeeze into a few pixels. The left margin also widens by itself when a
+        price label (pl, or an hline's label) is five or more characters long.
      curves[]: {id, label, pts:[[q,p],...], color, at, until, from, arrowP, shiftArrow, curved, thin, dashed, lstart, ldx, ldy}
         lstart = put the curve label at the first point instead of the last; ldx/ldy nudge it
         label:"" draws no label at all (a lone PPF needs none); omitting label falls back to the id
@@ -116,8 +120,13 @@
      points[]: {id, q, p, label, marker, pl, ql, color, at, until, dx, dy, guides:false, showP:false, showQ:false}
         marker = "1"/"2" numbered circle;  pl/ql = symbolic axis labels ("P₁","Q₁") instead of numbers
         guides:false draws no dashed guides; guides:"p" only the one to the P axis, "q" only the one to the Q axis
-     moves[]:  {from:[q,p], to:[q,p], at, until, color, offset}  arrow between two points, drawn `offset` px beside the curve (default 14; negative = other side)
-     hlines[]: {p, label, color, at, until}                       horizontal price line across the plot
+     moves[]:  {from:[q,p], to:[q,p], at, until, color, offset, label, ldx, ldy}
+        arrow between two points, drawn `offset` px beside the curve (default 14; negative = other side).
+        label is drawn beside the arrow's midpoint, nudged by ldx/ldy (default +8, +4) and anchored
+        away from the arrow: a negative ldx puts it on the left, ending at that x.
+     hlines[]: {p, label, name, nameBelow, color, at, until}      horizontal price line across the plot
+        label prints on the P axis; name ("PRICE CEILING") is drawn at the line's right end, just above
+        it, or just below it with nameBelow:true when a curve runs through the space above (a floor)
      braces[]: {p, q1, q2, label, at, until, below, color}        curly brace spanning a gap at price p
      vbraces[]:{p1, p2, q, label, at, until, left, side, color}   the same brace turned upright, spanning a
         price gap. left:true is the mirror of a brace's below:true: it sits outside the P axis, clear of the
@@ -155,9 +164,18 @@
     // A brace outside the P axis needs margin to sit in, the way a brace below
     // the Q axis needs the extra panel height above.
     var vleft = (cfg.vbraces || []).some(function (b) { return b.left; });
-    var left = (ax.cents ? 62 : (ax.yticks && ax.yticks.length ? 54 : 40)) + (vleft ? 44 : 0);
+    var left = (ax.cents ? 62 : (ax.yticks && ax.yticks.length ? 54 : 40));
+    // A long symbolic price label ("Pᴏʟᴅ+Tax", "$2,000") needs more margin
+    // than P₁ does: 10.5px text is about 6.6px a character once small
+    // capitals are in it, plus the 6px gap and a little air. Only labels
+    // that print on the P axis count.
+    var longest = 0;
+    (cfg.points || []).forEach(function (p) { if (p.pl) longest = Math.max(longest, String(p.pl).length); });
+    (cfg.hlines || []).forEach(function (l) { if (l.label) longest = Math.max(longest, String(l.label).length); });
+    left = Math.max(left, Math.round(12 + 6.6 * longest)) + (vleft ? 44 : 0);
     var O = {x: left, y: 205}, PW = W - left - 36, PH = 178;
-    var X = function (q) { return O.x + (q / ax.xmax) * PW; }, Y = function (p) { return O.y - (p / ax.ymax) * PH; };
+    var xmin = ax.xmin || 0, ymin = ax.ymin || 0;
+    var X = function (q) { return O.x + ((q - xmin) / (ax.xmax - xmin)) * PW; }, Y = function (p) { return O.y - ((p - ymin) / (ax.ymax - ymin)) * PH; };
     var svg = el('svg', {viewBox: '0 0 ' + W + ' ' + H, role: 'img', 'aria-label': cfg.heading || cfg.title || 'Supply and demand graph'});
     var g = el('g', {}); svg.appendChild(g);
     var parts = [], byId = {};
@@ -277,6 +295,9 @@
       var cc = col(l.color || 'red'), grp = el('g', {});
       grp.appendChild(el('line', {class: 'hline', stroke: cc, x1: O.x, y1: Y(l.p), x2: O.x + PW + 8, y2: Y(l.p)}));
       if ((ax.yticks || []).indexOf(l.p) < 0) grp.appendChild(el('text', {class: 'tk strong', x: O.x - 6, y: Y(l.p) + 4, 'text-anchor': 'end', fill: cc}, l.label || fmtP(l.p, ax)));
+      // The printed price controls name the line itself -- PRICE CEILING,
+      // RENT CEILING, PRICE FLOOR -- just above its right end.
+      if (l.name) grp.appendChild(el('text', {class: 'tag', x: O.x + PW + 8, y: Y(l.p) + (l.nameBelow ? 13 : -5), 'text-anchor': 'end', fill: cc}, l.name));
       g.appendChild(grp); reg(grp, l);
     });
 
@@ -328,7 +349,15 @@
       var x1 = X(m.from[0]), y1 = Y(m.from[1]), x2 = X(m.to[0]), y2 = Y(m.to[1]);
       var off = m.offset != null ? m.offset : 14, len = Math.hypot(x2 - x1, y2 - y1), nx = -(y2 - y1) / len * off, ny = (x2 - x1) / len * off;
       var a = arrow(x1 + nx, y1 + ny, x2 + nx, y2 + ny, col(m.color), 'mv');
-      g.appendChild(a); reg(a, m);
+      if (!m.label) { g.appendChild(a); reg(a, m); return; }
+      // A labelled arrow -- "Tax" beside the vertical gap between S and
+      // S + Tax -- keeps its text beside the midpoint, on whichever side ldx
+      // says, anchored so the text runs away from the arrow.
+      var grp = el('g', {}), ldx = m.ldx != null ? m.ldx : 8, ldy = m.ldy != null ? m.ldy : 4;
+      grp.appendChild(a);
+      grp.appendChild(el('text', {class: 'tag', x: (x1 + x2) / 2 + nx + ldx, y: (y1 + y2) / 2 + ny + ldy,
+        'text-anchor': ldx < 0 ? 'end' : 'start', fill: col(m.color)}, m.label));
+      g.appendChild(grp); reg(grp, m);
     });
 
     (cfg.points || []).forEach(function (p) {

@@ -302,3 +302,41 @@ including every kind of shift; the probe is throwaway and stayed out of the repo
     with nothing missing. MathJax could not be rendered here to confirm
     visually — the CDN is blocked in this environment — so the new LaTeX was
     checked mechanically for balanced braces and known commands instead.
+
+25. **Mobile is measured now, because it is the one thing review cannot see.**
+    Ian reviews these on a desktop and students read them on a phone, so a
+    layout defect is invisible exactly where it would be caught.
+    `scripts/mobile_check.py` loads a file at phone size and drives it: every
+    scenario clicked, every widget stepped to its last step and back.
+
+    It reports four things. `page` is the page scrolling sideways. `fit` is a
+    figure, table or SVG wider than its column. `tap` is a control under the
+    44px minimum. `reach` is the one a screenshot hides — scenario buttons go
+    full width on a phone, so several of them are a screenful on their own, and
+    the student taps one and has to scroll to see what it did. Nothing is broken
+    and nothing is off the edge; the cause and its effect are just never both
+    visible.
+
+    Two things had to be right before the interaction half meant anything. A
+    button that is disabled (`Back` on step 1) or already pressed (the scenario
+    currently showing) is doing its job when nothing happens, so neither is
+    exercised; counting them reported ten defects against a file that had none.
+    And when a figure does overflow it pushes the controls off the viewport, so
+    the step button cannot be tapped at all — that is the finding, and the first
+    version crashed on it instead of reporting it.
+
+    All four checks were controlled: a copy with the stacking and fluid-figure
+    rules disabled (21 problems, including the untappable controls), one with
+    the controls shrunk below 44px, and one with the scenario buttons padded
+    until the graph fell past the fold — which stays clean on a taller viewport,
+    so `reach` is measuring the screen rather than flagging everything. All six
+    example files pass at 390×844 and at 320×568: 58 widgets, no sideways
+    scroll, no overflow, no control under 44px, and 60 scenarios and 107 steps
+    driven without an engine error. The tightest widget spans 515px of a 568px
+    screen.
+
+    One correction to a first impression: the five-button elasticity spectrum
+    looked from its screenshot like it pushed its graph off the screen. Measured,
+    it spans 487px of 844. The screenshot is the whole widget at 2x device
+    scale, which reads as much taller than it is — the reason to measure rather
+    than judge a layout by eye.

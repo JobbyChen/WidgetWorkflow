@@ -40,6 +40,7 @@ scripts/
   transcript_diff.py          ← does a new term's transcript change this file? Run it BEFORE swapping.
   test_check_file.py          ← tests for check_file.py. Run after changing it.
   render_widgets.py           ← Playwright: screenshot every widget × scenario × step for collision review
+  mobile_check.py             ← does it fit and still work on a phone? Drives every button at 390/320px
 .claude/commands/             ← /convert, /check, /render
 ```
 
@@ -215,6 +216,17 @@ Full list with checkboxes: `docs/open-issues.md`.
   question by eye: a 1px gap and a touch look identical in a screenshot, and on
   a `curved` pair the drawn spline is nowhere near the polyline through its
   points, so the arithmetic misleads too.
+* **A phone is where these get read, and a desktop is where they get
+  reviewed.** `python scripts/mobile_check.py <file> --width 390` loads the file
+  at phone size and reports four things: the page scrolling sideways, a figure
+  or table wider than its column, a control under the 44px tap minimum, and the
+  buttons and the graph not fitting on screen together. It drives every
+  scenario and steps each widget to its last step, so "still interactive" is
+  measured rather than assumed — a button that is disabled or already pressed is
+  doing its job when nothing happens, so neither is counted against it. Run
+  `--width 320 --height 568` too; that is the size everything is tightest at.
+  All six example files pass at both, and the worst widget leaves 53px of
+  headroom on the small screen.
 * **An arrow does not lie over the dashed guides.** Ian's rule. A converging
   pair belongs *inside* the box the guides fence off, not across it, which
   usually means starting it a few units in from the point and keeping it short.

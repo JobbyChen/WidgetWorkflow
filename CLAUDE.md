@@ -35,6 +35,7 @@ scripts/
   check_file.py               ← mechanical step-8 checks (JSON, </script>, head, engine identity…)
   doc_headings.py             ← a Word file's headings and their level. Run it BEFORE writing any.
   add_toc.py                  ← write the house table of contents into a notes file
+  widget_text.py              ← every renamable string in a file's widgets; --apply writes them back
   test_check_file.py          ← tests for check_file.py. Run after changing it.
   render_widgets.py           ← Playwright: screenshot every widget × scenario × step for collision review
 .claude/commands/             ← /convert, /check, /render
@@ -206,6 +207,13 @@ Full list with checkboxes: `docs/open-issues.md`.
   usually means starting it a few units in from the point and keeping it short.
   Where a panel genuinely has nowhere else to put it, crossing a guide is
   allowed — but establish that from the measurement, not from a glance.
+* **A semester swap is `scripts/widget_text.py`, not a rewrite.** It lists every
+  title, lede, caption, step, axis title, button label and column header under
+  an address like `w4.scenarios.sub.steps[2]`, and `--apply` writes an edited
+  map back. Coordinates, ticks and step wiring are never listed and never
+  touched, so a swap cannot move a curve by accident; a no-op round-trip is
+  byte-identical. If the new semester also changes the *numbers*, that is a
+  reconversion rather than a swap, because the drawing has to change with them.
 * To test a config quickly, drop it into a copy of
   `examples/ECO2013-Widgets-All.html` and open it in a browser; it carries its
   own copy of the engine in its head.

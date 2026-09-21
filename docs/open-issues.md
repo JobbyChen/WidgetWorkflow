@@ -243,6 +243,12 @@ or "unattainable" dot) whose exact coordinates are not the lesson.
       guide or a curve** (widgets 5 and 6). It is Ian's file, so this is
       reported rather than rewritten. One for Ian.
 
+- [x] **Nothing made a semester swap mechanical.** Mode (d) says only the
+      wording changes when the good changes, but the wording was buried among
+      the coordinates in every config. `scripts/widget_text.py` lists and
+      rewrites exactly the renamable strings; round-trip is byte-identical on
+      all four converted files.
+
 ## Workflow
 
 - [ ] **No list of who may be named, by choice.** Hard rule 4 covers the policy:

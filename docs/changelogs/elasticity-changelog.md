@@ -79,3 +79,19 @@ one put P₁ and P₂ within a few pixels of each other.
 `check_file.py` → **0 FAIL, 4 WARN** (the three crowding lines and the Dr. Rush
 flag). `render_widgets.py` → 21 screenshots, no engine errors, reviewed at every
 step.
+
+## Correction, 2026-09-21 — two formulas were rewritten rather than reiterated
+
+Both were algebraically right and neither was what the source says.
+
+* **Point elasticity.** Written as `E_D = |ΔQ_D/ΔP × P/Q_D|`. The source writes
+  `E_D = |1/Slope × P/Q_D|`. The two are equal, which is exactly why the
+  substitution reads as tidying rather than as a change — but the whole reason
+  the source introduces that equation is that a straight line's slope is fixed
+  while `P/Q_D` is not, and the rewrite hides the constant.
+* **Cross-price elasticity.** Written with the subscript `E_{A,B}`. The source
+  subscripts it `E_CROSS`, matching `E_INC` and `E_S` beside it.
+
+The chapter's other ten equations were checked against the source and are
+exact. Read by `scripts/doc_formulas.py`, whose `--check` now catches both of
+these.

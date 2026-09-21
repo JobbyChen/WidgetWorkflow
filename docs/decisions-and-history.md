@@ -270,3 +270,35 @@ including every kind of shift; the probe is throwaway and stayed out of the repo
     caught (15/16, UNSUPPORTED: 17). `check_file.py` has always printed `SKIP
     numbers — whether each number is the source's number needs the source`;
     when the source is a transcript, this answers it.
+
+24. **Formulas are transcribed by a script now, because by eye they lose their
+    left-hand sides.** These chapters store every equation as a MathType OLE
+    object: `word/document.xml` carries an `<w:object>` and a WMF picture, and
+    no `<m:oMath>` at all, so pandoc, `antiword` and `catdoc` skip them without
+    a word. The only way anyone had read one was to look at the rendering and
+    retype it, and across 26 equations that cost three: `OC_X =` was dropped and
+    only its fraction kept; point elasticity was rewritten from the source's
+    `1/Slope × P/Q_D` to `ΔQ_D/ΔP × P/Q_D`; and cross-price elasticity was
+    resubscripted `E_{A,B}` where the source says `E_CROSS`. The last two are
+    the dangerous kind — algebraically right, and wrong about what the chapter
+    is teaching, since the point of the slope form is that a straight line's
+    slope is constant while `P/Q_D` is not.
+
+    `scripts/doc_formulas.py` reads them instead. The WMF is a picture, but
+    MathType draws the glyphs with real `TextOut` records, so the words survive
+    inside it in drawing order — numerator before denominator, left-hand side
+    where MathType emitted it. Readable, never pasteable: subscripts arrive as
+    their own runs, so `E_D` reads as `E ⟨/⟩ D`.
+
+    `--check` then compares each equation against the notes file. Three things
+    had to be true before it caught anything. Adjacent runs are emitted with no
+    space (`What You` + `Gain` → `whatyougain`), so runs are split where a
+    lower-case letter meets an upper-case one. `PP` is `P` and `P`, not a word,
+    so a token of one repeated letter is dropped. And the comparison is against
+    the single best-matching formula paragraph, not the whole file: a
+    file-wide bag of words cannot see a dropped `OC`, because `OC` appears a
+    dozen times over in the worked examples. All three original defects were
+    put back in temporary copies and all three fire; both real files come back
+    with nothing missing. MathJax could not be rendered here to confirm
+    visually — the CDN is blocked in this environment — so the new LaTeX was
+    checked mechanically for balanced braces and known commands instead.

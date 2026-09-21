@@ -120,3 +120,19 @@ Checking that across widths turned up a separate bug. A two-panel widget with
 `link: false` never stacked on a phone, because the `:not(:has(.sdg-between))`
 rule that sets two columns is more specific than the mobile rule that sets one.
 Each panel was about a third of a 390px screen. Fixed in the same version.
+
+## Correction, 2026-09-21 — the opportunity cost formula lost its left-hand side
+
+The definition under *The PPF and Opportunity Costs* was written as the bare
+fraction. The source states it as an equation:
+
+    OC_X = (# Units Lost of Good Y) / (# Units Gained of Good X)
+
+Restored, as `\[\text{OC}_\text{X} = \frac{...}{...}\]`, which matches the two
+other definitional formulas in the file and the ten worked ones.
+
+All fourteen of the chapter's equations were then read out of the source and
+compared line by line; the other thirteen were already exact, including the
+Lego-set definition that the source genuinely states twice. `scripts/doc_formulas.py`
+is what did the reading, and `--check` now reports this class of defect against
+the file.

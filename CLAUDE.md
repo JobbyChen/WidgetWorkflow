@@ -34,6 +34,7 @@ scripts/
   embed_engine.py             ← inline engine/ into a notes file's <head> (prompt step 7)
   check_file.py               ← mechanical step-8 checks (JSON, </script>, head, engine identity…)
   doc_headings.py             ← a Word file's headings and their level. Run it BEFORE writing any.
+  doc_formulas.py             ← a Word file's MathType equations as text; --check audits a notes file
   add_toc.py                  ← write the house table of contents into a notes file
   widget_text.py              ← every renamable string in a file's widgets; --apply writes them back
   transcript_diff.py          ← does a new term's transcript change this file? Run it BEFORE swapping.
@@ -182,6 +183,17 @@ Full list with checkboxes: `docs/open-issues.md`.
   a binary `.doc` centred Helvetica-Bold 12 is `<h1>` and underlined Times-Bold
   is `<h2>`. Never promote a section because it looks important, and never add a
   heading the source does not have. Box and exam-tip titles are not headings.
+* **A formula is a third thing a Word reader cannot see.** These chapters carry
+  their equations as MathType OLE objects, so `word/document.xml` has no
+  `<m:oMath>` at all — just an `<w:object>` and a WMF picture — and pandoc,
+  `antiword` and `catdoc` all skip them silently. Run `python
+  scripts/doc_formulas.py <the Word file>` for the text inside those pictures,
+  and `--check <notes file>` to be told which of their words the file's LaTeX
+  does not carry. Reiterate each formula whole: keep the left-hand side, keep
+  the source's subscript, and never substitute an equal expression. `OC_X =`
+  went missing because the fraction was transcribed by eye and the thing it
+  equals was not; point elasticity was rewritten from `1/Slope` to `ΔQ_D/ΔP`,
+  which is the same number and loses the reason the equation is there.
 * **A `.doc` needs two readers.** `antiword` gives the body flow and, via its
   PostScript output, the formatting; it silently drops every floating text box —
   which in these files is where the exam tips, the worked examples and the

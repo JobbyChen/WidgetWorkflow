@@ -187,6 +187,10 @@ gap — the other half of an opportunity cost, or the size of a price change.
 {"p1": 70, "p2": 85, "q": 40, "label": "15 butter", "side": "left", "at": 1}
 ```
 
+Both kinds of brace size their curl to the span they cover, so a brace across
+two dollars on a twenty-five dollar axis is drawn small and clean rather than as
+overlapping curves.
+
 `left: true` is the mirror of a horizontal brace's `below: true`: it sits outside
 the P axis, clear of the plot and of the tick numbers, and **widens the left
 margin by 44px** to fit — the same trade a `below` brace makes for 18px of panel

@@ -17,6 +17,12 @@ Every formula is set in MathJax rather than kept as an image, so it scales and
 is selectable. Each was recovered from the MathType WMF's embedded strings and
 cross-checked against the prose, which states all of them in words.
 
+**Nothing is condensed.** Each worked answer opens with the definition and then
+substitutes, the midpoint formula is written in both halves the source gives it
+in — the ratio of percentage changes, then the same thing in Q₂, Q₁ and the
+midpoints — and the interval example is three displayed steps rather than three
+expressions on one line.
+
 The point-elasticity formula is the one the strings do not settle. It is
 written as E_D = |(ΔQ_D/ΔP) × (P/Q_D)| because the document's own worked
 numbers require it: on the straight line through ($9, 1), ($5, 5) and ($1, 9),
@@ -45,6 +51,13 @@ one put P₁ and P₂ within a few pixels of each other.
 
 - **Dr. Rush is named once**, in the exam tip about the point-elasticity
   equation. Kept verbatim; `check_file.py` raises its one WARN on it.
+- **The spectrum curves bow.** Only the two extremes are straight in the source:
+  perfectly elastic is horizontal and perfectly inelastic vertical. The three
+  between them are convex to the origin, and unit elastic is drawn as a true
+  rectangular hyperbola (xy = 900), which is what unit elasticity means.
+- **The demand panel of the total revenue pair carries all five labels** the
+  source marks on it: E = ∞ at the vertical intercept, then E > 1, E = 1, E < 1,
+  and E = 0 at the horizontal intercept.
 - **Total revenue has no shaded rectangle.** The source shades the price-times-
   quantity rectangle under the demand curve; the engine has no area fill, so the
   widget marks the midpoint on demand and shows the revenue hump beside it

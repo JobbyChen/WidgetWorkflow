@@ -96,7 +96,7 @@
 .sdg .sdg-cap { margin:10px 0 0; padding:10px 12px; background:#fff; border-left:4px solid var(--red); font-size:.92rem; line-height:1.45; min-height:3.2em; }
 </style>
 <script>
-/* ===== sd-graph.js v2.8 — data-driven supply & demand widgets =====
+/* ===== sd-graph.js v2.9 — data-driven supply & demand widgets =====
    Markup:  <div class="sdg"><script type="application/json">{ ...config... }<\/script></div>
    Top-level config:
      title, lede, caption         heading / intro / static caption (caption used only when there are no steps)
@@ -219,7 +219,11 @@
 
     (cfg.braces || []).forEach(function (b) {
       var cc = col(b.color || 'red'), grp = el('g', {});
-      var x1 = X(Math.min(b.q1, b.q2)), x2 = X(Math.max(b.q1, b.q2)), y = b.below ? O.y + 22 : Y(b.p) - 8, dir = b.below ? 1 : -1, hh = 7, m = (x1 + x2) / 2;
+      var x1 = X(Math.min(b.q1, b.q2)), x2 = X(Math.max(b.q1, b.q2)), y = b.below ? O.y + 22 : Y(b.p) - 8, dir = b.below ? 1 : -1, m = (x1 + x2) / 2;
+      // Each half of the curl needs about 2*hh of run. Over a short span a
+      // fixed hh makes the segments overlap and the brace reads as a scribble,
+      // so it shrinks with the span it has to cover.
+      var hh = Math.max(2.5, Math.min(7, (x2 - x1) / 4));
       var d = 'M' + x1 + ' ' + y + ' Q' + x1 + ' ' + (y + dir * hh) + ' ' + (x1 + hh) + ' ' + (y + dir * hh) + ' L' + (m - hh) + ' ' + (y + dir * hh) + ' Q' + m + ' ' + (y + dir * hh) + ' ' + m + ' ' + (y + dir * 2 * hh) +
               ' Q' + m + ' ' + (y + dir * hh) + ' ' + (m + hh) + ' ' + (y + dir * hh) + ' L' + (x2 - hh) + ' ' + (y + dir * hh) + ' Q' + x2 + ' ' + (y + dir * hh) + ' ' + x2 + ' ' + y;
       grp.appendChild(el('path', {class: 'brace', stroke: cc, d: d}));
@@ -236,7 +240,8 @@
       var cc = col(b.color || 'red'), grp = el('g', {});
       var y1 = Y(Math.max(b.p1, b.p2)), y2 = Y(Math.min(b.p1, b.p2));
       var x = b.left ? O.x - 32 : X(b.q);
-      var dir = (b.left || b.side === 'left') ? -1 : 1, hh = 7, m = (y1 + y2) / 2;
+      var dir = (b.left || b.side === 'left') ? -1 : 1, m = (y1 + y2) / 2;
+      var hh = Math.max(2.5, Math.min(7, (y2 - y1) / 4));
       var d = 'M' + x + ' ' + y1 +
               ' Q' + (x + dir * hh) + ' ' + y1 + ' ' + (x + dir * hh) + ' ' + (y1 + hh) +
               ' L' + (x + dir * hh) + ' ' + (m - hh) +
@@ -820,14 +825,23 @@
      "label": "D",
      "pts": [
       [
-       38,
+       30,
        100
       ],
       [
-       62,
-       8
+       36,
+       65
+      ],
+      [
+       42,
+       35
+      ],
+      [
+       48,
+       10
       ]
-     ]
+     ],
+     "curved": true
     }
    ],
    "caption": "An inelastic demand curve is steep. A change in price moves the quantity demanded, but by proportionally less than the price itself moved."
@@ -840,14 +854,27 @@
      "label": "D",
      "pts": [
       [
-       8,
-       92
+       10,
+       90
       ],
       [
-       92,
-       8
+       20,
+       45
+      ],
+      [
+       30,
+       30
+      ],
+      [
+       45,
+       20
+      ],
+      [
+       90,
+       10
       ]
-     ]
+     ],
+     "curved": true
     }
    ],
    "caption": "A unit elastic demand curve sits between the two: a one per cent change in price brings exactly a one per cent change in the quantity demanded."
@@ -861,13 +888,22 @@
      "pts": [
       [
        8,
-       62
+       55
+      ],
+      [
+       25,
+       40
+      ],
+      [
+       50,
+       32
       ],
       [
        100,
-       38
+       26
       ]
-     ]
+     ],
+     "curved": true
     }
    ],
    "caption": "An elastic demand curve is flat. A change in price moves the quantity demanded by proportionally more than the price itself moved."
@@ -902,15 +938,15 @@
 
 <p>Assume that a 10% price hike leads to a 5% decrease in quantity demanded.  What is the price elasticity of demand?</p>
 
-<p>\[E_D = \left| \frac{-5\%}{10\%} \right| = 0.5 \quad \text{(weak response)}\]</p>
+<p>\[E_D = \left| \frac{\%\Delta Q_D}{\%\Delta P} \right| = \left| \frac{-5\%}{10\%} \right| = 0.5 \quad \text{(weak response)}\]</p>
 
 <p>Now, assume that a 10% increase in price leads to a 20% decrease in quantity demanded.  What is the price elasticity of demand?</p>
 
-<p>\[E_D = \left| \frac{-20\%}{10\%} \right| = 2.0 \quad \text{(strong response)}\]</p>
+<p>\[E_D = \left| \frac{\%\Delta Q_D}{\%\Delta P} \right| = \left| \frac{-20\%}{10\%} \right| = 2.0 \quad \text{(strong response)}\]</p>
 
 <p>Now, assume that a 10% increase in price leads to a 10% decrease in quantity demanded.  What is the price elasticity of demand?</p>
 
-<p>\[E_D = \left| \frac{-10\%}{10\%} \right| = 1.0 \quad \text{(intermediate response)}\]</p>
+<p>\[E_D = \left| \frac{\%\Delta Q_D}{\%\Delta P} \right| = \left| \frac{-10\%}{10\%} \right| = 1.0 \quad \text{(intermediate response)}\]</p>
 
 <div class="example-box"><h4>Why Do We Use Percentages?</h4>
 <p>We use percentage changes when calculating the price elasticity of demand because it is the percentage change and not the absolute change in price that influences consumer behavior.  For example, if the price of a Big Mac increases by $1, from $5 to $6, consumers may perceive this as a relatively large change.  As a result, they may switch to alternatives, such as Burger King&rsquo;s Whopper.</p>
@@ -921,7 +957,7 @@
 
 <p>You calculate elasticity over an interval by calculating the percentage change in price and the percentage change in quantity.  That is,</p>
 
-<p>\[E_D = \left| \frac{\dfrac{\Delta Q_D}{\text{Midpoint } Q_D}}{\dfrac{\Delta P}{\text{Midpoint } P}} \right|\]</p>
+<p>\[E_D = \left| \frac{\%\Delta Q_D}{\%\Delta P} \right| = \left| \frac{\dfrac{Q_2 - Q_1}{Q_{\text{Midpoint}}}}{\dfrac{P_2 - P_1}{P_{\text{Midpoint}}}} \right|\]</p>
 
 <div class="exam-tip"><h4>EXAM TIP: Midpoint Formula</h4><p>You will almost definitely have a question that asks you to use the midpoint formula on the exam.  Be sure this equation is on your notecard!</p></div>
 
@@ -995,8 +1031,9 @@
   {
    "p1": 19,
    "p2": 21,
+   "q": 8,
    "label": "$2 less, a 10% fall",
-   "left": true,
+   "side": "left",
    "at": 2
   }
  ],
@@ -1009,7 +1046,11 @@
 }
 </script></div>
 
-<p>\[\%\Delta Q_D = \frac{12 - 8}{10} = 40\% \qquad \%\Delta P = \frac{\$19 - \$21}{\$20} = -10\% \qquad E_D = \left| \frac{40\%}{-10\%} \right| = 4\]</p>
+<p>\[\%\Delta Q_D = \frac{Q_2 - Q_1}{Q_{\text{Midpoint}}} = \frac{12 - 8}{10} = 40\%\]</p>
+
+<p>\[\%\Delta P = \frac{P_2 - P_1}{P_{\text{Midpoint}}} = \frac{\$19 - \$21}{\$20} = -10\%\]</p>
+
+<p>\[E_D = \left| \frac{\%\Delta Q_D}{\%\Delta P} \right| = \left| \frac{40\%}{-10\%} \right| = 4\]</p>
 
 <p>As you can see, the elasticity of demand is 4, so demand is <em>elastic</em> between these two points.</p>
 
@@ -1104,13 +1145,17 @@
 
 <p><b>Suppose that the price elasticity of demand is 2 and the price increases by 10%.  What will happen to the quantity demanded as a result?</b></p>
 
-<p>\[2 = \left| \frac{\%\Delta Q_D}{10\%} \right| \qquad \Rightarrow \qquad \%\Delta Q_D = 2 \times 10\% = -20\%\]</p>
+<p>\[E_D = \left| \frac{\%\Delta Q_D}{\%\Delta P} \right| \qquad \Rightarrow \qquad 2 = \left| \frac{\%\Delta Q_D}{10\%} \right|\]</p>
+
+<p>\[\%\Delta Q_D = 2 \times 10\% = -20\%\]</p>
 
 <p>We know that an increase in price caused quantity demanded to <em>fall</em> because the law of demand states that the quantity demanded decreases when the price increases.</p>
 
 <p><b>Suppose that you know that the price elasticity of demand is 0.2 and that the quantity demanded rises by 10%.  What happens to the price?</b></p>
 
-<p>\[0.2 = \left| \frac{10\%}{\%\Delta P} \right| \qquad \Rightarrow \qquad \%\Delta P = \frac{10\%}{0.2} = -50\%\]</p>
+<p>\[E_D = \left| \frac{\%\Delta Q_D}{\%\Delta P} \right| \qquad \Rightarrow \qquad 0.2 = \left| \frac{10\%}{\%\Delta P} \right|\]</p>
+
+<p>\[\%\Delta P = \frac{10\%}{0.2} = -50\%\]</p>
 
 <p>We know that an increase in quantity demanded caused the price to fall because the law of demand states that the quantity demanded <em>increases</em> when the price decreases.</p>
 
@@ -1145,12 +1190,31 @@
        0
       ]
      ],
-     "lstart": true,
-     "ldx": 10,
+     "ldx": -44,
      "ldy": -2
     }
    ],
    "points": [
+    {
+     "q": 0,
+     "p": 110,
+     "label": "E = ∞",
+     "dx": 9,
+     "dy": -4,
+     "guides": false,
+     "showP": false,
+     "showQ": false
+    },
+    {
+     "q": 110,
+     "p": 0,
+     "label": "E = 0",
+     "dx": 9,
+     "dy": -6,
+     "guides": false,
+     "showP": false,
+     "showQ": false
+    },
     {
      "q": 55,
      "p": 55,
@@ -1244,7 +1308,7 @@
   }
  ],
  "steps": [
-  "Elasticity varies along a straight-line demand curve, from infinity at the vertical intercept down to zero at the horizontal one. Total revenue, price times quantity, traces a hump as quantity rises.",
+  "Elasticity varies along a straight-line demand curve: it is infinite at the vertical intercept and zero at the horizontal one. Total revenue, price times quantity, traces a hump as quantity rises.",
   "Revenue peaks at the midpoint of the demand curve, which is exactly where demand is unit elastic. At that point a price change leaves total revenue alone, because the percentage change in quantity offsets the percentage change in price.",
   "Above the midpoint demand is elastic. Raising the price here loses more in quantity than it gains in price, so total revenue falls; cutting the price raises it.",
   "Below the midpoint demand is inelastic. Raising the price here gains more in price than it loses in quantity, so total revenue rises; cutting the price lowers it."

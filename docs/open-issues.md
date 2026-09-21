@@ -218,6 +218,12 @@ or "unattainable" dot) whose exact coordinates are not the lesson.
       comments on, never before it. The source's boxes are headed only "Exam
       Tip". Prompt v6 step 0 should say both things.
 
+- [x] **A brace over a short span drew as a scribble.** Both the horizontal and
+      the upright brace used a fixed 7px curl, so a brace across two dollars on
+      a twenty-five dollar axis had its segments overlap. Engine v2.9 sizes the
+      curl to the span. Found on the midpoint widget in
+      `examples/ECO2023-263-Elasticity.html`.
+
 ## Workflow
 
 - [ ] **No list of who may be named, by choice.** Hard rule 4 covers the policy:

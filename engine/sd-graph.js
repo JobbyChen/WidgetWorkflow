@@ -1,4 +1,4 @@
-/* ===== sd-graph.js v2.8 — data-driven supply & demand widgets =====
+/* ===== sd-graph.js v2.9 — data-driven supply & demand widgets =====
    Markup:  <div class="sdg"><script type="application/json">{ ...config... }<\/script></div>
    Top-level config:
      title, lede, caption         heading / intro / static caption (caption used only when there are no steps)
@@ -121,7 +121,11 @@
 
     (cfg.braces || []).forEach(function (b) {
       var cc = col(b.color || 'red'), grp = el('g', {});
-      var x1 = X(Math.min(b.q1, b.q2)), x2 = X(Math.max(b.q1, b.q2)), y = b.below ? O.y + 22 : Y(b.p) - 8, dir = b.below ? 1 : -1, hh = 7, m = (x1 + x2) / 2;
+      var x1 = X(Math.min(b.q1, b.q2)), x2 = X(Math.max(b.q1, b.q2)), y = b.below ? O.y + 22 : Y(b.p) - 8, dir = b.below ? 1 : -1, m = (x1 + x2) / 2;
+      // Each half of the curl needs about 2*hh of run. Over a short span a
+      // fixed hh makes the segments overlap and the brace reads as a scribble,
+      // so it shrinks with the span it has to cover.
+      var hh = Math.max(2.5, Math.min(7, (x2 - x1) / 4));
       var d = 'M' + x1 + ' ' + y + ' Q' + x1 + ' ' + (y + dir * hh) + ' ' + (x1 + hh) + ' ' + (y + dir * hh) + ' L' + (m - hh) + ' ' + (y + dir * hh) + ' Q' + m + ' ' + (y + dir * hh) + ' ' + m + ' ' + (y + dir * 2 * hh) +
               ' Q' + m + ' ' + (y + dir * hh) + ' ' + (m + hh) + ' ' + (y + dir * hh) + ' L' + (x2 - hh) + ' ' + (y + dir * hh) + ' Q' + x2 + ' ' + (y + dir * hh) + ' ' + x2 + ' ' + y;
       grp.appendChild(el('path', {class: 'brace', stroke: cc, d: d}));
@@ -138,7 +142,8 @@
       var cc = col(b.color || 'red'), grp = el('g', {});
       var y1 = Y(Math.max(b.p1, b.p2)), y2 = Y(Math.min(b.p1, b.p2));
       var x = b.left ? O.x - 32 : X(b.q);
-      var dir = (b.left || b.side === 'left') ? -1 : 1, hh = 7, m = (y1 + y2) / 2;
+      var dir = (b.left || b.side === 'left') ? -1 : 1, m = (y1 + y2) / 2;
+      var hh = Math.max(2.5, Math.min(7, (y2 - y1) / 4));
       var d = 'M' + x + ' ' + y1 +
               ' Q' + (x + dir * hh) + ' ' + y1 + ' ' + (x + dir * hh) + ' ' + (y1 + hh) +
               ' L' + (x + dir * hh) + ' ' + (m - hh) +

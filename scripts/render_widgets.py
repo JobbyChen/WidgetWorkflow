@@ -42,9 +42,15 @@ MIN_ARROW_GAP = 4.0
 # A schedule's per-row arrow spans two dots at one price and is inset only 6px,
 # so it legitimately runs closer to its own curves than a shift arrow does.
 MIN_ROW_GAP = 2.0
+# Ian's rule: an arrow should not lie over the dashed guides either, unless
+# there is genuinely nowhere else for it to go. Reported apart from the curve
+# gap because the two are judged differently -- a guide crossing is sometimes
+# unavoidable in a crowded panel, a curve crossing never is. Row arrows are
+# exempt: they run between two schedule dots, across the grid, by construction.
+MIN_GUIDE_GAP = 3.0
 
 TOUCH_JS = """(n, args) => {
-  var i = args[0], lim = args[1], rowLim = args[2], bad = [], w = n[i];
+  var i = args[0], lim = args[1], rowLim = args[2], gLim = args[3], bad = [], w = n[i];
   w.querySelectorAll('svg').forEach(function (svg) {
     var arrows = [].slice.call(svg.querySelectorAll('path.arrow'))
       .filter(function (a) { return !a.closest('.off'); });
@@ -52,22 +58,33 @@ TOUCH_JS = """(n, args) => {
       var mine = a.classList.contains('row') ? rowLim : lim;
       var L = a.getTotalLength(), pts = [];
       for (var k = 0; k <= 120; k++) { var q = a.getPointAtLength(L * k / 120); pts.push([q.x, q.y]); }
-      svg.querySelectorAll('g.curve-g').forEach(function (g) {
-        if (g.classList.contains('off')) return;
-        var c = g.querySelector('path.curve'); if (!c) return;
-        var CL = c.getTotalLength(), best = 1e9;
+      function nearest(node) {
+        var EL = node.getTotalLength(), best = 1e9;
         for (var m = 0; m <= 300; m++) {
-          var q2 = c.getPointAtLength(CL * m / 300);
+          var q2 = node.getPointAtLength(EL * m / 300);
           for (var j = 0; j < pts.length; j++) {
             var d = Math.hypot(q2.x - pts[j][0], q2.y - pts[j][1]);
             if (d < best) best = d;
           }
         }
+        return best;
+      }
+      svg.querySelectorAll('g.curve-g').forEach(function (g) {
+        if (g.classList.contains('off')) return;
+        var c = g.querySelector('path.curve'); if (!c) return;
+        var best = nearest(c);
         if (best < mine) {
           var t = g.querySelector('text.clbl');
-          bad.push([Math.round(best * 10) / 10, (t && t.textContent) || '?']);
+          bad.push([Math.round(best * 10) / 10, (t && t.textContent) || '?', 'curve']);
         }
       });
+      if (!a.classList.contains('row')) {
+        svg.querySelectorAll('.guide').forEach(function (gd) {
+          if (gd.closest('.off')) return;
+          if (nearest(gd) < gLim) bad.push([Math.round(nearest(gd) * 10) / 10,
+                                            'a dashed guide', 'guide']);
+        });
+      }
     });
   });
   return bad;
@@ -77,7 +94,8 @@ TOUCH_JS = """(n, args) => {
 def touching(page, wi):
     """Every arrow/curve pair closer than MIN_ARROW_GAP, in the current state."""
     return page.eval_on_selector_all("div.sdg", TOUCH_JS,
-                                     [wi, MIN_ARROW_GAP, MIN_ROW_GAP])
+                                     [wi, MIN_ARROW_GAP, MIN_ROW_GAP,
+                                      MIN_GUIDE_GAP])
 
 
 def main():
@@ -142,10 +160,11 @@ def main():
                     widget = page.query_selector_all("div.sdg")[wi]
                     widget.screenshot(path=str(out / ("w%02d-%s-step%02d.png" % (wi + 1, slug, step))))
                     shots += 1
-                    for gap, lbl in touching(page, wi):
+                    for gap, lbl, kind in touching(page, wi):
+                        seen = "curve %s" % lbl if kind == "curve" else lbl
                         problems.append("widget %d (%s) step %d: an arrow comes "
-                                        "within %.1fpx of curve %s"
-                                        % (wi + 1, label, step, gap, lbl))
+                                        "within %.1fpx of %s"
+                                        % (wi + 1, label, step, gap, seen))
                     # .sdg-ctrl is [Back, Next step, Start over]
                     more = page.eval_on_selector_all(
                         "div.sdg",

@@ -195,7 +195,17 @@ Full list with checkboxes: `docs/open-issues.md`.
   0 FAIL.
 * After any change to a notes file: `python scripts/check_file.py <file>` (must
   be 0 FAIL) and, for anything visual, `python scripts/render_widgets.py <file>`
-  and look at every PNG for collisions at every step.
+  and look at every PNG for collisions at every step. That script also measures
+  every arrow against every curve and every dashed guide from the **rendered**
+  geometry and must report no problems. Do not settle a "does that touch?"
+  question by eye: a 1px gap and a touch look identical in a screenshot, and on
+  a `curved` pair the drawn spline is nowhere near the polyline through its
+  points, so the arithmetic misleads too.
+* **An arrow does not lie over the dashed guides.** Ian's rule. A converging
+  pair belongs *inside* the box the guides fence off, not across it, which
+  usually means starting it a few units in from the point and keeping it short.
+  Where a panel genuinely has nowhere else to put it, crossing a guide is
+  allowed — but establish that from the measurement, not from a glance.
 * To test a config quickly, drop it into a copy of
   `examples/ECO2013-Widgets-All.html` and open it in a browser; it carries its
   own copy of the engine in its head.

@@ -88,6 +88,11 @@ saw them. Only `render_widgets.py` and a person catch this class of defect.
 - **Dr. Rush is named once**, for his description of equilibrium as "a
   situation in which there is no automatic tendency for change". Kept verbatim;
   `check_file.py` raises its one WARN on it.
+- **No arrow lies over a dashed guide.** The converging pair in the
+  equilibrium widget now sits inside the box the guides fence off rather than
+  crossing it, the two movement arrows were shortened and re-sided, and the
+  two-factor preset's demand arrow moved to a price where it clears the Q₁
+  guide (`arrowD: 8`). Verified by measurement, not by eye.
 - **The two-factor widget sits after both examples it works, not before them.**
   Its buttons name markets, so ahead of the examples they named markets the
   reader had not met. One widget rather than one per example, because chicken

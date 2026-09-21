@@ -233,11 +233,15 @@ or "unattainable" dot) whose exact coordinates are not the lesson.
       a second case the screenshots had not: a `double` preset's demand arrow
       ending on S1, since a shift arrow is only inset from its own pair.
       `arrowD`/`arrowS` move it.
-- [ ] **The arrow-gap check reports 10 row arrows in the delivered
-      `ECO2013-263-SupplyAndDemand.html`.** A schedule's per-row arrow is inset
-      only 6px and legitimately runs about 3.2px from its curves, so the 4px
-      threshold is wrong for them; they need their own, lower one. Reported
-      rather than changed.
+- [x] **Row arrows needed their own threshold.** A schedule's per-row arrow is
+      inset only 6px and legitimately runs about 3.2px from its curves, so the
+      4px shift-arrow threshold flagged ten of them in the delivered
+      `ECO2013-263-SupplyAndDemand.html`. `MIN_ROW_GAP` is 2px, and row arrows
+      are exempt from the guide rule entirely -- they cross the schedule grid by
+      construction.
+- [ ] **The delivered `ECO2013-263-SupplyAndDemand.html` has eight arrows over a
+      guide or a curve** (widgets 5 and 6). It is Ian's file, so this is
+      reported rather than rewritten. One for Ian.
 
 ## Workflow
 

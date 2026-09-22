@@ -158,3 +158,22 @@ The vertical line forced three labels to move: it runs the full height, so the
 demand label could no longer sit in the wedge between the curves and now sits
 below both, and the two wedge labels moved out of its way. The label checker
 found every one of those.
+
+## Fourth review round
+
+* **The quantity label was a chunky block.** It was a curve label — 13px at
+  weight 800 — sitting among 10.5px ticks, and Qᴇꜰꜰɪᴄɪᴇɴᴛ spelled out in
+  small caps at that weight read as a solid bar. Engine **v2.12** adds
+  `dot: false` to a point: it keeps the axis labels and drops the marker, so the
+  quantity prints in the same tick style as every other number on that axis with
+  nothing drawn on the line. Shortened to Qᴇꜰꜰ, matching the file's own
+  `Qᴇꜰꜰ = Q*`. Area labels also drop from 11px/800 to 10px/700.
+* **DWL centred with room.** It was already at the polygon's centroid, which is
+  the max-min-distance point — the problem was the wedge, not the placement: at
+  the old width the label's corners came within 2–3px of the sloped edges.
+  Widening the wedge (the quantity produced is a drawing choice on a symbolic
+  graph) takes widget 8 to **8.5px** of clearance. Widget 9's quantities are
+  stated — 10, 15 and 20 million — so its wedge can only be made taller by
+  steepening the curves, which gets it to **2.4px**: clear of every edge, but
+  the tightest thing in the file, and the geometry cannot do better without
+  inventing different quantities.

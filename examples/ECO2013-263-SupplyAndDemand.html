@@ -60,7 +60,7 @@
 /* A shaded region reads as a wash behind the graph, never as a block: the
    curves, guides and points all have to stay legible through it. */
 .sdg .area { stroke:none; opacity:.18; }
-.sdg .arlbl { font-size:11px; font-weight:800; }
+.sdg .arlbl { font-size:10px; font-weight:700; }
 .sdg .curve.thin { stroke-width:2; }
 .sdg .clbl { font-size:13px; font-weight:800; }
 .sdg .guide { fill:none; stroke-width:1.1; stroke-dasharray:4 3; }
@@ -101,7 +101,7 @@
 .sdg .sdg-cap { margin:10px 0 0; padding:10px 12px; background:#fff; border-left:4px solid var(--red); font-size:.92rem; line-height:1.45; min-height:3.2em; }
 </style>
 <script>
-/* ===== sd-graph.js v2.11 — data-driven supply & demand widgets =====
+/* ===== sd-graph.js v2.12 — data-driven supply & demand widgets =====
    Markup:  <div class="sdg"><script type="application/json">{ ...config... }<\/script></div>
    Top-level config:
      title, lede, caption         heading / intro / static caption (caption used only when there are no steps)
@@ -120,7 +120,7 @@
         shiftArrow:false = animate and dim as usual but draw no shift arrow. Use it whenever the
                  widget already shows per-row arrows (table.arrows), which say the same thing once per row.
         curved = smooth through 3+ points (conceptual, non-linear look)
-     points[]: {id, q, p, label, marker, pl, ql, color, at, until, dx, dy, guides:false, showP:false, showQ:false}
+     points[]: {id, q, p, label, marker, pl, ql, color, at, until, dx, dy, guides:false, showP:false, showQ:false, dot:false}
         marker = "1"/"2" numbered circle;  pl/ql = symbolic axis labels ("P₁","Q₁") instead of numbers
      moves[]:  {from:[q,p], to:[q,p], at, until, color, offset}  arrow between two points, drawn `offset` px beside the curve (default 14; negative = other side)
      hlines[]: {p, label, color, at, until}                       horizontal price line across the plot
@@ -335,9 +335,17 @@
     (cfg.points || []).forEach(function (p) {
       var cc = col(p.color), grp = el('g', {class: 'ptg'});
       if (p.guides !== false) grp.appendChild(el('path', {class: 'guide', stroke: cc, d: 'M' + O.x + ' ' + Y(p.p) + ' L' + X(p.q) + ' ' + Y(p.p) + ' L' + X(p.q) + ' ' + O.y}));
-      grp.appendChild(el('circle', {class: 'halo', cx: X(p.q), cy: Y(p.p), r: p.marker ? 10.5 : 8.5}));
-      grp.appendChild(el('circle', {class: 'pt' + (p.marker ? ' mk' : ''), cx: X(p.q), cy: Y(p.p), r: p.marker ? 6 : 4.2, stroke: cc}));
-      if (p.marker) grp.appendChild(el('text', {class: 'mktxt', x: X(p.q), y: Y(p.p) + 2.6, 'text-anchor': 'middle'}, p.marker));
+      // dot:false keeps the axis labels and drops the marker. A quantity
+      // marked by a vertical line wants its name on the axis in the same tick
+      // style as every other number there, and nothing drawn on the line
+      // itself. Without this the only way to get that label was a curve label,
+      // which is 13px at weight 800 and reads as a chunky block next to the
+      // 10.5px ticks it sits among.
+      if (p.dot !== false) {
+        grp.appendChild(el('circle', {class: 'halo', cx: X(p.q), cy: Y(p.p), r: p.marker ? 10.5 : 8.5}));
+        grp.appendChild(el('circle', {class: 'pt' + (p.marker ? ' mk' : ''), cx: X(p.q), cy: Y(p.p), r: p.marker ? 6 : 4.2, stroke: cc}));
+        if (p.marker) grp.appendChild(el('text', {class: 'mktxt', x: X(p.q), y: Y(p.p) + 2.6, 'text-anchor': 'middle'}, p.marker));
+      }
       if (p.label) grp.appendChild(el('text', {class: 'tag', x: X(p.q) + (p.dx != null ? p.dx : 9), y: Y(p.p) + (p.dy != null ? p.dy : -9), fill: cc}, p.label));
       var pl = p.pl || ((p.showP !== false && (ax.yticks || []).indexOf(p.p) < 0 && !(cfg.hlines || []).some(function (l) { return l.p === p.p; })) ? fmtP(p.p, ax) : null);
       var ql = p.ql || ((p.showQ !== false && (ax.xticks || []).indexOf(p.q) < 0) ? fmtQ(p.q, ax) : null);
@@ -545,7 +553,7 @@
 
 <h1>Demand</h1>
 
-<h2>Definition of demand</h2>
+<h2>Definition of Demand</h2>
 
 <p><strong>Demand</strong> is the relationship between the price of a good and the quantity demanded of that same good, all else held equal. Three parts of that definition matter.</p>
 
@@ -555,7 +563,7 @@
 <li><b>All else held equal:</b> Along a demand curve, only the price of this good changes. If anything else changes, demand itself changes, which is the second half of this section.</li>
 </ul>
 
-<h2>What counts in the quantity demanded</h2>
+<h2>What Counts in the Quantity Demanded</h2>
 
 <p>Where does a number like "50,000 Volvo SUVs" come from? A consumer's desire for a product appears in the quantity demanded only when all three of the following hold.</p>
 
@@ -569,7 +577,7 @@
 
 <p>Wanting and affording are not the same thing, and affording and buying are not the same thing either. A yacht or a house may be something a student wants but cannot afford. A $400 pair of smart glasses is different. Most students could find $400 in an account or on a credit card, so the honest description is not "I cannot afford them" but "I would rather allocate my limited income elsewhere." The same logic applies to an $800-a-month lease on a sports car: someone with an extra $800 each month can afford it, yet may still choose to spend that money on a concert and a hotel instead. For a consumer to be counted, all three criteria must be met. It is not enough to want the good, and it is not even enough to want it and be able to afford it. The consumer has to be ready to buy it when it is put in front of them at that price.</p>
 
-<h2>A demand experiment</h2>
+<h2>A Demand Experiment</h2>
 
 <p>To see where a demand relationship comes from, imagine a market in which the good is a grande raspberry white mocha, a sweet, fruity coffee drink topped with whipped cream. Each person names the absolute maximum price they would pay for one right now. Two simplifying assumptions apply: anyone willing to pay a given price is also willing to pay any lower price, and each person buys at most one drink. (In the real world people often buy more than one unit and are willing to pay different amounts for the first and second unit.)</p>
 
@@ -592,7 +600,7 @@
 
 <p>The experiment makes three points. First, it shows where a demand curve actually comes from and what the data represent. Second, it shows that real-world demand curves are <strong>non-linear</strong>. The curve these answers trace is not a straight line. Textbooks and most online resources nonetheless draw straight-line supply and demand curves, and for most applications nothing is lost by doing so. Straight lines simply make the math easier, and from here on this course uses straight-line curves. Third, it illustrates the law of demand.</p>
 
-<h2>The law of demand</h2>
+<h2>The Law of Demand</h2>
 
 <p>The <strong>law of demand</strong> can be written several ways that are all logically equivalent.</p>
 
@@ -604,7 +612,7 @@
 
 <p>A natural question is whether luxury goods violate the law of demand, since some people seem to buy a designer bag precisely because it is expensive. The more careful view is that the high price exists because the brand has built up cachet, and a brand-new bag nobody had heard of could not be sold for $5,000. What matters in practice is what happens for a <em>local</em> change in price. If a $5,000 duffel bag went on sale for $4,800, more people would buy it, because the $200 discount is not enough to change how the bag is perceived but is enough to tip buyers who were on the fence. For reasonable price changes, the law of demand holds.</p>
 
-<h2>Movement along the curve versus a change in demand</h2>
+<h2>Movement Along the Curve Versus a Change in Demand</h2>
 
 <p>If the price of a raspberry white mocha changes, the market moves from one point on the demand curve to another. A higher price moves it up and to the left; a lower price moves it down and to the right. The curve itself does not move. This is called a <strong>change in the quantity demanded</strong>, and it is caused only by a change in the price of the good itself.</p>
 
@@ -624,7 +632,7 @@
       "steps":["On the original demand curve D₁, 20 pounds of chicken are demanded at $12, 30 pounds at $8, and 40 pounds at $4.",
                "Demand increases by 10 pounds at every price. At $12 the quantity demanded is now 30 pounds, at $8 it is 40, and at $4 it is 50. Every point has moved 10 pounds to the right, so the entire demand curve shifts to the right, from D₁ to D₂."]},
     "down":{"label":"Decrease in demand: 10 fewer pounds at every price",
-      "curves":[{"id":"D1","label":"D₁","pts":[[20,12],[30,8],[40,4]],"thin":true},{"id":"D2","label":"D₂","pts":[[10,12],[20,8],[30,4]],"color":"red","from":"D1","shiftArrow":false,"at":1,"arrowP":10,"ldx":-26,"ldy":15}],
+      "curves":[{"id":"D1","label":"D₁","pts":[[20,12],[30,8],[40,4]],"thin":true,"ldx":-26,"ldy":15},{"id":"D2","label":"D₂","pts":[[10,12],[20,8],[30,4]],"color":"red","from":"D1","shiftArrow":false,"at":1,"arrowP":10,"ldx":-26,"ldy":15}],
       "table":{"cols":["Price","Before","After"],"series":["D1","D2"],"rows":[[12,20,10],[8,30,20],[4,40,30]],"arrows":true},
       "steps":["On the original demand curve D₁, 20 pounds of chicken are demanded at $12, 30 pounds at $8, and 40 pounds at $4.",
                "Demand decreases by 10 pounds at every price. At $12 the quantity demanded is now only 10 pounds, at $8 it is 20, and at $4 it is 30. Every point has moved 10 pounds to the left, so the entire demand curve shifts to the left, from D₁ to D₂."]}
@@ -633,7 +641,7 @@
 
 <p>Any increase in demand is drawn as a rightward shift of the demand curve, and any decrease in demand is drawn as a leftward shift.</p>
 
-<h2>Demand shifters</h2>
+<h2>Demand Shifters</h2>
 
 <p><strong>Demand shifters</strong> are outside events that change the demand for a good or service. The list below covers things that affect the demand for almost all goods, but it is not comprehensive. For a particular good there may be an important shifter that is not on it. Outside temperature, for example, does not affect the demand for most goods, yet it has a huge effect on the demand for ice cream, which is why an ice cream shop in a cold climate may simply close for the winter.</p>
 
@@ -665,7 +673,7 @@
 
 <h1>Supply</h1>
 
-<h2>Definition of supply</h2>
+<h2>Definition of Supply</h2>
 
 <p><strong>Supply</strong> is the relationship between the price of a good or service and the quantity supplied of that same good or service, all else held equal. The same three ideas from the definition of demand apply. Supply is a relationship, not a number: it is not "sellers sold 30,000 burritos this month," but the quantity sellers would like to sell at every possible price. It links the price of a good to the quantity supplied of that same good; the prices of other goods can affect supply, but that is treated separately as a shifter. And along any one supply curve, the only thing that changes is the price of this specific good. Anything else that influences how much sellers want to sell will shift the supply curve rather than move along it.</p>
 
@@ -682,7 +690,7 @@
 
 <p>The price on the vertical axis is the price of the good, meaning the price at which one unit can be sold. It is <em>not</em> the cost of producing the good.</p>
 
-<h2>The law of supply</h2>
+<h2>The Law of Supply</h2>
 
 <p>The <strong>law of supply</strong> can be stated in equivalent ways.</p>
 
@@ -692,7 +700,7 @@
 <li>There is a positive relationship between the price of a good or service and the quantity supplied.</li>
 </ul>
 
-<h2>Why the supply curve slopes upward</h2>
+<h2>Why the Supply Curve Slopes Upward</h2>
 
 <p>The tempting answer is "firms like to make money, so they sell more when the price is higher." That is true, but it is not sufficient. One could just as easily argue that when prices are low, firms need to sell more units to make the same profit, which would give a downward-sloping curve. Saying the supply curve slopes upward is the same as saying firms are <em>not willing to sell as much when prices are lower</em>, and that points to the two real reasons.</p>
 
@@ -701,7 +709,7 @@
 <li><b>As prices rise, more firms are willing to enter the market.</b> Different firms have different <strong>reservation prices</strong>, the minimum price at which they would be willing to sell. Consider people deciding whether to give up a football Saturday to sell cold drinks from a cooler in the heat. One person would do it for $8, another for $12, another for $25, and another for $35. At a price of $8 there is one seller in the market. At $12 there are two, at $25 three, and at $35 four. As the price rises, more firms can profitably enter, so the total quantity supplied rises.</li>
 </ol>
 
-<h2>Changes in supply</h2>
+<h2>Changes in Supply</h2>
 
 <p>Just as with demand, a <strong>change in quantity supplied</strong> is a movement along one supply curve, and the only thing that causes it is a change in the price of the good itself. A higher price of iced coffee raises the quantity of iced coffee supplied; a lower price lowers it. A <strong>change in supply</strong> is a change in the quantity supplied at every price, which shifts the entire curve.</p>
 
@@ -728,7 +736,7 @@
 
 <p>Any increase in demand or supply is drawn as a rightward shift of that curve. Any decrease in demand or supply is drawn as a leftward shift.</p>
 
-<h2>Supply shifters</h2>
+<h2>Supply Shifters</h2>
 
 <p><strong>Supply shifters</strong> are the things other than the good's own price that affect how much of it firms want to sell. The plus and minus signs have the same meaning as before: a positive or negative relationship with supply, not a direction of shift.</p>
 
@@ -741,13 +749,13 @@
 
 <div class="exam-tip"><h4>EXAM TIP: "In production" means supply</h4><p>When the words <em>substitutes</em> or <em>complements</em> appear on their own, they describe a demand-side relationship between goods that consumers choose between or buy together. When they are followed by <em>in production</em>, they describe a supply-side relationship. If you see "in production," the supply curve shifts; if you do not, the demand curve shifts. You will always be told which relationship applies; you will not be asked to infer it.</p></div>
 
-<h2>Substitutes in production</h2>
+<h2>Substitutes in Production</h2>
 
 <p><strong>Substitutes in production</strong> are two goods where a firm must choose between making more of one or more of the other, usually because both are made from a limited essential input. A dairy farm has a fixed number of cows producing a fixed amount of milk, and that milk can be turned into either butter or ice cream. Allocating more milk to ice cream means less butter, and the reverse.</p>
 
 <p>Suppose butter and ice cream are substitutes in production and the price of butter rises. By the law of supply, firms want to make more butter. In the market for butter this is a movement up and to the right along the supply curve, an increase in the <em>quantity supplied</em> of butter, not a shift. But making more butter leaves less milk for ice cream, so firms reduce their production of ice cream at every price. Because that change is not caused by the price of ice cream, the supply curve for ice cream shifts to the left. There is a negative relationship between the price of a substitute in production and the supply of the good in question.</p>
 
-<h2>Complements in production</h2>
+<h2>Complements in Production</h2>
 
 <p><strong>Complements in production</strong> are two goods that are produced together, so that making more of one automatically means making more of the other. They are byproducts of each other. The textbook example is gasoline and kerosene. Kerosene, a cheap fuel used in oil lanterns and portable stoves, is produced when crude oil is refined into gasoline, so neither can be made without the other. If the price of gasoline rises, refiners want to make more gasoline, which is a movement along the gasoline supply curve. Making more gasoline means making more kerosene too, so the supply of kerosene increases and its curve shifts right. There is a positive relationship between the price of a complement in production and the supply of the good in question.</p>
 
@@ -853,7 +861,7 @@
 
 <div class="exam-tip"><h4>EXAM TIP: Always draw it out</h4><p>Students who work through all three steps, including the sketch, get most equilibrium questions right. Students who try to reason through a shift without drawing it are the ones who get confused. Draw the graph every time, even if it is sloppy.</p></div>
 
-<h2>Example 1: chips and Nutella are complements, and the price of Nutella falls</h2>
+<h2>Example 1: Chips and Nutella Are Complements, and the Price of Nutella Falls</h2>
 
 <p>Start in the market for chips at an equilibrium price of $2 per bag and an equilibrium quantity of 500 bags. Who cares most directly? Since these are complements (not complements in production), this is a demand-side relationship, so the demand for chips shifts. In which direction? When the price of a complement falls, consumers want more chips, so demand shifts right. Step through the drawing below.</p>
 
@@ -872,7 +880,7 @@
 
 <p>The specific numbers do not matter; what matters is the direction. The price rose because, once demand had shifted right, the original price of $2 left a shortage. The equilibrium price rose to $3 and the equilibrium quantity rose from 500 to 700 units.</p>
 
-<h2>Example 2: cheese and cheese curds are complements in production, and the price of cheese curds rises</h2>
+<h2>Example 2: Cheese and Cheese Curds Are Complements in Production, and the Price of Cheese Curds Rises</h2>
 
 <p>Cheese is made in water, and as it coagulates, pieces of byproduct float to the top. Those pieces, beer-battered and deep fried, are cheese curds. Making cheese always produces curds, and making curds requires making cheese, so the two are complements in production. Start in the market for cheese at an equilibrium price of $7 and an equilibrium quantity of 450 units. The words "in production" signal a supply-side relationship, so the supply of cheese shifts. When the price of cheese curds rises, producers want to make more curds, which means making more cheese, so the supply of cheese shifts right.</p>
 
@@ -889,7 +897,7 @@
           "The price falls until the market clears again at P₂ and Q₂, which here are $5 and 500 units. When supply shifts right, the equilibrium price decreases and the equilibrium quantity increases."]}
 </script></div>
 
-<h2>When supply and demand shift at the same time</h2>
+<h2>When Supply and Demand Shift at the Same Time</h2>
 
 <p>Suppose supply and demand both increase, so both curves shift right. The result depends on which shift is larger. If demand shifts by a lot and supply by a little, the equilibrium quantity rises and the equilibrium price also rises. If demand shifts by a little and supply by a lot, the equilibrium quantity still rises, but the equilibrium price falls. Step through both panels at once below.</p>
 

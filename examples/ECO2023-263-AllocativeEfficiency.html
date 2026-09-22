@@ -67,7 +67,7 @@
 /* A shaded region reads as a wash behind the graph, never as a block: the
    curves, guides and points all have to stay legible through it. */
 .sdg .area { stroke:none; opacity:.18; }
-.sdg .arlbl { font-size:11px; font-weight:800; }
+.sdg .arlbl { font-size:10px; font-weight:700; }
 .sdg .curve.thin { stroke-width:2; }
 .sdg .clbl { font-size:13px; font-weight:800; }
 .sdg .guide { fill:none; stroke-width:1.1; stroke-dasharray:4 3; }
@@ -108,7 +108,7 @@
 .sdg .sdg-cap { margin:10px 0 0; padding:10px 12px; background:#fff; border-left:4px solid var(--red); font-size:.92rem; line-height:1.45; min-height:3.2em; }
 </style>
 <script>
-/* ===== sd-graph.js v2.11 — data-driven supply & demand widgets =====
+/* ===== sd-graph.js v2.12 — data-driven supply & demand widgets =====
    Markup:  <div class="sdg"><script type="application/json">{ ...config... }<\/script></div>
    Top-level config:
      title, lede, caption         heading / intro / static caption (caption used only when there are no steps)
@@ -127,7 +127,7 @@
         shiftArrow:false = animate and dim as usual but draw no shift arrow. Use it whenever the
                  widget already shows per-row arrows (table.arrows), which say the same thing once per row.
         curved = smooth through 3+ points (conceptual, non-linear look)
-     points[]: {id, q, p, label, marker, pl, ql, color, at, until, dx, dy, guides:false, showP:false, showQ:false}
+     points[]: {id, q, p, label, marker, pl, ql, color, at, until, dx, dy, guides:false, showP:false, showQ:false, dot:false}
         marker = "1"/"2" numbered circle;  pl/ql = symbolic axis labels ("P₁","Q₁") instead of numbers
      moves[]:  {from:[q,p], to:[q,p], at, until, color, offset}  arrow between two points, drawn `offset` px beside the curve (default 14; negative = other side)
      hlines[]: {p, label, color, at, until}                       horizontal price line across the plot
@@ -342,9 +342,17 @@
     (cfg.points || []).forEach(function (p) {
       var cc = col(p.color), grp = el('g', {class: 'ptg'});
       if (p.guides !== false) grp.appendChild(el('path', {class: 'guide', stroke: cc, d: 'M' + O.x + ' ' + Y(p.p) + ' L' + X(p.q) + ' ' + Y(p.p) + ' L' + X(p.q) + ' ' + O.y}));
-      grp.appendChild(el('circle', {class: 'halo', cx: X(p.q), cy: Y(p.p), r: p.marker ? 10.5 : 8.5}));
-      grp.appendChild(el('circle', {class: 'pt' + (p.marker ? ' mk' : ''), cx: X(p.q), cy: Y(p.p), r: p.marker ? 6 : 4.2, stroke: cc}));
-      if (p.marker) grp.appendChild(el('text', {class: 'mktxt', x: X(p.q), y: Y(p.p) + 2.6, 'text-anchor': 'middle'}, p.marker));
+      // dot:false keeps the axis labels and drops the marker. A quantity
+      // marked by a vertical line wants its name on the axis in the same tick
+      // style as every other number there, and nothing drawn on the line
+      // itself. Without this the only way to get that label was a curve label,
+      // which is 13px at weight 800 and reads as a chunky block next to the
+      // 10.5px ticks it sits among.
+      if (p.dot !== false) {
+        grp.appendChild(el('circle', {class: 'halo', cx: X(p.q), cy: Y(p.p), r: p.marker ? 10.5 : 8.5}));
+        grp.appendChild(el('circle', {class: 'pt' + (p.marker ? ' mk' : ''), cx: X(p.q), cy: Y(p.p), r: p.marker ? 6 : 4.2, stroke: cc}));
+        if (p.marker) grp.appendChild(el('text', {class: 'mktxt', x: X(p.q), y: Y(p.p) + 2.6, 'text-anchor': 'middle'}, p.marker));
+      }
       if (p.label) grp.appendChild(el('text', {class: 'tag', x: X(p.q) + (p.dx != null ? p.dx : 9), y: Y(p.p) + (p.dy != null ? p.dy : -9), fill: cc}, p.label));
       var pl = p.pl || ((p.showP !== false && (ax.yticks || []).indexOf(p.p) < 0 && !(cfg.hlines || []).some(function (l) { return l.p === p.p; })) ? fmtP(p.p, ax) : null);
       var ql = p.ql || ((p.showQ !== false && (ax.xticks || []).indexOf(p.q) < 0) ? fmtQ(p.q, ax) : null);
@@ -1486,7 +1494,7 @@
        8
       ]
      ],
-     "ldx": -46,
+     "ldx": -38,
      "ldy": -42
     },
     {
@@ -1506,23 +1514,20 @@
      "ldy": -11
     },
     {
-     "id": "q30",
-     "label": "Qᴜɴᴅᴇʀ",
+     "id": "q25",
+     "label": "",
      "pts": [
       [
-       30,
+       25,
        0
       ],
       [
-       30,
+       25,
        104
       ]
      ],
      "color": "red",
-     "thin": true,
-     "lstart": true,
-     "ldx": -23,
-     "ldy": 15
+     "thin": true
     }
    ],
    "areas": [
@@ -1537,11 +1542,11 @@
        100
       ],
       [
-       30,
-       70
+       25,
+       75
       ],
       [
-       30,
+       25,
        50
       ]
      ],
@@ -1563,11 +1568,11 @@
        0
       ],
       [
-       30,
-       30
+       25,
+       25
       ],
       [
-       30,
+       25,
        50
       ]
      ],
@@ -1581,12 +1586,12 @@
     {
      "pts": [
       [
-       30,
-       70
+       25,
+       75
       ],
       [
-       30,
-       30
+       25,
+       25
       ],
       [
        50,
@@ -1604,6 +1609,15 @@
      "guides": false,
      "showP": false,
      "showQ": false
+    },
+    {
+     "q": 25,
+     "p": 0,
+     "dot": false,
+     "guides": false,
+     "showP": false,
+     "ql": "Qᴜɴᴅᴇʀ",
+     "color": "red"
     }
    ],
    "caption": "Only the units up to the red line get made, so consumer and producer surplus are cut short there. Every unit between that quantity and the efficient one was worth more to society than it would have cost, and the surplus in the red triangle is never created at all."
@@ -1629,7 +1643,7 @@
        8
       ]
      ],
-     "ldx": -46,
+     "ldx": -38,
      "ldy": -42
     },
     {
@@ -1649,23 +1663,20 @@
      "ldy": -11
     },
     {
-     "id": "q70",
-     "label": "Qᴏᴠᴇʀ",
+     "id": "q75",
+     "label": "",
      "pts": [
       [
-       70,
+       75,
        0
       ],
       [
-       70,
+       75,
        104
       ]
      ],
      "color": "red",
-     "thin": true,
-     "lstart": true,
-     "ldx": -19,
-     "ldy": 15
+     "thin": true
     }
    ],
    "areas": [
@@ -1720,12 +1731,12 @@
        50
       ],
       [
-       70,
-       70
+       75,
+       75
       ],
       [
-       70,
-       30
+       75,
+       25
       ]
      ],
      "label": "DWL",
@@ -1739,6 +1750,15 @@
      "guides": false,
      "showP": false,
      "showQ": false
+    },
+    {
+     "q": 75,
+     "p": 0,
+     "dot": false,
+     "guides": false,
+     "showP": false,
+     "ql": "Qᴏᴠᴇʀ",
+     "color": "red"
     }
    ],
    "caption": "Consumer and producer surplus are as large as they can be, but production carries on past the red line. Each of those extra units costs society more than it is worth, so making them destroys surplus, and the red triangle is what is thrown away."
@@ -1764,7 +1784,7 @@
        8
       ]
      ],
-     "ldx": -46,
+     "ldx": -38,
      "ldy": -42
     },
     {
@@ -1785,7 +1805,7 @@
     },
     {
      "id": "q50",
-     "label": "Qᴇꜰꜰɪᴄɪᴇɴᴛ",
+     "label": "",
      "pts": [
       [
        50,
@@ -1797,10 +1817,7 @@
       ]
      ],
      "color": "red",
-     "thin": true,
-     "lstart": true,
-     "ldx": -38,
-     "ldy": 15
+     "thin": true
     }
    ],
    "areas": [
@@ -1856,6 +1873,15 @@
      "guides": false,
      "showP": false,
      "showQ": false
+    },
+    {
+     "q": 50,
+     "p": 0,
+     "dot": false,
+     "guides": false,
+     "showP": false,
+     "ql": "Qᴇꜰꜰ",
+     "color": "red"
     }
    ],
    "caption": "The red line now sits exactly where the curves cross. Every unit worth making has been made and none that was not, so consumer and producer surplus between them take up the whole area between the curves and there is no deadweight loss at all."
@@ -1899,11 +1925,11 @@
      "pts": [
       [
        0,
-       95
+       100
       ],
       [
        24,
-       23
+       20
       ]
      ],
      "ldx": -41,
@@ -1915,11 +1941,11 @@
      "pts": [
       [
        0,
-       5
+       0
       ],
       [
        24,
-       77
+       80
       ]
      ],
      "ldx": -62,
@@ -1966,11 +1992,11 @@
       ],
       [
        0,
-       95
+       100
       ],
       [
        10,
-       65
+       66.7
       ],
       [
        10,
@@ -1992,11 +2018,11 @@
       ],
       [
        0,
-       5
+       0
       ],
       [
        10,
-       35
+       33.3
       ],
       [
        10,
@@ -2014,11 +2040,11 @@
      "pts": [
       [
        10,
-       65
+       66.7
       ],
       [
        10,
-       35
+       33.3
       ],
       [
        15,
@@ -2060,11 +2086,11 @@
      "pts": [
       [
        0,
-       95
+       100
       ],
       [
        24,
-       23
+       20
       ]
      ],
      "ldx": -41,
@@ -2076,11 +2102,11 @@
      "pts": [
       [
        0,
-       5
+       0
       ],
       [
        24,
-       77
+       80
       ]
      ],
      "ldx": -62,
@@ -2127,7 +2153,7 @@
       ],
       [
        0,
-       95
+       100
       ],
       [
        15,
@@ -2149,7 +2175,7 @@
       ],
       [
        0,
-       5
+       0
       ],
       [
        15,
@@ -2171,11 +2197,11 @@
       ],
       [
        20,
-       65
+       66.7
       ],
       [
        20,
-       35
+       33.3
       ]
      ],
      "label": "DWL",

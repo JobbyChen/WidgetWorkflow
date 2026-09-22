@@ -118,10 +118,15 @@ pixel apart. `scripts/check_file.py` tests for this.
 ```json
 {"q": 120, "p": 30, "label": "Equilibrium", "marker": "1",
  "pl": "P₁", "ql": "Q₁", "color": "red", "at": 3,
- "dx": 13, "dy": 4, "guides": false, "showP": false, "showQ": false}
+ "dx": 13, "dy": 4, "guides": false, "showP": false, "showQ": false, "dot": false}
 ```
 
 - Draws a hollow dot with dashed guides to both axes, unless `guides:false`.
+- `dot:false` (**v2.12**) keeps the axis labels and drops the marker, for a
+  quantity that a vertical line already marks. Its name then prints on the axis
+  in the same 10.5px tick style as every other number there. Getting that label
+  any other way means a curve label, which is 13px at weight 800 and reads as a
+  chunky block beside the ticks it sits among.
 - `marker:"1"`/`"2"` makes it a larger numbered circle — the Point 1 / Point 2
   convention of the conceptual graphs.
 - **The axis labels are automatic.** Unless `showP:false`, the point prints its

@@ -6,6 +6,7 @@
 Groups, in order:
 
   steps     every step changes the drawing, not just the caption
+  steady    a curve shared between scenarios keeps its label in one place
   head      house format -- <title> is the chapter name alone, the Red Hat
             Display link, sn25-v6.css and sn25-v6.js, nothing older
   engine    <!--SDG-ENGINE--> exactly once, or an engine already embedded whose
@@ -188,6 +189,54 @@ def walk(node, fn):
         for x in node:
             walk(x, fn)
 
+
+
+# --------------------------------------------------------------- steady ----
+
+
+def check_steady_labels(cfgs, r):
+    """A curve that does not move between scenarios keeps its label still.
+
+    Ian's rule: "make sure the D1 is in the same space ... it should be
+    consistent." The demand-for-chicken widget drew the same D1 in both
+    scenarios but gave its label an offset in one and the engine default in the
+    other, so D1 jumped across the plot when you pressed the other button while
+    the curve underneath it did not move.
+
+    Nothing else notices: each scenario is checked on its own and both were
+    fine, because the defect is the difference between them.
+    """
+    checked = flagged = 0
+    for n, cfg, _ in cfgs:
+        if cfg.get("preset"):
+            continue
+        scen = cfg.get("scenarios") or {}
+        if len(scen) < 2:
+            continue
+        seen = {}
+        for key, v in scen.items():
+            if v.get("preset"):
+                continue
+            for c in v.get("curves") or []:
+                cid = c.get("id")
+                if cid is None:
+                    continue
+                place = (c.get("ldx"), c.get("ldy"), c.get("lstart"),
+                         c.get("label"))
+                seen.setdefault(cid, []).append((json.dumps(c.get("pts")), place, key))
+        for cid, rows in seen.items():
+            if len(rows) < 2:
+                continue
+            checked += 1
+            if len({p for p, _, _ in rows}) == 1 and len({q for _, q, _ in rows}) > 1:
+                flagged += 1
+                r.fail("steady", "widget %d: curve %s is drawn identically in "
+                                 "%s but its label is placed differently, so it "
+                                 "jumps when the scenario changes"
+                       % (n, cid, " and ".join(sorted(k for _, _, k in rows))))
+    if checked and not flagged:
+        r.ok("steady", "%d curve(s) shared between scenarios keep their labels "
+                       "still" % checked)
 
 
 # ------------------------------------------------------------------ steps ----
@@ -1146,6 +1195,7 @@ def main():
     check_labels(cfgs, r)
     check_tick_emphasis(cfgs, r)
     check_steps(cfgs, r)
+    check_steady_labels(cfgs, r)
     check_arrows(cfgs, r)
     check_captions(cfgs, r)
     check_source(src, cfgs, r)

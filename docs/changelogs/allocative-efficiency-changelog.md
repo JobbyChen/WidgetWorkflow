@@ -135,3 +135,26 @@ and drops the wrong season with it. Say the word and I will put it back.
   neither source states an equilibrium price — so those points draw their guides
   and label nothing, rather than printing a symbol the figure does not have or a
   number nobody stated.
+
+## Third review round — the deadweight loss panels
+
+The three-case figure showed only its wedge. The printed figure shows more, and
+now so does the widget:
+
+* **Consumer and producer surplus in all three panels.** Under-production cuts
+  both short at the quantity produced, so they are quadrilaterals there rather
+  than triangles; over-production and the efficient case keep the full triangles
+  and add the wedge beyond. That is the whole point of the figure — the wedge is
+  only legible against the surplus it is taken from.
+* **A red vertical at the quantity produced**, as the source draws it. The
+  engine has no vertical-line primitive, so it is a labelless thin curve
+  (`label: ""` has drawn nothing since v2.6).
+* **The quantity is subscripted** — Qᴜɴᴅᴇʀ, Qᴏᴠᴇʀ, Qᴇꜰꜰɪᴄɪᴇɴᴛ — in the
+  small-caps convention the house files already use for Pʜɪ and Pʟᴏ.
+* **P\* is gone from these three panels**, because the printed figure does not
+  have it.
+
+The vertical line forced three labels to move: it runs the full height, so the
+demand label could no longer sit in the wedge between the curves and now sits
+below both, and the two wedge labels moved out of its way. The label checker
+found every one of those.

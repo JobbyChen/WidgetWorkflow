@@ -81,8 +81,20 @@ TOUCH_JS = """(n, args) => {
       if (!a.classList.contains('row')) {
         svg.querySelectorAll('.guide').forEach(function (gd) {
           if (gd.closest('.off')) return;
-          if (nearest(gd) < gLim) bad.push([Math.round(nearest(gd) * 10) / 10,
-                                            'a dashed guide', 'guide']);
+          var d = nearest(gd);
+          if (d < gLim) {
+            // Name the guide. "a dashed guide" sent three rounds of guesswork
+            // into a panel with four of them; its endpoints in user units say
+            // which one at a glance. The guide is a <path> or <line>, so read
+            // whichever geometry it has and convert back through the viewBox.
+            var b = gd.getBBox(), vb = svg.viewBox.baseVal;
+            var vert = b.width < 1.5, horiz = b.height < 1.5;
+            var where = vert ? 'vertical at x=' + Math.round(b.x)
+                      : horiz ? 'horizontal at y=' + Math.round(b.y)
+                      : 'bent, x ' + Math.round(b.x) + '-' + Math.round(b.x + b.width) +
+                        ' y ' + Math.round(b.y) + '-' + Math.round(b.y + b.height);
+            bad.push([Math.round(d * 10) / 10, 'the guide ' + where, 'guide']);
+          }
         });
       }
     });

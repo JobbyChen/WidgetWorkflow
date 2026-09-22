@@ -136,7 +136,15 @@ itself still forbids questions outright.
    needs no TOC markup in the file, and `check_file.py` compares version
    numbers **inside** a path, never across the two — matching a bare
    `sn25-v[0-5]` failed the current script twice over, once for being absent
-   and once for looking old. `<p class="date">` per class date, `<h1>`/`<h2>` only
+   and once for looking old.
+
+   **The two scripts differ in three visible ways**, which is worth knowing
+   before migrating a page: `content/sn25-v5.js` heads the box with 📖 OPEN
+   BOOK and inserts it at the very top of `<body>` — above the `date` pill,
+   which floats right and lands on the first paragraph. `studyguide/sn25-v2.js`
+   uses 📘 BLUE BOOK and inserts before the first `<h1>`, so the date keeps its
+   corner. Neither sets `open`; both say so in a comment, so a TOC that looks
+   "open" is the emoji, not the `<details>`. Both list `h1`, `h2` *and* `h3`. `<p class="date">` per class date, `<h1>`/`<h2>` only
    (never `<h3>`), `.exam-tip` with an `<h4>`, plain tables; `<strong>` for
    vocabulary terms only, `<b>` for emphasis and labels, never `<u>`; keep every
    `<!-- IMAGE POSITION: … -->` comment where the image was.

@@ -35,7 +35,7 @@ scripts/
   check_file.py               ← mechanical step-8 checks (JSON, </script>, head, engine identity…)
   doc_headings.py             ← a Word file's headings and their level. Run it BEFORE writing any.
   doc_formulas.py             ← a Word file's MathType equations as text; --check audits a notes file
-  add_toc.py                  ← write the house table of contents into a notes file
+  add_toc.py                  ← write the TOC in by hand. Only for a file WITHOUT the live script.
   widget_text.py              ← every renamable string in a file's widgets; --apply writes them back
   transcript_diff.py          ← does a new term's transcript change this file? Run it BEFORE swapping.
   test_check_file.py          ← tests for check_file.py. Run after changing it.
@@ -133,7 +133,12 @@ itself still forbids questions outright.
    carry, and is the one he confirmed correct on 2026-09-21. It builds the
    table of contents in the browser (the same `<details class="toc-box">` that
    `add_toc.py` writes) and gives every heading an id. So a chapter carrying it
-   needs no TOC markup in the file, and `check_file.py` compares version
+   needs no TOC markup in the file — and must not also carry one written in,
+   because the script builds its own unconditionally and the page then renders
+   two. Four example files did, because `add_toc.py` wrote them while
+   `content/sn25-v6.js` was the head's only script; swapping to the live script
+   is what turned those into duplicates. `check_file.py` fails on the pair now.
+   And `check_file.py` compares version
    numbers **inside** a path, never across the two — matching a bare
    `sn25-v[0-5]` failed the current script twice over, once for being absent
    and once for looking old.

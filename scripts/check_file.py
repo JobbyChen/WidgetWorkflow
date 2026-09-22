@@ -389,6 +389,17 @@ def check_toc(src, r):
                         "in the browser")
         return
 
+    if re.search(r"studyguide/sn25-v\d+\.js", src):
+        # The script builds its own box unconditionally, so a file that also
+        # carries one written in renders two. Four files did, because add_toc.py
+        # wrote them while content/sn25-v6.js was the head's only script and it
+        # is 403 -- nothing built one, so one had to be written. Swapping to the
+        # live script is what turns that into a duplicate.
+        r.fail("toc", "a table of contents is written into the file AND "
+                      "studyguide/sn25-v2.js builds one: the page renders two. "
+                      "Remove the written-in <details class=\"toc-box\">.")
+        return
+
     linked = re.findall(r'href="#([^"]*)"', block.group(1))
     ids = [m.group(1) for _, m in hs if m]
     missing = [a for a in linked if a not in ids]

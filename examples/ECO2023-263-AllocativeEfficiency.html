@@ -722,9 +722,8 @@
      8
     ]
    ],
-   "lstart": true,
-   "ldx": 178,
-   "ldy": 87
+   "ldx": -70,
+   "ldy": -52
   },
   {
    "id": "S",
@@ -1350,8 +1349,8 @@
      1
     ]
    ],
-   "ldx": -91,
-   "ldy": -67
+   "ldx": -58,
+   "ldy": -45
   },
   {
    "id": "S",
@@ -1507,8 +1506,8 @@
      "ldy": -11
     },
     {
-     "id": "q",
-     "label": "",
+     "id": "q30",
+     "label": "Qᴜɴᴅᴇʀ",
      "pts": [
       [
        30,
@@ -1520,7 +1519,10 @@
       ]
      ],
      "color": "red",
-     "thin": true
+     "thin": true,
+     "lstart": true,
+     "ldx": -23,
+     "ldy": 15
     }
    ],
    "areas": [
@@ -1592,11 +1594,7 @@
       ]
      ],
      "label": "DWL",
-     "color": "red",
-     "lp": [
-      40,
-      66
-     ]
+     "color": "red"
     }
    ],
    "points": [
@@ -1606,14 +1604,6 @@
      "guides": false,
      "showP": false,
      "showQ": false
-    },
-    {
-     "q": 30,
-     "p": 30,
-     "guides": false,
-     "showP": false,
-     "ql": "Qᴜɴᴅᴇʀ",
-     "color": "red"
     }
    ],
    "caption": "Only the units up to the red line get made, so consumer and producer surplus are cut short there. Every unit between that quantity and the efficient one was worth more to society than it would have cost, and the surplus in the red triangle is never created at all."
@@ -1659,8 +1649,8 @@
      "ldy": -11
     },
     {
-     "id": "q",
-     "label": "",
+     "id": "q70",
+     "label": "Qᴏᴠᴇʀ",
      "pts": [
       [
        70,
@@ -1672,7 +1662,10 @@
       ]
      ],
      "color": "red",
-     "thin": true
+     "thin": true,
+     "lstart": true,
+     "ldx": -19,
+     "ldy": 15
     }
    ],
    "areas": [
@@ -1736,12 +1729,7 @@
       ]
      ],
      "label": "DWL",
-     "color": "red",
-     "lp": [
-      70,
-      50
-     ],
-     "ldx": 30
+     "color": "red"
     }
    ],
    "points": [
@@ -1751,14 +1739,6 @@
      "guides": false,
      "showP": false,
      "showQ": false
-    },
-    {
-     "q": 70,
-     "p": 30,
-     "guides": false,
-     "showP": false,
-     "ql": "Qᴏᴠᴇʀ",
-     "color": "red"
     }
    ],
    "caption": "Consumer and producer surplus are as large as they can be, but production carries on past the red line. Each of those extra units costs society more than it is worth, so making them destroys surplus, and the red triangle is what is thrown away."
@@ -1804,8 +1784,8 @@
      "ldy": -11
     },
     {
-     "id": "q",
-     "label": "",
+     "id": "q50",
+     "label": "Qᴇꜰꜰɪᴄɪᴇɴᴛ",
      "pts": [
       [
        50,
@@ -1817,7 +1797,10 @@
       ]
      ],
      "color": "red",
-     "thin": true
+     "thin": true,
+     "lstart": true,
+     "ldx": -38,
+     "ldy": 15
     }
    ],
    "areas": [
@@ -1872,7 +1855,7 @@
      "p": 50,
      "guides": false,
      "showP": false,
-     "ql": "Qᴇꜰꜰɪᴄɪᴇɴᴛ"
+     "showQ": false
     }
    ],
    "caption": "The red line now sits exactly where the curves cross. Every unit worth making has been made and none that was not, so consumer and producer surplus between them take up the whole area between the curves and there is no deadweight loss at all."
@@ -1902,7 +1885,7 @@
    "axes": {
     "x": "Q",
     "y": "P",
-    "xmax": 24,
+    "xmax": 26,
     "ymax": 110,
     "xticks": [
      10,
@@ -1923,7 +1906,7 @@
        23
       ]
      ],
-     "ldx": -70,
+     "ldx": -41,
      "ldy": 16
     },
     {
@@ -1940,10 +1923,93 @@
       ]
      ],
      "ldx": -62,
-     "ldy": -11
+     "ldy": -14
+    },
+    {
+     "id": "q10",
+     "label": "",
+     "pts": [
+      [
+       10,
+       0
+      ],
+      [
+       10,
+       80
+      ]
+     ],
+     "color": "red",
+     "thin": true
+    },
+    {
+     "id": "q15",
+     "label": "",
+     "pts": [
+      [
+       15,
+       0
+      ],
+      [
+       15,
+       80
+      ]
+     ],
+     "thin": true
     }
    ],
    "areas": [
+    {
+     "pts": [
+      [
+       0,
+       50
+      ],
+      [
+       0,
+       95
+      ],
+      [
+       10,
+       65
+      ],
+      [
+       10,
+       50
+      ]
+     ],
+     "label": "CS",
+     "color": "teal",
+     "lp": [
+      3.6,
+      63
+     ]
+    },
+    {
+     "pts": [
+      [
+       0,
+       50
+      ],
+      [
+       0,
+       5
+      ],
+      [
+       10,
+       35
+      ],
+      [
+       10,
+       50
+      ]
+     ],
+     "label": "PS",
+     "color": "orange",
+     "lp": [
+      3.6,
+      37
+     ]
+    },
     {
      "pts": [
       [
@@ -1960,38 +2026,19 @@
       ]
      ],
      "label": "DWL",
-     "color": "red",
-     "lp": [
-      10,
-      58
-     ],
-     "ldx": -22
+     "color": "red"
     }
    ],
    "points": [
     {
      "q": 15,
      "p": 50,
-     "showP": false
-    },
-    {
-     "q": 10,
-     "p": 65,
      "guides": false,
      "showP": false,
-     "showQ": false,
-     "color": "red"
-    },
-    {
-     "q": 10,
-     "p": 35,
-     "guides": false,
-     "showP": false,
-     "showQ": false,
-     "color": "red"
+     "showQ": false
     }
    ],
-   "caption": "Society produces 10 million pizzas when 15 million is the efficient amount. The 5 million never made were each worth more than they would have cost, so the surplus in the red triangle is never created and is lost to everyone."
+   "caption": "Society produces 10 million pizzas when 15 million is the efficient amount, so consumer and producer surplus both stop at the red line. The 5 million never made were each worth more than they would have cost, and the surplus in the red triangle is never created."
   },
   "over": {
    "label": "20 million produced",
@@ -1999,7 +2046,7 @@
    "axes": {
     "x": "Q",
     "y": "P",
-    "xmax": 24,
+    "xmax": 26,
     "ymax": 110,
     "xticks": [
      15,
@@ -2020,7 +2067,7 @@
        23
       ]
      ],
-     "ldx": -70,
+     "ldx": -41,
      "ldy": 16
     },
     {
@@ -2037,58 +2084,114 @@
       ]
      ],
      "ldx": -62,
-     "ldy": -11
+     "ldy": -14
+    },
+    {
+     "id": "q15",
+     "label": "",
+     "pts": [
+      [
+       15,
+       0
+      ],
+      [
+       15,
+       80
+      ]
+     ],
+     "thin": true
+    },
+    {
+     "id": "q20",
+     "label": "",
+     "pts": [
+      [
+       20,
+       0
+      ],
+      [
+       20,
+       80
+      ]
+     ],
+     "color": "red",
+     "thin": true
     }
    ],
    "areas": [
     {
      "pts": [
       [
-       20,
-       35
+       0,
+       50
       ],
       [
-       20,
-       65
+       0,
+       95
       ],
       [
        15,
        50
       ]
      ],
-     "label": "DWL",
-     "color": "red",
+     "label": "CS",
+     "color": "teal",
      "lp": [
-      20,
-      42
+      4.5,
+      64
+     ]
+    },
+    {
+     "pts": [
+      [
+       0,
+       50
+      ],
+      [
+       0,
+       5
+      ],
+      [
+       15,
+       50
+      ]
      ],
-     "ldx": 24
+     "label": "PS",
+     "color": "orange",
+     "lp": [
+      4.5,
+      36
+     ]
+    },
+    {
+     "pts": [
+      [
+       15,
+       50
+      ],
+      [
+       20,
+       65
+      ],
+      [
+       20,
+       35
+      ]
+     ],
+     "label": "DWL",
+     "color": "red"
     }
    ],
    "points": [
     {
      "q": 15,
      "p": 50,
-     "showP": false
-    },
-    {
-     "q": 20,
-     "p": 35,
      "guides": false,
      "showP": false,
-     "showQ": false,
-     "color": "red"
-    },
-    {
-     "q": 20,
-     "p": 65,
-     "guides": false,
-     "showP": false,
-     "showQ": false,
-     "color": "red"
+     "showQ": false
     }
    ],
-   "caption": "Society produces 20 million pizzas when 15 million is the efficient amount. Each of the extra 5 million cost more to make than it was worth, so producing them destroys surplus, and the red triangle is what society throws away."
+   "caption": "Society produces 20 million pizzas when 15 million is the efficient amount. Surplus is already as large as it can be at 15 million, and each of the extra 5 million costs more to make than it is worth, so the red triangle is what society throws away."
   }
  }
 }

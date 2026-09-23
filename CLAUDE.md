@@ -120,8 +120,13 @@ itself still forbids questions outright.
    axis labels, nothing else. No label may touch a curve, point, arrow, or
    another label (step 5 has the placement rules — read them before writing any
    config).
-7. **House HTML format is fixed** (prompt step 0): `<title>` = chapter name only,
-   with no course code, term code, season or year; the Red Hat Display font link,
+7. **House HTML format is fixed** (prompt step 0), with one exception: **the
+   `<title>` is not yours to set.** Prompt v6 step 0 asks for the chapter name
+   alone, and `check_file.py` used to fail a title carrying a course code, term
+   or year. Ian's titles come from his boss — "ECO2013 Fall '26 - International
+   Trade Study Guide" is correct as written — so the checker now only requires
+   that a title exist, and a title you are given is left exactly as it is.
+   (Changed 2026-09-23.) The rest of the head: the Red Hat Display font link,
    `sn25-v6.css` from
    `https://smokinnotes.s3.us-east-1.amazonaws.com/content/`, the house script,
    then `<!--SDG-ENGINE-->`;

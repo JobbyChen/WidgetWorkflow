@@ -7,8 +7,8 @@ Groups, in order:
 
   steps     every step changes the drawing, not just the caption
   steady    a curve shared between scenarios keeps its label in one place
-  head      house format -- <title> is the chapter name alone, the Red Hat
-            Display link, sn25-v6.css and sn25-v6.js, nothing older
+  head      house format -- a <title> exists, the Red Hat Display link,
+            sn25-v6.css, and a current house script
   engine    <!--SDG-ENGINE--> exactly once, or an engine already embedded whose
             bytes match engine/; and no <link>/<script src> to a hosted copy
   markup    no <u>, no <h3>, <strong> used for vocabulary terms only
@@ -304,17 +304,16 @@ def check_steps(cfgs, r):
 # ------------------------------------------------------------------- head ----
 
 def check_head(src, r):
+    # The title is not this script's business. Prompt v6 step 0 asked for the
+    # chapter name alone, and this used to fail anything carrying a course code,
+    # a term or a year -- but Ian's titles come from his boss, so the rule was
+    # policing someone else's decision. A title has to exist; what it says is
+    # not a defect. (2026-09-23)
     m = re.search(r"<title>(.*?)</title>", src, re.S)
     if not m or not m.group(1).strip():
         r.fail("head", "no <title>")
     else:
-        t = m.group(1).strip()
-        bad = re.search(r"\b(ECO\d{4}|\d{3}\b|spring|summer|fall|20\d\d)\b", t, re.I)
-        if bad:
-            r.fail("head", "<title> must be the chapter name alone; found %r in %r"
-                   % (bad.group(0), t))
-        else:
-            r.ok("head", "<title> is %r" % t)
+        r.ok("head", "<title> is %r" % m.group(1).strip())
 
     for needle, what in [("Red+Hat+Display", "the Red Hat Display font link"),
                          ("sn25-v6.css", "sn25-v6.css")]:

@@ -1053,7 +1053,8 @@
     {
      "q": 100,
      "p": 700,
-     "guides": "p",
+     "guides": false,
+     "showP": false,
      "showQ": false
     },
     {
@@ -2443,7 +2444,7 @@
   {
    "q": 125,
    "p": 5.5,
-   "guides": "p",
+   "guides": false,
    "showP": false,
    "showQ": false
   }
@@ -2604,7 +2605,8 @@
     <p>As you can see in the diagram below, in this case, the consumer surplus is the area of a triangle and the producer surplus is the area of a trapezoid:</p>
 
     <!-- IMAGE POSITION: price floor surplus calculation -->
-    <div class="sdg"><script type="application/json">{
+    <div class="sdg"><script type="application/json">
+{
  "title": "Surplus with a $7 price floor",
  "lede": "Only 125 burritos sell, so both areas stop there.",
  "axes": {
@@ -2712,7 +2714,7 @@
    "color": "orange",
    "lp": [
     62.5,
-    4.85
+    6.2
    ]
   }
  ],
@@ -2720,6 +2722,7 @@
   {
    "q": 150,
    "p": 6,
+   "guides": "q",
    "showP": false,
    "showQ": false
   },
@@ -2751,7 +2754,8 @@
   }
  ],
  "caption": "At $7 sellers would make 200 burritos but buyers take 125, so 125 is what changes hands. Consumer surplus is a triangle; producer surplus is a triangle and a rectangle together."
-}</script></div>
+}
+</script></div>
 
   <p style="text-align: center;">
     \(CS = \frac{1}{2} \times \text{Base} \times \text{Height}\)<br>
@@ -3553,7 +3557,9 @@
    "hlines": [
     {
      "p": 75,
-     "label": "Pᶠˡᵒᵒʳ"
+     "label": "Pᶠ",
+     "tag": "Price floor",
+     "tagdy": 14
     }
    ],
    "areas": [
@@ -3633,7 +3639,8 @@
      "q": 50,
      "p": 50,
      "pl": "P*",
-     "guides": "p",
+     "guides": false,
+     "showP": false,
      "showQ": false
     }
    ],
@@ -3683,7 +3690,8 @@
    "hlines": [
     {
      "p": 25,
-     "label": "Pᶜᵉⁱˡ"
+     "label": "Pᶜ",
+     "tag": "Price ceiling"
     }
    ],
    "areas": [
@@ -3763,7 +3771,8 @@
      "q": 50,
      "p": 50,
      "pl": "P*",
-     "guides": "p",
+     "guides": false,
+     "showP": false,
      "showQ": false
     }
    ],
@@ -4103,6 +4112,7 @@
     {
      "q": 30,
      "p": 15,
+     "guides": "q",
      "showP": false,
      "showQ": false
     }

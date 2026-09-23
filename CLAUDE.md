@@ -198,6 +198,16 @@ economics instead of label placement.
   elbow; a quantity read off a control price gets `guides:"q"`; a price whose
   quantity is not the point gets `guides:"p"`. Two points at one quantity draw
   the same dashed line twice, which is most of what makes a panel look busy.
+* **A guide needs a number at its foot.** A dashed line running to a blank spot
+  on the axis — because its price is suppressed, or cannot be written beside
+  its neighbour — is clutter. Drop the guide and keep the dot; the reading is
+  still marked, and the number appears in the panel whose answer depends on it.
+* **Draw the equilibrium's guide once per widget.** If a later step or panel
+  does not move it, it does not need drawing again (Ian, 2026-09-23). It is the
+  horizontal that goes — it only restates a price already established — while a
+  vertical still marking a quantity that panel refers to stays.
+* **One superscript letter after P, never four.** `Pᶜ`, `Pᶠ`, `Pᵂ` read at
+  10.5px; `Pᶜᵉⁱˡ` is noise. The line says what it is in full through its `tag`.
 * **A dot wherever a price meets a curve, the control price included.** The
   artwork marks all of them, and Ian's call (2026-09-23) is to match it: every
   reading in a panel, not just the ones away from the ceiling. The same

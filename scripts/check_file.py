@@ -559,6 +559,8 @@ def brace_y(b, Y, oy):
         return oy + 22, 1
     if b.get("below") == "in":
         return Y(b["p"]) + 8, 1
+    if b.get("below") == "axis":
+        return oy - 12, -1
     return Y(b["p"]) - 8, -1
 
 

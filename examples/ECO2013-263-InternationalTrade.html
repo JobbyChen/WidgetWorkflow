@@ -99,6 +99,12 @@ MathJax = {
 .sdg .fade { transition:opacity .45s ease; }
 .sdg .move { transition:transform .6s ease, opacity .45s ease; }
 .sdg .off { opacity:0; pointer-events:none; }
+.sdg .hide { display:none; }
+.sdg .sdg-calc { margin:10px auto 0; width:fit-content; max-width:100%;
+  font-size:14px; font-weight:600; color:var(--navy); line-height:1.7; }
+.sdg .sdg-calcline { white-space:nowrap; overflow-x:auto; }
+.sdg .sdg-calc .res { color:var(--red); font-weight:800;
+  border-bottom:2px solid var(--red); padding-bottom:1px; }
 @media (prefers-reduced-motion:reduce){ .sdg .fade, .sdg .move { transition:none; } }
 .sdg .sdg-ctrl { display:flex; align-items:center; gap:10px; margin-top:12px; flex-wrap:wrap; }
 .sdg .sdg-ctrl button { border:1px solid var(--navy); background:#fff; color:var(--navy); padding:7px 14px; font:inherit; font-size:.9rem; cursor:pointer; }
@@ -107,7 +113,7 @@ MathJax = {
 .sdg .sdg-cap { margin:10px 0 0; padding:10px 12px; background:#fff; border-left:4px solid var(--red); font-size:.92rem; line-height:1.45; min-height:3.2em; }
 </style>
 <script>
-/* ===== sd-graph.js v2.14 — data-driven supply & demand widgets =====
+/* ===== sd-graph.js v2.15 — data-driven supply & demand widgets =====
    Markup:  <div class="sdg"><script type="application/json">{ ...config... }<\/script></div>
    Top-level config:
      title, lede, caption         heading / intro / static caption (caption used only when there are no steps)
@@ -129,8 +135,9 @@ MathJax = {
      points[]: {id, q, p, label, marker, pl, ql, color, at, until, dx, dy, guides:false|'p'|'q', showP:false, showQ:false, dot:false}
         marker = "1"/"2" numbered circle;  pl/ql = symbolic axis labels ("P₁","Q₁") instead of numbers
      moves[]:  {from:[q,p], to:[q,p], at, until, color, offset}  arrow between two points, drawn `offset` px beside the curve (default 14; negative = other side)
+     calcs[]:  "CS = 1/2 x 80 x ($5 - $3) = $80" | {text, at, until}   the working, under the plot
      hlines[]: {p, label, tag, tagdy, color, at, until}                       horizontal price line across the plot
-     braces[]: {p, q1, q2, label, at, until, below:true|'in', color}  curly brace spanning a gap at price p
+     braces[]: {p, q1, q2, label, at, until, below:true|'in'|'axis', color}  curly brace spanning a gap at price p
      vbraces[]:{p1, p2, q, label, at, until, left, side, color}   the same brace turned upright, spanning a
         price gap. left:true is the mirror of a brace's below:true: it sits outside the P axis, clear of the
         plot and the tick numbers, with its label running up the axis, and widens the left margin to fit.
@@ -295,9 +302,15 @@ MathJax = {
 
     (cfg.braces || []).forEach(function (b) {
       var cc = col(b.color || 'red'), grp = el('g', {});
-      var inplot = b.below === 'in', out = b.below === true;
+      // Four positions, all of them in the artwork. "axis" keeps the drop
+      // guides running from the price line but sets the bracket down by the Q
+      // axis with its label above -- the tariff figures are drawn that way,
+      // where the space just under the price line is taken by the revenue
+      // rectangle, while the import figures hug the line with "in".
+      var inplot = b.below === 'in', out = b.below === true, atax = b.below === 'axis';
       var x1 = X(Math.min(b.q1, b.q2)), x2 = X(Math.max(b.q1, b.q2)),
-          y = out ? O.y + 22 : Y(b.p) + (inplot ? 8 : -8), dir = (out || inplot) ? 1 : -1, m = (x1 + x2) / 2;
+          y = out ? O.y + 22 : atax ? O.y - 12 : Y(b.p) + (inplot ? 8 : -8),
+          dir = (out || inplot) ? 1 : -1, m = (x1 + x2) / 2;
       // Each half of the curl needs about 2*hh of run. Over a short span a
       // fixed hh makes the segments overlap and the brace reads as a scribble,
       // so it shrinks with the span it has to cover.
@@ -437,6 +450,28 @@ MathJax = {
       tbl.appendChild(tbody); var wrap = h('div', 'sdg-tablewrap'); wrap.appendChild(tbl); body.insertBefore(wrap, body.firstChild);
     }
     host.appendChild(body);
+
+    // calcs: the working, set under the plot the way the artwork prints it
+    // beneath each diagram -- a reader who only sees "CS = $80" cannot get
+    // there themselves. Each line's closing "= result" is set apart, which is
+    // the red underline in the source. Lines take at/until like anything else,
+    // so a walkthrough can add the arithmetic as it reaches it.
+    self.calcs = [];
+    if (cfg.calcs && cfg.calcs.length) {
+      var cbox = h('div', 'sdg-calc');
+      cfg.calcs.forEach(function (c) {
+        var spec = (typeof c === 'string') ? {text: c} : c,
+            line = h('div', 'sdg-calcline'), t = spec.text || '', cut = t.lastIndexOf(' = ');
+        if (cut > 0) {
+          line.appendChild(document.createTextNode(t.slice(0, cut + 3)));
+          line.appendChild(h('span', 'res', t.slice(cut + 3)));
+        } else { line.textContent = t; }
+        cbox.appendChild(line);
+        self.calcs.push({node: line, spec: spec});
+      });
+      host.appendChild(cbox);
+    }
+
     if (cfg.steps && cfg.steps.length > 1) {
       var ctrl = h('div', 'sdg-ctrl'), prev = h('button', null, 'Back'), next = h('button', null, 'Next step'), reset = h('button', null, 'Start over'), lbl = h('span', 'sdg-step');
       prev.type = next.type = reset.type = 'button';
@@ -465,6 +500,12 @@ MathJax = {
         if (pt.node.dataset.dx != null) pt.node.style.transform = on ? 'translate(0,0)' : 'translate(' + (-pt.node.dataset.dx) + 'px,0)';
       });
       (pn.cfg.curves || []).forEach(function (c) { if (c.from && pn.byId[c.from]) pn.byId[c.from].node.classList.toggle('dim', s >= (c.at || 0)); });
+    });
+    (this.calcs || []).forEach(function (c) {
+      var at = c.spec.at || 0, until = c.spec.until;
+      // display, not opacity: an invisible line that still takes its height
+      // leaves a gap the reader has to wonder about
+      c.node.classList.toggle('hide', !(s >= at && (until == null || s < until)));
     });
     if (this.ui) {
       var n = cfg.steps.length;
@@ -855,8 +896,8 @@ MathJax = {
      "label": "CS",
      "color": "teal",
      "lp": [
-      13,
-      67
+      16.67,
+      66.67
      ]
     },
     {
@@ -877,8 +918,8 @@ MathJax = {
      "label": "PS",
      "color": "orange",
      "lp": [
-      13,
-      33
+      16.67,
+      33.33
      ]
     }
    ],
@@ -960,8 +1001,8 @@ MathJax = {
      "label": "CS",
      "color": "teal",
      "lp": [
-      6,
-      83
+      8.33,
+      83.33
      ]
     },
     {
@@ -982,8 +1023,8 @@ MathJax = {
      "label": "PS",
      "color": "orange",
      "lp": [
-      21,
-      36
+      20.0,
+      42.5
      ]
     }
    ],
@@ -1114,8 +1155,8 @@ MathJax = {
      "label": "CS",
      "color": "teal",
      "lp": [
-      22,
-      3.7
+      26.67,
+      3.67
      ]
     },
     {
@@ -1136,8 +1177,8 @@ MathJax = {
      "label": "PS",
      "color": "orange",
      "lp": [
-      22,
-      2.65
+      26.67,
+      2.67
      ]
     }
    ],
@@ -1147,7 +1188,12 @@ MathJax = {
      "p": 3
     }
    ],
-   "caption": "Without trade apples clear at $3 and 80 units. Consumer surplus is $80, producer surplus is $40, and total surplus is $120."
+   "calcs": [
+    "CS = ½ × 80 × ($5 − $3) = $80",
+    "PS = ½ × 80 × ($3 − $2) = $40",
+    "Total surplus = CS + PS = $120"
+   ],
+   "caption": "Without trade apples clear at $3 and 80 units. Consumer surplus is the triangle under demand and above the price, producer surplus the triangle above supply and below it."
   },
   "yes": {
    "label": "With trade",
@@ -1229,8 +1275,8 @@ MathJax = {
      "label": "CS",
      "color": "teal",
      "lp": [
-      11,
-      4.4
+      13.33,
+      4.33
      ]
     },
     {
@@ -1251,8 +1297,8 @@ MathJax = {
      "label": "PS",
      "color": "orange",
      "lp": [
-      10.67,
-      2.73
+      53.33,
+      3.33
      ]
     }
    ],
@@ -1272,7 +1318,12 @@ MathJax = {
      "label": "120 exported"
     }
    ],
-   "caption": "At the world price of $4 buyers take only 40 while sellers offer 160, and the 120-unit gap is exported. Consumer surplus falls to $20, producer surplus rises to $160, and total surplus is $180 — a $60 gain from trade."
+   "calcs": [
+    "CS = ½ × 40 × ($5 − $4) = $20",
+    "PS = ½ × 160 × ($4 − $2) = $160",
+    "Total surplus = CS + PS = $180"
+   ],
+   "caption": "At the world price of $4 buyers take only 40 while sellers offer 160, and the 120-unit gap is exported. Consumer surplus falls and producer surplus rises by more, so total surplus is $60 higher than without trade."
   }
  }
 }
@@ -1351,8 +1402,8 @@ MathJax = {
      "label": "CS",
      "color": "teal",
      "lp": [
-      13,
-      67
+      16.67,
+      66.67
      ]
     },
     {
@@ -1373,8 +1424,8 @@ MathJax = {
      "label": "PS",
      "color": "orange",
      "lp": [
-      13,
-      33
+      16.67,
+      33.33
      ]
     }
    ],
@@ -1455,8 +1506,8 @@ MathJax = {
      "label": "CS",
      "color": "teal",
      "lp": [
-      32.5,
-      57.5
+      25.0,
+      42.5
      ]
     },
     {
@@ -1477,8 +1528,8 @@ MathJax = {
      "label": "PS",
      "color": "orange",
      "lp": [
-      8,
-      15
+      8.33,
+      16.67
      ]
     }
    ],
@@ -1610,8 +1661,8 @@ MathJax = {
      "label": "CS",
      "color": "teal",
      "lp": [
-      11,
-      3.7
+      13.33,
+      3.67
      ]
     },
     {
@@ -1632,8 +1683,8 @@ MathJax = {
      "label": "PS",
      "color": "orange",
      "lp": [
-      11,
-      2.3
+      13.33,
+      2.33
      ]
     }
    ],
@@ -1643,7 +1694,12 @@ MathJax = {
      "p": 3
     }
    ],
-   "caption": "Without trade avocados clear at $3 and 40 units. Consumer surplus is $40, producer surplus is $40, and total surplus is $80."
+   "calcs": [
+    "CS = ½ × 40 × ($5 − $3) = $40",
+    "PS = ½ × 40 × ($3 − $1) = $40",
+    "Total surplus = CS + PS = $80"
+   ],
+   "caption": "Without trade avocados clear at $3 and 40 units. Consumer surplus is the triangle under demand and above the price, producer surplus the triangle above supply and below it."
   },
   "yes": {
    "label": "With trade",
@@ -1724,8 +1780,8 @@ MathJax = {
      "label": "CS",
      "color": "teal",
      "lp": [
-      4.0,
-      3.5
+      20.0,
+      2.7
      ]
     },
     {
@@ -1746,8 +1802,8 @@ MathJax = {
      "label": "PS",
      "color": "orange",
      "lp": [
-      3.33,
-      1.5
+      6.67,
+      1.67
      ]
     }
    ],
@@ -1768,7 +1824,12 @@ MathJax = {
      "below": "in"
     }
    ],
-   "caption": "At the world price of $2 buyers take 60 while sellers offer only 20, and the 40-unit gap is imported. Consumer surplus rises to $90, producer surplus falls to $10, and total surplus is $100 — a $20 gain from trade."
+   "calcs": [
+    "CS = ½ × 60 × ($5 − $2) = $90",
+    "PS = ½ × 20 × ($2 − $1) = $10",
+    "Total surplus = CS + PS = $100"
+   ],
+   "caption": "At the world price of $2 buyers take 60 while sellers offer only 20, and the 40-unit gap is imported. Producer surplus falls and consumer surplus rises by more, so total surplus is $20 higher than without trade."
   }
  }
 }
@@ -1897,8 +1958,8 @@ MathJax = {
      "label": "Gain",
      "color": "teal",
      "lp": [
-      50,
-      63
+      50.0,
+      66.67
      ]
     }
    ],
@@ -2004,8 +2065,8 @@ MathJax = {
      "label": "Gain",
      "color": "teal",
      "lp": [
-      43.33,
-      35.0
+      50.0,
+      33.33
      ]
     }
    ],
@@ -2139,8 +2200,8 @@ MathJax = {
      "label": "CS",
      "color": "teal",
      "lp": [
-      32.5,
-      57.5
+      25.0,
+      42.5
      ]
     },
     {
@@ -2161,8 +2222,8 @@ MathJax = {
      "label": "PS",
      "color": "orange",
      "lp": [
-      8,
-      15
+      8.33,
+      16.67
      ]
     }
    ],
@@ -2197,7 +2258,7 @@ MathJax = {
      "q1": 25,
      "q2": 75,
      "label": "Imports",
-     "below": "in"
+     "below": "axis"
     }
    ],
    "caption": "At the world price the country buys the gap between what it wants and what it makes from abroad."
@@ -2275,8 +2336,8 @@ MathJax = {
      "label": "CS",
      "color": "teal",
      "lp": [
-      17,
-      62
+      20.0,
+      60.0
      ]
     },
     {
@@ -2297,8 +2358,8 @@ MathJax = {
      "label": "PS",
      "color": "orange",
      "lp": [
-      12.0,
-      18.67
+      13.33,
+      30.67
      ]
     },
     {
@@ -2338,12 +2399,8 @@ MathJax = {
        25
       ]
      ],
-     "label": "DWL",
-     "color": "red",
-     "lp": [
-      37.5,
-      30.5
-     ]
+     "label": "",
+     "color": "red"
     },
     {
      "pts": [
@@ -2360,12 +2417,8 @@ MathJax = {
        25
       ]
      ],
-     "label": "DWL",
-     "color": "red",
-     "lp": [
-      62.5,
-      30.5
-     ]
+     "label": "",
+     "color": "red"
     }
    ],
    "points": [
@@ -2395,11 +2448,11 @@ MathJax = {
    ],
    "braces": [
     {
-     "p": 25,
+     "p": 40,
      "q1": 40,
      "q2": 60,
      "label": "Imports",
-     "below": "in"
+     "below": "axis"
     }
    ],
    "caption": "The price rises by the tariff, so domestic production rises, domestic consumption falls and imports shrink. The government collects the navy rectangle between the two price lines, and the two red wedges are surplus that nobody gets at all."
@@ -2499,8 +2552,8 @@ MathJax = {
    "label": "CS",
    "color": "teal",
    "lp": [
-    16,
-    2.9
+    20.0,
+    3.0
    ],
    "until": 1
   },
@@ -2522,8 +2575,8 @@ MathJax = {
    "label": "PS",
    "color": "orange",
    "lp": [
-    3.33,
-    1.5
+    6.67,
+    1.67
    ],
    "until": 1
   },
@@ -2545,8 +2598,8 @@ MathJax = {
    "label": "CS",
    "color": "teal",
    "lp": [
-    13,
-    3.25
+    16.67,
+    3.33
    ],
    "at": 1
   },
@@ -2568,7 +2621,7 @@ MathJax = {
    "label": "PS",
    "color": "orange",
    "lp": [
-    3.0,
+    8.0,
     1.7
    ],
    "at": 1
@@ -2685,6 +2738,40 @@ MathJax = {
    "label": "20 imported",
    "below": true,
    "at": 1
+  }
+ ],
+ "calcs": [
+  {
+   "text": "CS = ½ × 60 × ($5 − $2) = $90",
+   "until": 1
+  },
+  {
+   "text": "PS = ½ × 20 × ($2 − $1) = $10",
+   "until": 1
+  },
+  {
+   "text": "Total surplus = CS + PS = $100",
+   "until": 1
+  },
+  {
+   "text": "CS = ½ × 50 × ($5 − $2.50) = $62.50",
+   "at": 1
+  },
+  {
+   "text": "PS = ½ × 30 × ($2.50 − $1) = $22.50",
+   "at": 1
+  },
+  {
+   "text": "Tariff revenue = (50 − 30) × $0.50 = $10",
+   "at": 2
+  },
+  {
+   "text": "Total surplus = CS + PS + revenue = $95",
+   "at": 3
+  },
+  {
+   "text": "Deadweight loss = $100 − $95 = $5",
+   "at": 3
   }
  ],
  "steps": [

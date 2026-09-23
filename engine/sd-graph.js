@@ -1,4 +1,4 @@
-/* ===== sd-graph.js v2.14 — data-driven supply & demand widgets =====
+/* ===== sd-graph.js v2.15 — data-driven supply & demand widgets =====
    Markup:  <div class="sdg"><script type="application/json">{ ...config... }<\/script></div>
    Top-level config:
      title, lede, caption         heading / intro / static caption (caption used only when there are no steps)
@@ -20,8 +20,9 @@
      points[]: {id, q, p, label, marker, pl, ql, color, at, until, dx, dy, guides:false|'p'|'q', showP:false, showQ:false, dot:false}
         marker = "1"/"2" numbered circle;  pl/ql = symbolic axis labels ("P₁","Q₁") instead of numbers
      moves[]:  {from:[q,p], to:[q,p], at, until, color, offset}  arrow between two points, drawn `offset` px beside the curve (default 14; negative = other side)
+     calcs[]:  "CS = 1/2 x 80 x ($5 - $3) = $80" | {text, at, until}   the working, under the plot
      hlines[]: {p, label, tag, tagdy, color, at, until}                       horizontal price line across the plot
-     braces[]: {p, q1, q2, label, at, until, below:true|'in', color}  curly brace spanning a gap at price p
+     braces[]: {p, q1, q2, label, at, until, below:true|'in'|'axis', color}  curly brace spanning a gap at price p
      vbraces[]:{p1, p2, q, label, at, until, left, side, color}   the same brace turned upright, spanning a
         price gap. left:true is the mirror of a brace's below:true: it sits outside the P axis, clear of the
         plot and the tick numbers, with its label running up the axis, and widens the left margin to fit.
@@ -186,9 +187,15 @@
 
     (cfg.braces || []).forEach(function (b) {
       var cc = col(b.color || 'red'), grp = el('g', {});
-      var inplot = b.below === 'in', out = b.below === true;
+      // Four positions, all of them in the artwork. "axis" keeps the drop
+      // guides running from the price line but sets the bracket down by the Q
+      // axis with its label above -- the tariff figures are drawn that way,
+      // where the space just under the price line is taken by the revenue
+      // rectangle, while the import figures hug the line with "in".
+      var inplot = b.below === 'in', out = b.below === true, atax = b.below === 'axis';
       var x1 = X(Math.min(b.q1, b.q2)), x2 = X(Math.max(b.q1, b.q2)),
-          y = out ? O.y + 22 : Y(b.p) + (inplot ? 8 : -8), dir = (out || inplot) ? 1 : -1, m = (x1 + x2) / 2;
+          y = out ? O.y + 22 : atax ? O.y - 12 : Y(b.p) + (inplot ? 8 : -8),
+          dir = (out || inplot) ? 1 : -1, m = (x1 + x2) / 2;
       // Each half of the curl needs about 2*hh of run. Over a short span a
       // fixed hh makes the segments overlap and the brace reads as a scribble,
       // so it shrinks with the span it has to cover.
@@ -328,6 +335,28 @@
       tbl.appendChild(tbody); var wrap = h('div', 'sdg-tablewrap'); wrap.appendChild(tbl); body.insertBefore(wrap, body.firstChild);
     }
     host.appendChild(body);
+
+    // calcs: the working, set under the plot the way the artwork prints it
+    // beneath each diagram -- a reader who only sees "CS = $80" cannot get
+    // there themselves. Each line's closing "= result" is set apart, which is
+    // the red underline in the source. Lines take at/until like anything else,
+    // so a walkthrough can add the arithmetic as it reaches it.
+    self.calcs = [];
+    if (cfg.calcs && cfg.calcs.length) {
+      var cbox = h('div', 'sdg-calc');
+      cfg.calcs.forEach(function (c) {
+        var spec = (typeof c === 'string') ? {text: c} : c,
+            line = h('div', 'sdg-calcline'), t = spec.text || '', cut = t.lastIndexOf(' = ');
+        if (cut > 0) {
+          line.appendChild(document.createTextNode(t.slice(0, cut + 3)));
+          line.appendChild(h('span', 'res', t.slice(cut + 3)));
+        } else { line.textContent = t; }
+        cbox.appendChild(line);
+        self.calcs.push({node: line, spec: spec});
+      });
+      host.appendChild(cbox);
+    }
+
     if (cfg.steps && cfg.steps.length > 1) {
       var ctrl = h('div', 'sdg-ctrl'), prev = h('button', null, 'Back'), next = h('button', null, 'Next step'), reset = h('button', null, 'Start over'), lbl = h('span', 'sdg-step');
       prev.type = next.type = reset.type = 'button';
@@ -356,6 +385,12 @@
         if (pt.node.dataset.dx != null) pt.node.style.transform = on ? 'translate(0,0)' : 'translate(' + (-pt.node.dataset.dx) + 'px,0)';
       });
       (pn.cfg.curves || []).forEach(function (c) { if (c.from && pn.byId[c.from]) pn.byId[c.from].node.classList.toggle('dim', s >= (c.at || 0)); });
+    });
+    (this.calcs || []).forEach(function (c) {
+      var at = c.spec.at || 0, until = c.spec.until;
+      // display, not opacity: an invisible line that still takes its height
+      // leaves a gap the reader has to wonder about
+      c.node.classList.toggle('hide', !(s >= at && (until == null || s < until)));
     });
     if (this.ui) {
       var n = cfg.steps.length;

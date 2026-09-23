@@ -192,6 +192,28 @@ own price line, and enough that a deadweight label had to be given room by
 widening the wedge rather than by centring the text. If you are placing an area
 label with `lp`, give it the point you want the text centred on.
 
+### `calcs`
+
+```json
+"calcs": ["CS = ½ × 80 × ($5 − $3) = $80",
+          {"text": "Tariff revenue = (50 − 30) × $0.50 = $10", "at": 2}]
+```
+
+Lines of working, set under the plot the way the artwork prints them beneath
+each diagram (**v2.15**). A reader given only "CS = $80" cannot get there
+themselves, which is the whole point of the figure.
+
+Each line's closing `" = result"` is split off into a `<span class="res">` and
+set in red with a rule under it — the red underline the source uses. The split
+is on the **last** `" = "`, so `Total surplus = CS + PS = $120` emphasises
+`$120` and nothing else. A line with no `" = "` is printed as-is.
+
+A plain string always shows; `{text, at, until}` takes step windows like
+anything else, so a walkthrough can add each line as it reaches it. Hidden
+lines are `display:none`, not transparent, so the block closes up rather than
+leaving a gap. Lines do not wrap — they scroll sideways on a narrow screen
+instead of breaking an equation across two lines.
+
 ### `moves`
 
 ```json
@@ -233,12 +255,15 @@ A curly brace spanning `q1`→`q2` at price `p`. Red by default.
 tall to make room). `below:false` puts it just above the price line **and also
 draws vertical guides** from each end down to the axis. `below:"in"`
 (**v2.14**) is the third position: inside the plot, hanging just *below* its
-price line, with the same vertical guides.
+price line, with the same vertical guides. `below:"axis"` (**v2.15**) is the
+fourth: the drop guides still run from the price line, but the bracket sits
+down by the Q axis with its label **above** it.
 
-The three exist because the artwork uses all three. An exports brace goes above
+The four exist because the artwork uses all four. An exports brace goes above
 the world-price line; an imports brace goes below it, because above it is where
-the curves cross; and a numerical example puts the brace under the axis
-entirely. Note that `"in"` is truthy, so any code testing `if b.below` must ask
+the curves cross; a tariff figure sends it down to the axis, because the space
+under its price line is taken by the revenue rectangle; and a numerical example
+puts the brace under the axis entirely. Note that `"in"` is truthy, so any code testing `if b.below` must ask
 `=== true` instead — `check_file.py` reads the position through one helper,
 `brace_y()`, for exactly that reason.
 

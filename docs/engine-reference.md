@@ -251,6 +251,10 @@ instead.
 
 A curly brace spanning `q1`→`q2` at price `p`. Red by default.
 
+A `label` may carry `\n` and is drawn on that many lines (**v2.17**), growing
+away from the price line. The artwork wraps its longer ones, and on one line
+the text is often wider than the gap between the curves it has to sit in.
+
 `below:true` puts it under the Q axis (and grows the panel from 250 to 268 units
 tall to make room). `below:false` puts it just above the price line **and also
 draws vertical guides** from each end down to the axis. `below:"in"`

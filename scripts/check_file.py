@@ -880,9 +880,17 @@ def check_labels(cfgs, r):
                     x1b, x2b = X(min(b["q1"], b["q2"])), X(max(b["q1"], b["q2"]))
                     m = (x1b + x2b) / 2
                     hh = max(2.5, min(7.0, (x2b - x1b) / 4.0))
-                    boxes.append((box(m, y + d * 2 * hh + (12 if d > 0 else -4),
-                                      b["label"], 12, "middle"),
-                                  "brace label %r" % b["label"],
+                    # a wrapped label is as wide as its longest line and as
+                    # tall as all of them; measuring the joined string instead
+                    # invents a box three times too wide
+                    rows = str(b["label"]).split("\n")
+                    widest = max(rows, key=len)
+                    ly = y + d * 2 * hh + (12 if d > 0 else -4)
+                    if d < 0:
+                        ly -= (len(rows) - 1) * 13
+                    lb = box(m, ly, widest, 12, "middle")
+                    lb = (lb[0], lb[1], lb[2], lb[3] + (len(rows) - 1) * 13)
+                    boxes.append((lb, "brace label %r" % b["label"],
                                   (b.get("at", 0), b.get("until"))))
 
                 # A price line can name itself at its right-hand end (v2.14).
@@ -947,6 +955,13 @@ def check_labels(cfgs, r):
                         pts = c.get("pts") or []
                         if len(pts) < 2:
                             continue
+                        # Only against a curve that is on screen at the same
+                        # time. The guides loop has always checked this; these
+                        # three did not, so a walkthrough was tested against the
+                        # curve its next step replaces -- a collision that is
+                        # never drawn, and one the author cannot fix.
+                        if not coexist(win, (c.get("at", 0), c.get("until"))):
+                            continue
                         cid = c.get("label") or c.get("id")
                         # A curve's own label used to be skipped outright here,
                         # on the grounds that it sits at its own end. That is
@@ -961,6 +976,8 @@ def check_labels(cfgs, r):
                         if curve_hits(bx, pts, X, Y):
                             r.fail("labels", "%s: %s sits on curve %s" % (where, what, cid))
                     for seg, desc, _aw in arrows:
+                        if not coexist(win, _aw):
+                            continue
                         if poly_hits(bx, list(seg)):
                             r.fail("labels", "%s: %s sits on %s" % (where, what, desc))
                     for pt in pn.get("points") or []:
@@ -968,6 +985,8 @@ def check_labels(cfgs, r):
                         # label, which is boxed separately above. Testing the
                         # marker anyway invents an obstacle that is not there.
                         if pt.get("dot") is False:
+                            continue
+                        if not coexist(win, (pt.get("at", 0), pt.get("until"))):
                             continue
                         cx, cy = X(pt["q"]), Y(pt["p"])
                         rad = 6.0 if pt.get("marker") else 4.2

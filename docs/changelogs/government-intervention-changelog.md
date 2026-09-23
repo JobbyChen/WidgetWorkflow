@@ -74,8 +74,9 @@ Every curve is fixed by two values the chapter states, never drawn to taste:
   taken by a curve, a guide or the brace, and figure 3's producer surplus
   sliver is labelled beside the shape rather than inside it. The captions name
   both. The source does the same with its own slivers.
-* **The two long shortage braces** (figures 2 and 10) sit under the Q axis
-  rather than against the price line, where their text crosses a curve.
+* **Figure 2's shortage label wraps onto two lines**, as the source's does.
+  On one line it is wider than the gap between the curves it sits in; the
+  braces themselves stay against the price line, as everywhere else.
 * **Burrito and sushi axes are clipped** to the region the figures use. Drawn
   to the full intercepts, 24 and 30 rendered as a single "2430".
 

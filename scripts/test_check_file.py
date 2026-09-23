@@ -103,6 +103,26 @@ case("label pressed against a guide", lambda r: C.check_labels(widget(
     points=[{"q": 50, "p": 50, "label": "E", "dx": -18, "dy": 3}]), r)
     or r.has("WARN", "labels", "close to the guides"))
 
+# ---- steps and what is on screen -------------------------------------------
+
+# A label is only tested against what shares a step with it. The curve, arrow
+# and point loops used to skip this check, so a walkthrough was flagged against
+# the curve its next step replaces -- a collision never drawn and impossible to
+# fix. Both directions matter: the same overlap in a shared step must still fail.
+case("label over a curve that is gone by then", lambda r: C.check_labels(widget(
+    curves=[{"id": "D1", "label": "D\u2081", "pts": [[0, 100], [100, 0]], "until": 1},
+            {"id": "S", "label": "S", "pts": [[0, 0], [100, 100]]}],
+    braces=[{"p": 50, "q1": 20, "q2": 80, "label": "Shortage of 400", "below": "in", "at": 3}],
+    steps=["a.", "b.", "c.", "d."]), r)
+    or not r.has("FAIL", "labels", "sits on curve D\u2081"))
+
+case("label over a curve that is still there", lambda r: C.check_labels(widget(
+    curves=[{"id": "D1", "label": "D\u2081", "pts": [[0, 100], [100, 0]]},
+            {"id": "S", "label": "S", "pts": [[0, 0], [100, 100]]}],
+    braces=[{"p": 50, "q1": 20, "q2": 80, "label": "Shortage of 400", "below": "in", "at": 3}],
+    steps=["a.", "b.", "c.", "d."]), r)
+    or r.has("FAIL", "labels", "sits on curve D\u2081"))
+
 # ---- the arrow tests -------------------------------------------------------
 
 case("two arrows abutting", lambda r: C.check_labels(widget(

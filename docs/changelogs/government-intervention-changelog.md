@@ -94,6 +94,17 @@ Every curve is fixed by two values the chapter states, never drawn to taste:
   figures 11 and 18 gained the supply reading each formula uses ($650 at 75
   units, $10 at 200 hours).
 
+* **Guides follow the source panel by panel.** Figure 12 draws a horizontal
+  from each price across to its reading; figure 15's equilibrium carries only a
+  vertical, because the source draws no horizontal there; and figure 18's
+  "after" panel drops the $15 guide and tick altogether, since the "before"
+  panel has already established the market wage — which is what frees the room
+  for the deadweight label to sit inside its wedge.
+* **$5.50 has no label in figure 12.** It is half a dollar from $6 on an axis
+  that must reach $12, which is under seven pixels; its guide is drawn but
+  unlabelled there. Figures 14 and 15 drop $6 instead, so the number is written
+  wherever an answer depends on it.
+
 ## Not changed
 
 * `<strong>` wraps whole question sentences in 18 places (Ian's markup).

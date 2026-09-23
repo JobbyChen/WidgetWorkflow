@@ -2084,7 +2084,7 @@
    "axes": {
     "x": "Q",
     "y": "P",
-    "xmax": 320,
+    "xmax": 280,
     "ymax": 980,
     "money": true,
     "xticks": [
@@ -2104,8 +2104,8 @@
        900
       ],
       [
-       300,
-       300
+       280,
+       340
       ]
      ],
      "ldx": 6,
@@ -2120,8 +2120,8 @@
        500
       ],
       [
-       220,
-       940
+       240,
+       980
       ]
      ],
      "ldx": -20,
@@ -2188,11 +2188,12 @@
    "axes": {
     "x": "Q",
     "y": "P",
-    "xmax": 320,
+    "xmax": 280,
     "ymax": 980,
     "money": true,
     "xticks": [
      75,
+     100,
      125
     ],
     "yticks": [
@@ -2209,8 +2210,8 @@
        900
       ],
       [
-       300,
-       300
+       280,
+       340
       ]
      ],
      "ldx": 6,
@@ -2225,8 +2226,8 @@
        500
       ],
       [
-       220,
-       940
+       240,
+       980
       ]
      ],
      "ldx": -20,
@@ -2437,13 +2438,12 @@
   {
    "q": 200,
    "p": 7,
-   "guides": "q",
    "showQ": false
   },
   {
    "q": 125,
    "p": 5.5,
-   "guides": false,
+   "guides": "p",
    "showP": false,
    "showQ": false
   }
@@ -2604,8 +2604,7 @@
     <p>As you can see in the diagram below, in this case, the consumer surplus is the area of a triangle and the producer surplus is the area of a trapezoid:</p>
 
     <!-- IMAGE POSITION: price floor surplus calculation -->
-    <div class="sdg"><script type="application/json">
-{
+    <div class="sdg"><script type="application/json">{
  "title": "Surplus with a $7 price floor",
  "lede": "Only 125 burritos sell, so both areas stop there.",
  "axes": {
@@ -2616,6 +2615,7 @@
   "money": true,
   "xticks": [
    125,
+   150,
    200
   ],
   "yticks": [
@@ -2712,11 +2712,17 @@
    "color": "orange",
    "lp": [
     62.5,
-    6.2
+    4.85
    ]
   }
  ],
  "points": [
+  {
+   "q": 150,
+   "p": 6,
+   "showP": false,
+   "showQ": false
+  },
   {
    "q": 125,
    "p": 7,
@@ -2745,8 +2751,7 @@
   }
  ],
  "caption": "At $7 sellers would make 200 burritos but buyers take 125, so 125 is what changes hands. Consumer surplus is a triangle; producer surplus is a triangle and a rectangle together."
-}
-</script></div>
+}</script></div>
 
   <p style="text-align: center;">
     \(CS = \frac{1}{2} \times \text{Base} \times \text{Height}\)<br>
@@ -2917,12 +2922,21 @@
   {
    "q": 150,
    "p": 6,
-   "showP": false
+   "guides": "q",
+   "showP": false,
+   "showQ": false
   },
   {
    "q": 125,
    "p": 7,
    "guides": "q",
+   "showQ": false
+  },
+  {
+   "q": 200,
+   "p": 7,
+   "guides": false,
+   "showP": false,
    "showQ": false
   },
   {
@@ -3000,7 +3014,7 @@
     ]
    ],
    "ldx": -44,
-   "ldy": -80
+   "ldy": -50
   },
   {
    "id": "S",
@@ -3100,7 +3114,7 @@
       ]
      ],
      "ldx": -44,
-     "ldy": -80
+     "ldy": -50
     },
     {
      "id": "S",
@@ -3195,7 +3209,6 @@
     ],
     "yticks": [
      10,
-     15,
      20,
      30
     ]
@@ -3215,7 +3228,7 @@
       ]
      ],
      "ldx": -44,
-     "ldy": -80
+     "ldy": -50
     },
     {
      "id": "S",
@@ -3305,18 +3318,15 @@
       ]
      ],
      "label": "DWL",
-     "color": "red",
-     "lp": [
-      259.33,
-      10.67
-     ]
+     "color": "red"
     }
    ],
    "points": [
     {
      "q": 300,
      "p": 15,
-     "guides": "p",
+     "guides": "q",
+     "showP": false,
      "showQ": false
     },
     {

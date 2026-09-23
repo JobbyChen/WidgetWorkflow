@@ -188,7 +188,7 @@ Fetch the source images and match them. The <img src> URLs in a notes file resol
 Label every price and quantity the source names — P*, the control price, Qᴅ/Qꜱ, and the intercepts. A dashed guide with no number at its foot is worse than no guide; drop the guide instead.
 Shading: consumer surplus teal, producer surplus orange, gains from trade teal, deadweight loss red, tax or tariff revenue navy. Two pieces of one surplus (a trapezoid split into a triangle and a rectangle) take edge:true, or they read as one wash.
 One guide per quantity, and the right leg of it: an equilibrium gets the full elbow, a quantity read off a control price gets guides:"q", a price whose quantity is not the point gets guides:"p". Two points at one quantity draw the same dashed line twice.
-No dot where a quantity meets a control price — a ceiling, a floor, a minimum wage, a world price. The line and its guide mark it, and a dot there reads as an equilibrium. A bare disequilibrium price line is the opposite case: the dots on it are what the figure is about.
+A dot wherever a price meets a curve, the control price included — the artwork marks all of them. Mark the same readings in every panel of a market, so a series does not change its markings from one figure to the next.
 Show the working (calcs) only where the formulas live inside the image, because replacing the image would lose them. Where the chapter prints the same formula as text under the figure, a calcs block says it twice.
 Clip the axis to the region the figure uses. Drawn out to the full intercepts, ticks collide and most of the plot is empty.
 Where the source figure and the source prose disagree, the prose wins, and the changelog says so.

@@ -21,7 +21,7 @@ Groups, in order:
   labels    step 5's x-position test -- for every label, where does each curve
             pass at that label's x? Plus label-on-label and point-on-point.
   arrows    every surplus/shortage walkthrough ends with two movement arrows
-  controls  no dot on a control price; one dashed guide per quantity
+  controls  one dashed guide per quantity
   calcs     working is shown only where the chapter does not print it as prose
   caption   prose, not slide bullets: no "Before -/After -", no "Price up,
             quantity up", complete sentences
@@ -1165,64 +1165,39 @@ def is_control(h):
     """Is this price line a policy the market cannot leave?
 
     A ceiling, a floor, a minimum wage, a world price, a world price plus a
-    tariff -- as against a disequilibrium price the market is merely passing
-    through, where the dots showing what each curve offers at that price are
-    the whole point of the figure.
+    tariff -- as against a disequilibrium price the market is passing through.
+    `tag` alone will not do: a tag is whether the line is NAMED on screen,
+    which is a question of room, so a line says what it is with `control:true`.
 
-    `tag` alone will not do it. A tag is whether the line is NAMED on screen,
-    which is a question of room: figure 8 of the trade chapter stacks two price
-    lines 16px apart and neither can carry a tag, which does not make them any
-    less of a tariff. So a line says what it is with `control: true`, and a tag
-    is taken as one only because a named line almost always is.
+    Only the arrow rule reads this now. A control price used to forbid a dot
+    where a quantity meets it, on the grounds that the line already marks it;
+    Ian's call (2026-09-23) is to match the artwork, which draws the dot.
     """
     return bool(h.get("control") or h.get("tag"))
 
 
 def check_controls(cfgs, r):
-    """Two things the drawing conventions ask for and nothing tested.
+    """One dashed guide per quantity.
 
-    A control price -- a ceiling, a floor, a minimum wage, a world price -- is
-    a line the market cannot leave, not a place the market settles. A hollow
-    dot there reads as an equilibrium, so the line and its drop guide say where
-    the quantity is and the dot comes off. A control is a line the config
-    NAMES (`tag`); a bare price line is a disequilibrium price the market is
-    passing through, and the dots on it are what the figure is about.
-
-    And one dashed guide per quantity. Two points at the same quantity each
-    draw their own vertical, one straight down the other: twice the ink, no
-    more information, and it is most of what makes a busy panel look busy.
+    Two points at the same quantity each draw their own vertical, one straight
+    down the other: twice the ink, no more information, and it is most of what
+    makes a busy panel look busy.
     """
-    dots = dupes = n = 0
+    dupes = n = 0
     for idx, cfg, _ in cfgs:
         for label, v in variants(cfg):
             if v.get("preset"):
                 continue
-            for pi, pn in enumerate(panels(v)):
+            for pn in panels(v):
                 where = "widget %d%s" % (idx, " (%s)" % label if label else "")
                 n += 1
-                # Only a NAMED line is a control. The same distinction the
-                # arrow rule makes: a ceiling or a floor is a price the market
-                # cannot leave, while a bare price line is one the market is
-                # passing through -- and there the dots where supply and demand
-                # meet that price are the whole point of the figure.
-                lines = [(h["p"], h.get("at", 0), h.get("until"))
-                         for h in (pn.get("hlines") or []) if is_control(h)]
                 drops = {}
                 for pt in pn.get("points") or []:
-                    win = (pt.get("at", 0), pt.get("until"))
-                    if pt.get("dot") is not False:
-                        for lp, la, lu in lines:
-                            if abs(lp - pt["p"]) < 1e-9 and coexist(win, (la, lu)):
-                                dots += 1
-                                r.fail("controls", "%s: a dot sits on the control price at "
-                                                   "(%s, %s) -- the line already marks it"
-                                       % (where, pt["q"], pt["p"]))
-                                break
                     g = pt.get("guides", True)
                     # a point on the axis has a vertical leg of zero length,
                     # so it is not drawing a second line down anything
                     if g is not False and g != "p" and pt.get("p", 0) > 0:
-                        drops.setdefault(pt["q"], []).append(win)
+                        drops.setdefault(pt["q"], []).append((pt.get("at", 0), pt.get("until")))
                 for q, wins in drops.items():
                     for i in range(len(wins)):
                         for j in range(i + 1, len(wins)):
@@ -1231,8 +1206,8 @@ def check_controls(cfgs, r):
                                 r.warn("controls", "%s: two guides run down q = %s at once"
                                        % (where, q))
                                 break
-    if n and not dots and not dupes:
-        r.ok("controls", "no dot sits on a control price, and no guide is drawn twice")
+    if n and not dupes:
+        r.ok("controls", "no guide is drawn twice")
 
 
 FORMULA = re.compile(r"\\\(([^)]{0,400}?)\\\)", re.S)

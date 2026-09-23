@@ -87,6 +87,13 @@ Every curve is fixed by two values the chapter states, never drawn to taste:
   and cannot be written beside it, so 12 shows $6 and the two floor figures
   show $5.50.)
 
+* **Every reading carries a dot**, the control price included, matching the
+  artwork — 44 of them across the two chapters, applied by one rule at the foot
+  of the config rather than point by point, so no figure can drift from the
+  rest. Figure 10 also takes the source's `1k`/`1.2k`/`1.4k` quantities, and
+  figures 11 and 18 gained the supply reading each formula uses ($650 at 75
+  units, $10 at 200 hours).
+
 ## Not changed
 
 * `<strong>` wraps whole question sentences in 18 places (Ian's markup).

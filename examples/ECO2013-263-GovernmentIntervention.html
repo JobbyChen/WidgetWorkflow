@@ -757,7 +757,6 @@
   {
    "q": 375,
    "p": 75,
-   "dot": false,
    "guides": "q",
    "showQ": false,
    "at": 1
@@ -765,7 +764,6 @@
   {
    "q": 562.5,
    "p": 75,
-   "dot": false,
    "guides": "q",
    "showQ": false,
    "at": 1
@@ -935,7 +933,8 @@
     ],
     "yticks": [
      500,
-     700
+     700,
+     1000
     ]
    },
    "curves": [
@@ -1059,15 +1058,19 @@
     },
     {
      "q": 25,
+     "p": 1000,
+     "guides": "p",
+     "showQ": false
+    },
+    {
+     "q": 25,
      "p": 500,
-     "dot": false,
      "guides": "q",
      "showQ": false
     },
     {
      "q": 150,
      "p": 500,
-     "dot": false,
      "guides": "q",
      "showQ": false
     }
@@ -1081,7 +1084,7 @@
      "below": "in"
     }
    ],
-   "caption": "At $500 only 25 units are supplied while 150 are wanted. Consumer surplus grows and producer surplus shrinks by more, and the red wedge is surplus that nobody gets because those units are never made."
+   "caption": "At $500 only 25 units are supplied while 150 are wanted. The 25th unit is worth $1,000 to the buyer who gets it, so the red wedge between the curves — the surplus on every unit from 25 up to 100 that is now never made — is large."
   }
  }
 }
@@ -1372,14 +1375,12 @@
   {
    "q": 400,
    "p": 300,
-   "dot": false,
    "guides": "q",
    "showQ": false
   },
   {
    "q": 720,
    "p": 300,
-   "dot": false,
    "guides": "q",
    "showQ": false
   }
@@ -1537,14 +1538,12 @@
   {
    "q": 400,
    "p": 300,
-   "dot": false,
    "guides": false,
    "showQ": false
   },
   {
    "q": 720,
    "p": 300,
-   "dot": false,
    "guides": "q",
    "showQ": false
   }
@@ -1712,14 +1711,12 @@
   {
    "q": 400,
    "p": 300,
-   "dot": false,
    "guides": false,
    "showQ": false
   },
   {
    "q": 720,
    "p": 300,
-   "dot": false,
    "guides": "q",
    "showQ": false
   }
@@ -1902,14 +1899,12 @@
   {
    "q": 400,
    "p": 300,
-   "dot": false,
    "guides": false,
    "showQ": false
   },
   {
    "q": 720,
    "p": 300,
-   "dot": false,
    "guides": "q",
    "showQ": false
   }
@@ -1944,6 +1939,7 @@
   "xmax": 1600,
   "ymax": 1300,
   "money": true,
+  "k": true,
   "xticks": [
    1000,
    1200,
@@ -2024,13 +2020,11 @@
   {
    "q": 1200,
    "p": 800,
-   "at": 1,
-   "until": 2
+   "at": 1
   },
   {
    "q": 1000,
    "p": 600,
-   "dot": false,
    "guides": "q",
    "showQ": false,
    "at": 2
@@ -2038,7 +2032,6 @@
   {
    "q": 1400,
    "p": 600,
-   "dot": false,
    "guides": "q",
    "showQ": false,
    "at": 2
@@ -2325,15 +2318,20 @@
     {
      "q": 75,
      "p": 750,
-     "dot": false,
      "guides": "q",
      "showQ": false
     },
     {
      "q": 125,
      "p": 750,
-     "dot": false,
      "guides": "q",
+     "showQ": false
+    },
+    {
+     "q": 75,
+     "p": 650,
+     "guides": false,
+     "showP": false,
      "showQ": false
     }
    ],
@@ -2722,14 +2720,12 @@
   {
    "q": 125,
    "p": 7,
-   "dot": false,
    "guides": "q",
    "showQ": false
   },
   {
    "q": 200,
    "p": 7,
-   "dot": false,
    "guides": "q",
    "showQ": false
   },
@@ -2926,7 +2922,6 @@
   {
    "q": 125,
    "p": 7,
-   "dot": false,
    "guides": "q",
    "showQ": false
   },
@@ -3038,14 +3033,12 @@
   {
    "q": 200,
    "p": 20,
-   "dot": false,
    "guides": "q",
    "showQ": false
   },
   {
    "q": 400,
    "p": 20,
-   "dot": false,
    "guides": "q",
    "showQ": false
   }
@@ -3329,15 +3322,19 @@
     {
      "q": 200,
      "p": 20,
-     "dot": false,
      "guides": "q",
      "showQ": false
     },
     {
      "q": 400,
      "p": 20,
-     "dot": false,
      "guides": "q",
+     "showQ": false
+    },
+    {
+     "q": 200,
+     "p": 10,
+     "guides": "p",
      "showQ": false
     }
    ],

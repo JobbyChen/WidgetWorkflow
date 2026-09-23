@@ -198,10 +198,11 @@ economics instead of label placement.
   elbow; a quantity read off a control price gets `guides:"q"`; a price whose
   quantity is not the point gets `guides:"p"`. Two points at one quantity draw
   the same dashed line twice, which is most of what makes a panel look busy.
-* **No dot where a quantity meets a control price.** The line and its guide
-  already mark it, and a dot there reads as an equilibrium. A *bare*
-  disequilibrium price line is the opposite case: its dots are the figure's
-  whole point.
+* **A dot wherever a price meets a curve, the control price included.** The
+  artwork marks all of them, and Ian's call (2026-09-23) is to match it: every
+  reading in a panel, not just the ones away from the ceiling. The same
+  readings appear in every panel of a market, so a series does not change its
+  markings figure to figure.
 * **Show the working only where the artwork does.** `calcs` carries the
   formulas when they live inside the image — replacing the image would
   otherwise lose them. Where the chapter prints the same formula as text under

@@ -215,28 +215,7 @@ def _box_baseline(r):
 case("an area label's box is centred on its anchor", _box_centred)
 case("every other label's box hangs above its baseline", _box_baseline)
 
-# ---- control prices and duplicated guides ----------------------------------
-
-case("a dot on a named control price", lambda r: C.check_controls(widget(
-    hlines=[{"p": 70, "tag": "Price ceiling"}],
-    points=[{"q": 30, "p": 70}]), r)
-    or r.has("FAIL", "controls", "dot sits on the control price"))
-
-# A line says what it is rather than being guessed from whether it is named:
-# two price lines 16px apart cannot both carry a tag, which does not make them
-# any less of a tariff.
-case("a dot on a line declared a control", lambda r: C.check_controls(widget(
-    hlines=[{"p": 70, "control": True}],
-    points=[{"q": 30, "p": 70}]), r)
-    or r.has("FAIL", "controls", "dot sits on the control price"))
-
-# ...but a bare price line is a disequilibrium price, and the dots where the
-# curves meet it are the whole point of a surplus/shortage figure.
-case("a dot on a bare price line is fine", lambda r: C.check_controls(widget(
-    hlines=[{"p": 70, "label": "$8"}],
-    points=[{"q": 30, "p": 70}]), r)
-    or not r.has("FAIL", "controls", "dot sits on the control price"))
-
+# ---- duplicated guides ------------------------------------------------------
 case("two guides down one quantity", lambda r: C.check_controls(widget(
     points=[{"q": 40, "p": 70, "guides": "q"}, {"q": 40, "p": 30, "guides": "q"}]), r)
     or r.has("WARN", "controls", "two guides run down"))

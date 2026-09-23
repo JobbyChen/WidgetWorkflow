@@ -67,7 +67,14 @@ def main():
         if src.count(PLACEHOLDER) > 1:
             sys.exit("%s has %d %s lines; expected exactly one"
                      % (path, src.count(PLACEHOLDER), PLACEHOLDER))
-        out = re.sub(r"[ \t]*" + re.escape(PLACEHOLDER) + r"[ \t]*\n?", engine, out, count=1)
+        # The engine goes in through a lambda, never as a replacement
+        # string: re.sub reads escapes in a replacement, so a literal
+        # backslash-n anywhere in the engine -- split('\\n') in the brace
+        # label code -- comes out as a real newline and breaks the JS
+        # string it was inside. The page then throws before drawing a
+        # single widget, and the only visible symptom is a syntax error.
+        out = re.sub(r"[ \t]*" + re.escape(PLACEHOLDER) + r"[ \t]*\n?",
+                     lambda _m: engine, out, count=1)
         how = "replaced the %s placeholder" % PLACEHOLDER
     elif had_embedded:
         out = CSS_BLOCK.sub("", out)

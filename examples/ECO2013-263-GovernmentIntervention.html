@@ -115,7 +115,7 @@
 .sdg .sdg-cap { margin:10px 0 0; padding:10px 12px; background:#fff; border-left:4px solid var(--red); font-size:.92rem; line-height:1.45; min-height:3.2em; }
 </style>
 <script>
-/* ===== sd-graph.js v2.17 — data-driven supply & demand widgets =====
+/* ===== sd-graph.js v2.18 — data-driven supply & demand widgets =====
    Markup:  <div class="sdg"><script type="application/json">{ ...config... }<\/script></div>
    Top-level config:
      title, lede, caption         heading / intro / static caption (caption used only when there are no steps)
@@ -127,7 +127,7 @@
      axes: {x, y, xmax, ymax, xticks[], yticks[], money, cents, k, grid, bg:false}
         x, y = axis titles, default 'Q' and 'P'. A word or two fits; they are never wrapped.
      curves[]: {id, label, pts:[[q,p],...], color, at, until, from, arrowP, shiftArrow, curved, thin, dashed, lstart, ldx, ldy}
-     areas[]:  {pts:[[q,p],...], label, color, lp, ldx, ldy, at, until}   a shaded polygon under the curves (CS, PS, deadweight loss)
+     areas[]:  {pts:[[q,p],...], label, color, edge, lp, ldx, ldy, at, until}   a shaded polygon under the curves (CS, PS, deadweight loss)
         lstart = put the curve label at the first point instead of the last; ldx/ldy nudge it
         label:"" draws no label at all (a lone PPF needs none); omitting label falls back to the id
         from   = id of the curve this one shifts away from (animated shift + arrow); arrowP = price height of arrow
@@ -201,7 +201,13 @@
     // line, a point or a label.
     (cfg.areas || []).forEach(function (a) {
       var cc = col(a.color), grp = el('g', {class: 'area-g'});
+      // edge:true outlines the polygon in its own colour. Two pieces of one
+      // surplus -- the triangle and rectangle a trapezoid splits into -- are
+      // the same wash and read as a single blob without a line between them.
+      // The stroke goes in a style attribute because the sheet sets
+      // stroke:none on .area, and a rule beats a presentation attribute.
       grp.appendChild(el('polygon', {class: 'area', fill: cc,
+        style: a.edge ? 'stroke:' + cc + ';stroke-width:1.6;stroke-opacity:1' : null,
         points: a.pts.map(function (p) { return X(p[0]) + ',' + Y(p[1]); }).join(' ')}));
       if (a.label) {
         // The centroid keeps a label inside its own shape, which is right for
@@ -758,7 +764,7 @@
    "p": 75,
    "q1": 375,
    "q2": 562.5,
-   "label": "Shortage\n(187.5 units)",
+   "label": "Shortage\n187.5 units",
    "below": "in",
    "at": 2
   }
@@ -1089,10 +1095,13 @@
   "ymax": 950,
   "money": true,
   "xticks": [
-   600
+   600,
+   1080
   ],
   "yticks": [
-   400
+   100,
+   400,
+   900
   ]
  },
  "curves": [
@@ -1162,7 +1171,8 @@
   "ymax": 950,
   "money": true,
   "xticks": [
-   600
+   600,
+   1080
   ],
   "yticks": [
    100,
@@ -1256,11 +1266,6 @@
    "p": 400
   }
  ],
- "calcs": [
-  "CS = ½ × 600 × ($900 − $400) = $150,000",
-  "PS = ½ × 600 × ($400 − $100) = $90,000",
-  "Total surplus = CS + PS = $240,000"
- ],
  "caption": "Consumer surplus is the area below demand and above the rent; producer surplus is the area above supply and below it. Here the consumer surplus is the larger of the two, which depends on how steep each curve is."
 }
 </script></div>
@@ -1297,11 +1302,14 @@
   "xticks": [
    400,
    600,
-   720
+   720,
+   1080
   ],
   "yticks": [
+   100,
    300,
-   400
+   400,
+   900
   ]
  },
  "curves": [
@@ -1347,9 +1355,7 @@
  "points": [
   {
    "q": 600,
-   "p": 400,
-   "guides": "p",
-   "showQ": false
+   "p": 400
   },
   {
    "q": 400,
@@ -1371,7 +1377,7 @@
    "p": 300,
    "q1": 400,
    "q2": 720,
-   "label": "Shortage of 320",
+   "label": "Shortage\nof 320",
    "below": "in"
   }
  ],
@@ -1404,11 +1410,17 @@
   "ymax": 950,
   "money": true,
   "xticks": [
-   400
+   400,
+   600,
+   720,
+   1080
   ],
   "yticks": [
    100,
-   300
+   300,
+   400,
+   566.67,
+   900
   ]
  },
  "curves": [
@@ -1460,6 +1472,32 @@
     ],
     [
      0,
+     900
+    ],
+    [
+     400,
+     566.67
+    ],
+    [
+     400,
+     300
+    ]
+   ],
+   "label": "CS",
+   "color": "teal",
+   "lp": [
+    200.0,
+    520.0
+   ]
+  },
+  {
+   "pts": [
+    [
+     0,
+     300
+    ],
+    [
+     0,
      100
     ],
     [
@@ -1477,15 +1515,27 @@
  ],
  "points": [
   {
+   "q": 600,
+   "p": 400
+  },
+  {
    "q": 400,
+   "p": 566.67
+  },
+  {
+   "q": 400,
+   "p": 300,
+   "dot": false,
+   "guides": false,
+   "showQ": false
+  },
+  {
+   "q": 720,
    "p": 300,
    "dot": false,
    "guides": "q",
    "showQ": false
   }
- ],
- "calcs": [
-  "PS = ½ × 400 × ($300 − $100) = $40,000"
  ],
  "caption": "Only 400 apartments are let, and each earns $300 rather than $400. Producer surplus falls from $90,000 to $40,000."
 }
@@ -1511,10 +1561,15 @@
   "ymax": 950,
   "money": true,
   "xticks": [
-   400
+   400,
+   600,
+   720,
+   1080
   ],
   "yticks": [
+   100,
    300,
+   400,
    566.67,
    900
   ]
@@ -1577,6 +1632,7 @@
    ],
    "label": "Triangle",
    "color": "teal",
+   "edge": true,
    "lp": [
     120.0,
     677.78
@@ -1603,16 +1659,54 @@
    ],
    "label": "Rectangle",
    "color": "teal",
+   "edge": true,
    "lp": [
     200.0,
-    433.33
+    451.11
+   ]
+  },
+  {
+   "pts": [
+    [
+     0,
+     300
+    ],
+    [
+     0,
+     100
+    ],
+    [
+     400,
+     300
+    ]
+   ],
+   "label": "PS",
+   "color": "orange",
+   "lp": [
+    133.33,
+    233.33
    ]
   }
  ],
  "points": [
   {
+   "q": 600,
+   "p": 400
+  },
+  {
    "q": 400,
-   "p": 566.67,
+   "p": 566.67
+  },
+  {
+   "q": 400,
+   "p": 300,
+   "dot": false,
+   "guides": false,
+   "showQ": false
+  },
+  {
+   "q": 720,
+   "p": 300,
    "dot": false,
    "guides": "q",
    "showQ": false
@@ -1660,12 +1754,16 @@
   "money": true,
   "xticks": [
    400,
-   600
+   600,
+   720,
+   1080
   ],
   "yticks": [
+   100,
    300,
    400,
-   566.67
+   566.67,
+   900
   ]
  },
  "curves": [
@@ -1712,6 +1810,54 @@
   {
    "pts": [
     [
+     0,
+     300
+    ],
+    [
+     0,
+     900
+    ],
+    [
+     400,
+     566.67
+    ],
+    [
+     400,
+     300
+    ]
+   ],
+   "label": "CS",
+   "color": "teal",
+   "lp": [
+    200.0,
+    520.0
+   ]
+  },
+  {
+   "pts": [
+    [
+     0,
+     300
+    ],
+    [
+     0,
+     100
+    ],
+    [
+     400,
+     300
+    ]
+   ],
+   "label": "PS",
+   "color": "orange",
+   "lp": [
+    133.33,
+    233.33
+   ]
+  },
+  {
+   "pts": [
+    [
      400,
      566.67
     ],
@@ -1739,14 +1885,22 @@
   },
   {
    "q": 400,
-   "p": 566.67,
+   "p": 566.67
+  },
+  {
+   "q": 400,
+   "p": 300,
+   "dot": false,
+   "guides": false,
+   "showQ": false
+  },
+  {
+   "q": 720,
+   "p": 300,
    "dot": false,
    "guides": "q",
    "showQ": false
   }
- ],
- "calcs": [
-  "DWL = ½ × (600 − 400) × ($566.67 − $300) = $26,666.67"
  ],
  "caption": "Total surplus falls from $240,000 to $213,333.33. The $26,666.67 difference is surplus attached to apartments that are never let, which is what makes the controlled market inefficient."
 }
@@ -1883,7 +2037,7 @@
    "p": 600,
    "q1": 1000,
    "q2": 1400,
-   "label": "Shortage of 400",
+   "label": "Shortage\nof 400",
    "below": "in",
    "at": 3
   }
@@ -2381,11 +2535,6 @@
    "p": 6
   }
  ],
- "calcs": [
-  "CS = ½ × 150 × ($12 − $6) = $450",
-  "PS = ½ × 150 × ($6 − $3) = $225",
-  "Total surplus = CS + PS = $675"
- ],
  "caption": "Consumer surplus is the area below demand and above the price; producer surplus is the area above supply and below it. The consumer surplus is larger here, which depends on the slope of each curve."
 }
 </script></div>
@@ -2529,7 +2678,7 @@
    "color": "orange",
    "lp": [
     62.5,
-    5.67
+    6.2
    ]
   }
  ],
@@ -2552,7 +2701,7 @@
    "q": 125,
    "p": 5.5,
    "dot": false,
-   "guides": "q",
+   "guides": "p",
    "showQ": false
   }
  ],
@@ -2563,11 +2712,6 @@
    "q2": 200,
    "label": "Surplus of 75"
   }
- ],
- "calcs": [
-  "CS = ½ × 125 × ($12 − $7) = $312.50",
-  "PS = ½ × 125 × ($5.50 − $3) + 125 × ($7 − $5.50) = $343.75",
-  "Total surplus = CS + PS = $656.25"
  ],
  "caption": "At $7 sellers would make 200 burritos but buyers take 125, so 125 is what changes hands. Consumer surplus is a triangle; producer surplus is a triangle and a rectangle together."
 }
@@ -2701,9 +2845,6 @@
    "guides": "q",
    "showQ": false
   }
- ],
- "calcs": [
-  "DWL = ½ × (150 − 125) × ($7 − $5.50) = $18.75"
  ],
  "caption": "Total surplus falls from $675 to $656.25. The $18.75 difference is the surplus on the 25 burritos that are no longer made, which is what the floor costs the market."
 }
@@ -3844,12 +3985,8 @@
        15
       ]
      ],
-     "label": "DWL",
-     "color": "red",
-     "lp": [
-      30.16,
-      16.57
-     ]
+     "label": "",
+     "color": "red"
     }
    ],
    "points": [
@@ -3863,7 +4000,7 @@
      "q": 24,
      "p": 13,
      "dot": false,
-     "guides": "q",
+     "guides": false,
      "showQ": false
     },
     {

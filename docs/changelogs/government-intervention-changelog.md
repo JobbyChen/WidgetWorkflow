@@ -80,6 +80,13 @@ Every curve is fixed by two values the chapter states, never drawn to taste:
 * **Burrito and sushi axes are clipped** to the region the figures use. Drawn
   to the full intercepts, 24 and 30 rendered as a single "2430".
 
+* **Figures 12 and 15 carry the whole picture.** 12 is the reference diagram
+  for the burrito question set, so it marks $12/$7/$6/$3 and 125/150/200 with a
+  dot at each, as the source does; 15 shades consumer and producer surplus
+  behind its deadweight wedge. ($5.50 sits seven pixels from $6 on a 0–12 axis
+  and cannot be written beside it, so 12 shows $6 and the two floor figures
+  show $5.50.)
+
 ## Not changed
 
 * `<strong>` wraps whole question sentences in 18 places (Ian's markup).

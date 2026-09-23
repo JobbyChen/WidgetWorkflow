@@ -179,6 +179,20 @@ case("a Surplus brace with no price line is not a walkthrough",
          steps=["one.", "two."]), r)
      or not r.has("FAIL", "arrows", "two movement arrows"))
 
+# ---- place_labels agrees with this file ------------------------------------
+
+# place_labels.py scores candidate positions by swapping the label for a marker
+# and asking check_labels. The marker has to be the same LENGTH as the label it
+# stands in for, because a text box is measured from its character count: a
+# 2-character marker standing in for "DWL" passed a position that this file then
+# failed, which is the two of them disagreeing about the same drawing.
+def _sentinel_width(r):
+    import place_labels as P
+    return all(len(P.sentinel(x)) == len(x) for x in ("CS", "DWL", "Revenue", "Gain"))
+
+
+case("place_labels measures a label at its own width", _sentinel_width)
+
 # ---- the text-box model ----------------------------------------------------
 
 # An area label is the one label the engine centres on its anchor point

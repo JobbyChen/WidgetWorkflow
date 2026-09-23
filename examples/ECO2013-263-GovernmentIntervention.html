@@ -2368,10 +2368,15 @@
   "ymax": 13,
   "money": true,
   "xticks": [
-   150
+   125,
+   150,
+   200
   ],
   "yticks": [
-   6
+   3,
+   6,
+   7,
+   12
   ]
  },
  "curves": [
@@ -2412,6 +2417,18 @@
   {
    "q": 150,
    "p": 6
+  },
+  {
+   "q": 125,
+   "p": 7,
+   "guides": "q",
+   "showQ": false
+  },
+  {
+   "q": 200,
+   "p": 7,
+   "guides": "q",
+   "showQ": false
   }
  ],
  "caption": "The quantity demanded equals the quantity supplied at $6, where 150 burritos are sold. Total surplus is at its largest at that quantity."
@@ -2763,8 +2780,10 @@
    150
   ],
   "yticks": [
+   3,
    5.5,
-   7
+   7,
+   12
   ]
  },
  "curves": [
@@ -2812,6 +2831,54 @@
   {
    "pts": [
     [
+     0,
+     7
+    ],
+    [
+     0,
+     12
+    ],
+    [
+     125,
+     7
+    ]
+   ],
+   "label": "CS",
+   "color": "teal",
+   "lp": [
+    43.27,
+    8.73
+   ]
+  },
+  {
+   "pts": [
+    [
+     0,
+     7
+    ],
+    [
+     0,
+     3
+    ],
+    [
+     125,
+     5.5
+    ],
+    [
+     125,
+     7
+    ]
+   ],
+   "label": "PS",
+   "color": "orange",
+   "lp": [
+    62.5,
+    5.31
+   ]
+  },
+  {
+   "pts": [
+    [
      125,
      7
     ],
@@ -2827,8 +2894,8 @@
    "label": "DWL",
    "color": "red",
    "lp": [
-    137.67,
-    5.08
+    136.67,
+    5.18
    ]
   }
  ],

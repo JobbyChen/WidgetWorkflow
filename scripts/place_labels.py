@@ -59,17 +59,28 @@ def inside(pts, q, p):
     return ins
 
 
-SENTINEL = "❖❖"          # same everywhere, so two CS areas never score each other
+MARK = "❖"                     # a character no label uses
 
 
-def findings_for(widget, scn_label):
+def sentinel(label):
+    """A stand-in for one label while it is scored.
+
+    Two areas on a panel often share a name (CS before and after a tax), and a
+    finding names the label rather than the index, so the one being moved is
+    marked out. It must be the SAME LENGTH as the real label: a text box is
+    measured from its character count, so scoring a three-letter label as a
+    two-letter stand-in passes positions the checker then rejects."""
+    return MARK * max(1, len(str(label)))
+
+
+def findings_for(widget, mark, scn_label):
     r = Catch()
     try:
         C.check_labels([(1, widget, "")], r)
     except Exception:
         return 1
     return sum(1 for m in r.lines
-               if SENTINEL in m and (not scn_label or "(%s)" % scn_label in m))
+               if mark in m and (not scn_label or "(%s)" % scn_label in m))
 
 
 def slots(w):
@@ -98,8 +109,9 @@ def best_lp(widget, key, scn_label, ai, area, steps=26):
                 trial = copy.deepcopy(widget)
                 tgt = trial["scenarios"][key] if key else trial
                 tgt["areas"][ai]["lp"] = [round(q, 2), round(p, 2)]
-                tgt["areas"][ai]["label"] = SENTINEL
-                if findings_for(trial, scn_label):
+                mark = sentinel(area["label"])
+                tgt["areas"][ai]["label"] = mark
+                if findings_for(trial, mark, scn_label):
                     continue
                 d = ((q - cq) / max(1e-9, max(qs) - min(qs))) ** 2 + \
                     ((p - cp) / max(1e-9, max(ps) - min(ps))) ** 2
@@ -135,8 +147,9 @@ def main():
                     continue
                 probe = copy.deepcopy(cfg)
                 tgt = probe["scenarios"][key] if key else probe
-                tgt["areas"][ai]["label"] = SENTINEL
-                if not findings_for(probe, scn_label):
+                mark = sentinel(area["label"])
+                tgt["areas"][ai]["label"] = mark
+                if not findings_for(probe, mark, scn_label):
                     continue           # already clear where it is
                 got = best_lp(cfg, key, scn_label, ai, area)
                 where = "widget %d%s %r" % (idx, " (%s)" % scn_label if scn_label else "",

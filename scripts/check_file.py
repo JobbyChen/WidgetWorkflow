@@ -889,7 +889,9 @@ def check_labels(cfgs, r):
                 for hh_ in pn.get("hlines") or []:
                     if not hh_.get("tag"):
                         continue
-                    boxes.append((box(ox + (W - ox - 36.0) + 6, Y(hh_["p"]) + hh_.get("tagdy", -6), hh_["tag"], 12, "end"),
+                    boxes.append((box(X(hh_["tagq"]) if hh_.get("tagq") is not None else ox + (W - ox - 36.0) + 6,
+                                      Y(hh_["p"]) + hh_.get("tagdy", -6), hh_["tag"], 12,
+                                      "middle" if hh_.get("tagq") is not None else "end"),
                                   "price-line tag %r" % hh_["tag"],
                                   (hh_.get("at", 0), hh_.get("until"))))
 
@@ -1105,7 +1107,14 @@ def check_arrows(cfgs, r):
             hlines = [h for pn in panels(v) for h in (pn.get("hlines") or [])]
             gap = [b for pn in panels(v) for b in (pn.get("braces") or [])
                    if re.search(r"surplus|shortage", str(b.get("label", "")), re.I)]
-            if not hlines or not gap or not v.get("steps"):
+            # ...and the price line must be a bare disequilibrium price, not a
+            # policy the market cannot leave. A ceiling, a floor or a minimum
+            # wage opens exactly the same gap and never closes it: the price
+            # stays put because it is illegal to move, so there is no return to
+            # equilibrium to draw and demanding the arrows flags every control
+            # figure in the chapter. A named line (`tag`) is a policy line.
+            named = [h for h in hlines if h.get("tag")]
+            if not hlines or named or not gap or not v.get("steps"):
                 continue
             n_checked += 1
             last = len(v["steps"]) - 1

@@ -1,0 +1,3896 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ECO2013 Spring '26 - Government Intervention</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://smokinnotes.s3.us-east-1.amazonaws.com/content/sn25-v6.css">
+    <script>
+    MathJax = {
+      tex: {
+        displayMath: [['\\[','\\]']],
+        inlineMath: [['\\(','\\)']]
+      }
+    };
+    </script>
+    <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    <script src="https://smokinnotes.s3.us-east-1.amazonaws.com/studyguide/sn25-v2.js"></script>
+<style>
+.sdg { --navy:#002060; --ink:#1c2a44; --red:#d62828; --teal:#1a8a8a; --orange:#d8641c; --grey:#8a94a6; --rule:#c9d2e3; --paper:#f6f8fc; --plot:#eef3fd; --fig:580px;
+  font-family:"Red Hat Display","Segoe UI",system-ui,sans-serif; color:var(--ink);
+  border:1px solid var(--navy); background:var(--paper); padding:18px 20px 16px; width:80%; margin:24px auto; }
+@media (max-width:640px){ .sdg { width:100%; } }
+.sdg, .sdg *, .sdg *::before, .sdg *::after { box-sizing:border-box; }
+.sdg h4 { margin:0 0 4px; color:var(--navy); font-size:1.05rem; font-weight:700; }
+.sdg .sdg-lede { margin:0 0 12px; font-size:.92rem; line-height:1.45; }
+.sdg .sdg-scen { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px; }
+.sdg .sdg-scen button { flex:1 1 200px; border:1px solid var(--navy); background:#fff; color:var(--navy); padding:8px 12px; font:inherit; font-size:.9rem; cursor:pointer; text-align:left; line-height:1.3; }
+.sdg .sdg-scen button[aria-pressed="true"] { background:var(--navy); color:#fff; }
+.sdg .sdg-body { display:grid; grid-template-columns:1fr; gap:14px; align-items:start; }
+.sdg .sdg-body:not(.has-table):not(.two) figure { max-width:var(--fig); margin:0 auto; width:100%; }
+.sdg .sdg-body.has-table figure { max-width:var(--fig); width:100%; }
+.sdg .sdg-body.has-table { grid-template-columns:minmax(150px,1fr) 2.2fr; }
+.sdg .sdg-body.two { grid-template-columns:1fr 34px 1fr; gap:8px; align-items:center; }
+.sdg .sdg-body.two:not(:has(.sdg-between)) { grid-template-columns:1fr 1fr; gap:14px; }
+.sdg .sdg-between svg { width:34px; height:34px; display:block; }
+.sdg .sdg-between path { fill:none; stroke:var(--ink); stroke-width:4; stroke-linecap:round; stroke-linejoin:round; }
+@media (max-width:640px){
+  /* The :not(:has(.sdg-between)) rule above is more specific than a plain
+     .sdg-body.two, so without repeating it here a two-panel widget with
+     link:false never stacked on a phone -- it stayed side by side and shrank
+     each panel to about a third of the screen. */
+  .sdg .sdg-body.has-table, .sdg .sdg-body.two,
+  .sdg .sdg-body.two:not(:has(.sdg-between)) { grid-template-columns:1fr; }
+  .sdg .sdg-between svg { transform:rotate(90deg); margin:0 auto; }
+  .sdg .sdg-ctrl button, .sdg .sdg-scen button { min-height:44px; }
+}
+/* The panel heading is HTML at a fixed size while everything inside the plot is
+   SVG text that scales with the panel's width, so on a wide screen the axis
+   titles overtook the heading. Sizing the heading in container-width units keeps
+   the order fixed at every width: heading, then axis title (14 SVG units =
+   3.76cqw), then point label (12 units = 3.23cqw). */
+.sdg figure { margin:0; background:#fff; border:1px solid var(--rule); padding:8px 8px 2px; container-type:inline-size; }
+.sdg figcaption { font-size:max(1.05rem, 5cqw); font-weight:700; color:var(--navy); text-align:center; margin:0 0 6px; line-height:1.2; }
+.sdg svg { width:100%; height:auto; display:block; }
+.sdg .sdg-table { border-collapse:collapse; width:100%; font-size:.9rem; background:#fff; border:1px solid var(--rule); }
+.sdg .sdg-table th { background:var(--navy); color:#fff; font-weight:700; padding:6px 8px; text-align:center; font-size:.82rem; }
+.sdg .sdg-table td { padding:6px 8px; text-align:center; border-top:1px solid var(--rule); }
+.sdg .sdg-table tr.hi td { background:#fdeadb; font-weight:700; }
+.sdg .plotbg { fill:var(--plot); }
+.sdg .grid { stroke:#b9c2d3; stroke-width:1; stroke-dasharray:4 4; }
+.sdg .ax { fill:none; stroke:var(--ink); stroke-width:1.6; }
+.sdg .tk { font-size:10.5px; fill:var(--navy); }
+.sdg .tk.strong { font-weight:700; }
+.sdg .axlbl { font-size:14px; font-weight:800; fill:var(--navy); }
+.sdg .curve { fill:none; stroke-width:3; stroke-linecap:round; }
+/* A shaded region reads as a wash behind the graph, never as a block: the
+   curves, guides and points all have to stay legible through it. */
+.sdg .area { stroke:none; opacity:.18; }
+.sdg .arlbl { font-size:10px; font-weight:700; dominant-baseline:central; }
+.sdg .curve.thin { stroke-width:2; }
+.sdg .clbl { font-size:13px; font-weight:800; }
+.sdg .guide { fill:none; stroke-width:1.1; stroke-dasharray:4 3; }
+.sdg .pt { fill:#fff; stroke-width:2; }
+.sdg .pt.hi { stroke:var(--orange); stroke-width:3; r:6; }
+/* What this step just revealed, and what an earlier one did. */
+.sdg .ptg, .sdg .ptg .pt, .sdg .ptg .tag { transition:opacity .35s ease, stroke-width .25s ease; }
+.sdg .ptg.new .pt { stroke-width:3.4; }
+.sdg .ptg.new .pt.mk { stroke-width:2.4; }
+.sdg .ptg.new .halo { opacity:1; }
+.sdg .halo { fill:none; stroke:var(--orange); stroke-width:2; opacity:0; transition:opacity .35s ease; }
+.sdg .ptg.prior { opacity:.6; }
+.sdg .ptg.hi { opacity:1; }
+.sdg .ptg.hi .pt { stroke:var(--orange); stroke-width:3.4; }
+.sdg .ptg.hi .tag { fill:var(--orange); }
+.sdg .ptg { cursor:default; }
+.sdg .curve-g.new .curve { stroke-width:3.6; }
+.sdg .arrow.new { stroke-width:3.4; }
+.sdg g.new > .brace, .sdg .brace.new { stroke-width:3; }
+.sdg .pt.mk { stroke-width:1.4; }
+.sdg .mktxt { font-size:7.5px; font-weight:800; fill:var(--ink); }
+.sdg .tag { font-size:12px; font-weight:700; }
+.sdg .arrow { fill:none; stroke-width:2; stroke-linejoin:round; }
+.sdg .arrow.shift { stroke-width:2.4; }
+.sdg .arrow.mv { stroke-width:2.4; stroke:var(--red); }
+.sdg .arrow.row { stroke-width:2.4; stroke:var(--red); }
+.sdg .hline { stroke-width:3; }
+.sdg .brace { fill:none; stroke-width:1.8; }
+.sdg .curve-g.dim .curve { stroke-width:2; opacity:.8; }
+.sdg .fade { transition:opacity .45s ease; }
+.sdg .move { transition:transform .6s ease, opacity .45s ease; }
+.sdg .off { opacity:0; pointer-events:none; }
+.sdg .hide { display:none; }
+.sdg .sdg-calc { margin:10px auto 0; width:fit-content; max-width:100%;
+  font-size:14px; font-weight:600; color:var(--navy); line-height:1.7; }
+.sdg .sdg-calcline { white-space:nowrap; overflow-x:auto; }
+.sdg .sdg-calc .res { color:var(--red); font-weight:800;
+  border-bottom:2px solid var(--red); padding-bottom:1px; }
+@media (prefers-reduced-motion:reduce){ .sdg .fade, .sdg .move { transition:none; } }
+.sdg .sdg-ctrl { display:flex; align-items:center; gap:10px; margin-top:12px; flex-wrap:wrap; }
+.sdg .sdg-ctrl button { border:1px solid var(--navy); background:#fff; color:var(--navy); padding:7px 14px; font:inherit; font-size:.9rem; cursor:pointer; }
+.sdg .sdg-ctrl button:disabled { opacity:.4; cursor:default; }
+.sdg .sdg-step { font-size:.85rem; color:var(--navy); font-weight:700; margin-left:auto; }
+.sdg .sdg-cap { margin:10px 0 0; padding:10px 12px; background:#fff; border-left:4px solid var(--red); font-size:.92rem; line-height:1.45; min-height:3.2em; }
+</style>
+<script>
+/* ===== sd-graph.js v2.16 — data-driven supply & demand widgets =====
+   Markup:  <div class="sdg"><script type="application/json">{ ...config... }<\/script></div>
+   Top-level config:
+     title, lede, caption         heading / intro / static caption (caption used only when there are no steps)
+     steps: [caption, ...]        index 0 = start state; elements use `at`/`until` (step indices) to appear/vanish
+     scenarios: {key:{label, ...overrides}}   one button per scenario; overrides merge over the base config
+     panels: [panelCfg, panelCfg]  two side-by-side graphs (two-market). Otherwise the panel keys live at top level.
+   Panel config:
+     heading                      title above the panel (two-market only)
+     axes: {x, y, xmax, ymax, xticks[], yticks[], money, cents, k, grid, bg:false}
+        x, y = axis titles, default 'Q' and 'P'. A word or two fits; they are never wrapped.
+     curves[]: {id, label, pts:[[q,p],...], color, at, until, from, arrowP, shiftArrow, curved, thin, dashed, lstart, ldx, ldy}
+     areas[]:  {pts:[[q,p],...], label, color, lp, ldx, ldy, at, until}   a shaded polygon under the curves (CS, PS, deadweight loss)
+        lstart = put the curve label at the first point instead of the last; ldx/ldy nudge it
+        label:"" draws no label at all (a lone PPF needs none); omitting label falls back to the id
+        from   = id of the curve this one shifts away from (animated shift + arrow); arrowP = price height of arrow
+        shiftArrow:false = animate and dim as usual but draw no shift arrow. Use it whenever the
+                 widget already shows per-row arrows (table.arrows), which say the same thing once per row.
+        curved = smooth through 3+ points (conceptual, non-linear look)
+     points[]: {id, q, p, label, marker, pl, ql, color, at, until, dx, dy, guides:false|'p'|'q', showP:false, showQ:false, dot:false}
+        marker = "1"/"2" numbered circle;  pl/ql = symbolic axis labels ("P₁","Q₁") instead of numbers
+     moves[]:  {from:[q,p], to:[q,p], at, until, color, offset}  arrow between two points, drawn `offset` px beside the curve (default 14; negative = other side)
+     calcs[]:  "CS = 1/2 x 80 x ($5 - $3) = $80" | {text, at, until}   the working, under the plot
+     hlines[]: {p, label, tag, tagdy, tagq, color, at, until}                       horizontal price line across the plot
+     braces[]: {p, q1, q2, label, at, until, below:true|'in'|'axis', color}  curly brace spanning a gap at price p
+     vbraces[]:{p1, p2, q, label, at, until, left, side, color}   the same brace turned upright, spanning a
+        price gap. left:true is the mirror of a brace's below:true: it sits outside the P axis, clear of the
+        plot and the tick numbers, with its label running up the axis, and widens the left margin to fit.
+        Without left it sits inside the plot at quantity q, opening right unless side:'left'.
+     table:    {cols[], series[], rows[[price,q,...]], arrows}    schedule beside the graph; arrows draws row shift arrows
+   Colors: 'ink' (default, black-navy), 'red' (shifted/new), 'teal', 'orange', 'grey'
+   Presets (symbolic graphs, P₁/P₂/Q₁/Q₂, no numbers) — a few keys expand into a full config:
+     {"preset":"shift", "shift":"D"|"S", "dir":"right"|"left", "good":"pasta", "event":"The price of pizza rises.", "why":"...", "static":true}
+     {"preset":"double", "demand":"right"|"left", "supply":"right"|"left", "dD":40, "dS":15, "note":"...", "static":true}
+     {"preset":"double", "demand":"right", "supply":"left", "compare":true}   two panels: larger supply shift vs larger demand shift
+     Presets can be combined with title/lede/caption/steps overrides and with scenarios (each scenario gives its own shift/dir).
+*/
+(function () {
+  var NS = 'http://www.w3.org/2000/svg';
+  var C = {ink: 'var(--ink)', red: 'var(--red)', teal: 'var(--teal)', orange: 'var(--orange)', grey: 'var(--grey)', navy: 'var(--navy)'};
+  function col(c) { return C[c || 'ink']; }
+  function el(tag, a, text) { var e = document.createElementNS(NS, tag); for (var k in a) if (a[k] != null) e.setAttribute(k, a[k]); if (text != null) e.textContent = text; return e; }
+  function h(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+  function fmtP(v, ax) { if (!ax.money) return String(v); if (ax.cents) return '$' + Number(v).toFixed(2); return '$' + (Number.isInteger(v) ? v : v.toFixed(2)); }
+  function fmtQ(v, ax) { if (ax.k && v >= 1000) return (v / 1000) + 'k'; return v.toLocaleString('en-US'); }
+  function merge(a, b) { var o = {}; for (var k in a) o[k] = a[k]; for (var k2 in b) o[k2] = b[k2]; return o; }
+
+  // ---------- one SVG panel ----------
+  function buildPanel(cfg) {
+    var ax = cfg.axes, W = 372, below = (cfg.braces || []).some(function (b) { return b.below === true; }), H = below ? 268 : 250;
+    // A brace outside the P axis needs margin to sit in, the way a brace below
+    // the Q axis needs the extra panel height above.
+    var vleft = (cfg.vbraces || []).some(function (b) { return b.left; });
+    var left = (ax.cents ? 62 : (ax.yticks && ax.yticks.length ? 54 : 40)) + (vleft ? 44 : 0);
+    var O = {x: left, y: 205}, PW = W - left - 36, PH = 178;
+    var X = function (q) { return O.x + (q / ax.xmax) * PW; }, Y = function (p) { return O.y - (p / ax.ymax) * PH; };
+    var svg = el('svg', {viewBox: '0 0 ' + W + ' ' + H, role: 'img', 'aria-label': cfg.heading || cfg.title || 'Supply and demand graph'});
+    var g = el('g', {}); svg.appendChild(g);
+    var parts = [], byId = {};
+    function reg(node, spec) { node.classList.add('fade'); parts.push({node: node, spec: spec}); if (spec.id) byId[spec.id] = {node: node, spec: spec}; return node; }
+
+    if (ax.bg !== false) g.appendChild(el('rect', {class: 'plotbg', x: O.x, y: 14, width: PW + 14, height: O.y - 14}));
+    if (ax.grid) {
+      (ax.xticks || []).forEach(function (q) { g.appendChild(el('line', {class: 'grid', x1: X(q), y1: 14, x2: X(q), y2: O.y})); });
+      (ax.yticks || []).forEach(function (p) { g.appendChild(el('line', {class: 'grid', x1: O.x, y1: Y(p), x2: O.x + PW + 14, y2: Y(p)})); });
+    }
+    g.appendChild(el('path', {class: 'ax', d: 'M' + O.x + ' 14 L' + O.x + ' ' + O.y + ' L' + (O.x + PW + 14) + ' ' + O.y}));
+    (ax.xticks || []).forEach(function (q) { g.appendChild(el('text', {class: 'tk', x: X(q), y: O.y + 15, 'text-anchor': 'middle'}, fmtQ(q, ax))); });
+    (ax.yticks || []).forEach(function (p) { g.appendChild(el('text', {class: 'tk', x: O.x - 6, y: Y(p) + 4, 'text-anchor': 'end'}, fmtP(p, ax))); });
+    // Axis titles. P and Q fit anywhere, but a PPF names its axes with words, so
+    // the x title is anchored to the right edge instead of running off it, and the
+    // y title sits in the headroom above the plot instead of inside its top-left
+    // corner. Keep axis titles to a word or two: nothing here can wrap them.
+    g.appendChild(el('text', {class: 'axlbl', x: W - 2, y: O.y + 16, 'text-anchor': 'end'}, ax.x || 'Q'));
+    g.appendChild(el('text', {class: 'axlbl', x: O.x - 2, y: 11}, ax.y || 'P'));
+
+    // Surplus and deadweight loss ARE areas, and before v2.11 the engine drew
+    // none: "area fills of any kind" was on the list of things it does not do,
+    // which left an entire chapter unconvertible. A polygon is enough. These
+    // graphs draw demand and supply as straight lines, so every region the
+    // chapter needs -- consumer surplus, producer surplus, total surplus, a
+    // deadweight wedge -- has straight edges and is named by its corners.
+    // Drawn here, after the axes and before the curves, so a fill never hides a
+    // line, a point or a label.
+    (cfg.areas || []).forEach(function (a) {
+      var cc = col(a.color), grp = el('g', {class: 'area-g'});
+      grp.appendChild(el('polygon', {class: 'area', fill: cc,
+        points: a.pts.map(function (p) { return X(p[0]) + ',' + Y(p[1]); }).join(' ')}));
+      if (a.label) {
+        // The centroid keeps a label inside its own shape, which is right for
+        // the triangles this draws. A thin wedge has no room for one, so `lp`
+        // places it by hand instead -- outside the shape if that is what fits.
+        var n = a.pts.length,
+            lp = a.lp || [a.pts.reduce(function (t, p) { return t + p[0]; }, 0) / n,
+                          a.pts.reduce(function (t, p) { return t + p[1]; }, 0) / n];
+        grp.appendChild(el('text', {class: 'arlbl', x: X(lp[0]) + (a.ldx || 0),
+          y: Y(lp[1]) + (a.ldy || 0), 'text-anchor': 'middle', fill: cc}, a.label));
+      }
+      g.appendChild(reg(grp, a));
+    });
+
+    function arrow(x1, y1, x2, y2, c, cls) {
+      var dx = x2 - x1, dy = y2 - y1, len = Math.hypot(dx, dy), ux = dx / len, uy = dy / len, hh = 7, ww = 3.6, bx = x2 - ux * hh, by = y2 - uy * hh;
+      return el('path', {class: 'arrow ' + (cls || ''), stroke: c, d: 'M' + x1 + ' ' + y1 + ' L' + x2 + ' ' + y2 + ' M' + (bx - uy * ww) + ' ' + (by + ux * ww) + ' L' + x2 + ' ' + y2 + ' L' + (bx + uy * ww) + ' ' + (by - ux * ww)});
+    }
+    function pathD(pts, curved) {
+      var P = pts.map(function (p) { return [X(p[0]), Y(p[1])]; });
+      if (!curved || P.length < 3) return P.map(function (p, i) { return (i ? 'L' : 'M') + p[0] + ' ' + p[1]; }).join(' ');
+      var d = 'M' + P[0][0] + ' ' + P[0][1];
+      for (var i = 0; i < P.length - 1; i++) {
+        var p0 = P[i - 1] || P[i], p1 = P[i], p2 = P[i + 1], p3 = P[i + 2] || p2;
+        d += ' C' + (p1[0] + (p2[0] - p0[0]) / 6) + ' ' + (p1[1] + (p2[1] - p0[1]) / 6) + ' ' + (p2[0] - (p3[0] - p1[0]) / 6) + ' ' + (p2[1] - (p3[1] - p1[1]) / 6) + ' ' + p2[0] + ' ' + p2[1];
+      }
+      return d;
+    }
+    // Where does the *drawn* curve sit? For a curved pair the spline bows away
+    // from the polyline through its points, so a shift arrow whose ends were
+    // computed from the polyline was inset from the wrong place and landed on
+    // the curve. Sample the same Catmull-Rom the renderer draws.
+    function samplePx(pts, curved) {
+      var P = pts.map(function (q) { return [X(q[0]), Y(q[1])]; });
+      if (!curved || P.length < 3) return P;
+      var out = [P[0]], N = 24;
+      for (var i = 0; i < P.length - 1; i++) {
+        var p0 = P[i - 1] || P[i], p1 = P[i], p2 = P[i + 1], p3 = P[i + 2] || p2;
+        var c1 = [p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6];
+        var c2 = [p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6];
+        for (var k = 1; k <= N; k++) {
+          var t = k / N, u = 1 - t;
+          out.push([u * u * u * p1[0] + 3 * u * u * t * c1[0] + 3 * u * t * t * c2[0] + t * t * t * p2[0],
+                    u * u * u * p1[1] + 3 * u * u * t * c1[1] + 3 * u * t * t * c2[1] + t * t * t * p2[1]]);
+        }
+      }
+      return out;
+    }
+    function xAtPx(pts, curved, y) {
+      var S = samplePx(pts, curved);
+      for (var i = 0; i < S.length - 1; i++) {
+        var a = S[i], b = S[i + 1];
+        if ((y - a[1]) * (y - b[1]) <= 0 && a[1] !== b[1])
+          return a[0] + (y - a[1]) * (b[0] - a[0]) / (b[1] - a[1]);
+      }
+      var f = S[0], l = S[S.length - 1];
+      return f[1] === l[1] ? f[0] : f[0] + (y - f[1]) * (l[0] - f[0]) / (l[1] - f[1]);
+    }
+    function qAt(pts, p) {
+      for (var i = 0; i < pts.length - 1; i++) { var a = pts[i], b = pts[i + 1]; if ((p - a[1]) * (p - b[1]) <= 0 && a[1] !== b[1]) return a[0] + (p - a[1]) * (b[0] - a[0]) / (b[1] - a[1]); }
+      var a2 = pts[0], b2 = pts[pts.length - 1]; return a2[0] + (p - a2[1]) * (b2[0] - a2[0]) / (b2[1] - a2[1]);
+    }
+
+    (cfg.curves || []).forEach(function (c) {
+      var cc = col(c.color), grp = el('g', {class: 'curve-g'});
+      var path = el('path', {class: 'curve' + (c.thin ? ' thin' : ''), d: pathD(c.pts, c.curved), stroke: cc});
+      if (c.dashed) path.setAttribute('stroke-dasharray', '6 4');
+      grp.appendChild(path);
+      var last = c.pts[c.pts.length - 1], up = last[1] > c.pts[0][1], lp = c.lstart ? c.pts[0] : last;
+      // label:"" draws nothing. A lone frontier needs no name -- the axis titles
+      // already say what it is -- but the id is still needed by table.series, and
+      // falling back to it parked "PPF" on the curve. Omitting label still uses the id.
+      grp.appendChild(el('text', {class: 'clbl', x: X(lp[0]) + (c.ldx || 6), y: Y(lp[1]) + (c.ldy || (up ? 2 : 6)), fill: cc}, c.label != null ? c.label : (c.id || '')));
+      if (c.from && byId[c.from]) {
+        var src = byId[c.from].spec, ap = c.arrowP != null ? c.arrowP : (c.pts[0][1] + last[1]) / 2;
+        var yA = Y(ap);
+        var x0 = xAtPx(src.pts, src.curved, yA), x1 = xAtPx(c.pts, c.curved, yA), s = Math.sign(x1 - x0);
+        grp.dataset.dx = x1 - x0; grp.dataset.dy = 0; grp.classList.add('move');
+        // shiftArrow:false keeps the slide and the dimming but drops the arrow, for
+        // widgets whose per-row arrows already show the shift once per schedule row.
+        // The 11px inset is measured off the drawn curves, so the arrow clears
+        // both of them however far the spline bows.
+        if (c.shiftArrow !== false) g.appendChild(reg(arrow(x0 + s * 11, yA, x1 - s * 11, yA, cc, 'shift'), {at: c.at || 0, until: c.until}));
+      }
+      g.appendChild(grp); reg(grp, c);
+    });
+
+    (cfg.hlines || []).forEach(function (l) {
+      var cc = col(l.color || 'red'), grp = el('g', {});
+      grp.appendChild(el('line', {class: 'hline', stroke: cc, x1: O.x, y1: Y(l.p), x2: O.x + PW + 8, y2: Y(l.p)}));
+      if ((ax.yticks || []).indexOf(l.p) < 0) grp.appendChild(el('text', {class: 'tk strong', x: O.x - 6, y: Y(l.p) + 4, 'text-anchor': 'end', fill: cc}, l.label || fmtP(l.p, ax)));
+      // `label` names the line's price on the P axis; `tag` names the line
+      // itself, at its right-hand end, the way the printed artwork writes
+      // "World Price" beside the line rather than only on the axis.
+      // tagdy nudges it off the line: above by default, below where the
+      // curve that climbs to the right-hand corner is already there.
+      // tagq anchors the name over a chosen quantity instead of the line's
+      // right-hand end, for a panel where a curve runs through that corner.
+      if (l.tag) grp.appendChild(el('text', {class: 'tag',
+        x: l.tagq != null ? X(l.tagq) : O.x + PW + 6,
+        y: Y(l.p) + (l.tagdy != null ? l.tagdy : -6),
+        'text-anchor': l.tagq != null ? 'middle' : 'end', fill: cc}, l.tag));
+      g.appendChild(grp); reg(grp, l);
+    });
+
+    (cfg.braces || []).forEach(function (b) {
+      var cc = col(b.color || 'red'), grp = el('g', {});
+      // Four positions, all of them in the artwork. "axis" keeps the drop
+      // guides running from the price line but sets the bracket down by the Q
+      // axis with its label above -- the tariff figures are drawn that way,
+      // where the space just under the price line is taken by the revenue
+      // rectangle, while the import figures hug the line with "in".
+      var inplot = b.below === 'in', out = b.below === true, atax = b.below === 'axis';
+      var x1 = X(Math.min(b.q1, b.q2)), x2 = X(Math.max(b.q1, b.q2)),
+          y = out ? O.y + 22 : atax ? O.y - 12 : Y(b.p) + (inplot ? 8 : -8),
+          dir = (out || inplot) ? 1 : -1, m = (x1 + x2) / 2;
+      // Each half of the curl needs about 2*hh of run. Over a short span a
+      // fixed hh makes the segments overlap and the brace reads as a scribble,
+      // so it shrinks with the span it has to cover.
+      var hh = Math.max(2.5, Math.min(7, (x2 - x1) / 4));
+      var d = 'M' + x1 + ' ' + y + ' Q' + x1 + ' ' + (y + dir * hh) + ' ' + (x1 + hh) + ' ' + (y + dir * hh) + ' L' + (m - hh) + ' ' + (y + dir * hh) + ' Q' + m + ' ' + (y + dir * hh) + ' ' + m + ' ' + (y + dir * 2 * hh) +
+              ' Q' + m + ' ' + (y + dir * hh) + ' ' + (m + hh) + ' ' + (y + dir * hh) + ' L' + (x2 - hh) + ' ' + (y + dir * hh) + ' Q' + x2 + ' ' + (y + dir * hh) + ' ' + x2 + ' ' + y;
+      grp.appendChild(el('path', {class: 'brace', stroke: cc, d: d}));
+      grp.appendChild(el('text', {class: 'tag', x: m, y: y + dir * 2 * hh + ((out || inplot) ? 12 : -4), 'text-anchor': 'middle', fill: cc}, b.label));
+      if (!out) { [b.q1, b.q2].forEach(function (q) { grp.appendChild(el('line', {class: 'guide', stroke: cc, x1: X(q), y1: Y(b.p), x2: X(q), y2: O.y})); }); }
+      g.appendChild(grp); reg(grp, b);
+    });
+
+    // The brace turned upright, spanning a price gap. left:true mirrors the
+    // horizontal brace's below:true -- outside the P axis, clear of the plot and
+    // the tick numbers, label running up the axis because horizontal text does
+    // not fit in the margin.
+    (cfg.vbraces || []).forEach(function (b) {
+      var cc = col(b.color || 'red'), grp = el('g', {});
+      var y1 = Y(Math.max(b.p1, b.p2)), y2 = Y(Math.min(b.p1, b.p2));
+      var x = b.left ? O.x - 32 : X(b.q);
+      var dir = (b.left || b.side === 'left') ? -1 : 1, m = (y1 + y2) / 2;
+      var hh = Math.max(2.5, Math.min(7, (y2 - y1) / 4));
+      var d = 'M' + x + ' ' + y1 +
+              ' Q' + (x + dir * hh) + ' ' + y1 + ' ' + (x + dir * hh) + ' ' + (y1 + hh) +
+              ' L' + (x + dir * hh) + ' ' + (m - hh) +
+              ' Q' + (x + dir * hh) + ' ' + m + ' ' + (x + dir * 2 * hh) + ' ' + m +
+              ' Q' + (x + dir * hh) + ' ' + m + ' ' + (x + dir * hh) + ' ' + (m + hh) +
+              ' L' + (x + dir * hh) + ' ' + (y2 - hh) +
+              ' Q' + (x + dir * hh) + ' ' + y2 + ' ' + x + ' ' + y2;
+      grp.appendChild(el('path', {class: 'brace', stroke: cc, d: d}));
+      if (b.left) {
+        var lx = x + dir * (2 * hh + 8);
+        grp.appendChild(el('text', {class: 'tag', x: lx, y: m, 'text-anchor': 'middle',
+          transform: 'rotate(-90 ' + lx + ' ' + m + ')', fill: cc}, b.label));
+      } else {
+        grp.appendChild(el('text', {class: 'tag', x: x + dir * (2 * hh + 6), y: m + 4,
+          'text-anchor': dir > 0 ? 'start' : 'end', fill: cc}, b.label));
+      }
+      g.appendChild(grp); reg(grp, b);
+    });
+
+    (cfg.moves || []).forEach(function (m) {
+      var x1 = X(m.from[0]), y1 = Y(m.from[1]), x2 = X(m.to[0]), y2 = Y(m.to[1]);
+      var off = m.offset != null ? m.offset : 14, len = Math.hypot(x2 - x1, y2 - y1), nx = -(y2 - y1) / len * off, ny = (x2 - x1) / len * off;
+      var a = arrow(x1 + nx, y1 + ny, x2 + nx, y2 + ny, col(m.color), 'mv');
+      g.appendChild(a); reg(a, m);
+    });
+
+    (cfg.points || []).forEach(function (p) {
+      var cc = col(p.color), grp = el('g', {class: 'ptg'});
+      // guides: the dashed elbow from the P axis across to the point and down
+      // to the Q axis. "p" draws only the leg to the price axis and "q" only
+      // the leg to the quantity axis, because the printed artwork rarely wants
+      // both: a world-price quantity gets a vertical guide only (the price line
+      // is already drawn through it), and an equilibrium under trade gets a
+      // horizontal guide only (its quantity is not the point being made).
+      if (p.guides !== false) {
+        var hleg = 'M' + O.x + ' ' + Y(p.p) + ' L' + X(p.q) + ' ' + Y(p.p),
+            vleg = 'M' + X(p.q) + ' ' + Y(p.p) + ' L' + X(p.q) + ' ' + O.y,
+            gd = p.guides === 'p' ? hleg : p.guides === 'q' ? vleg : hleg + ' L' + X(p.q) + ' ' + O.y;
+        grp.appendChild(el('path', {class: 'guide', stroke: cc, d: gd}));
+      }
+      // dot:false keeps the axis labels and drops the marker. A quantity
+      // marked by a vertical line wants its name on the axis in the same tick
+      // style as every other number there, and nothing drawn on the line
+      // itself. Without this the only way to get that label was a curve label,
+      // which is 13px at weight 800 and reads as a chunky block next to the
+      // 10.5px ticks it sits among.
+      if (p.dot !== false) {
+        grp.appendChild(el('circle', {class: 'halo', cx: X(p.q), cy: Y(p.p), r: p.marker ? 10.5 : 8.5}));
+        grp.appendChild(el('circle', {class: 'pt' + (p.marker ? ' mk' : ''), cx: X(p.q), cy: Y(p.p), r: p.marker ? 6 : 4.2, stroke: cc}));
+        if (p.marker) grp.appendChild(el('text', {class: 'mktxt', x: X(p.q), y: Y(p.p) + 2.6, 'text-anchor': 'middle'}, p.marker));
+      }
+      if (p.label) grp.appendChild(el('text', {class: 'tag', x: X(p.q) + (p.dx != null ? p.dx : 9), y: Y(p.p) + (p.dy != null ? p.dy : -9), fill: cc}, p.label));
+      var pl = p.pl || ((p.showP !== false && (ax.yticks || []).indexOf(p.p) < 0 && !(cfg.hlines || []).some(function (l) { return l.p === p.p; })) ? fmtP(p.p, ax) : null);
+      var ql = p.ql || ((p.showQ !== false && (ax.xticks || []).indexOf(p.q) < 0) ? fmtQ(p.q, ax) : null);
+      if (pl) grp.appendChild(el('text', {class: 'tk strong', x: O.x - 6, y: Y(p.p) + 4, 'text-anchor': 'end', fill: cc}, pl));
+      if (ql) grp.appendChild(el('text', {class: 'tk strong', x: X(p.q), y: O.y + 15, 'text-anchor': 'middle', fill: cc}, ql));
+      grp.addEventListener('mouseenter', function () { grp.classList.add('hi'); });
+      grp.addEventListener('mouseleave', function () { grp.classList.remove('hi'); });
+      g.appendChild(grp); reg(grp, p);
+    });
+
+    var rowHooks = [];
+    if (cfg.table) {
+      var t = cfg.table;
+      t.rows.forEach(function (row) {
+        var dots = [], p = row[0];
+        (t.series || []).forEach(function (sid, si) {
+          var sc = byId[sid] && byId[sid].spec, q = row[si + 1];
+          var dot = el('circle', {class: 'pt sched', cx: X(q), cy: Y(p), r: 3.8, stroke: col(sc && sc.color)});
+          g.appendChild(dot); reg(dot, {at: (sc && sc.at) || 0}); dots.push(dot);
+          if (t.arrows && si > 0) { var q0 = row[si], s = Math.sign(q - q0); g.appendChild(reg(arrow(X(q0) + s * 6, Y(p), X(q) - s * 6, Y(p), col('ink'), 'row'), {at: (sc && sc.at) || 0})); }
+        });
+        rowHooks.push(dots);
+      });
+    }
+    return {svg: svg, parts: parts, byId: byId, rowHooks: rowHooks, cfg: cfg};
+  }
+
+  // ---------- widget ----------
+  function Widget(host, cfg) { this.host = host; this.cfg = cfg; this.step = 0; this.build(); }
+  Widget.prototype.build = function () {
+    var cfg = this.cfg, self = this, host = this.host; host.innerHTML = '';
+    if (cfg.title) host.appendChild(h('h4', null, cfg.title));
+    if (cfg.lede) host.appendChild(h('p', 'sdg-lede', cfg.lede));
+    if (cfg.scenarios) {
+      var sc = h('div', 'sdg-scen'); sc.setAttribute('role', 'group');
+      Object.keys(cfg.scenarios).forEach(function (k) {
+        var b = h('button', null, cfg.scenarios[k].label); b.type = 'button';
+        b.setAttribute('aria-pressed', k === cfg.activeScenario ? 'true' : 'false');
+        b.addEventListener('click', function () { host.dispatchEvent(new CustomEvent('sdg-scenario', {detail: k})); });
+        sc.appendChild(b);
+      });
+      host.appendChild(sc);
+    }
+    var panels = cfg.panels || [cfg];
+    this.panels = panels.map(buildPanel);
+    var body = h('div', 'sdg-body' + (cfg.table ? ' has-table' : '') + (panels.length > 1 ? ' two' : ''));
+    this.panels.forEach(function (pn, i) {
+      var fig = h('figure');
+      if (pn.cfg.heading) fig.appendChild(h('figcaption', null, pn.cfg.heading));
+      fig.appendChild(pn.svg); body.appendChild(fig);
+      if (i === 0 && panels.length > 1 && cfg.link !== false) { var a = h('div', 'sdg-between'); a.innerHTML = '<svg viewBox="0 0 40 40" aria-hidden="true"><path d="M4 20 H26 M18 11 L28 20 L18 29" /></svg>'; body.appendChild(a); }
+    });
+    if (cfg.table) {
+      var t = cfg.table, ax = cfg.axes, tbl = h('table', 'sdg-table'), thead = h('thead'), tr = h('tr');
+      t.cols.forEach(function (c) { tr.appendChild(h('th', null, c)); }); thead.appendChild(tr); tbl.appendChild(thead);
+      var tbody = h('tbody'), hooks = this.panels[0].rowHooks;
+      t.rows.forEach(function (row, ri) {
+        var r = h('tr');
+        row.forEach(function (v, i) { r.appendChild(h('td', null, i === 0 ? fmtP(v, ax) : fmtQ(v, ax))); });
+        r.addEventListener('mouseenter', function () { r.classList.add('hi'); hooks[ri].forEach(function (d) { d.classList.add('hi'); }); });
+        r.addEventListener('mouseleave', function () { r.classList.remove('hi'); hooks[ri].forEach(function (d) { d.classList.remove('hi'); }); });
+        tbody.appendChild(r);
+      });
+      tbl.appendChild(tbody); var wrap = h('div', 'sdg-tablewrap'); wrap.appendChild(tbl); body.insertBefore(wrap, body.firstChild);
+    }
+    host.appendChild(body);
+
+    // calcs: the working, set under the plot the way the artwork prints it
+    // beneath each diagram -- a reader who only sees "CS = $80" cannot get
+    // there themselves. Each line's closing "= result" is set apart, which is
+    // the red underline in the source. Lines take at/until like anything else,
+    // so a walkthrough can add the arithmetic as it reaches it.
+    self.calcs = [];
+    if (cfg.calcs && cfg.calcs.length) {
+      var cbox = h('div', 'sdg-calc');
+      cfg.calcs.forEach(function (c) {
+        var spec = (typeof c === 'string') ? {text: c} : c,
+            line = h('div', 'sdg-calcline'), t = spec.text || '', cut = t.lastIndexOf(' = ');
+        if (cut > 0) {
+          line.appendChild(document.createTextNode(t.slice(0, cut + 3)));
+          line.appendChild(h('span', 'res', t.slice(cut + 3)));
+        } else { line.textContent = t; }
+        cbox.appendChild(line);
+        self.calcs.push({node: line, spec: spec});
+      });
+      host.appendChild(cbox);
+    }
+
+    if (cfg.steps && cfg.steps.length > 1) {
+      var ctrl = h('div', 'sdg-ctrl'), prev = h('button', null, 'Back'), next = h('button', null, 'Next step'), reset = h('button', null, 'Start over'), lbl = h('span', 'sdg-step');
+      prev.type = next.type = reset.type = 'button';
+      [prev, next, reset, lbl].forEach(function (x) { ctrl.appendChild(x); }); host.appendChild(ctrl);
+      var cap = h('p', 'sdg-cap'); cap.setAttribute('aria-live', 'polite'); host.appendChild(cap);
+      this.ui = {prev: prev, next: next, lbl: lbl, cap: cap};
+      var n = cfg.steps.length;
+      prev.addEventListener('click', function () { if (self.step > 0) { self.step--; self.render(); } });
+      next.addEventListener('click', function () { if (self.step < n - 1) { self.step++; self.render(); } });
+      reset.addEventListener('click', function () { self.step = 0; self.render(); });
+    } else if (cfg.caption) host.appendChild(h('p', 'sdg-cap', cfg.caption));
+    this.render();
+  };
+  Widget.prototype.render = function () {
+    var s = this.step, cfg = this.cfg;
+    this.panels.forEach(function (pn) {
+      pn.parts.forEach(function (pt) {
+        var at = pt.spec.at || 0, until = pt.spec.until, on = s >= at && (until == null || s < until);
+        pt.node.classList.toggle('off', !on);
+        // Which element is this step's? Without that, a walkthrough that leaves
+        // earlier points on screen gives no clue which one the caption means.
+        // What this step brought in is highlighted; what an earlier step
+        // brought in stays, but steps back.
+        pt.node.classList.toggle('new', on && s > 0 && at === s);
+        pt.node.classList.toggle('prior', on && at > 0 && at < s);
+        if (pt.node.dataset.dx != null) pt.node.style.transform = on ? 'translate(0,0)' : 'translate(' + (-pt.node.dataset.dx) + 'px,0)';
+      });
+      (pn.cfg.curves || []).forEach(function (c) { if (c.from && pn.byId[c.from]) pn.byId[c.from].node.classList.toggle('dim', s >= (c.at || 0)); });
+    });
+    (this.calcs || []).forEach(function (c) {
+      var at = c.spec.at || 0, until = c.spec.until;
+      // display, not opacity: an invisible line that still takes its height
+      // leaves a gap the reader has to wonder about
+      c.node.classList.toggle('hide', !(s >= at && (until == null || s < until)));
+    });
+    if (this.ui) {
+      var n = cfg.steps.length;
+      this.ui.cap.textContent = cfg.steps[s];
+      this.ui.lbl.textContent = 'Step ' + (s + 1) + ' of ' + n;
+      this.ui.prev.disabled = s === 0; this.ui.next.disabled = s === n - 1;
+    }
+  };
+
+
+  // ---------- presets: symbolic (no-number) graphs from a few settings ----------
+  function clipLine(intercept, slope, lo, hi) { // p = intercept + slope*q, return pts with p in [lo,hi] and q in [4,104]
+    var pts = [];
+    [4, 104].forEach(function (q) { var p = intercept + slope * q; if (p < lo) { p = lo; } if (p > hi) { p = hi; } pts.push([(p - intercept) / slope, p]); });
+    return pts;
+  }
+  function shiftPanel(o) { // o: {shift:'D'|'S', dir:'left'|'right', size, static, heading, labels}
+    var d = (o.size || 20) * (o.dir === 'left' ? -1 : 1), D = o.shift === 'D', at1 = o.static ? 0 : 1, at3 = o.static ? 0 : 3;
+    var S = clipLine(0, 1, 8, 100), Dl = clipLine(100, -1, 8, 100);
+    var S2 = clipLine(-d, 1, 8, 100), D2 = clipLine(100 + d, -1, 8, 100);
+    var e2 = D ? [50 + d / 2, 50 + d / 2] : [50 + d / 2, 50 - d / 2];
+    var gap = D ? [50, 50 + d] : [50, 50 + d]; // quantity at P1 on the shifted curve
+    var curves = D ? [{id: 'S', label: 'S', pts: S}, {id: 'D1', label: 'D₁', pts: Dl, thin: true}, {id: 'D2', label: 'D₂', pts: D2, color: 'red', from: 'D1', at: at1, arrowP: 88}]
+                   : [{id: 'D', label: 'D', pts: Dl}, {id: 'S1', label: 'S₁', pts: S, thin: true}, {id: 'S2', label: 'S₂', pts: S2, color: 'red', from: 'S1', at: at1, arrowP: 88}];
+    var isShort = (D && d > 0) || (!D && d < 0);
+    var pn = {heading: o.heading, axes: {xmax: 110, ymax: 110}, curves: curves,
+      points: [{q: 50, p: 50, pl: 'P₁', ql: 'Q₁'}, {q: e2[0], p: e2[1], pl: 'P₂', ql: 'Q₂', color: 'red', at: at3}]};
+    if (!o.static) { pn.points.push({q: 50 + d, p: 50, color: 'red', at: 2, until: 3, showP: false, showQ: false});
+      // below:true, as the hand-written symbolic template always has it: above
+      // the axis the label lands on whichever curve crosses that price.
+      pn.braces = [{p: 50, q1: 50, q2: 50 + d, label: isShort ? 'Shortage' : 'Surplus', below: true, at: 2, until: 3}]; }
+    return pn;
+  }
+  function shiftSteps(o) {
+    var D = o.shift === 'D', right = o.dir !== 'left', good = o.good ? ' for ' + o.good : '';
+    var isShort = (D && right) || (!D && !right), pUp = isShort, qUp = right;
+    var why = o.why || (D ? (right ? 'Buyers want more at every price' : 'Buyers want less at every price') : (right ? 'Selling is more profitable at every price' : 'Selling is less profitable at every price'));
+    var ev = o.event ? o.event + ' ' : '';
+    return [
+      'The market' + good + ' is in equilibrium at P₁ and Q₁.',
+      ev + why + ', so ' + (D ? 'demand' : 'supply') + ' shifts ' + (right ? 'right' : 'left') + ', from ' + (D ? 'D₁ to D₂' : 'S₁ to S₂') + '.',
+      'At the old price P₁ there is now a ' + (isShort ? 'shortage: buyers want more than sellers offer, so the price rises.' : 'surplus: sellers offer more than buyers want, so the price falls.'),
+      'The market settles at P₂ and Q₂. Price ' + (pUp ? 'up' : 'down') + ', quantity ' + (qUp ? 'up' : 'down') + '.'];
+  }
+  function doublePanel(o) { // o: {demand:'left'|'right', supply:'left'|'right', dD, dS, heading, static}
+    var dD = (o.dD || 20) * (o.demand === 'left' ? -1 : 1), dS = (o.dS || 20) * (o.supply === 'left' ? -1 : 1);
+    var q2 = (100 + dD + dS) / 2, p2 = q2 - dS, a1 = o.static ? 0 : 1, a2 = o.static ? 0 : 2, a3 = o.static ? 0 : 3;
+    return {heading: o.heading, axes: {xmax: 110, ymax: 110},
+      curves: [{id: 'D1', label: 'D₁', pts: clipLine(100, -1, 8, 100), thin: true}, {id: 'S1', label: 'S₁', pts: clipLine(0, 1, 8, 100), thin: true},
+               // A shift arrow only clears the pair it belongs to. The other
+               // pair can still lie across it, so arrowD/arrowS let a config
+               // move it: at price p the demand arrow spans q = 100+dD-p to
+               // 100-p, and S1 sits at q = p, which is inside that span
+               // whenever (100+dD)/2 < p < 100 - dD/2 for a leftward shift.
+               {id: 'D2', label: 'D₂', pts: clipLine(100 + dD, -1, 8, 100), color: 'red', from: 'D1', at: a1, arrowP: o.arrowD != null ? o.arrowD : 32},
+               {id: 'S2', label: 'S₂', pts: clipLine(-dS, 1, 8, 100), color: 'red', from: 'S1', at: a2, arrowP: o.arrowS != null ? o.arrowS : 88}],
+      points: [{q: 50, p: 50, pl: 'P₁', ql: 'Q₁', marker: '1'}, {q: q2, p: p2, pl: 'P₂', ql: 'Q₂', color: 'red', marker: '2', at: a3}]};
+  }
+  function doubleSteps(o, q2, p2) {
+    var dr = o.demand !== 'left', sr = o.supply !== 'left';
+    return ['Equilibrium at P₁ and Q₁ (Point 1).',
+      'Demand shifts ' + (dr ? 'right' : 'left') + ', from D₁ to D₂.',
+      'Supply shifts ' + (sr ? 'right' : 'left') + ', from S₁ to S₂.',
+      'The new equilibrium is Point 2: price ' + (p2 > 50 ? 'up' : p2 < 50 ? 'down' : 'unchanged') + ', quantity ' + (q2 > 50 ? 'up' : q2 < 50 ? 'down' : 'unchanged') + '. ' + (o.note || '')];
+  }
+  function expand(cfg) {
+    if (!cfg.preset) return cfg;
+    var out = merge(cfg, {}); delete out.preset;
+    if (cfg.preset === 'shift') {
+      var pn = shiftPanel(cfg); for (var k in pn) out[k] = pn[k];
+      if (!cfg.static && !cfg.steps) out.steps = shiftSteps(cfg);
+    } else if (cfg.preset === 'double') {
+      if (cfg.compare) { // two panels: bigger supply shift vs bigger demand shift
+        var big = cfg.big || 40, small = cfg.small || 15;
+        out.link = false; out.panels = [doublePanel(merge(cfg, {dD: small, dS: big, heading: cfg.headings ? cfg.headings[0] : 'Larger shift of supply'})),
+                      doublePanel(merge(cfg, {dD: big, dS: small, heading: cfg.headings ? cfg.headings[1] : 'Larger shift of demand'}))];
+        if (!cfg.static && !cfg.steps) { var s = doubleSteps(cfg, 50, 50); s[3] = 'Each panel ends at a new Point 2. ' + (cfg.note || 'Compare them: one of price or quantity moves the same way in both; the other depends on which shift is larger.'); out.steps = s; }
+      } else {
+        var one = doublePanel(cfg); for (var k2 in one) out[k2] = one[k2];
+        var e = one.points[1]; if (!cfg.static && !cfg.steps) out.steps = doubleSteps(cfg, e.q, e.p);
+      }
+    }
+    return out;
+  }
+
+  function mount(root) {
+    var script = root.querySelector('script[type="application/json"]'); if (!script) return;
+    var base; try { base = JSON.parse(script.textContent); } catch (e) { root.textContent = 'Widget config error: ' + e.message; return; }
+    function draw(key) {
+      var cfg = base;
+      if (base.scenarios) { key = key || base.activeScenario || Object.keys(base.scenarios)[0]; cfg = merge(base, base.scenarios[key]); cfg.activeScenario = key; }
+      new Widget(root, expand(cfg));
+    }
+    root.addEventListener('sdg-scenario', function (e) { draw(e.detail); });
+    draw();
+  }
+  function init() { document.querySelectorAll('.sdg').forEach(mount); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+})();
+</script>
+</head>
+<body>
+
+<p class="date">Wednesday, 9/16/26</p>
+
+<h1>Government Intervention in Markets</h1>
+
+<p>Markets tend to move toward equilibrium in order to eliminate shortages and surpluses. In some cases, governments intervene in the market in order to prevent market forces from working. In this section, we will discuss how governments interfere in markets and what consequences their interference has on suppliers and consumers. Specifically, we will discuss price floors, price ceilings, and taxes.</p>
+
+<p>Governments intervene in markets because of political pressure from buyers and sellers. Buyers always strive to obtain goods at lower prices; if they can make a moral argument that they cannot afford an important good (like housing in New York), they might be able to convince the government to restrict prices and set a price ceiling. Likewise, sellers always strive to sell their goods at higher prices; if they can make an argument that they will go out of business unless they receive the higher price, they might be able to convince the government to set a price floor.</p>
+
+<p>A common theme that we will see throughout this section is that government intervention creates a deadweight loss in the market because it results in the production of an inefficient quantity and thus the loss of surplus. While government intervention may benefit some groups at the expense of others, the net effect of government intervention is a loss of total surplus to society.</p>
+
+<h1>Government Intervention: Price Ceilings</h1>
+
+<p>A <strong>binding price ceiling</strong> is a price below the equilibrium price above which it is illegal to charge. The imposition of a price ceiling redistributes surplus between consumers and producers and reduces total economic surplus. The quantity supplied at the price ceiling is less than the quantity demanded, and a shortage results. The quantity transacted will be the quantity supplied because it is the lower of the quantity supplied and the quantity demanded. The quantity transacted under a price ceiling is less than the quantity transacted at equilibrium.</p>
+
+<p>Two practical examples of price ceilings are as follows:</p>
+
+<ul>
+  <li>
+    <p><strong>Rent controls</strong> – Large cities such as New York, San Francisco, and Washington, D.C. often face a situation in which supply and demand produce outrageously high housing prices. The governments of these cities often impose rent ceilings, which dictate the maximum rent that landlords can charge their tenants.</p>
+
+    <!-- IMAGE POSITION: inline with rent controls example -->
+    <img 
+      src="https://smokinnotes.s3.us-east-1.amazonaws.com/public/eco2013-spring26-exam1-module3-part1-01-city-rent-control.png"
+      alt="Night view of urban cityscape with apartment buildings and street lights showing rent-controlled housing"
+      class="image-wide-20 content-image"
+      loading="lazy"
+      width="auto"
+      height="auto"
+    />
+  </li>
+  <li>
+    <p><strong>Anti-gouging laws</strong> – Anti-gouging laws attempt to prevent "price gouging" during times of need by setting the maximum price that can be charged for certain necessities. For example, the Florida government passed price gouging laws establishing maximum price increases for fuel, building materials, and other emergency-related items after Hurricane Ian in 2022.</p>
+
+    <p>At first glance, you might think that anti-gouging laws are good things. After all, we don't want companies jacking up the price of essential things like generators, bottled water, gasoline, and hotel rooms in the aftermath of a storm. The difficulty with this argument is that, like all binding price ceilings, anti-gouging laws create shortages and thus create deadweight losses. This means that some people who want these essential goods and services will not be able to buy them.</p>
+  </li>
+  <li>
+    <p><strong>Price ceilings on other items</strong> – In some countries, the government puts price ceilings on basic necessities and other items, especially in times of economic duress. For example, some countries have price ceilings on pharmaceutical drugs. The United States has price ceilings on insulin, and other countries have price ceilings on a wide variety of drugs.</p>
+  </li>
+</ul>
+
+<p>Consider the supply and demand diagram below, which shows the market for textbooks. At the equilibrium price of $100 per unit, the quantity demanded and the quantity supplied are both 500. However, if the government imposes a price ceiling of $75 per unit, the quantity demanded increases to 562.5 and the quantity supplied falls to 375. This leaves a shortage of 187.5 units.</p>
+
+<!-- IMAGE POSITION: referenced in paragraph above -->
+<div class="sdg"><script type="application/json">
+{
+ "title": "A price ceiling in the textbook market",
+ "lede": "The market clears at $100 and 500 units. Then the ceiling arrives.",
+ "axes": {
+  "x": "Q",
+  "y": "P",
+  "xmax": 820,
+  "ymax": 160,
+  "money": true,
+  "xticks": [
+   375,
+   562.5
+  ],
+  "yticks": [
+   75,
+   100
+  ]
+ },
+ "curves": [
+  {
+   "id": "D",
+   "label": "D",
+   "pts": [
+    [
+     350,
+     160
+    ],
+    [
+     750,
+     0
+    ]
+   ],
+   "ldx": 6,
+   "ldy": -8
+  },
+  {
+   "id": "S",
+   "label": "S",
+   "pts": [
+    [
+     0,
+     0
+    ],
+    [
+     800,
+     160
+    ]
+   ],
+   "ldx": -20,
+   "ldy": -10
+  }
+ ],
+ "hlines": [
+  {
+   "p": 75,
+   "tag": "Price ceiling",
+   "at": 1
+  }
+ ],
+ "points": [
+  {
+   "q": 500,
+   "p": 100,
+   "guides": "p",
+   "showQ": false
+  },
+  {
+   "q": 375,
+   "p": 75,
+   "dot": false,
+   "guides": "q",
+   "showQ": false,
+   "at": 1
+  },
+  {
+   "q": 562.5,
+   "p": 75,
+   "dot": false,
+   "guides": "q",
+   "showQ": false,
+   "at": 1
+  }
+ ],
+ "braces": [
+  {
+   "p": 75,
+   "q1": 375,
+   "q2": 562.5,
+   "label": "Shortage (187.5 units)",
+   "below": true,
+   "at": 2
+  }
+ ],
+ "steps": [
+  "Left alone, the textbook market settles where the curves cross: $100 a copy, and 500 copies bought and sold.",
+  "A ceiling of $75 makes any higher price illegal. At $75 buyers want 562.5 copies but sellers will only offer 375.",
+  "The 187.5-copy gap is a shortage. The price is lower, but fewer copies change hands than before — 375 rather than 500."
+ ]
+}
+</script></div>
+
+<p>If a price control does not make the equilibrium price illegal, it does not have any impact on the market. Therefore, a price ceiling is only binding, or effective, if it is set below the equilibrium price. In a competitive market, the price will not rise above equilibrium, so any price ceiling set above the equilibrium price will be ineffective. By "ineffective," we mean that the prevailing price in the market will not be determined by the price ceiling; it will be determined by the equilibrium price instead. For example, if the government imposed a $300 ceiling on a bottle of water, it would be ineffective. There's no scenario in which the equilibrium price of a bottle of water would be as high as $300, so the price ceiling simply would not matter.</p>
+
+<p>Excess demand under price ceilings can have several consequences. One of them is the formation of a black market, an illegal market in which goods are transacted at a price that exceeds the ceiling price. For example, suppose that the government imposes a rent ceiling of $500 in a market where average rents are far higher. Sellers might charge buyers a huge upfront fee for the "privilege" of renting the apartment at $500. There are obviously no rent controls in Gainesville, so you have probably not had to deal with the difficulty of finding a rent-controlled apartment. If you lived in New York City or San Francisco where rent ceilings exist, apartment hunting would be much more difficult and time-consuming.</p>
+
+<h2>A Price Ceiling's Impact on Producer Surplus, Consumer Surplus, and Total Surplus</h2>
+
+<p>A price ceiling has the following effects on the market:</p>
+
+<ul>
+  <li>It increases the quantity demanded.</li>
+  <li>It reduces the quantity supplied.</li>
+  <li>It reduces the quantity sold.</li>
+  <li>It reduces producer surplus.</li>
+  <li>It reduces total surplus.</li>
+  <li>It usually increases consumer surplus, but consumer surplus could also decrease. (Consumer surplus increases as long as the gain to consumers who get to buy the good at the lower price is greater than the loss to consumers who don't get to buy the good at all because of the ceiling.)</li>
+</ul>
+
+<p>The people who win from a price ceiling are consumers who are able to get the good at the lower price. The groups that lose from a price ceiling are producers who have to sell at a lower price and consumers who don't get to buy the good at the lower price.</p>
+
+<p>Let's graphically examine the impact of a price ceiling in a market. The diagram on the left below shows the distribution of consumer surplus and producer surplus without a price ceiling, and the diagram on the right shows the distribution of consumer surplus and producer surplus with a price ceiling:</p>
+
+<!-- IMAGE POSITION: referenced comparison diagrams -->
+<div class="sdg"><script type="application/json">
+{
+ "lede": "The same market, before and after a binding ceiling.",
+ "scenarios": {
+  "free": {
+   "label": "Competitive market",
+   "title": "No price ceiling",
+   "axes": {
+    "x": "Q",
+    "y": "P",
+    "xmax": 290,
+    "ymax": 1150,
+    "money": true,
+    "xticks": [
+     100
+    ],
+    "yticks": [
+     700
+    ]
+   },
+   "curves": [
+    {
+     "id": "D",
+     "label": "D",
+     "pts": [
+      [
+       0,
+       1100
+      ],
+      [
+       275,
+       0
+      ]
+     ],
+     "ldx": 6,
+     "ldy": -8
+    },
+    {
+     "id": "S",
+     "label": "S",
+     "pts": [
+      [
+       0,
+       433.33
+      ],
+      [
+       250,
+       1100
+      ]
+     ],
+     "ldx": -20,
+     "ldy": -10
+    }
+   ],
+   "areas": [
+    {
+     "pts": [
+      [
+       0,
+       700
+      ],
+      [
+       0,
+       1100
+      ],
+      [
+       100,
+       700
+      ]
+     ],
+     "label": "CS",
+     "color": "teal",
+     "lp": [
+      33.33,
+      833.33
+     ]
+    },
+    {
+     "pts": [
+      [
+       0,
+       700
+      ],
+      [
+       0,
+       433.33
+      ],
+      [
+       100,
+       700
+      ]
+     ],
+     "label": "PS",
+     "color": "orange",
+     "lp": [
+      33.33,
+      611.11
+     ]
+    }
+   ],
+   "points": [
+    {
+     "q": 100,
+     "p": 700
+    }
+   ],
+   "caption": "Left alone the market clears at $700, and every unit worth making is made. Consumer surplus and producer surplus together are as large as this market can make them."
+  },
+  "cap": {
+   "label": "Binding price ceiling",
+   "title": "A $500 ceiling imposed",
+   "axes": {
+    "x": "Q",
+    "y": "P",
+    "xmax": 290,
+    "ymax": 1150,
+    "money": true,
+    "xticks": [
+     25,
+     100,
+     150
+    ],
+    "yticks": [
+     500,
+     700
+    ]
+   },
+   "curves": [
+    {
+     "id": "D",
+     "label": "D",
+     "pts": [
+      [
+       0,
+       1100
+      ],
+      [
+       275,
+       0
+      ]
+     ],
+     "ldx": 6,
+     "ldy": -8
+    },
+    {
+     "id": "S",
+     "label": "S",
+     "pts": [
+      [
+       0,
+       433.33
+      ],
+      [
+       250,
+       1100
+      ]
+     ],
+     "ldx": -20,
+     "ldy": -10
+    }
+   ],
+   "hlines": [
+    {
+     "p": 500,
+     "tag": "Price ceiling"
+    }
+   ],
+   "areas": [
+    {
+     "pts": [
+      [
+       0,
+       500
+      ],
+      [
+       0,
+       1100
+      ],
+      [
+       25,
+       1000
+      ],
+      [
+       25,
+       500
+      ]
+     ],
+     "label": "CS",
+     "color": "teal",
+     "lp": [
+      12.5,
+      780.0
+     ]
+    },
+    {
+     "pts": [
+      [
+       0,
+       500
+      ],
+      [
+       0,
+       433.33
+      ],
+      [
+       25,
+       500
+      ]
+     ],
+     "label": "PS",
+     "color": "orange",
+     "lp": [
+      14.83,
+      420.0
+     ]
+    },
+    {
+     "pts": [
+      [
+       25,
+       1000
+      ],
+      [
+       25,
+       500
+      ],
+      [
+       100,
+       700
+      ]
+     ],
+     "label": "DWL",
+     "color": "red",
+     "lp": [
+      50.0,
+      766.67
+     ]
+    }
+   ],
+   "points": [
+    {
+     "q": 100,
+     "p": 700,
+     "guides": "p",
+     "showQ": false
+    },
+    {
+     "q": 25,
+     "p": 500,
+     "dot": false,
+     "guides": "q",
+     "showQ": false
+    },
+    {
+     "q": 150,
+     "p": 500,
+     "dot": false,
+     "guides": "q",
+     "showQ": false
+    }
+   ],
+   "braces": [
+    {
+     "p": 500,
+     "q1": 25,
+     "q2": 150,
+     "label": "Shortage",
+     "below": "in"
+    }
+   ],
+   "caption": "At $500 only 25 units are supplied while 150 are wanted. Consumer surplus grows and producer surplus shrinks by more, and the red wedge is surplus that nobody gets because those units are never made."
+  }
+ }
+}
+</script></div>
+
+<p>Note that, under the $500 price ceiling, the quantity demanded exceeds the quantity supplied by 125 units. Also, note that the quantity transacted under the price ceiling—25 units—is less than the quantity transacted in a competitive market. The darkened triangle to the right of the quantity transacted is the deadweight loss—the efficiency loss that results because the market does not produce the efficient quantity under the price ceiling. In this case, the price ceiling reduced producer surplus, increased consumer surplus, and reduced total surplus.</p>
+
+<p>Price ceilings are typically imposed to increase consumer surplus. Price ceilings do not <em>always</em> increase consumer surplus, but the price ceiling in the previous example did. If this was the goal of the price ceiling in this case, it was successful. However, this desired outcome has come at a cost: the loss of total surplus that we call deadweight loss. (Note that the loss in producer surplus is greater than the gain in consumer surplus, so the "winners" from the policy cannot adequately compensate the "losers.")</p>
+
+<h2>Price Ceilings: A Numerical Example</h2>
+
+<p>Consider the market for rental apartments. Use the following supply and demand diagram to answer the questions below:</p>
+
+<!-- IMAGE POSITION: example problem reference -->
+<div class="sdg"><script type="application/json">
+{
+ "title": "The market for rental apartments",
+ "lede": "Rent settles where the two curves cross.",
+ "axes": {
+  "x": "Q",
+  "y": "P",
+  "xmax": 1150,
+  "ymax": 950,
+  "money": true,
+  "xticks": [
+   600
+  ],
+  "yticks": [
+   400
+  ]
+ },
+ "curves": [
+  {
+   "id": "D",
+   "label": "D",
+   "pts": [
+    [
+     0,
+     900
+    ],
+    [
+     1080,
+     0
+    ]
+   ],
+   "ldx": 6,
+   "ldy": -8
+  },
+  {
+   "id": "S",
+   "label": "S",
+   "pts": [
+    [
+     0,
+     100
+    ],
+    [
+     1080,
+     640
+    ]
+   ],
+   "ldx": -20,
+   "ldy": -10
+  }
+ ],
+ "points": [
+  {
+   "q": 600,
+   "p": 400
+  }
+ ],
+ "caption": "The quantity demanded equals the quantity supplied at a rent of $400, where 600 apartments are let. That is the quantity at which total surplus is as large as it can be."
+}
+</script></div>
+
+<ol>
+  <li>
+    <p><strong>What is the equilibrium price and quantity?</strong></p>
+
+    <p>The equilibrium quantity is the quantity for which the quantity demanded equals the quantity supplied. Total surplus is maximized at this quantity. In the diagram, the equilibrium price is $400 and the equilibrium quantity is 600 units.</p>
+  </li>
+  <li>
+    <p><strong>What are the consumer surplus and producer surplus at the equilibrium price and quantity?</strong></p>
+
+    <p>The consumer surplus is equal to the area below the demand curve and above the price, to the left of equilibrium. The producer surplus is equal to the area above the supply curve and below the price, to the left of equilibrium. These areas are shown below.</p>
+
+    <!-- IMAGE POSITION: consumer and producer surplus visualization -->
+    <div class="sdg"><script type="application/json">
+{
+ "title": "Consumer and producer surplus at $400",
+ "lede": "Each surplus is a triangle against the equilibrium rent.",
+ "axes": {
+  "x": "Q",
+  "y": "P",
+  "xmax": 1150,
+  "ymax": 950,
+  "money": true,
+  "xticks": [
+   600
+  ],
+  "yticks": [
+   100,
+   400,
+   900
+  ]
+ },
+ "curves": [
+  {
+   "id": "D",
+   "label": "D",
+   "pts": [
+    [
+     0,
+     900
+    ],
+    [
+     1080,
+     0
+    ]
+   ],
+   "ldx": 6,
+   "ldy": -8
+  },
+  {
+   "id": "S",
+   "label": "S",
+   "pts": [
+    [
+     0,
+     100
+    ],
+    [
+     1080,
+     640
+    ]
+   ],
+   "ldx": -20,
+   "ldy": -10
+  }
+ ],
+ "areas": [
+  {
+   "pts": [
+    [
+     0,
+     400
+    ],
+    [
+     0,
+     900
+    ],
+    [
+     600,
+     400
+    ]
+   ],
+   "label": "CS",
+   "color": "teal",
+   "lp": [
+    200.0,
+    566.67
+   ]
+  },
+  {
+   "pts": [
+    [
+     0,
+     400
+    ],
+    [
+     0,
+     100
+    ],
+    [
+     600,
+     400
+    ]
+   ],
+   "label": "PS",
+   "color": "orange",
+   "lp": [
+    200.0,
+    300.0
+   ]
+  }
+ ],
+ "points": [
+  {
+   "q": 600,
+   "p": 400
+  }
+ ],
+ "calcs": [
+  "CS = ½ × 600 × ($900 − $400) = $150,000",
+  "PS = ½ × 600 × ($400 − $100) = $90,000",
+  "Total surplus = CS + PS = $240,000"
+ ],
+ "caption": "Consumer surplus is the area below demand and above the rent; producer surplus is the area above supply and below it. Here the consumer surplus is the larger of the two, which depends on how steep each curve is."
+}
+</script></div>
+
+    <p>The relevant areas are calculated as follows:</p>
+<p style="text-align: center;">
+  \(CS = \frac{1}{2} \times \text{Base} \times \text{Height}\)<br>
+  \(CS = \frac{1}{2} \times (600) \times (\$900 - \$400) = \$150,000\)
+</p>
+
+<p style="text-align: center;">
+  \(PS = \frac{1}{2} \times \text{Base} \times \text{Height}\)<br>
+  \(PS = \frac{1}{2} \times (600) \times (\$400 - \$100) = \$90,000\)
+</p>
+
+    <p>In this case, the consumer surplus was greater than the producer surplus. This does not always have to be the case; it depends on the slope of the demand curve and the slope of the supply curve.</p>
+  </li>
+  <li>
+    <p><strong>If a price ceiling of $300 per unit is imposed, is there a shortage or a surplus?</strong></p>
+
+    <p>If a price ceiling of $300 is imposed, the quantity demanded will be 720 and the quantity supplied will be 400. The quantity demanded exceeds the quantity supplied, so there is a <strong>shortage</strong> of 320 units.</p>
+
+    <!-- IMAGE POSITION: price ceiling shortage illustration -->
+    <div class="sdg"><script type="application/json">
+{
+ "title": "A $300 rent ceiling",
+ "lede": "Below the market rent, the two quantities part company.",
+ "axes": {
+  "x": "Q",
+  "y": "P",
+  "xmax": 1150,
+  "ymax": 950,
+  "money": true,
+  "xticks": [
+   400,
+   600,
+   720
+  ],
+  "yticks": [
+   300,
+   400
+  ]
+ },
+ "curves": [
+  {
+   "id": "D",
+   "label": "D",
+   "pts": [
+    [
+     0,
+     900
+    ],
+    [
+     1080,
+     0
+    ]
+   ],
+   "ldx": 6,
+   "ldy": -8
+  },
+  {
+   "id": "S",
+   "label": "S",
+   "pts": [
+    [
+     0,
+     100
+    ],
+    [
+     1080,
+     640
+    ]
+   ],
+   "ldx": -20,
+   "ldy": -10
+  }
+ ],
+ "hlines": [
+  {
+   "p": 300,
+   "tag": "Rent ceiling"
+  }
+ ],
+ "points": [
+  {
+   "q": 600,
+   "p": 400,
+   "guides": "p",
+   "showQ": false
+  },
+  {
+   "q": 400,
+   "p": 300,
+   "dot": false,
+   "guides": "q",
+   "showQ": false
+  },
+  {
+   "q": 720,
+   "p": 300,
+   "dot": false,
+   "guides": "q",
+   "showQ": false
+  }
+ ],
+ "braces": [
+  {
+   "p": 300,
+   "q1": 400,
+   "q2": 720,
+   "label": "Shortage of 320",
+   "below": "in"
+  }
+ ],
+ "caption": "At $300 renters want 720 apartments and landlords offer 400. The quantity demanded exceeds the quantity supplied, so 320 apartments' worth of renters go without."
+}
+</script></div>
+  </li>
+  <li>
+    <p><strong>If a price ceiling of $300 per unit is imposed, how many units will be transacted?</strong></p>
+
+    <p>The lower of the quantity demanded and the quantity supplied will determine the quantity transacted. At a price ceiling of $300, 720 units are demanded and 400 units are supplied. Therefore, the quantity transacted will be <strong>400 units</strong>.</p>
+  </li>
+  <li>
+    <p><strong>If a price ceiling of $300 per unit is imposed, what are the consumer surplus and producer surplus?</strong></p>
+
+    <p>The producer surplus is the area below the ceiling price ($300) and above the supply curve, to the left of the quantity transacted (400 units).</p>
+
+ 
+
+    <p>As you can see in the diagram below, this is the area of the PS triangle:</p>
+   <!-- IMAGE POSITION: surplus calculation with price ceiling -->
+    <div class="sdg"><script type="application/json">
+{
+ "title": "Producer surplus with the ceiling",
+ "lede": "Landlords keep the area below $300 and above supply, out to 400.",
+ "axes": {
+  "x": "Q",
+  "y": "P",
+  "xmax": 1150,
+  "ymax": 950,
+  "money": true,
+  "xticks": [
+   400
+  ],
+  "yticks": [
+   100,
+   300
+  ]
+ },
+ "curves": [
+  {
+   "id": "D",
+   "label": "D",
+   "pts": [
+    [
+     0,
+     900
+    ],
+    [
+     1080,
+     0
+    ]
+   ],
+   "ldx": 6,
+   "ldy": -8
+  },
+  {
+   "id": "S",
+   "label": "S",
+   "pts": [
+    [
+     0,
+     100
+    ],
+    [
+     1080,
+     640
+    ]
+   ],
+   "ldx": -20,
+   "ldy": -10
+  }
+ ],
+ "hlines": [
+  {
+   "p": 300,
+   "tag": "Rent ceiling"
+  }
+ ],
+ "areas": [
+  {
+   "pts": [
+    [
+     0,
+     300
+    ],
+    [
+     0,
+     100
+    ],
+    [
+     400,
+     300
+    ]
+   ],
+   "label": "PS",
+   "color": "orange",
+   "lp": [
+    133.33,
+    233.33
+   ]
+  }
+ ],
+ "points": [
+  {
+   "q": 400,
+   "p": 300,
+   "dot": false,
+   "guides": "q",
+   "showQ": false
+  }
+ ],
+ "calcs": [
+  "PS = ½ × 400 × ($300 − $100) = $40,000"
+ ],
+ "caption": "Only 400 apartments are let, and each earns $300 rather than $400. Producer surplus falls from $90,000 to $40,000."
+}
+</script></div>
+ <p style="text-align: center;">
+  \(PS = \frac{1}{2} \times \text{Base} \times \text{Height}\)<br>
+  \(PS = \frac{1}{2} \times (400) \times (\$300 - \$100)\)<br>
+  \(PS = \$40,000\)
+</p>
+
+
+    <p>The consumer surplus is the area of the trapezoid formed below the demand curve and above the ceiling price, to the left of the quantity transacted. Although you could calculate the area of the trapezoid directly, it is typically easier to break up the area into a triangle and a rectangle and add those areas together.</p>
+
+    <!-- IMAGE POSITION: consumer surplus calculation breakdown -->
+    <div class="sdg"><script type="application/json">
+{
+ "title": "Consumer surplus with the ceiling",
+ "lede": "The shape is a trapezoid, so split it into a triangle and a rectangle.",
+ "axes": {
+  "x": "Q",
+  "y": "P",
+  "xmax": 1150,
+  "ymax": 950,
+  "money": true,
+  "xticks": [
+   400
+  ],
+  "yticks": [
+   300,
+   566.67,
+   900
+  ]
+ },
+ "curves": [
+  {
+   "id": "D",
+   "label": "D",
+   "pts": [
+    [
+     0,
+     900
+    ],
+    [
+     1080,
+     0
+    ]
+   ],
+   "ldx": 6,
+   "ldy": -8
+  },
+  {
+   "id": "S",
+   "label": "S",
+   "pts": [
+    [
+     0,
+     100
+    ],
+    [
+     1080,
+     640
+    ]
+   ],
+   "ldx": -20,
+   "ldy": -10
+  }
+ ],
+ "hlines": [
+  {
+   "p": 300,
+   "tag": "Rent ceiling"
+  }
+ ],
+ "areas": [
+  {
+   "pts": [
+    [
+     0,
+     566.67
+    ],
+    [
+     0,
+     900
+    ],
+    [
+     400,
+     566.67
+    ]
+   ],
+   "label": "Triangle",
+   "color": "teal",
+   "lp": [
+    120.0,
+    677.78
+   ]
+  },
+  {
+   "pts": [
+    [
+     0,
+     300
+    ],
+    [
+     400,
+     300
+    ],
+    [
+     400,
+     566.67
+    ],
+    [
+     0,
+     566.67
+    ]
+   ],
+   "label": "Rectangle",
+   "color": "teal",
+   "lp": [
+    200.0,
+    433.33
+   ]
+  }
+ ],
+ "points": [
+  {
+   "q": 400,
+   "p": 566.67,
+   "dot": false,
+   "guides": "q",
+   "showQ": false
+  }
+ ],
+ "calcs": [
+  "Triangle = ½ × 400 × ($900 − $566.67) = $66,666.67",
+  "Rectangle = 400 × ($566.67 − $300) = $106,666.67",
+  "CS = $66,666.67 + $106,666.67 = $173,333.33"
+ ],
+ "caption": "Demand sits at $566.67 when 400 apartments are let, so the surplus is a triangle stacked on a rectangle. Added together they come to $173,333.33, up from $150,000 before the ceiling."
+}
+</script></div>
+
+    <p>As you can see, the producer surplus fell from $90,000 to $40,000 due to the imposition of the price ceiling. The consumer surplus increased from $150,000 to $173,333.33 due to the imposition of the price ceiling.</p>
+  </li>
+  <li>
+    <p><strong>Did total surplus increase or decrease due to the imposition of the price ceiling?</strong></p>
+
+    <p>The total surplus is the consumer surplus plus the producer surplus. The total surplus before and after the price ceiling is calculated below:</p>
+
+ <p style="text-align: center;">
+  <strong>Before the Price Ceiling:</strong><br>
+  \(TS = CS + PS = \$150,000 + \$90,000 = \$240,000\)
+</p>
+
+<p style="text-align: center;">
+  <strong>After the Price Ceiling:</strong><br>
+  \(TS = CS + PS = \$173,333.33 + \$40,000 = \$213,333.33\)
+</p>
+
+
+    <p>As you can see, the total surplus decreased by $26,666.67 due to the imposition of the price ceiling. This lost surplus is called the deadweight loss, and it can be calculated as the area to the right of the quantity transacted and to the left of the equilibrium quantity, below the demand curve and above the supply curve:</p>
+
+    <!-- IMAGE POSITION: deadweight loss visualization -->
+    <div class="sdg"><script type="application/json">
+{
+ "title": "The deadweight loss from the ceiling",
+ "lede": "The units between 400 and 600 are worth more than they cost, and go unbuilt.",
+ "axes": {
+  "x": "Q",
+  "y": "P",
+  "xmax": 1150,
+  "ymax": 950,
+  "money": true,
+  "xticks": [
+   400,
+   600
+  ],
+  "yticks": [
+   300,
+   400,
+   566.67
+  ]
+ },
+ "curves": [
+  {
+   "id": "D",
+   "label": "D",
+   "pts": [
+    [
+     0,
+     900
+    ],
+    [
+     1080,
+     0
+    ]
+   ],
+   "ldx": 6,
+   "ldy": -8
+  },
+  {
+   "id": "S",
+   "label": "S",
+   "pts": [
+    [
+     0,
+     100
+    ],
+    [
+     1080,
+     640
+    ]
+   ],
+   "ldx": -20,
+   "ldy": -10
+  }
+ ],
+ "hlines": [
+  {
+   "p": 300,
+   "tag": "Rent ceiling"
+  }
+ ],
+ "areas": [
+  {
+   "pts": [
+    [
+     400,
+     566.67
+    ],
+    [
+     400,
+     300
+    ],
+    [
+     600,
+     400
+    ]
+   ],
+   "label": "DWL",
+   "color": "red",
+   "lp": [
+    466.67,
+    451.11
+   ]
+  }
+ ],
+ "points": [
+  {
+   "q": 600,
+   "p": 400
+  },
+  {
+   "q": 400,
+   "p": 566.67,
+   "dot": false,
+   "guides": "q",
+   "showQ": false
+  }
+ ],
+ "calcs": [
+  "DWL = ½ × (600 − 400) × ($566.67 − $300) = $26,666.67"
+ ],
+ "caption": "Total surplus falls from $240,000 to $213,333.33. The $26,666.67 difference is surplus attached to apartments that are never let, which is what makes the controlled market inefficient."
+}
+</script></div>
+
+<p style="text-align: center;">
+    \(DWL = \frac{1}{2} \times \text{Base} \times \text{Height}\)<br>
+    \(DWL = \frac{1}{2} \times (600 - 400) \times (\$566.67 - \$300)\)<br>
+    \(DWL = \frac{1}{2} \times (200) \times (\$266.67) = \$26,666.67\)
+</p>
+
+
+    <p>The deadweight loss can be thought of as the amount by which total surplus falls when the market is not in equilibrium, or as the total surplus associated with units that do not get produced. The existence of a deadweight loss in this market illustrates that the price control has made the market inefficient.</p>
+  </li>
+</ol>
+
+<h2>Another Example: Price Gouging Laws</h2>
+
+<p>A price gouging law is simply a government-imposed price ceiling on either prices in general, or on certain goods, such as goods related to disaster relief. For example, suppose that a hurricane hits Florida, leaving many without power. This would naturally increase the demand for generators. Without any government-imposed price ceilings, the impact on the market for generators would be shown in the diagram below. The equilibrium price of a generator would increase from $600 to $800, and the equilibrium quantity would increase from 1,000 to 1,200.</p>
+
+<!-- IMAGE POSITION: hurricane generator demand example -->
+<div class="sdg"><script type="application/json">
+{
+ "title": "Generators after a hurricane",
+ "lede": "The storm raises demand. Then a price ceiling meets it.",
+ "axes": {
+  "x": "Q",
+  "y": "P",
+  "xmax": 1600,
+  "ymax": 1300,
+  "money": true,
+  "xticks": [
+   1000,
+   1200,
+   1400
+  ],
+  "yticks": [
+   600,
+   800
+  ]
+ },
+ "curves": [
+  {
+   "id": "D1",
+   "label": "D₁",
+   "pts": [
+    [
+     400,
+     1200
+    ],
+    [
+     1600,
+     0
+    ]
+   ],
+   "ldx": 6,
+   "ldy": -8,
+   "until": 1
+  },
+  {
+   "id": "D2",
+   "label": "D₂",
+   "pts": [
+    [
+     800,
+     1200
+    ],
+    [
+     1600,
+     400
+    ]
+   ],
+   "ldx": 6,
+   "ldy": -8,
+   "color": "red",
+   "at": 1
+  },
+  {
+   "id": "S",
+   "label": "S",
+   "pts": [
+    [
+     400,
+     0
+    ],
+    [
+     1600,
+     1200
+    ]
+   ],
+   "ldx": -20,
+   "ldy": -10
+  }
+ ],
+ "hlines": [
+  {
+   "p": 600,
+   "tag": "Price ceiling",
+   "tagq": 560,
+   "at": 2
+  }
+ ],
+ "points": [
+  {
+   "q": 1000,
+   "p": 600,
+   "until": 1
+  },
+  {
+   "q": 1200,
+   "p": 800,
+   "at": 1,
+   "until": 2
+  },
+  {
+   "q": 1000,
+   "p": 600,
+   "dot": false,
+   "guides": "q",
+   "showQ": false,
+   "at": 2
+  },
+  {
+   "q": 1400,
+   "p": 600,
+   "dot": false,
+   "guides": "q",
+   "showQ": false,
+   "at": 2
+  }
+ ],
+ "braces": [
+  {
+   "p": 600,
+   "q1": 1000,
+   "q2": 1400,
+   "label": "Shortage of 400",
+   "below": true,
+   "at": 3
+  }
+ ],
+ "steps": [
+  "Before the storm, generators sell for $600 and 1,000 of them change hands.",
+  "Losing power sends demand up. Left alone, the price rises to $800 and the quantity rises to 1,200 — more generators reach people who want them.",
+  "Now suppose a gouging law holds the price at $600. At that price 1,400 are wanted but only 1,000 are offered.",
+  "The 400-generator gap is a shortage. Buyers who get one pay less, but 400 households that would have bought a generator cannot find one at all."
+ ]
+}
+</script></div>
+
+<p>However, if the government were to impose a $600 price ceiling on generators, the quantity of generators demanded at $600 (1,400) would be greater than the quantity of generators supplied at $600 (1,000). Therefore, a shortage of 400 generators would result. The people who are able to buy a generator at the lower price will benefit, but two groups will lose from this price control: producers who are forced to accept a price less than equilibrium and consumers who are unable to buy the generators they want at the price they're willing to pay.</p>
+
+<h1>Government Intervention: Price Floors</h1>
+
+<p>A <strong>binding price floor</strong> is a price above the equilibrium price below which it is illegal to charge. The imposition of a price floor redistributes surplus between producers and consumers and reduces total economic surplus. The quantity supplied at the price floor is greater than the quantity demanded, and a surplus results. The lower of the quantity demanded and quantity supplied determines the quantity transacted, so the quantity demanded will be the quantity transacted. The quantity transacted under a price floor is less than the quantity transacted at equilibrium.</p>
+
+<p>Two real-world examples of price floors are as follows:</p>
+
+<ul>
+  <li><strong>The minimum wage</strong> – The minimum wage is the minimum hourly rate that employers can pay their employees. We will discuss the minimum wage in greater detail later in these notes.</li>
+  <li><strong>Agricultural price controls</strong> – The government sometimes dictates the minimum amount that may be paid for certain agricultural goods. These price controls are in place to guarantee domestic farmers a minimum amount of profit so that they remain viable.</li>
+</ul>
+
+<p>A price floor set below the equilibrium price will not be binding (that is, it won't have any effect on the market) because the equilibrium price—and not the price floor—will determine the quantity transacted. For example, if the government mandated that new cars could not be sold for less than $50, the price floor would not have any impact. Likewise, if the New York City government said that the minimum wage rate for workers in New York City were 25 cents per hour, it would have no effect on the labor market in New York City.</p>
+
+<p>The diagram below compares a market with no price floor to a market in which a binding price floor has been established:</p>
+
+<!-- IMAGE POSITION: price floor comparison -->
+<div class="sdg"><script type="application/json">
+{
+ "lede": "The same market, before and after a binding floor.",
+ "scenarios": {
+  "free": {
+   "label": "Competitive market",
+   "title": "No price floor",
+   "axes": {
+    "x": "Q",
+    "y": "P",
+    "xmax": 320,
+    "ymax": 980,
+    "money": true,
+    "xticks": [
+     100
+    ],
+    "yticks": [
+     700
+    ]
+   },
+   "curves": [
+    {
+     "id": "D",
+     "label": "D",
+     "pts": [
+      [
+       0,
+       900
+      ],
+      [
+       300,
+       300
+      ]
+     ],
+     "ldx": 6,
+     "ldy": -8
+    },
+    {
+     "id": "S",
+     "label": "S",
+     "pts": [
+      [
+       0,
+       500
+      ],
+      [
+       220,
+       940
+      ]
+     ],
+     "ldx": -20,
+     "ldy": -10
+    }
+   ],
+   "areas": [
+    {
+     "pts": [
+      [
+       0,
+       700
+      ],
+      [
+       0,
+       900
+      ],
+      [
+       100,
+       700
+      ]
+     ],
+     "label": "CS",
+     "color": "teal",
+     "lp": [
+      33.33,
+      766.67
+     ]
+    },
+    {
+     "pts": [
+      [
+       0,
+       700
+      ],
+      [
+       0,
+       500
+      ],
+      [
+       100,
+       700
+      ]
+     ],
+     "label": "PS",
+     "color": "orange",
+     "lp": [
+      33.33,
+      633.33
+     ]
+    }
+   ],
+   "points": [
+    {
+     "q": 100,
+     "p": 700
+    }
+   ],
+   "caption": "Left alone the market clears at $700 and 100 units, and total surplus is as large as this market can make it."
+  },
+  "flr": {
+   "label": "Binding price floor",
+   "title": "A $750 floor imposed",
+   "axes": {
+    "x": "Q",
+    "y": "P",
+    "xmax": 320,
+    "ymax": 980,
+    "money": true,
+    "xticks": [
+     75,
+     125
+    ],
+    "yticks": [
+     750
+    ]
+   },
+   "curves": [
+    {
+     "id": "D",
+     "label": "D",
+     "pts": [
+      [
+       0,
+       900
+      ],
+      [
+       300,
+       300
+      ]
+     ],
+     "ldx": 6,
+     "ldy": -8
+    },
+    {
+     "id": "S",
+     "label": "S",
+     "pts": [
+      [
+       0,
+       500
+      ],
+      [
+       220,
+       940
+      ]
+     ],
+     "ldx": -20,
+     "ldy": -10
+    }
+   ],
+   "hlines": [
+    {
+     "p": 750,
+     "tag": "Price floor"
+    }
+   ],
+   "areas": [
+    {
+     "pts": [
+      [
+       0,
+       750
+      ],
+      [
+       0,
+       900
+      ],
+      [
+       75,
+       750
+      ]
+     ],
+     "label": "CS",
+     "color": "teal",
+     "lp": [
+      25.0,
+      800.0
+     ]
+    },
+    {
+     "pts": [
+      [
+       0,
+       750
+      ],
+      [
+       0,
+       500
+      ],
+      [
+       75,
+       650
+      ],
+      [
+       75,
+       750
+      ]
+     ],
+     "label": "PS",
+     "color": "orange",
+     "lp": [
+      37.5,
+      658.33
+     ]
+    },
+    {
+     "pts": [
+      [
+       75,
+       750
+      ],
+      [
+       75,
+       650
+      ],
+      [
+       100,
+       700
+      ]
+     ],
+     "label": "",
+     "color": "red"
+    }
+   ],
+   "points": [
+    {
+     "q": 100,
+     "p": 700,
+     "guides": "q",
+     "showP": false,
+     "showQ": false
+    },
+    {
+     "q": 75,
+     "p": 750,
+     "dot": false,
+     "guides": "q",
+     "showQ": false
+    },
+    {
+     "q": 125,
+     "p": 750,
+     "dot": false,
+     "guides": "q",
+     "showQ": false
+    }
+   ],
+   "braces": [
+    {
+     "p": 750,
+     "q1": 75,
+     "q2": 125,
+     "label": "Surplus"
+    }
+   ],
+   "caption": "At $750 sellers offer 125 units but buyers take only 75. Producer surplus grows and consumer surplus shrinks by more, and the red wedge is the surplus lost on the 25 units no longer traded."
+  }
+ }
+}
+</script></div>
+
+<p>At a price floor of $750, the quantity demanded is 75 units, the quantity supplied is 125 units, and there is a surplus of 50 units. The quantity transacted is 75 units—25 units fewer than the quantity transacted in a market with no price floor.</p>
+
+<p>As you can see, an effective price floor typically has the following effects in the market:</p>
+
+<ul>
+  <li>It reduces the quantity demanded.</li>
+  <li>It increases the quantity supplied.</li>
+  <li>It reduces the total quantity sold.</li>
+  <li>It reduces consumer surplus.</li>
+  <li>It reduces total surplus.</li>
+  <li>It usually increases producer surplus, but producer surplus could also decrease. (Producer surplus increases as long as the gain to producers who get to sell the good at the higher price is greater than the loss to producers who don't get to sell the good at all because of the floor.)</li>
+</ul>
+
+<h2>Price Floors: A Numerical Example</h2>
+
+<p>Consider the market for burritos. Use the supply and demand diagram below to answer the questions below:</p>
+
+<!-- IMAGE POSITION: burrito market example -->
+<div class="sdg"><script type="application/json">
+{
+ "title": "The market for burritos",
+ "lede": "Price settles where the two curves cross.",
+ "axes": {
+  "x": "Q",
+  "y": "P",
+  "xmax": 245,
+  "ymax": 13,
+  "money": true,
+  "xticks": [
+   150
+  ],
+  "yticks": [
+   6
+  ]
+ },
+ "curves": [
+  {
+   "id": "D",
+   "label": "D",
+   "pts": [
+    [
+     0,
+     12
+    ],
+    [
+     230,
+     2.8
+    ]
+   ],
+   "ldx": 6,
+   "ldy": -8
+  },
+  {
+   "id": "S",
+   "label": "S",
+   "pts": [
+    [
+     0,
+     3
+    ],
+    [
+     230,
+     7.6
+    ]
+   ],
+   "ldx": -20,
+   "ldy": -10
+  }
+ ],
+ "points": [
+  {
+   "q": 150,
+   "p": 6
+  }
+ ],
+ "caption": "The quantity demanded equals the quantity supplied at $6, where 150 burritos are sold. Total surplus is at its largest at that quantity."
+}
+</script></div>
+
+<ol start="1">
+  <li>
+    <p><strong>What is the equilibrium price and quantity?</strong></p>
+
+    <p>The equilibrium quantity is the quantity for which the quantity demanded equals the quantity supplied. Total surplus is maximized at this quantity. In the diagram, the equilibrium price is $6 and the equilibrium quantity is 150 units.</p>
+  </li>
+  <li>
+    <p><strong>What are the consumer surplus and producer surplus at the equilibrium price and quantity?</strong></p>
+
+    <p>The consumer surplus is equal to the area below the demand curve and above the price, to the left of equilibrium. The producer surplus is equal to the area above the supply curve and below the price, to the left of equilibrium. These areas are shown below.</p>
+
+    <!-- IMAGE POSITION: burrito equilibrium surplus areas -->
+    <div class="sdg"><script type="application/json">
+{
+ "title": "Consumer and producer surplus at $6",
+ "lede": "Each surplus is a triangle against the equilibrium price.",
+ "axes": {
+  "x": "Q",
+  "y": "P",
+  "xmax": 245,
+  "ymax": 13,
+  "money": true,
+  "xticks": [
+   150
+  ],
+  "yticks": [
+   3,
+   6,
+   12
+  ]
+ },
+ "curves": [
+  {
+   "id": "D",
+   "label": "D",
+   "pts": [
+    [
+     0,
+     12
+    ],
+    [
+     230,
+     2.8
+    ]
+   ],
+   "ldx": 6,
+   "ldy": -8
+  },
+  {
+   "id": "S",
+   "label": "S",
+   "pts": [
+    [
+     0,
+     3
+    ],
+    [
+     230,
+     7.6
+    ]
+   ],
+   "ldx": -20,
+   "ldy": -10
+  }
+ ],
+ "areas": [
+  {
+   "pts": [
+    [
+     0,
+     6
+    ],
+    [
+     0,
+     12
+    ],
+    [
+     150,
+     6
+    ]
+   ],
+   "label": "CS",
+   "color": "teal",
+   "lp": [
+    50.0,
+    8.0
+   ]
+  },
+  {
+   "pts": [
+    [
+     0,
+     6
+    ],
+    [
+     0,
+     3
+    ],
+    [
+     150,
+     6
+    ]
+   ],
+   "label": "PS",
+   "color": "orange",
+   "lp": [
+    50.0,
+    5.0
+   ]
+  }
+ ],
+ "points": [
+  {
+   "q": 150,
+   "p": 6
+  }
+ ],
+ "calcs": [
+  "CS = ½ × 150 × ($12 − $6) = $450",
+  "PS = ½ × 150 × ($6 − $3) = $225",
+  "Total surplus = CS + PS = $675"
+ ],
+ "caption": "Consumer surplus is the area below demand and above the price; producer surplus is the area above supply and below it. The consumer surplus is larger here, which depends on the slope of each curve."
+}
+</script></div>
+
+    <p>The relevant areas are calculated as follows:</p>
+
+ <p style="text-align: center;">
+    \(CS = \frac{1}{2} \times \text{Base} \times \text{Height}\)<br>
+    \(CS = \frac{1}{2} \times (150) \times (\$12 - \$6) = \$450\)
+</p>
+
+<p style="text-align: center;">
+    \(PS = \frac{1}{2} \times \text{Base} \times \text{Height}\)<br>
+    \(PS = \frac{1}{2} \times (150) \times (\$6 - \$3) = \$225\)
+</p>
+
+
+    <p>In this case, the consumer surplus is greater than the producer surplus at the equilibrium price. This does not always have to be the case; it depends on the slope of the demand curve and the slope of the supply curve.</p>
+  </li>
+  <li>
+    <p><strong>If a price floor of $7 is imposed, is there a shortage or a surplus?</strong></p>
+
+    <p>If a price floor of $7 is imposed, the quantity demanded is 125 and the quantity supplied is 200. The quantity supplied exceeds the quantity demanded, so there is a <strong>surplus</strong> of 75 units.</p>
+  </li>
+  <li>
+    <p><strong>If a price floor of $7 is imposed, what will be the quantity transacted?</strong></p>
+
+    <p>The lower of the quantity demanded and quantity supplied will determine the quantity transacted. If a price floor of $7 is imposed, the quantity demanded is 125 and the quantity supplied is 200, so the quantity transacted will be <strong>125</strong>.</p>
+  </li>
+  <li>
+    <p><strong>What is the consumer surplus and producer surplus with a price floor of $7?</strong></p>
+
+    <p>As you can see in the diagram below, in this case, the consumer surplus is the area of a triangle and the producer surplus is the area of a trapezoid:</p>
+
+    <!-- IMAGE POSITION: price floor surplus calculation -->
+    <div class="sdg"><script type="application/json">
+{
+ "title": "Surplus with a $7 price floor",
+ "lede": "Only 125 burritos sell, so both areas stop there.",
+ "axes": {
+  "x": "Q",
+  "y": "P",
+  "xmax": 245,
+  "ymax": 13,
+  "money": true,
+  "xticks": [
+   125,
+   200
+  ],
+  "yticks": [
+   3,
+   5.5,
+   7,
+   12
+  ]
+ },
+ "curves": [
+  {
+   "id": "D",
+   "label": "D",
+   "pts": [
+    [
+     0,
+     12
+    ],
+    [
+     230,
+     2.8
+    ]
+   ],
+   "ldx": 6,
+   "ldy": -8
+  },
+  {
+   "id": "S",
+   "label": "S",
+   "pts": [
+    [
+     0,
+     3
+    ],
+    [
+     230,
+     7.6
+    ]
+   ],
+   "ldx": -20,
+   "ldy": -10
+  }
+ ],
+ "hlines": [
+  {
+   "p": 7,
+   "tag": "Price floor",
+   "tagdy": 14
+  }
+ ],
+ "areas": [
+  {
+   "pts": [
+    [
+     0,
+     7
+    ],
+    [
+     0,
+     12
+    ],
+    [
+     125,
+     7
+    ]
+   ],
+   "label": "CS",
+   "color": "teal",
+   "lp": [
+    41.67,
+    8.67
+   ]
+  },
+  {
+   "pts": [
+    [
+     0,
+     7
+    ],
+    [
+     0,
+     3
+    ],
+    [
+     125,
+     5.5
+    ],
+    [
+     125,
+     7
+    ]
+   ],
+   "label": "PS",
+   "color": "orange",
+   "lp": [
+    62.5,
+    5.67
+   ]
+  }
+ ],
+ "points": [
+  {
+   "q": 125,
+   "p": 7,
+   "dot": false,
+   "guides": "q",
+   "showQ": false
+  },
+  {
+   "q": 200,
+   "p": 7,
+   "dot": false,
+   "guides": "q",
+   "showQ": false
+  },
+  {
+   "q": 125,
+   "p": 5.5,
+   "dot": false,
+   "guides": "q",
+   "showQ": false
+  }
+ ],
+ "braces": [
+  {
+   "p": 7,
+   "q1": 125,
+   "q2": 200,
+   "label": "Surplus of 75"
+  }
+ ],
+ "calcs": [
+  "CS = ½ × 125 × ($12 − $7) = $312.50",
+  "PS = ½ × 125 × ($5.50 − $3) + 125 × ($7 − $5.50) = $343.75",
+  "Total surplus = CS + PS = $656.25"
+ ],
+ "caption": "At $7 sellers would make 200 burritos but buyers take 125, so 125 is what changes hands. Consumer surplus is a triangle; producer surplus is a triangle and a rectangle together."
+}
+</script></div>
+
+  <p style="text-align: center;">
+    \(CS = \frac{1}{2} \times \text{Base} \times \text{Height}\)<br>
+    \(CS = \frac{1}{2} \times (125) \times (\$12 - \$7) = \$312.50\)
+</p>
+
+<p style="text-align: center;">
+    \(PS = \left(\frac{1}{2} \times \text{Base} \times \text{Height}\right) + (\text{Base} \times \text{Height})\)<br>
+    \(PS = \frac{1}{2} \times (125) \times (\$5.50 - \$3) + (125) \times (\$7 - \$5.5)\)<br>
+    \(PS = \$156.25 + \$187.50 = \$343.75\)
+</p>
+
+  </li>
+  <li>
+    <p><strong>Did total surplus increase or decrease due to the imposition of the price floor?</strong></p>
+
+    <p>The total surplus is the consumer surplus plus the producer surplus. The total surplus before and after the price floor is calculated below:</p>
+
+<p style="text-align: center;">
+    <strong>Before the Price Floor:</strong><br>
+    \(TS = CS + PS = \$450 + \$225 = \$675\)
+</p>
+
+<p style="text-align: center;">
+    <strong>After the Price Floor:</strong><br>
+    \(TS = CS + PS = \$312.50 + \$343.75 = \$656.25\)
+</p>
+
+
+    <p>As you can see, the total surplus decreased by a total of $18.75 due to the imposition of the price floor. This lost surplus is called the deadweight loss, and it can be calculated as the area to the right of the quantity transacted and to the left of the equilibrium quantity, below the demand curve and above the supply curve:</p>
+
+    <!-- IMAGE POSITION: price floor deadweight loss -->
+    <div class="sdg"><script type="application/json">
+{
+ "title": "The deadweight loss from the floor",
+ "lede": "The burritos between 125 and 150 are worth more than they cost.",
+ "axes": {
+  "x": "Q",
+  "y": "P",
+  "xmax": 245,
+  "ymax": 13,
+  "money": true,
+  "xticks": [
+   125,
+   150
+  ],
+  "yticks": [
+   5.5,
+   7
+  ]
+ },
+ "curves": [
+  {
+   "id": "D",
+   "label": "D",
+   "pts": [
+    [
+     0,
+     12
+    ],
+    [
+     230,
+     2.8
+    ]
+   ],
+   "ldx": 6,
+   "ldy": -8
+  },
+  {
+   "id": "S",
+   "label": "S",
+   "pts": [
+    [
+     0,
+     3
+    ],
+    [
+     230,
+     7.6
+    ]
+   ],
+   "ldx": -20,
+   "ldy": -10
+  }
+ ],
+ "hlines": [
+  {
+   "p": 7,
+   "tag": "Price floor",
+   "tagdy": 14
+  }
+ ],
+ "areas": [
+  {
+   "pts": [
+    [
+     125,
+     7
+    ],
+    [
+     125,
+     5.5
+    ],
+    [
+     150,
+     6
+    ]
+   ],
+   "label": "DWL",
+   "color": "red",
+   "lp": [
+    137.67,
+    5.08
+   ]
+  }
+ ],
+ "points": [
+  {
+   "q": 150,
+   "p": 6,
+   "showP": false
+  },
+  {
+   "q": 125,
+   "p": 7,
+   "dot": false,
+   "guides": "q",
+   "showQ": false
+  }
+ ],
+ "calcs": [
+  "DWL = ½ × (150 − 125) × ($7 − $5.50) = $18.75"
+ ],
+ "caption": "Total surplus falls from $675 to $656.25. The $18.75 difference is the surplus on the 25 burritos that are no longer made, which is what the floor costs the market."
+}
+</script></div>
+
+<p style="text-align: center;">
+    \(DWL = \frac{1}{2} \times \text{Base} \times \text{Height}\)<br>
+    \(DWL = \frac{1}{2} \times (150 - 125) \times (\$7 - \$5.50)\)<br>
+    \(DWL = \frac{1}{2} \times (25) \times (\$1.50) = \$18.75\)
+</p>
+
+  </li>
+</ol>
+
+<h2>A Specific Example of a Price Floor: The Minimum Wage</h2>
+
+<p>Price floors can also be found in the labor market in the form of a minimum wage—a wage below which it is illegal to pay workers. The market for labor is similar to the market for any good or service, but the roles of firms and individuals are reversed. In most markets, the individuals are the demanders and the firms are the suppliers. In the market for labor, however, firms are the demanders and individuals are the suppliers. Like any market, the market for labor is made up of an upward-sloping labor supply curve and a downward-sloping labor demand curve. The price of labor is the wage rate.</p>
+
+<!-- IMAGE POSITION: minimum wage protest image -->
+<img 
+  src="https://smokinnotes.s3.us-east-1.amazonaws.com/public/eco2013-spring26-exam1-module3-part1-16-minimum-wage-protest.png"
+  alt="Protesters holding signs advocating for higher minimum wages at political demonstration"
+  class="image-wide-40 content-image"
+  loading="lazy"
+  width="auto"
+  height="auto"
+/>
+
+<p>The minimum wage is the most prominent example of a price floor. The federal minimum wage is currently $7.25 per hour, though most states have a higher state minimum wage. Many people believe that the minimum wage should be much higher, and there has recently been a movement to increase the federal minimum wage to $15 or $20 per hour. A number of states (including Florida) have recently increased their minimum wages.</p>
+
+<p>Consider the following example, which illustrates a minimum wage acting as a binding price floor in the labor market: Suppose that the equilibrium wage is $15 per hour and the minimum wage is set at $20 per hour. The market diagram might look like this:</p>
+
+<!-- IMAGE POSITION: minimum wage labor market diagram -->
+<div class="sdg"><script type="application/json">
+{
+ "title": "A minimum wage above the market wage",
+ "lede": "Firms are the buyers of labour here, and workers the sellers.",
+ "axes": {
+  "x": "Hours",
+  "y": "Wage",
+  "xmax": 640,
+  "ymax": 32,
+  "money": true,
+  "xticks": [
+   200,
+   300,
+   400
+  ],
+  "yticks": [
+   15,
+   20,
+   30
+  ]
+ },
+ "curves": [
+  {
+   "id": "D",
+   "label": "Labor Demand",
+   "pts": [
+    [
+     0,
+     30
+    ],
+    [
+     600,
+     0
+    ]
+   ],
+   "ldx": 6,
+   "ldy": -8
+  },
+  {
+   "id": "S",
+   "label": "Labor Supply",
+   "pts": [
+    [
+     0,
+     0
+    ],
+    [
+     600,
+     30
+    ]
+   ],
+   "ldx": -46,
+   "ldy": -10
+  }
+ ],
+ "hlines": [
+  {
+   "p": 20,
+   "tag": "Min. wage"
+  }
+ ],
+ "points": [
+  {
+   "q": 300,
+   "p": 15
+  },
+  {
+   "q": 200,
+   "p": 20,
+   "dot": false,
+   "guides": "q",
+   "showQ": false
+  },
+  {
+   "q": 400,
+   "p": 20,
+   "dot": false,
+   "guides": "q",
+   "showQ": false
+  }
+ ],
+ "braces": [
+  {
+   "p": 20,
+   "q1": 200,
+   "q2": 400,
+   "label": "Unemployment"
+  }
+ ],
+ "caption": "At $20 an hour firms want 200 hours of labour while workers offer 400. Employment falls by 100 hours, but unemployment rises by 200, because the higher wage draws in people who would not have worked at $15."
+}
+</script></div>
+
+<p>As you can see, a binding minimum wage creates a situation in which the quantity of labor supplied exceeds the quantity of labor demanded. We call this <strong>unemployment</strong>. Note that the quantity of labor supplied increases due to the imposition of the minimum wage. This is one reason why the unemployment rate increases when a minimum wage is imposed. That is, not all of the workers who are unemployed at the minimum wage would be willing to work at the equilibrium wage.</p>
+
+<p>Note this subtle point: When a minimum wage is imposed, the amount of unemployment increases by more than the amount that employment decreases. Employment decreases from the original equilibrium quantity to the new quantity of labor demanded. However, the amount of unemployment increases by even more because more people are willing to work at the higher wage rate. That is, unemployment increases for two reasons: the quantity of labor supplied increases (because people are more willing to work at a higher wage rate) and the quantity of labor demanded decreases (because firms are less willing to hire workers at a higher wage rate).</p>
+
+<p>In the diagram above, total employment decreased by 100 hours (from 300 hours to 200 hours) as a result of the minimum wage. However, unemployment increased by 200 hours (the difference between the 400 hours supplied and the 200 hours demanded). This is because the quantity of labor supplied increased when the wage rate increased.</p>
+
+<p>The following diagrams summarize the consumer surplus (<strong>employers' surplus</strong>), producer surplus (<strong>employees' surplus</strong>), and deadweight loss with and without the minimum wage:</p>
+
+<!-- IMAGE POSITION: minimum wage surplus comparison -->
+<div class="sdg"><script type="application/json">
+{
+ "lede": "Employers' surplus and employees' surplus, before and after.",
+ "scenarios": {
+  "before": {
+   "label": "Before the minimum wage",
+   "title": "The market wage of $15",
+   "axes": {
+    "x": "Hours",
+    "y": "Wage",
+    "xmax": 640,
+    "ymax": 32,
+    "money": true,
+    "xticks": [
+     300
+    ],
+    "yticks": [
+     15,
+     30
+    ]
+   },
+   "curves": [
+    {
+     "id": "D",
+     "label": "Labor Demand",
+     "pts": [
+      [
+       0,
+       30
+      ],
+      [
+       600,
+       0
+      ]
+     ],
+     "ldx": 6,
+     "ldy": -8
+    },
+    {
+     "id": "S",
+     "label": "Labor Supply",
+     "pts": [
+      [
+       0,
+       0
+      ],
+      [
+       600,
+       30
+      ]
+     ],
+     "ldx": -46,
+     "ldy": -10
+    }
+   ],
+   "areas": [
+    {
+     "pts": [
+      [
+       0,
+       15
+      ],
+      [
+       0,
+       30
+      ],
+      [
+       300,
+       15
+      ]
+     ],
+     "label": "CS",
+     "color": "teal",
+     "lp": [
+      100.0,
+      20.0
+     ]
+    },
+    {
+     "pts": [
+      [
+       0,
+       15
+      ],
+      [
+       0,
+       0
+      ],
+      [
+       300,
+       15
+      ]
+     ],
+     "label": "PS",
+     "color": "orange",
+     "lp": [
+      100.0,
+      10.0
+     ]
+    }
+   ],
+   "points": [
+    {
+     "q": 300,
+     "p": 15
+    }
+   ],
+   "calcs": [
+    "CS = ½ × 300 × ($30 − $15) = $2,250",
+    "PS = ½ × 300 × ($15 − $0) = $2,250",
+    "Total surplus = CS + PS = $4,500",
+    "Deadweight loss = $0"
+   ],
+   "caption": "At the market wage 300 hours are worked, and the surplus splits evenly between the firms that hire and the workers they hire."
+  },
+  "after": {
+   "label": "After the minimum wage",
+   "title": "A minimum wage of $20",
+   "axes": {
+    "x": "Hours",
+    "y": "Wage",
+    "xmax": 640,
+    "ymax": 32,
+    "money": true,
+    "xticks": [
+     200,
+     300,
+     400
+    ],
+    "yticks": [
+     10,
+     15,
+     20,
+     30
+    ]
+   },
+   "curves": [
+    {
+     "id": "D",
+     "label": "Labor Demand",
+     "pts": [
+      [
+       0,
+       30
+      ],
+      [
+       600,
+       0
+      ]
+     ],
+     "ldx": 6,
+     "ldy": -8
+    },
+    {
+     "id": "S",
+     "label": "Labor Supply",
+     "pts": [
+      [
+       0,
+       0
+      ],
+      [
+       600,
+       30
+      ]
+     ],
+     "ldx": -46,
+     "ldy": -10
+    }
+   ],
+   "hlines": [
+    {
+     "p": 20,
+     "tag": "Min. wage"
+    }
+   ],
+   "areas": [
+    {
+     "pts": [
+      [
+       0,
+       20
+      ],
+      [
+       0,
+       30
+      ],
+      [
+       200,
+       20
+      ]
+     ],
+     "label": "CS",
+     "color": "teal",
+     "lp": [
+      66.67,
+      23.33
+     ]
+    },
+    {
+     "pts": [
+      [
+       0,
+       0
+      ],
+      [
+       0,
+       20
+      ],
+      [
+       200,
+       20
+      ],
+      [
+       200,
+       10
+      ]
+     ],
+     "label": "PS",
+     "color": "orange",
+     "lp": [
+      100.0,
+      12.67
+     ]
+    },
+    {
+     "pts": [
+      [
+       200,
+       20
+      ],
+      [
+       200,
+       10
+      ],
+      [
+       300,
+       15
+      ]
+     ],
+     "label": "DWL",
+     "color": "red",
+     "lp": [
+      259.33,
+      10.67
+     ]
+    }
+   ],
+   "points": [
+    {
+     "q": 300,
+     "p": 15,
+     "guides": "p",
+     "showQ": false
+    },
+    {
+     "q": 200,
+     "p": 20,
+     "dot": false,
+     "guides": "q",
+     "showQ": false
+    },
+    {
+     "q": 400,
+     "p": 20,
+     "dot": false,
+     "guides": "q",
+     "showQ": false
+    }
+   ],
+   "braces": [
+    {
+     "p": 20,
+     "q1": 200,
+     "q2": 400,
+     "label": "Unemployment"
+    }
+   ],
+   "calcs": [
+    "CS = ½ × 200 × ($30 − $20) = $1,000",
+    "PS = ½ × 200 × $10 + 200 × ($20 − $10) = $3,000",
+    "Total surplus = CS + PS = $4,000",
+    "Deadweight loss = ½ × (300 − 200) × ($20 − $10) = $500"
+   ],
+   "caption": "Firms are worse off and the workers who keep their hours are better off. Total surplus falls by $500, which is the surplus on the 100 hours no longer worked."
+  }
+ }
+}
+</script></div>
+
+<p>Note: In the diagrams above, consumer surplus is <em>employers' surplus</em> and producer surplus is <em>employees' surplus</em>. Employers are the consumers of labor, and employees are the producers of labor.</p>
+
+<p>As you can see, the consumers of labor (i.e., businesses) are made worse off. Some producers of labor (i.e., workers) are made better off because they receive a higher wage. However, some producers of labor (i.e., workers) are made worse off because they no longer have a job. On the whole, the minimum wage helps workers as a group, but it reduces society's total surplus because the harm to businesses and individuals who no longer have a job is greater than the benefit to workers overall.</p>
+
+<h2>More on the Minimum Wage</h2>
+
+<p>The group that <em>wins</em> from a binding minimum wage is those less-skilled workers who keep their jobs and enjoy the higher wage rate. The groups that <em>lose</em> from a binding minimum wage are workers who become unemployed as a result of the new minimum wage and firms that have to pay a higher price for labor.</p>
+
+<p>The economic theory predicts that an increase in the minimum wage should cause an increase in unemployment. However, economists have historically not seen this in the data. Two commonly cited explanations are the following:</p>
+
+<ul>
+  <li>
+    <p><strong>The quantity of labor demanded and the quantity of labor supplied are not very responsive to small changes in the wage rate.</strong> Empirical studies show that the demand for labor and supply of labor are both relatively inelastic (i.e., the labor demand and labor supply curves are steep) at low wage rates, and over small intervals. This suggests that small increases in the minimum wage may not result in noticeable increases in unemployment.</p>
+
+    <p>In fact, in the early 1990s, labor economists collected data that illustrated that small-scale increases in the minimum wage have no impact on unemployment. In these studies, researchers studied the Philadelphia labor market. The Philadelphia metro area spans over three states—New Jersey, Pennsylvania, and Delaware. New Jersey increased its minimum wage, while Pennsylvania didn't, so researchers expected to find that unemployment increased in New Jersey but not in Pennsylvania. However, they found no differential impact in the two states. Since then, several other studies have had similar results. Advocates of increases in the minimum wage point to this research as an argument in favor of increasing the minimum wage.</p>
+  </li>
+  <li>
+    <p><strong>Historically, most increases in the minimum wage have been small.</strong> In fact, many states have not even increased their minimum wage enough to keep up with inflation. This makes it difficult to detect any resulting increase in unemployment because the supply and demand for low-skilled labor are both very inelastic (meaning the supply and demand curves are vertical). Looking for the impact of small-scale increases in the minimum wage on the unemployment rate is therefore like looking for a statistical "needle in a haystack."</p>
+
+    <p>Until recently, there had been no large-scale experiments analyzing <em>large</em> increases in the minimum wage. However, there have recently been movements for significant increases in the minimum wage. Soon, economists will have enough data to determine whether large increases in the minimum wage do have a significant impact on unemployment. Some economists believe that these studies will likely reveal that large-scale increases in the minimum wage do increase unemployment, but more research needs to be done to determine whether they're right.</p>
+  </li>
+</ul>
+
+<p>Does this mean that the government should not raise the minimum wage? That's up for you to decide. There are other ethical and non-economic considerations as well. For example, some people believe that the government should absolutely implement policies that increase the incomes of certain members of society. Other people believe that these redistributive policies are unethical and should not be pursued.</p>
+
+<p>If the goal of the minimum wage is to eliminate poverty, it may not be the best policy alternative for two reasons:</p>
+
+<ul>
+  <li>The poorest people in society have no jobs at all, so the minimum wage does not affect them.</li>
+  <li>Many people who earn the minimum wage are high school and college students who are not poor; they're just working to earn some extra spending money.</li>
+</ul>
+
+<p>Another way to think of this is as follows: If the minimum wage is like medicine used to combat poverty, we're not treating the sickest people—we're giving it to people who aren't sick at all.</p>
+
+<h2>Review: Comparing Surpluses</h2>
+
+<p>As a quick review, the supply and demand diagrams below compare the areas of consumer surplus, producer surplus, and deadweight loss in a competitive market; a market with a price floor; and a market with a price ceiling:</p>
+
+<!-- IMAGE POSITION: three-way surplus comparison -->
+<div class="sdg"><script type="application/json">
+{
+ "lede": "Where the surplus goes under each of the three regimes.",
+ "scenarios": {
+  "free": {
+   "label": "Competitive market",
+   "title": "No control: P = P*",
+   "axes": {
+    "xmax": 110,
+    "ymax": 110
+   },
+   "curves": [
+    {
+     "id": "D",
+     "label": "Demand",
+     "pts": [
+      [
+       4,
+       96
+      ],
+      [
+       96,
+       4
+      ]
+     ],
+     "ldx": 6,
+     "ldy": -8
+    },
+    {
+     "id": "S",
+     "label": "Supply",
+     "pts": [
+      [
+       4,
+       4
+      ],
+      [
+       100,
+       100
+      ]
+     ],
+     "ldx": -34,
+     "ldy": -10
+    }
+   ],
+   "areas": [
+    {
+     "pts": [
+      [
+       0,
+       50
+      ],
+      [
+       0,
+       100
+      ],
+      [
+       50,
+       50
+      ]
+     ],
+     "label": "CS",
+     "color": "teal",
+     "lp": [
+      16.67,
+      66.67
+     ]
+    },
+    {
+     "pts": [
+      [
+       0,
+       50
+      ],
+      [
+       0,
+       0
+      ],
+      [
+       50,
+       50
+      ]
+     ],
+     "label": "PS",
+     "color": "orange",
+     "lp": [
+      16.67,
+      33.33
+     ]
+    }
+   ],
+   "points": [
+    {
+     "q": 50,
+     "p": 50,
+     "pl": "P*",
+     "guides": "p",
+     "showQ": false
+    }
+   ],
+   "caption": "The price settles where the curves cross, every unit worth making is made, and there is no deadweight loss to draw."
+  },
+  "flr": {
+   "label": "Price floor",
+   "title": "A binding floor: P > P*",
+   "axes": {
+    "xmax": 110,
+    "ymax": 110
+   },
+   "curves": [
+    {
+     "id": "D",
+     "label": "Demand",
+     "pts": [
+      [
+       4,
+       96
+      ],
+      [
+       96,
+       4
+      ]
+     ],
+     "ldx": 6,
+     "ldy": -8
+    },
+    {
+     "id": "S",
+     "label": "Supply",
+     "pts": [
+      [
+       4,
+       4
+      ],
+      [
+       100,
+       100
+      ]
+     ],
+     "ldx": -34,
+     "ldy": -10
+    }
+   ],
+   "hlines": [
+    {
+     "p": 75,
+     "label": "Pᶠˡᵒᵒʳ"
+    }
+   ],
+   "areas": [
+    {
+     "pts": [
+      [
+       0,
+       75
+      ],
+      [
+       0,
+       100
+      ],
+      [
+       25,
+       75
+      ]
+     ],
+     "label": "CS",
+     "color": "teal",
+     "lp": [
+      8.33,
+      83.33
+     ]
+    },
+    {
+     "pts": [
+      [
+       0,
+       0
+      ],
+      [
+       0,
+       75
+      ],
+      [
+       25,
+       75
+      ],
+      [
+       25,
+       25
+      ]
+     ],
+     "label": "PS",
+     "color": "orange",
+     "lp": [
+      12.5,
+      42.5
+     ]
+    },
+    {
+     "pts": [
+      [
+       25,
+       75
+      ],
+      [
+       25,
+       25
+      ],
+      [
+       50,
+       50
+      ]
+     ],
+     "label": "DWL",
+     "color": "red",
+     "lp": [
+      33.33,
+      43.33
+     ]
+    }
+   ],
+   "points": [
+    {
+     "q": 50,
+     "p": 50,
+     "pl": "P*",
+     "guides": "p",
+     "showQ": false
+    }
+   ],
+   "caption": "Above the market price, buyers take less than sellers offer. Consumer surplus shrinks, producer surplus usually grows, and the wedge between the curves is lost to both."
+  },
+  "cap": {
+   "label": "Price ceiling",
+   "title": "A binding ceiling: P < P*",
+   "axes": {
+    "xmax": 110,
+    "ymax": 110
+   },
+   "curves": [
+    {
+     "id": "D",
+     "label": "Demand",
+     "pts": [
+      [
+       4,
+       96
+      ],
+      [
+       96,
+       4
+      ]
+     ],
+     "ldx": 6,
+     "ldy": -8
+    },
+    {
+     "id": "S",
+     "label": "Supply",
+     "pts": [
+      [
+       4,
+       4
+      ],
+      [
+       100,
+       100
+      ]
+     ],
+     "ldx": -34,
+     "ldy": -10
+    }
+   ],
+   "hlines": [
+    {
+     "p": 25,
+     "label": "Pᶜᵉⁱˡ"
+    }
+   ],
+   "areas": [
+    {
+     "pts": [
+      [
+       0,
+       25
+      ],
+      [
+       0,
+       100
+      ],
+      [
+       25,
+       75
+      ],
+      [
+       25,
+       25
+      ]
+     ],
+     "label": "CS",
+     "color": "teal",
+     "lp": [
+      12.5,
+      57.5
+     ]
+    },
+    {
+     "pts": [
+      [
+       0,
+       25
+      ],
+      [
+       0,
+       0
+      ],
+      [
+       25,
+       25
+      ]
+     ],
+     "label": "PS",
+     "color": "orange",
+     "lp": [
+      8.33,
+      16.67
+     ]
+    },
+    {
+     "pts": [
+      [
+       25,
+       75
+      ],
+      [
+       25,
+       25
+      ],
+      [
+       50,
+       50
+      ]
+     ],
+     "label": "DWL",
+     "color": "red",
+     "lp": [
+      33.33,
+      43.33
+     ]
+    }
+   ],
+   "points": [
+    {
+     "q": 50,
+     "p": 50,
+     "pl": "P*",
+     "guides": "p",
+     "showQ": false
+    }
+   ],
+   "caption": "Below the market price, sellers offer less than buyers want. Producer surplus shrinks, consumer surplus usually grows, and the same wedge is lost to both."
+  }
+ }
+}
+</script></div>
+
+<h1>Government Intervention: Taxes</h1>
+
+<p>The government collects <strong>taxes</strong> in order to raise revenues to fund government spending. In this section, we will examine the impact of taxes without considering the value of the spending programs that taxes fund. We will see that taxes reduce the quantity transacted and create a deadweight loss, but the benefit of the spending programs funded by the taxes may outweigh this loss. We will revisit this later in the semester when we discuss fiscal policy.</p>
+
+<p>We will begin our discussion of taxes by distinguishing between quantity taxes and ad valorem taxes. We will then show the economic impact of a quantity tax.</p>
+
+<h2>Types of Taxes: Quantity Taxes vs. Ad Valorem Taxes</h2>
+
+<p>Governments use a number of different kinds of taxes. We will focus on an <strong>excise tax</strong> (also called a <strong>quantity tax</strong>), which is a per-unit quantity tax that is imposed on every unit sold. Another type of tax is an <strong>ad valorem tax</strong>, such as a sales tax, which is typically set as a percentage of the sales price. Property taxes are other examples of ad valorem taxes.</p>
+
+
+
+<p>Many excise taxes are on goods that the government wants to dissuade people from using, like cigarettes and alcohol. For example, the government might impose a per-unit tax on every pack of cigarettes, every liter of alcohol, or every gallon of gasoline sold. These taxes are sometimes called "sin taxes."</p>
+<!-- IMAGE POSITION: alcohol and cigarettes sin tax example -->
+<img 
+  src="https://smokinnotes.s3.us-east-1.amazonaws.com/public/eco2013-spring26-exam1-module3-part1-20-alcohol-cigarettes-sin-tax.png"
+  alt="Beer and cigarettes representing goods commonly subject to excise taxes"
+  class="image-wide-40 content-image"
+  loading="lazy"
+  width="auto"
+  height="auto"
+/>
+<p>To illustrate the difference between a quantity tax and an ad valorem tax, suppose you buy a new sweater at Uniqlo or H&M. A quantity (excise) tax would be a fixed amount per unit—for example, $20 per sweater—so you'd pay the same tax whether the sweater costs $400 or $200. An ad valorem tax, by contrast, is a percentage of the purchase price—for example, 10%—so you would pay more tax on the more expensive sweater.</p>
+
+<p>Here's a test that you can use to determine whether a tax is a quantity tax or an ad valorem tax: If the tax is calculated as a percentage of the price, then tax revenue per unit rises when the price rises (ad valorem tax). If the tax is a fixed dollar amount per unit, then the tax per unit does not change when the price changes (quantity tax).</p>
+
+<p>Only a handful of taxes, such as taxes on alcohol and cigarettes, are quantity taxes in the "real world," but the economic analysis of a quantity tax is easier than the economic analysis of any other kind of tax. The intuition that we gain from analyzing the impact of a quantity tax can be generally applied to other types of taxes.</p>
+
+<div class="other-box">
+  <h4>Example: The Gasoline Tax</h4>
+
+  <p>The gasoline tax is an example of an excise tax because it is a standard amount for every gallon of gasoline. This tax has not changed much for several decades, which is problematic because it is used to fund the interstate highway system. As cars have become more fuel-efficient (and some are electric), consumers are now driving more and using less gasoline. This means that the interstate highway system is being funded by a shrinking pool of revenue. Some have called for an increase in the gasoline tax, but this is a contentious and highly political issue.</p>
+</div>
+
+<h2>The Economic Impact of a Quantity Tax Paid by the Seller</h2>
+
+<p>Let's consider a quantity tax that must be paid by the seller. Specifically, let's assume that the government imposes a $3 per unit tax on sushi rolls—a tax that must be sent to the government by the sellers. Such a tax would increase the minimum amount that sellers must receive for each unit by $3 and would therefore cause an upward shift of the supply curve by $3. Note that this is a <em>vertical</em> shift of the supply curve because the tax essentially increases the amount that sellers must receive for each unit by the amount of the tax. The change in producer surplus and consumer surplus is shown below:</p>
+
+<!-- IMAGE POSITION: tax impact comparison diagrams -->
+<div class="sdg"><script type="application/json">
+{
+ "lede": "A $3 tax on every sushi roll, collected from the seller.",
+ "scenarios": {
+  "before": {
+   "label": "Before the tax",
+   "title": "The untaxed market",
+   "axes": {
+    "x": "Q",
+    "y": "P",
+    "xmax": 72,
+    "ymax": 22,
+    "money": true,
+    "xticks": [
+     30
+    ],
+    "yticks": [
+     5,
+     15,
+     20
+    ]
+   },
+   "curves": [
+    {
+     "id": "D",
+     "label": "D",
+     "pts": [
+      [
+       0,
+       20
+      ],
+      [
+       66,
+       9
+      ]
+     ],
+     "ldx": 6,
+     "ldy": -8
+    },
+    {
+     "id": "S",
+     "label": "S",
+     "pts": [
+      [
+       0,
+       5
+      ],
+      [
+       45,
+       20
+      ]
+     ],
+     "lstart": true,
+     "ldx": 10,
+     "ldy": 13
+    }
+   ],
+   "areas": [
+    {
+     "pts": [
+      [
+       0,
+       15
+      ],
+      [
+       0,
+       20
+      ],
+      [
+       30,
+       15
+      ]
+     ],
+     "label": "CS",
+     "color": "teal",
+     "lp": [
+      10.0,
+      16.67
+     ]
+    },
+    {
+     "pts": [
+      [
+       0,
+       15
+      ],
+      [
+       0,
+       5
+      ],
+      [
+       30,
+       15
+      ]
+     ],
+     "label": "PS",
+     "color": "orange",
+     "lp": [
+      10.0,
+      11.67
+     ]
+    }
+   ],
+   "points": [
+    {
+     "q": 30,
+     "p": 15
+    }
+   ],
+   "calcs": [
+    "CS = ½ × 30 × ($20 − $15) = $75",
+    "PS = ½ × 30 × ($15 − $5) = $150",
+    "Total surplus = CS + PS = $225"
+   ],
+   "caption": "Sushi rolls sell for $15 and 30 of them change hands. The surplus splits between buyers and sellers in the usual way."
+  },
+  "after": {
+   "label": "After the tax",
+   "title": "The tax shifts supply up by $3",
+   "axes": {
+    "x": "Q",
+    "y": "P",
+    "xmax": 72,
+    "ymax": 22,
+    "money": true,
+    "xticks": [
+     24,
+     30
+    ],
+    "yticks": [
+     5,
+     8,
+     13,
+     16,
+     20
+    ]
+   },
+   "curves": [
+    {
+     "id": "D",
+     "label": "D",
+     "pts": [
+      [
+       0,
+       20
+      ],
+      [
+       66,
+       9
+      ]
+     ],
+     "ldx": 6,
+     "ldy": -8
+    },
+    {
+     "id": "S",
+     "label": "S",
+     "pts": [
+      [
+       0,
+       5
+      ],
+      [
+       45,
+       20
+      ]
+     ],
+     "lstart": true,
+     "ldx": 10,
+     "ldy": 13
+    },
+    {
+     "id": "St",
+     "label": "S + tax",
+     "pts": [
+      [
+       0,
+       8
+      ],
+      [
+       42,
+       22
+      ]
+     ],
+     "ldx": -30,
+     "ldy": -10,
+     "color": "red"
+    }
+   ],
+   "areas": [
+    {
+     "pts": [
+      [
+       0,
+       16
+      ],
+      [
+       0,
+       20
+      ],
+      [
+       24,
+       16
+      ]
+     ],
+     "label": "CS",
+     "color": "teal",
+     "lp": [
+      8.0,
+      17.33
+     ]
+    },
+    {
+     "pts": [
+      [
+       0,
+       13
+      ],
+      [
+       0,
+       5
+      ],
+      [
+       24,
+       13
+      ]
+     ],
+     "label": "PS",
+     "color": "orange",
+     "lp": [
+      9.6,
+      9.8
+     ]
+    },
+    {
+     "pts": [
+      [
+       0,
+       13
+      ],
+      [
+       24,
+       13
+      ],
+      [
+       24,
+       16
+      ],
+      [
+       0,
+       16
+      ]
+     ],
+     "label": "",
+     "color": "navy"
+    },
+    {
+     "pts": [
+      [
+       24,
+       16
+      ],
+      [
+       24,
+       13
+      ],
+      [
+       30,
+       15
+      ]
+     ],
+     "label": "DWL",
+     "color": "red",
+     "lp": [
+      30.16,
+      16.57
+     ]
+    }
+   ],
+   "points": [
+    {
+     "q": 24,
+     "p": 16,
+     "guides": "q",
+     "showQ": false
+    },
+    {
+     "q": 24,
+     "p": 13,
+     "dot": false,
+     "guides": "q",
+     "showQ": false
+    },
+    {
+     "q": 30,
+     "p": 15,
+     "showP": false,
+     "showQ": false
+    }
+   ],
+   "calcs": [
+    "CS = ½ × 24 × ($20 − $16) = $48",
+    "PS = ½ × 24 × ($13 − $5) = $96",
+    "Tax revenue = $3 × 24 = $72",
+    "Total surplus = CS + PS + revenue = $216",
+    "Deadweight loss = ½ × (30 − 24) × ($16 − $13) = $9"
+   ],
+   "caption": "Buyers now pay $16 and sellers keep $13, so the $3 is split between them, and only 24 rolls are sold. The navy rectangle is what the government collects, and the red wedge is surplus that nobody receives."
+  }
+ }
+}
+</script></div>
+
+<p>As you can see, the imposition of the $3 tax on suppliers shifted the supply curve up by $3. The price that consumers have to pay increased by $1 (from $15 to $16), and the price that producers receive and get to keep fell by $2 (from $15 to $13). In this case, producers bear a greater share of the tax burden than consumers, but both consumer surplus and producer surplus fell as a result of the tax.</p>
+
+<p>Note that the government generated $72 in tax revenue from this tax: $3 per unit on a total of 24 units transacted under the tax. The number of units transacted under the tax was 6 units fewer than the number of units that would have been transacted without the tax. The deadweight loss ($9) is the area of lost surplus because those units were not transacted.</p>
+
+<p>If the tax were imposed on the consumers rather than on the sellers, we would show a downward shift of the demand curve rather than an upward shift of the supply curve. However, every other economic impact would be the same: The quantity transacted would fall, consumers would pay more, sellers would keep less, the government would generate tax revenue, consumer surplus and producer surplus would fall, and a deadweight loss would be created. All of these qualitative results would also be the same if we were considering an ad valorem tax rather than an excise tax, though the quantitative results (i.e., how much these values change) would be different.</p>
+
+<!-- IMAGE AUDIT: All images placed per PDF reading order; ambiguous alignment resolved as centered/inline -->
+<!-- FORMAT AUDIT: All italic, bold, and underline text visually verified -->
+<!-- STRUCTURE AUDIT: All ordered and unordered lists preserved exactly as in PDF -->
+<!-- MATHJAX AUDIT: MathJax applied ONLY to equations, operator-based expressions, and chemical reactions -->
+<!-- GEO AUDIT: Verified no coordinates or degree symbols incorrectly wrapped in MathJax -->
+<!-- LIST INTEGRITY AUDIT: Verified no <ol> or <li> elements were prematurely closed due to images, boxes, equations, or tables -->
+<!-- INDENTATION AUDIT: Verified all visually indented continuation paragraphs remain inside their owning indentation container (<ul>/<ol>), with or without <li> -->
+<!-- BOX IMAGE AUDIT: Verified all images inside Exam Tip, Example, Question, and Other boxes were extracted and placed inside their owning box -->
+<!-- TABLE AUDIT: All data tables verified as semantic HTML, not images -->
+
+</body>
+</html>

@@ -107,7 +107,7 @@
 .sdg .sdg-cap { margin:10px 0 0; padding:10px 12px; background:#fff; border-left:4px solid var(--red); font-size:.92rem; line-height:1.45; min-height:3.2em; }
 </style>
 <script>
-/* ===== sd-graph.js v2.15 — data-driven supply & demand widgets =====
+/* ===== sd-graph.js v2.16 — data-driven supply & demand widgets =====
    Markup:  <div class="sdg"><script type="application/json">{ ...config... }<\/script></div>
    Top-level config:
      title, lede, caption         heading / intro / static caption (caption used only when there are no steps)
@@ -130,7 +130,7 @@
         marker = "1"/"2" numbered circle;  pl/ql = symbolic axis labels ("P₁","Q₁") instead of numbers
      moves[]:  {from:[q,p], to:[q,p], at, until, color, offset}  arrow between two points, drawn `offset` px beside the curve (default 14; negative = other side)
      calcs[]:  "CS = 1/2 x 80 x ($5 - $3) = $80" | {text, at, until}   the working, under the plot
-     hlines[]: {p, label, tag, tagdy, color, at, until}                       horizontal price line across the plot
+     hlines[]: {p, label, tag, tagdy, tagq, color, at, until}                       horizontal price line across the plot
      braces[]: {p, q1, q2, label, at, until, below:true|'in'|'axis', color}  curly brace spanning a gap at price p
      vbraces[]:{p1, p2, q, label, at, until, left, side, color}   the same brace turned upright, spanning a
         price gap. left:true is the mirror of a brace's below:true: it sits outside the P axis, clear of the
@@ -290,7 +290,12 @@
       // "World Price" beside the line rather than only on the axis.
       // tagdy nudges it off the line: above by default, below where the
       // curve that climbs to the right-hand corner is already there.
-      if (l.tag) grp.appendChild(el('text', {class: 'tag', x: O.x + PW + 6, y: Y(l.p) + (l.tagdy != null ? l.tagdy : -6), 'text-anchor': 'end', fill: cc}, l.tag));
+      // tagq anchors the name over a chosen quantity instead of the line's
+      // right-hand end, for a panel where a curve runs through that corner.
+      if (l.tag) grp.appendChild(el('text', {class: 'tag',
+        x: l.tagq != null ? X(l.tagq) : O.x + PW + 6,
+        y: Y(l.p) + (l.tagdy != null ? l.tagdy : -6),
+        'text-anchor': l.tagq != null ? 'middle' : 'end', fill: cc}, l.tag));
       g.appendChild(grp); reg(grp, l);
     });
 

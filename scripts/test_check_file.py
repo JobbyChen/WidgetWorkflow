@@ -141,6 +141,17 @@ case("a world-price line is not a surplus walkthrough", lambda r: C.check_arrows
     steps=["one.", "two."]), r)
     or not r.has("FAIL", "arrows", "two movement arrows"))
 
+# A price control opens the same gap and never closes it: the price is held
+# there by law, so nothing moves back and there are no arrows to demand. This
+# fires on every ceiling, floor and minimum-wage figure if the rule keys on the
+# gap alone -- a named line (tag) is what marks a policy rather than a passing
+# disequilibrium price.
+case("a named control price is not a surplus walkthrough", lambda r: C.check_arrows(widget(
+    hlines=[{"p": 70, "tag": "Price floor"}],
+    braces=[{"p": 70, "q1": 20, "q2": 80, "label": "Surplus of 75"}],
+    steps=["one.", "two."]), r)
+    or not r.has("FAIL", "arrows", "two movement arrows"))
+
 # ...and the equilibrium-shift widgets, which carry the brace without a line.
 case("a Surplus brace with no price line is not a walkthrough",
      lambda r: C.check_arrows(widget(

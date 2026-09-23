@@ -845,9 +845,13 @@ def check_labels(cfgs, r):
                     last = pts[-1]
                     up = last[1] > pts[0][1]
                     lp = pts[0] if c.get("lstart") else last
+                    # a wrapped curve label (v2.19) is as wide as its longest
+                    # line and as tall as all of them, and it grows downward
+                    crows = str(text).split("\n")
                     bx = box(X(lp[0]) + c.get("ldx", 6),
                              Y(lp[1]) + c.get("ldy", 2 if up else 6),
-                             text, 13)
+                             max(crows, key=len), 13)
+                    bx = (bx[0], bx[1], bx[2], bx[3] + (len(crows) - 1) * 14)
                     boxes.append((bx, "curve label %r" % text,
                                   (c.get("at", 0), c.get("until"))))
 
@@ -1134,7 +1138,7 @@ def check_arrows(cfgs, r):
             # stays put because it is illegal to move, so there is no return to
             # equilibrium to draw and demanding the arrows flags every control
             # figure in the chapter. A named line (`tag`) is a policy line.
-            named = [h for h in hlines if h.get("tag")]
+            named = [h for h in hlines if is_control(h)]
             if not hlines or named or not gap or not v.get("steps"):
                 continue
             n_checked += 1
@@ -1155,6 +1159,23 @@ def check_arrows(cfgs, r):
     if n_checked - n_bad:
         r.ok("arrows", "%d surplus/shortage walkthrough(s) end with two movement "
                        "arrows" % (n_checked - n_bad))
+
+
+def is_control(h):
+    """Is this price line a policy the market cannot leave?
+
+    A ceiling, a floor, a minimum wage, a world price, a world price plus a
+    tariff -- as against a disequilibrium price the market is merely passing
+    through, where the dots showing what each curve offers at that price are
+    the whole point of the figure.
+
+    `tag` alone will not do it. A tag is whether the line is NAMED on screen,
+    which is a question of room: figure 8 of the trade chapter stacks two price
+    lines 16px apart and neither can carry a tag, which does not make them any
+    less of a tariff. So a line says what it is with `control: true`, and a tag
+    is taken as one only because a named line almost always is.
+    """
+    return bool(h.get("control") or h.get("tag"))
 
 
 def check_controls(cfgs, r):
@@ -1185,7 +1206,7 @@ def check_controls(cfgs, r):
                 # passing through -- and there the dots where supply and demand
                 # meet that price are the whole point of the figure.
                 lines = [(h["p"], h.get("at", 0), h.get("until"))
-                         for h in (pn.get("hlines") or []) if h.get("tag")]
+                         for h in (pn.get("hlines") or []) if is_control(h)]
                 drops = {}
                 for pt in pn.get("points") or []:
                     win = (pt.get("at", 0), pt.get("until"))

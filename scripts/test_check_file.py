@@ -222,6 +222,14 @@ case("a dot on a named control price", lambda r: C.check_controls(widget(
     points=[{"q": 30, "p": 70}]), r)
     or r.has("FAIL", "controls", "dot sits on the control price"))
 
+# A line says what it is rather than being guessed from whether it is named:
+# two price lines 16px apart cannot both carry a tag, which does not make them
+# any less of a tariff.
+case("a dot on a line declared a control", lambda r: C.check_controls(widget(
+    hlines=[{"p": 70, "control": True}],
+    points=[{"q": 30, "p": 70}]), r)
+    or r.has("FAIL", "controls", "dot sits on the control price"))
+
 # ...but a bare price line is a disequilibrium price, and the dots where the
 # curves meet it are the whole point of a surplus/shortage figure.
 case("a dot on a bare price line is fine", lambda r: C.check_controls(widget(

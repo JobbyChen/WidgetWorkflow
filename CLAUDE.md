@@ -221,6 +221,27 @@ economics instead of label placement.
 `check_file.py` enforces the guide, control-price and `calcs` rules, so they
 fail the file rather than waiting for someone to notice.
 
+**A rule is only worth having if it is cheap to obey.** When you add or change
+one — here, in the prompt, or in a script — weigh what it costs on every future
+run, not just whether it is correct:
+
+* **Make it mechanical or make it brief.** A rule a script checks needs one
+  line here; a rule a person has to remember needs to earn its paragraph. The
+  label-placement arithmetic came out of the prompt when `check_file` and
+  `place_labels` started doing it properly.
+* **Declare, don't infer.** `control: true` on a price line replaced guessing
+  from whether the line happened to be named, which was a drawing decision
+  standing in for an economic one. A stated fact needs no heuristic and never
+  drifts.
+* **Score against the checker's own geometry, never a copy of it.** That is why
+  `place_labels` takes 0.3s where a re-run-the-checks loop took three minutes,
+  and why the two can never disagree about the same drawing.
+* **Know what each step costs.** The whole static toolchain is under a second:
+  `check_file` 0.2s, the test suite 0.8s, `place_labels` 0.3s, `embed_engine`
+  0.05s — run those freely, and after every change. The browser steps are the
+  expensive ones (`render_widgets` ~30s, `mobile_check` ~13s per width), so run
+  them once the static checks are clean, not between edits.
+
 ## Where things stand (2026-09-23)
 
 The repository was created empty — `eco-widgets.zip` never reached it. The engine,

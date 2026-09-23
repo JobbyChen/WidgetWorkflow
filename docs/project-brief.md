@@ -1,6 +1,6 @@
 # Project brief
 
-> The original brief is not in the repository; `docs/conversion-prompt-v6.md` is
+> The original brief is not in the repository; `docs/conversion-prompt-v7.md` is
 > the operating procedure it became, and is authoritative. This page is the
 > why behind it.
 
@@ -22,7 +22,7 @@ The pieces:
 
 - **`engine/sd-graph.js` + `.css`** — one copy, embedded verbatim into every
   published notes file.
-- **`docs/conversion-prompt-v6.md`** — the step-numbered procedure that turns a
+- **`docs/conversion-prompt-v7.md`** — the step-numbered procedure that turns a
   PDF, an HTML file, a transcript, or a "this semester it's hotdogs" message into
   a finished notes file.
 - **`scripts/`** — embed the engine, check the result mechanically, screenshot

@@ -19,7 +19,7 @@ engine/
   sd-graph.css                ← its stylesheet (all arrows red)
 docs/
   project-brief.md            ← the brief + what got built against it
-  conversion-prompt-v6.md     ← THE operating procedure (the system prompt), verbatim
+  conversion-prompt-v7.md     ← THE operating procedure (the system prompt), verbatim
   engine-reference.md         ← JSON schema, presets, geometry, and what the engine does NOT do
   decisions-and-history.md    ← timeline and decisions with reasons
   open-issues.md              ← bugs, gaps, next steps (checkboxes)
@@ -41,6 +41,7 @@ scripts/
   test_check_file.py          ← tests for check_file.py. Run after changing it.
   render_widgets.py           ← Playwright: screenshot every widget × scenario × step for collision review
   mobile_check.py             ← does it fit and still work on a phone? Drives every button at 390/320px
+  place_labels.py             ← put every shaded area's label where it is clear, and centred
 .claude/commands/             ← /convert, /check, /render
 ```
 
@@ -48,7 +49,7 @@ scripts/
 
 Input is one of: (a) notes PDF ± PNGs, (b) notes HTML ± PNGs, (c) a lecture
 transcript (± notes), or (d) an existing widget file plus a message saying what
-changed this semester. Follow `docs/conversion-prompt-v6.md` exactly — it is a
+changed this semester. Follow `docs/conversion-prompt-v7.md` exactly — it is a
 step-numbered procedure (0, 0T, 0C, 1–8) that was iterated over six versions,
 and every rule in it exists because something went wrong without it. Output is
 one HTML file carrying the house head, a `<!--SDG-ENGINE-->` placeholder, and a
@@ -117,9 +118,8 @@ itself still forbids questions outright.
 6. **Match the printed artwork.** Black original curve, red shifted curve, every
    arrow red, curved D/S with numbered markers on conceptual graphs, straight
    lines with hollow dots on numeric ones, dashed grid on schedules, P and Q as
-   axis labels, nothing else. No label may touch a curve, point, arrow, or
-   another label (step 5 has the placement rules — read them before writing any
-   config).
+   axis labels, nothing else. (Label placement is rule 5; the rest of the
+   drawing conventions are settled below.)
 7. **House HTML format is fixed** (prompt step 0), with one exception: **the
    `<title>` is not yours to set.** Prompt v6 step 0 asks for the chapter name
    alone, and `check_file.py` used to fail a title carrying a course code, term
@@ -172,7 +172,56 @@ itself still forbids questions outright.
    apple shifts; surplus + shortage; increase + decrease of one schedule;
    substitutes + complements in production).
 
-## Where things stand (2026-09-16)
+## Drawing conventions (settled — do not re-decide these per chapter)
+
+Every one of these was a round of review. Follow them and the review is about
+economics instead of label placement.
+
+* **Fetch the source images and match them.** The `<img src>` URLs in the
+  chapter resolve (200 from S3), so `curl` them and look. Match the *figure*,
+  not the paragraph beside it: a figure showing consumer surplus, producer
+  surplus and five ticks keeps all of it even where the text discusses one
+  piece. Drawing only the piece under discussion throws the figure away.
+* **Label every price and quantity the source names** — `P*`, the control
+  price, `Qᴅ`/`Qꜱ`, and the intercepts. A dashed guide with no number at its
+  foot is worse than no guide: drop the guide instead.
+* **Shading**: consumer surplus teal, producer surplus orange, gains from
+  trade teal, deadweight loss red, tax or tariff revenue navy. Two pieces of
+  one surplus (a trapezoid split into a triangle and a rectangle) take
+  `edge: true`, or they read as one wash.
+* **Braces sit against their price line.** Above it for a surplus or exports,
+  `below:"in"` for a shortage or imports, `below:"axis"` where the space under
+  the line is taken (the tariff figures). Under the Q axis *only* where the
+  source puts them there. A long label wraps with `\n` rather than moving the
+  brace — that is what the artwork does.
+* **One guide per quantity, and the right leg.** An equilibrium gets the full
+  elbow; a quantity read off a control price gets `guides:"q"`; a price whose
+  quantity is not the point gets `guides:"p"`. Two points at one quantity draw
+  the same dashed line twice, which is most of what makes a panel look busy.
+* **No dot where a quantity meets a control price.** The line and its guide
+  already mark it, and a dot there reads as an equilibrium. A *bare*
+  disequilibrium price line is the opposite case: its dots are the figure's
+  whole point.
+* **Show the working only where the artwork does.** `calcs` carries the
+  formulas when they live inside the image — replacing the image would
+  otherwise lose them. Where the chapter prints the same formula as text under
+  the figure, a `calcs` block says it twice.
+* **Clip the axis to the region the figure uses.** Drawn out to the full
+  intercepts, ticks collide (24 and 30 rendered as "2430") and most of the
+  plot is empty.
+* **Place area labels with `scripts/place_labels.py`, never by eye.** It takes
+  the clear point nearest the centroid, and falls back to just outside the
+  shape for a wedge too small to hold a label — which is what the source does
+  with its own slivers.
+* **Where the source figure and the source prose disagree, the prose wins**
+  (rule 3's authority order) — and say so in the changelog. The apartment
+  figure prints a demand intercept of 1,200 that contradicts its own
+  equilibrium; the prose's numbers force 1,080.
+
+`check_file.py` enforces the guide, control-price and `calcs` rules, so they
+fail the file rather than waiting for someone to notice.
+
+## Where things stand (2026-09-23)
 
 The repository was created empty — `eco-widgets.zip` never reached it. The engine,
 both example files and prompt v6 were later supplied directly and are installed
@@ -186,14 +235,14 @@ not enough to reproduce an implementation.
   `embed_engine.py`'s paths reproduce the delivered file byte-for-byte; all 20
   prototype widgets render with no engine errors; `check_file.py` runs the
   geometric label test over 74 labels in the 263 file with no overlaps.
-* **Engine is v2.6.** `shiftArrow: false` drops the redundant shift arrow in a
-  schedule-shift widget — the per-row arrows already say it once per row — while
-  keeping the slide and the dimming, and every arrow is one weight (2.4px).
-  Prompt v6 step 5 changed with it. Axis titles take a word (`x` anchored to the
-  right edge, `y` in the headroom above the plot) so a PPF can name its axes.
-  `vbraces` add the upright brace: `left: true` puts it outside the P axis,
-  mirroring a horizontal brace's `below: true`. `label: ""` on a curve draws no
-  label, for a lone frontier that needs no name.
+* **Engine is v2.18.** Since v2.6: `areas` shade a polygon (v2.11) with
+  `edge` to outline it (v2.18) and labels centred on their anchor (v2.13);
+  `dot:false` drops a marker but keeps the axis label (v2.12); points take
+  `guides:"p"`/`"q"` for one leg of the elbow (v2.14); braces take
+  `below:"in"` and `below:"axis"` (v2.14/v2.17) and wrap on `\n` (v2.17);
+  `hlines` take `tag`/`tagdy`/`tagq` to name the line itself (v2.14/v2.16);
+  and `calcs` prints the working under the plot (v2.15).
+
 * **PPF works.** The first chapter of Exam 1 material converted to seven widgets
   with no engine gaps hit: frontiers, a combinations table, points on/inside/
   outside, opportunity cost with both braces, a bowed-out frontier, three growth
@@ -309,7 +358,7 @@ Full list with checkboxes: `docs/open-issues.md`.
 * To test a config quickly, drop it into a copy of
   `examples/ECO2013-Widgets-All.html` and open it in a browser; it carries its
   own copy of the engine in its head.
-* Prompt changes: edit `docs/conversion-prompt-v6.md` (bump to v7 in the file
+* Prompt changes: edit `docs/conversion-prompt-v7.md` (bump the version in the file
   name and add a "what changed" line at the top). If a standalone tool prompt is
   needed, append the two engine files as Appendix A/B — see
   `docs/archive/README.md`.
@@ -328,7 +377,7 @@ Ian changed this rule on 2026-09-17, and the change applies **here only**:
 * **Decide everything else and flag it.** Heading levels, table markup, `<b>` vs
   `<strong>`, label placement, scenario grouping, prose edits. A changelog line
   is the right place for those, not a question.
-* **`docs/conversion-prompt-v6.md` still says "You never reply with a question",
+* **`docs/conversion-prompt-v7.md` still says "You never reply with a question",
   and that is deliberate — do not harmonise the two.** v6 runs in Claude Cowork,
   where a question stalls a run that nobody is watching, so it must always
   finish the output. This file governs work done here, with Ian present. If v6

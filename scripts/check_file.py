@@ -21,6 +21,8 @@ Groups, in order:
   labels    step 5's x-position test -- for every label, where does each curve
             pass at that label's x? Plus label-on-label and point-on-point.
   arrows    every surplus/shortage walkthrough ends with two movement arrows
+  controls  no dot on a control price; one dashed guide per quantity
+  calcs     working is shown only where the chapter does not print it as prose
   caption   prose, not slide bullets: no "Before -/After -", no "Price up,
             quantity up", complete sentences
   source    no student-facing text names where the material came from
@@ -1155,6 +1157,106 @@ def check_arrows(cfgs, r):
                        "arrows" % (n_checked - n_bad))
 
 
+def check_controls(cfgs, r):
+    """Two things the drawing conventions ask for and nothing tested.
+
+    A control price -- a ceiling, a floor, a minimum wage, a world price -- is
+    a line the market cannot leave, not a place the market settles. A hollow
+    dot there reads as an equilibrium, so the line and its drop guide say where
+    the quantity is and the dot comes off. A control is a line the config
+    NAMES (`tag`); a bare price line is a disequilibrium price the market is
+    passing through, and the dots on it are what the figure is about.
+
+    And one dashed guide per quantity. Two points at the same quantity each
+    draw their own vertical, one straight down the other: twice the ink, no
+    more information, and it is most of what makes a busy panel look busy.
+    """
+    dots = dupes = n = 0
+    for idx, cfg, _ in cfgs:
+        for label, v in variants(cfg):
+            if v.get("preset"):
+                continue
+            for pi, pn in enumerate(panels(v)):
+                where = "widget %d%s" % (idx, " (%s)" % label if label else "")
+                n += 1
+                # Only a NAMED line is a control. The same distinction the
+                # arrow rule makes: a ceiling or a floor is a price the market
+                # cannot leave, while a bare price line is one the market is
+                # passing through -- and there the dots where supply and demand
+                # meet that price are the whole point of the figure.
+                lines = [(h["p"], h.get("at", 0), h.get("until"))
+                         for h in (pn.get("hlines") or []) if h.get("tag")]
+                drops = {}
+                for pt in pn.get("points") or []:
+                    win = (pt.get("at", 0), pt.get("until"))
+                    if pt.get("dot") is not False:
+                        for lp, la, lu in lines:
+                            if abs(lp - pt["p"]) < 1e-9 and coexist(win, (la, lu)):
+                                dots += 1
+                                r.fail("controls", "%s: a dot sits on the control price at "
+                                                   "(%s, %s) -- the line already marks it"
+                                       % (where, pt["q"], pt["p"]))
+                                break
+                    g = pt.get("guides", True)
+                    # a point on the axis has a vertical leg of zero length,
+                    # so it is not drawing a second line down anything
+                    if g is not False and g != "p" and pt.get("p", 0) > 0:
+                        drops.setdefault(pt["q"], []).append(win)
+                for q, wins in drops.items():
+                    for i in range(len(wins)):
+                        for j in range(i + 1, len(wins)):
+                            if coexist(wins[i], wins[j]):
+                                dupes += 1
+                                r.warn("controls", "%s: two guides run down q = %s at once"
+                                       % (where, q))
+                                break
+    if n and not dots and not dupes:
+        r.ok("controls", "no dot sits on a control price, and no guide is drawn twice")
+
+
+FORMULA = re.compile(r"\\\(([^)]{0,400}?)\\\)", re.S)
+
+
+def check_calcs(src, cfgs, r):
+    """A widget shows its working only where the chapter does not.
+
+    Ian's rule: where the prose prints the formula as text under the figure,
+    a `calcs` block says the same thing twice. Where the formulas live inside
+    the artwork -- and are therefore lost the moment the image is replaced --
+    the widget has to carry them. So a calc line is a duplicate when the same
+    equation appears in the prose between this widget and the next.
+    """
+    dup = n = 0
+    bodies = [m.start() for m in re.finditer(r'<div class="sdg"', src)]
+    for pos, (idx, cfg, _) in zip(bodies, cfgs):
+        lines = []
+        walk(cfg, lambda d: lines.extend(
+            [c if isinstance(c, str) else c.get("text", "") for c in (d.get("calcs") or [])]))
+        if not lines:
+            continue
+        n += 1
+        nxt = next((b for b in bodies if b > pos), len(src))
+        after = src[pos:nxt]
+        for ln in lines:
+            # the result is what a reader would see repeated: match on it plus
+            # the left-hand side, so "= $40,000" alone does not trip on prose
+            lhs = ln.split("=")[0].strip()
+            res = ln.rsplit("=", 1)[-1].strip()
+            if not lhs or not res:
+                continue
+            for m in FORMULA.finditer(after):
+                body = m.group(1).replace("\\", "").replace("{", "").replace("}", "")
+                if res.replace(",", "") in body.replace(",", "") and \
+                        lhs.split()[0] in body:
+                    dup += 1
+                    r.fail("calcs", "widget %d: %r is printed again as prose below the "
+                                    "figure -- drop the calcs, the chapter already shows it"
+                           % (idx, ln))
+                    break
+    if n and not dup:
+        r.ok("calcs", "%d widget(s) show working the chapter does not print itself" % n)
+
+
 def check_captions(cfgs, r):
     bad = 0
     for n, cfg, _ in cfgs:
@@ -1280,6 +1382,8 @@ def main():
     check_steps(cfgs, r)
     check_steady_labels(cfgs, r)
     check_arrows(cfgs, r)
+    check_controls(cfgs, r)
+    check_calcs(src, cfgs, r)
     check_captions(cfgs, r)
     check_source(src, cfgs, r)
     check_names(src, cfgs, r)

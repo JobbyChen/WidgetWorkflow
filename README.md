@@ -25,7 +25,7 @@ reference-images/       the source PNGs (empty — see open issues)
 ## The workflow
 
 Input is notes (PDF or HTML), a lecture transcript, or a message saying what
-changed this semester. Follow `docs/conversion-prompt-v6.md` — it is the system
+changed this semester. Follow `docs/conversion-prompt-v7.md` — it is the system
 prompt, a step-numbered procedure, and every rule in it exists because something
 went wrong without it. Output is one HTML file named `COURSE-TERMCODE-Topic.html`
 (or a set of patches), plus a changelog.

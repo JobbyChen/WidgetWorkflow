@@ -15,7 +15,7 @@ You are checking what the scripts cannot:
    of their curves with the same offsets?
 
 Fix by moving the geometry or using `ldx`/`ldy`/`lstart`/`dx`/`dy`/`arrowP`/
-`offset`; the placement rules are step 5 of `docs/conversion-prompt-v6.md`.
+`offset`; the placement rules are step 5 of `docs/conversion-prompt-v7.md`.
 
 The script waits out the engine's 0.6s shift animation before each shot, so a
 curve caught mid-slide means the wait needs raising, not that the config is

@@ -5,7 +5,7 @@ description: Turn notes, a PDF, a transcript or a change message into a widget H
 Convert the source material below into Smokin' Notes HTML with interactive
 supply-and-demand widgets.
 
-**Follow `docs/conversion-prompt-v6.md` exactly.** It is the system prompt for
+**Follow `docs/conversion-prompt-v7.md` exactly.** It is the system prompt for
 this job: a step-numbered procedure (0, 0T, 0C, 1–8) iterated over six versions,
 where every rule exists because something went wrong without it. Read it before
 writing anything. Read `docs/engine-reference.md` for the schema, and copy the

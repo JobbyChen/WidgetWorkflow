@@ -201,6 +201,34 @@ def _box_baseline(r):
 case("an area label's box is centred on its anchor", _box_centred)
 case("every other label's box hangs above its baseline", _box_baseline)
 
+# ---- control prices and duplicated guides ----------------------------------
+
+case("a dot on a named control price", lambda r: C.check_controls(widget(
+    hlines=[{"p": 70, "tag": "Price ceiling"}],
+    points=[{"q": 30, "p": 70}]), r)
+    or r.has("FAIL", "controls", "dot sits on the control price"))
+
+# ...but a bare price line is a disequilibrium price, and the dots where the
+# curves meet it are the whole point of a surplus/shortage figure.
+case("a dot on a bare price line is fine", lambda r: C.check_controls(widget(
+    hlines=[{"p": 70, "label": "$8"}],
+    points=[{"q": 30, "p": 70}]), r)
+    or not r.has("FAIL", "controls", "dot sits on the control price"))
+
+case("two guides down one quantity", lambda r: C.check_controls(widget(
+    points=[{"q": 40, "p": 70, "guides": "q"}, {"q": 40, "p": 30, "guides": "q"}]), r)
+    or r.has("WARN", "controls", "two guides run down"))
+
+# A point on the axis has a vertical leg of zero length. Counting it flagged
+# the endpoint of a frontier against the point above it in shipped work.
+case("a point on the axis draws no second guide", lambda r: C.check_controls(widget(
+    points=[{"q": 200, "p": 0, "label": "B"}, {"q": 200, "p": 400, "label": "E"}]), r)
+    or not r.has("WARN", "controls", "two guides run down"))
+
+case("one guide down each quantity", lambda r: C.check_controls(widget(
+    points=[{"q": 40, "p": 70, "guides": "q"}, {"q": 60, "p": 30, "guides": "q"}]), r)
+    or not r.has("WARN", "controls", "two guides run down"))
+
 # ---- captions --------------------------------------------------------------
 
 case("'Before -' caption prefix", lambda r: C.check_captions(

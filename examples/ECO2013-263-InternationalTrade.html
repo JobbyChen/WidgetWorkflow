@@ -107,7 +107,7 @@ MathJax = {
 .sdg .sdg-cap { margin:10px 0 0; padding:10px 12px; background:#fff; border-left:4px solid var(--red); font-size:.92rem; line-height:1.45; min-height:3.2em; }
 </style>
 <script>
-/* ===== sd-graph.js v2.13 — data-driven supply & demand widgets =====
+/* ===== sd-graph.js v2.14 — data-driven supply & demand widgets =====
    Markup:  <div class="sdg"><script type="application/json">{ ...config... }<\/script></div>
    Top-level config:
      title, lede, caption         heading / intro / static caption (caption used only when there are no steps)
@@ -126,11 +126,11 @@ MathJax = {
         shiftArrow:false = animate and dim as usual but draw no shift arrow. Use it whenever the
                  widget already shows per-row arrows (table.arrows), which say the same thing once per row.
         curved = smooth through 3+ points (conceptual, non-linear look)
-     points[]: {id, q, p, label, marker, pl, ql, color, at, until, dx, dy, guides:false, showP:false, showQ:false, dot:false}
+     points[]: {id, q, p, label, marker, pl, ql, color, at, until, dx, dy, guides:false|'p'|'q', showP:false, showQ:false, dot:false}
         marker = "1"/"2" numbered circle;  pl/ql = symbolic axis labels ("P₁","Q₁") instead of numbers
      moves[]:  {from:[q,p], to:[q,p], at, until, color, offset}  arrow between two points, drawn `offset` px beside the curve (default 14; negative = other side)
-     hlines[]: {p, label, color, at, until}                       horizontal price line across the plot
-     braces[]: {p, q1, q2, label, at, until, below, color}        curly brace spanning a gap at price p
+     hlines[]: {p, label, tag, tagdy, color, at, until}                       horizontal price line across the plot
+     braces[]: {p, q1, q2, label, at, until, below:true|'in', color}  curly brace spanning a gap at price p
      vbraces[]:{p1, p2, q, label, at, until, left, side, color}   the same brace turned upright, spanning a
         price gap. left:true is the mirror of a brace's below:true: it sits outside the P axis, clear of the
         plot and the tick numbers, with its label running up the axis, and widens the left margin to fit.
@@ -155,7 +155,7 @@ MathJax = {
 
   // ---------- one SVG panel ----------
   function buildPanel(cfg) {
-    var ax = cfg.axes, W = 372, below = (cfg.braces || []).some(function (b) { return b.below; }), H = below ? 268 : 250;
+    var ax = cfg.axes, W = 372, below = (cfg.braces || []).some(function (b) { return b.below === true; }), H = below ? 268 : 250;
     // A brace outside the P axis needs margin to sit in, the way a brace below
     // the Q axis needs the extra panel height above.
     var vleft = (cfg.vbraces || []).some(function (b) { return b.left; });
@@ -284,12 +284,20 @@ MathJax = {
       var cc = col(l.color || 'red'), grp = el('g', {});
       grp.appendChild(el('line', {class: 'hline', stroke: cc, x1: O.x, y1: Y(l.p), x2: O.x + PW + 8, y2: Y(l.p)}));
       if ((ax.yticks || []).indexOf(l.p) < 0) grp.appendChild(el('text', {class: 'tk strong', x: O.x - 6, y: Y(l.p) + 4, 'text-anchor': 'end', fill: cc}, l.label || fmtP(l.p, ax)));
+      // `label` names the line's price on the P axis; `tag` names the line
+      // itself, at its right-hand end, the way the printed artwork writes
+      // "World Price" beside the line rather than only on the axis.
+      // tagdy nudges it off the line: above by default, below where the
+      // curve that climbs to the right-hand corner is already there.
+      if (l.tag) grp.appendChild(el('text', {class: 'tag', x: O.x + PW + 6, y: Y(l.p) + (l.tagdy != null ? l.tagdy : -6), 'text-anchor': 'end', fill: cc}, l.tag));
       g.appendChild(grp); reg(grp, l);
     });
 
     (cfg.braces || []).forEach(function (b) {
       var cc = col(b.color || 'red'), grp = el('g', {});
-      var x1 = X(Math.min(b.q1, b.q2)), x2 = X(Math.max(b.q1, b.q2)), y = b.below ? O.y + 22 : Y(b.p) - 8, dir = b.below ? 1 : -1, m = (x1 + x2) / 2;
+      var inplot = b.below === 'in', out = b.below === true;
+      var x1 = X(Math.min(b.q1, b.q2)), x2 = X(Math.max(b.q1, b.q2)),
+          y = out ? O.y + 22 : Y(b.p) + (inplot ? 8 : -8), dir = (out || inplot) ? 1 : -1, m = (x1 + x2) / 2;
       // Each half of the curl needs about 2*hh of run. Over a short span a
       // fixed hh makes the segments overlap and the brace reads as a scribble,
       // so it shrinks with the span it has to cover.
@@ -297,8 +305,8 @@ MathJax = {
       var d = 'M' + x1 + ' ' + y + ' Q' + x1 + ' ' + (y + dir * hh) + ' ' + (x1 + hh) + ' ' + (y + dir * hh) + ' L' + (m - hh) + ' ' + (y + dir * hh) + ' Q' + m + ' ' + (y + dir * hh) + ' ' + m + ' ' + (y + dir * 2 * hh) +
               ' Q' + m + ' ' + (y + dir * hh) + ' ' + (m + hh) + ' ' + (y + dir * hh) + ' L' + (x2 - hh) + ' ' + (y + dir * hh) + ' Q' + x2 + ' ' + (y + dir * hh) + ' ' + x2 + ' ' + y;
       grp.appendChild(el('path', {class: 'brace', stroke: cc, d: d}));
-      grp.appendChild(el('text', {class: 'tag', x: m, y: y + dir * 2 * hh + (b.below ? 12 : -4), 'text-anchor': 'middle', fill: cc}, b.label));
-      if (!b.below) { [b.q1, b.q2].forEach(function (q) { grp.appendChild(el('line', {class: 'guide', stroke: cc, x1: X(q), y1: Y(b.p), x2: X(q), y2: O.y})); }); }
+      grp.appendChild(el('text', {class: 'tag', x: m, y: y + dir * 2 * hh + ((out || inplot) ? 12 : -4), 'text-anchor': 'middle', fill: cc}, b.label));
+      if (!out) { [b.q1, b.q2].forEach(function (q) { grp.appendChild(el('line', {class: 'guide', stroke: cc, x1: X(q), y1: Y(b.p), x2: X(q), y2: O.y})); }); }
       g.appendChild(grp); reg(grp, b);
     });
 
@@ -340,7 +348,18 @@ MathJax = {
 
     (cfg.points || []).forEach(function (p) {
       var cc = col(p.color), grp = el('g', {class: 'ptg'});
-      if (p.guides !== false) grp.appendChild(el('path', {class: 'guide', stroke: cc, d: 'M' + O.x + ' ' + Y(p.p) + ' L' + X(p.q) + ' ' + Y(p.p) + ' L' + X(p.q) + ' ' + O.y}));
+      // guides: the dashed elbow from the P axis across to the point and down
+      // to the Q axis. "p" draws only the leg to the price axis and "q" only
+      // the leg to the quantity axis, because the printed artwork rarely wants
+      // both: a world-price quantity gets a vertical guide only (the price line
+      // is already drawn through it), and an equilibrium under trade gets a
+      // horizontal guide only (its quantity is not the point being made).
+      if (p.guides !== false) {
+        var hleg = 'M' + O.x + ' ' + Y(p.p) + ' L' + X(p.q) + ' ' + Y(p.p),
+            vleg = 'M' + X(p.q) + ' ' + Y(p.p) + ' L' + X(p.q) + ' ' + O.y,
+            gd = p.guides === 'p' ? hleg : p.guides === 'q' ? vleg : hleg + ' L' + X(p.q) + ' ' + O.y;
+        grp.appendChild(el('path', {class: 'guide', stroke: cc, d: gd}));
+      }
       // dot:false keeps the axis labels and drops the marker. A quantity
       // marked by a vertical line wants its name on the axis in the same tick
       // style as every other number there, and nothing drawn on the line
@@ -635,7 +654,34 @@ MathJax = {
    "hlines": [
     {
      "p": 75,
-     "label": "Pᵂ"
+     "label": "Pᵂ",
+     "tag": "World Price",
+     "tagdy": 14
+    }
+   ],
+   "points": [
+    {
+     "q": 50,
+     "p": 50,
+     "pl": "P*",
+     "guides": "p",
+     "showQ": false
+    },
+    {
+     "q": 25,
+     "p": 75,
+     "dot": false,
+     "guides": false,
+     "showP": false,
+     "ql": "Qᴅ"
+    },
+    {
+     "q": 75,
+     "p": 75,
+     "dot": false,
+     "guides": false,
+     "showP": false,
+     "ql": "Qꜱ"
     }
    ],
    "braces": [
@@ -644,15 +690,6 @@ MathJax = {
      "q1": 25,
      "q2": 75,
      "label": "Exports"
-    }
-   ],
-   "points": [
-    {
-     "q": 50,
-     "p": 50,
-     "guides": false,
-     "showP": false,
-     "showQ": false
     }
    ],
    "caption": "The world price sits above the price this market would reach on its own. Domestic producers supply more than domestic buyers want at that price, and the gap between the two is what the country exports."
@@ -701,7 +738,33 @@ MathJax = {
    "hlines": [
     {
      "p": 25,
-     "label": "Pᵂ"
+     "label": "Pᵂ",
+     "tag": "World Price"
+    }
+   ],
+   "points": [
+    {
+     "q": 50,
+     "p": 50,
+     "pl": "P*",
+     "guides": "p",
+     "showQ": false
+    },
+    {
+     "q": 25,
+     "p": 25,
+     "dot": false,
+     "guides": false,
+     "showP": false,
+     "ql": "Qꜱ"
+    },
+    {
+     "q": 75,
+     "p": 25,
+     "dot": false,
+     "guides": false,
+     "showP": false,
+     "ql": "Qᴅ"
     }
    ],
    "braces": [
@@ -710,16 +773,7 @@ MathJax = {
      "q1": 25,
      "q2": 75,
      "label": "Imports",
-     "below": true
-    }
-   ],
-   "points": [
-    {
-     "q": 50,
-     "p": 50,
-     "guides": false,
-     "showP": false,
-     "showQ": false
+     "below": "in"
     }
    ],
    "caption": "The world price sits below the price this market would reach on its own. Domestic buyers want more than domestic producers will supply at that price, and the gap between the two is what the country imports."
@@ -832,9 +886,8 @@ MathJax = {
     {
      "q": 50,
      "p": 50,
-     "guides": false,
-     "showP": false,
-     "showQ": false
+     "pl": "P*",
+     "ql": "Qᴅ = Qꜱ"
     }
    ],
    "caption": "Without trade the market settles where the curves cross, and the surplus splits between buyers and sellers in the usual way."
@@ -883,7 +936,9 @@ MathJax = {
    "hlines": [
     {
      "p": 75,
-     "label": "Pᵂ"
+     "label": "Pᵂ",
+     "tag": "World Price",
+     "tagdy": 14
     }
    ],
    "areas": [
@@ -932,21 +987,37 @@ MathJax = {
      ]
     }
    ],
+   "points": [
+    {
+     "q": 50,
+     "p": 50,
+     "pl": "P*",
+     "guides": "p",
+     "showQ": false
+    },
+    {
+     "q": 25,
+     "p": 75,
+     "dot": false,
+     "guides": false,
+     "showP": false,
+     "ql": "Qᴅ"
+    },
+    {
+     "q": 75,
+     "p": 75,
+     "dot": false,
+     "guides": false,
+     "showP": false,
+     "ql": "Qꜱ"
+    }
+   ],
    "braces": [
     {
      "p": 75,
      "q1": 25,
      "q2": 75,
      "label": "Exports"
-    }
-   ],
-   "points": [
-    {
-     "q": 50,
-     "p": 50,
-     "guides": false,
-     "showP": false,
-     "showQ": false
     }
    ],
    "caption": "Every unit now sells at the world price, so buyers pay more and take less while sellers supply more. Consumer surplus shrinks, producer surplus grows by more than that, and total surplus rises."
@@ -970,82 +1041,240 @@ MathJax = {
 <!-- IMAGE POSITION: below the paragraph introducing numerical example -->
 <div class="sdg"><script type="application/json">
 {
- "title": "Exporting apples",
- "lede": "At the world price the country supplies 160 and demands 40.",
- "axes": {
-  "x": "Q",
-  "y": "P",
-  "xmax": 200,
-  "ymax": 110,
-  "xticks": [
-   40,
-   160
-  ]
- },
- "curves": [
-  {
-   "id": "D",
-   "label": "D",
-   "pts": [
-    [
-     0,
-     90
-    ],
-    [
-     180,
-     0
-    ]
-   ],
-   "ldx": 6,
-   "ldy": -8
-  },
-  {
-   "id": "S",
-   "label": "S",
-   "pts": [
-    [
-     20,
-     0
-    ],
-    [
-     180,
+ "lede": "The apple market, with the world price and without it.",
+ "scenarios": {
+  "no": {
+   "label": "No trade (autarky)",
+   "title": "Apples without trade",
+   "axes": {
+    "x": "Q",
+    "y": "P",
+    "xmax": 210,
+    "ymax": 5.5,
+    "money": true,
+    "xticks": [
      80
+    ],
+    "yticks": [
+     2,
+     3,
+     5
     ]
+   },
+   "curves": [
+    {
+     "id": "D",
+     "label": "D",
+     "pts": [
+      [
+       0,
+       5
+      ],
+      [
+       180,
+       0.5
+      ]
+     ],
+     "ldx": 6,
+     "ldy": -8
+    },
+    {
+     "id": "S",
+     "label": "S",
+     "pts": [
+      [
+       0,
+       2
+      ],
+      [
+       200,
+       4.5
+      ]
+     ],
+     "ldx": -20,
+     "ldy": -10
+    }
    ],
-   "ldx": -20,
-   "ldy": -10
+   "areas": [
+    {
+     "pts": [
+      [
+       0,
+       3
+      ],
+      [
+       0,
+       5
+      ],
+      [
+       80,
+       3
+      ]
+     ],
+     "label": "CS",
+     "color": "teal",
+     "lp": [
+      22,
+      3.7
+     ]
+    },
+    {
+     "pts": [
+      [
+       0,
+       3
+      ],
+      [
+       0,
+       2
+      ],
+      [
+       80,
+       3
+      ]
+     ],
+     "label": "PS",
+     "color": "orange",
+     "lp": [
+      22,
+      2.65
+     ]
+    }
+   ],
+   "points": [
+    {
+     "q": 80,
+     "p": 3
+    }
+   ],
+   "caption": "Without trade apples clear at $3 and 80 units. Consumer surplus is $80, producer surplus is $40, and total surplus is $120."
+  },
+  "yes": {
+   "label": "With trade",
+   "title": "Apples at the world price",
+   "axes": {
+    "x": "Q",
+    "y": "P",
+    "xmax": 210,
+    "ymax": 5.5,
+    "money": true,
+    "xticks": [
+     40,
+     160
+    ],
+    "yticks": [
+     2,
+     3,
+     5
+    ]
+   },
+   "curves": [
+    {
+     "id": "D",
+     "label": "D",
+     "pts": [
+      [
+       0,
+       5
+      ],
+      [
+       180,
+       0.5
+      ]
+     ],
+     "ldx": 6,
+     "ldy": -8
+    },
+    {
+     "id": "S",
+     "label": "S",
+     "pts": [
+      [
+       0,
+       2
+      ],
+      [
+       200,
+       4.5
+      ]
+     ],
+     "ldx": -20,
+     "ldy": -10
+    }
+   ],
+   "hlines": [
+    {
+     "p": 4,
+     "label": "$4",
+     "tag": "World Price",
+     "tagdy": 14
+    }
+   ],
+   "areas": [
+    {
+     "pts": [
+      [
+       0,
+       4
+      ],
+      [
+       0,
+       5
+      ],
+      [
+       40,
+       4
+      ]
+     ],
+     "label": "CS",
+     "color": "teal",
+     "lp": [
+      11,
+      4.4
+     ]
+    },
+    {
+     "pts": [
+      [
+       0,
+       4
+      ],
+      [
+       0,
+       2
+      ],
+      [
+       160,
+       4
+      ]
+     ],
+     "label": "PS",
+     "color": "orange",
+     "lp": [
+      10.67,
+      2.73
+     ]
+    }
+   ],
+   "points": [
+    {
+     "q": 80,
+     "p": 3,
+     "guides": "p",
+     "showQ": false
+    }
+   ],
+   "braces": [
+    {
+     "p": 4,
+     "q1": 40,
+     "q2": 160,
+     "label": "120 exported"
+    }
+   ],
+   "caption": "At the world price of $4 buyers take only 40 while sellers offer 160, and the 120-unit gap is exported. Consumer surplus falls to $20, producer surplus rises to $160, and total surplus is $180 — a $60 gain from trade."
   }
- ],
- "hlines": [
-  {
-   "p": 70,
-   "label": "Pᵂ",
-   "at": 1
-  }
- ],
- "braces": [
-  {
-   "p": 70,
-   "q1": 40,
-   "q2": 160,
-   "label": "120 exported",
-   "at": 2
-  }
- ],
- "points": [
-  {
-   "q": 100,
-   "p": 40,
-   "guides": false,
-   "showP": false,
-   "showQ": false
-  }
- ],
- "steps": [
-  "Without trade the apple market would settle where the two curves cross.",
-  "The world price is higher than that, so the domestic price rises to meet it. At that price buyers want only 40 units while sellers offer 160.",
-  "The 120-unit gap is what the country exports. Producer surplus rises by more than consumer surplus falls, and total surplus is $60 higher than it was without trade."
- ]
+ }
 }
 </script></div>
 
@@ -1153,9 +1382,8 @@ MathJax = {
     {
      "q": 50,
      "p": 50,
-     "guides": false,
-     "showP": false,
-     "showQ": false
+     "pl": "P*",
+     "ql": "Qᴅ = Qꜱ"
     }
    ],
    "caption": "Without trade the market settles where the curves cross, and the surplus splits between buyers and sellers in the usual way."
@@ -1204,7 +1432,8 @@ MathJax = {
    "hlines": [
     {
      "p": 25,
-     "label": "Pᵂ"
+     "label": "Pᵂ",
+     "tag": "World Price"
     }
    ],
    "areas": [
@@ -1226,8 +1455,8 @@ MathJax = {
      "label": "CS",
      "color": "teal",
      "lp": [
-      21,
-      53
+      32.5,
+      57.5
      ]
     },
     {
@@ -1253,22 +1482,38 @@ MathJax = {
      ]
     }
    ],
+   "points": [
+    {
+     "q": 50,
+     "p": 50,
+     "pl": "P*",
+     "guides": "p",
+     "showQ": false
+    },
+    {
+     "q": 25,
+     "p": 25,
+     "dot": false,
+     "guides": false,
+     "showP": false,
+     "ql": "Qꜱ"
+    },
+    {
+     "q": 75,
+     "p": 25,
+     "dot": false,
+     "guides": false,
+     "showP": false,
+     "ql": "Qᴅ"
+    }
+   ],
    "braces": [
     {
      "p": 25,
      "q1": 25,
      "q2": 75,
      "label": "Imports",
-     "below": true
-    }
-   ],
-   "points": [
-    {
-     "q": 50,
-     "p": 50,
-     "guides": false,
-     "showP": false,
-     "showQ": false
+     "below": "in"
     }
    ],
    "caption": "Every unit now sells at the world price, so buyers pay less and take more while sellers supply less. Producer surplus shrinks, consumer surplus grows by more than that, and total surplus rises."
@@ -1292,83 +1537,240 @@ MathJax = {
 <!-- IMAGE POSITION: below the paragraph introducing avocado example -->
 <div class="sdg"><script type="application/json">
 {
- "title": "Importing avocados",
- "lede": "At the world price the country demands 60 and supplies 20.",
- "axes": {
-  "x": "Q",
-  "y": "P",
-  "xmax": 110,
-  "ymax": 80,
-  "xticks": [
-   20,
-   60
-  ]
- },
- "curves": [
-  {
-   "id": "D",
-   "label": "D",
-   "pts": [
-    [
-     0,
-     60
+ "lede": "The avocado market, with the world price and without it.",
+ "scenarios": {
+  "no": {
+   "label": "No trade (autarky)",
+   "title": "Avocados without trade",
+   "axes": {
+    "x": "Q",
+    "y": "P",
+    "xmax": 100,
+    "ymax": 5.5,
+    "money": true,
+    "xticks": [
+     40
     ],
-    [
-     110,
+    "yticks": [
+     1,
+     3,
      5
     ]
+   },
+   "curves": [
+    {
+     "id": "D",
+     "label": "D",
+     "pts": [
+      [
+       0,
+       5
+      ],
+      [
+       90,
+       0.5
+      ]
+     ],
+     "ldx": 6,
+     "ldy": -8
+    },
+    {
+     "id": "S",
+     "label": "S",
+     "pts": [
+      [
+       0,
+       1
+      ],
+      [
+       80,
+       5
+      ]
+     ],
+     "ldx": -20,
+     "ldy": -10
+    }
    ],
-   "ldx": 6,
-   "ldy": -8
+   "areas": [
+    {
+     "pts": [
+      [
+       0,
+       3
+      ],
+      [
+       0,
+       5
+      ],
+      [
+       40,
+       3
+      ]
+     ],
+     "label": "CS",
+     "color": "teal",
+     "lp": [
+      11,
+      3.7
+     ]
+    },
+    {
+     "pts": [
+      [
+       0,
+       3
+      ],
+      [
+       0,
+       1
+      ],
+      [
+       40,
+       3
+      ]
+     ],
+     "label": "PS",
+     "color": "orange",
+     "lp": [
+      11,
+      2.3
+     ]
+    }
+   ],
+   "points": [
+    {
+     "q": 40,
+     "p": 3
+    }
+   ],
+   "caption": "Without trade avocados clear at $3 and 40 units. Consumer surplus is $40, producer surplus is $40, and total surplus is $80."
   },
-  {
-   "id": "S",
-   "label": "S",
-   "pts": [
-    [
-     0,
-     20
+  "yes": {
+   "label": "With trade",
+   "title": "Avocados at the world price",
+   "axes": {
+    "x": "Q",
+    "y": "P",
+    "xmax": 100,
+    "ymax": 5.5,
+    "money": true,
+    "xticks": [
+     20,
+     60
     ],
-    [
-     100,
-     70
+    "yticks": [
+     1,
+     3,
+     5
     ]
+   },
+   "curves": [
+    {
+     "id": "D",
+     "label": "D",
+     "pts": [
+      [
+       0,
+       5
+      ],
+      [
+       90,
+       0.5
+      ]
+     ],
+     "ldx": 6,
+     "ldy": -8
+    },
+    {
+     "id": "S",
+     "label": "S",
+     "pts": [
+      [
+       0,
+       1
+      ],
+      [
+       80,
+       5
+      ]
+     ],
+     "ldx": -20,
+     "ldy": -10
+    }
    ],
-   "ldx": -20,
-   "ldy": -10
+   "hlines": [
+    {
+     "p": 2,
+     "label": "$2",
+     "tag": "World Price"
+    }
+   ],
+   "areas": [
+    {
+     "pts": [
+      [
+       0,
+       2
+      ],
+      [
+       0,
+       5
+      ],
+      [
+       60,
+       2
+      ]
+     ],
+     "label": "CS",
+     "color": "teal",
+     "lp": [
+      4.0,
+      3.5
+     ]
+    },
+    {
+     "pts": [
+      [
+       0,
+       2
+      ],
+      [
+       0,
+       1
+      ],
+      [
+       20,
+       2
+      ]
+     ],
+     "label": "PS",
+     "color": "orange",
+     "lp": [
+      3.33,
+      1.5
+     ]
+    }
+   ],
+   "points": [
+    {
+     "q": 40,
+     "p": 3,
+     "guides": "p",
+     "showQ": false
+    }
+   ],
+   "braces": [
+    {
+     "p": 2,
+     "q1": 20,
+     "q2": 60,
+     "label": "40 imported",
+     "below": "in"
+    }
+   ],
+   "caption": "At the world price of $2 buyers take 60 while sellers offer only 20, and the 40-unit gap is imported. Consumer surplus rises to $90, producer surplus falls to $10, and total surplus is $100 — a $20 gain from trade."
   }
- ],
- "hlines": [
-  {
-   "p": 30,
-   "label": "Pᵂ",
-   "at": 1
-  }
- ],
- "braces": [
-  {
-   "p": 30,
-   "q1": 20,
-   "q2": 60,
-   "label": "40 imported",
-   "below": true,
-   "at": 2
-  }
- ],
- "points": [
-  {
-   "q": 40,
-   "p": 40,
-   "guides": false,
-   "showP": false,
-   "showQ": false
-  }
- ],
- "steps": [
-  "Without trade the avocado market would settle where the two curves cross.",
-  "The world price is lower than that, so the domestic price falls to meet it. At that price buyers want 60 units while sellers offer only 20.",
-  "The 40-unit gap is what the country imports. Consumer surplus rises by more than producer surplus falls, and total surplus is $20 higher than it was without trade."
- ]
+ }
 }
 </script></div>
 
@@ -1471,7 +1873,9 @@ MathJax = {
    "hlines": [
     {
      "p": 75,
-     "label": "Pᵂ"
+     "label": "Pᵂ",
+     "tag": "World Price",
+     "tagdy": 14
     }
    ],
    "areas": [
@@ -1502,9 +1906,33 @@ MathJax = {
     {
      "q": 50,
      "p": 50,
+     "pl": "P*",
+     "guides": "p",
+     "showQ": false
+    },
+    {
+     "q": 25,
+     "p": 75,
+     "dot": false,
      "guides": false,
      "showP": false,
-     "showQ": false
+     "ql": "Qᴅ"
+    },
+    {
+     "q": 75,
+     "p": 75,
+     "dot": false,
+     "guides": false,
+     "showP": false,
+     "ql": "Qꜱ"
+    }
+   ],
+   "braces": [
+    {
+     "p": 75,
+     "q1": 25,
+     "q2": 75,
+     "label": "Exports"
     }
    ],
    "caption": "Consumers lose and producers gain, but the producers' gain is larger, and the shaded wedge is what society is left with on balance."
@@ -1553,7 +1981,8 @@ MathJax = {
    "hlines": [
     {
      "p": 25,
-     "label": "Pᵂ"
+     "label": "Pᵂ",
+     "tag": "World Price"
     }
    ],
    "areas": [
@@ -1575,8 +2004,8 @@ MathJax = {
      "label": "Gain",
      "color": "teal",
      "lp": [
-      50,
-      37
+      43.33,
+      35.0
      ]
     }
    ],
@@ -1584,9 +2013,34 @@ MathJax = {
     {
      "q": 50,
      "p": 50,
+     "pl": "P*",
+     "guides": "p",
+     "showQ": false
+    },
+    {
+     "q": 25,
+     "p": 25,
+     "dot": false,
      "guides": false,
      "showP": false,
-     "showQ": false
+     "ql": "Qꜱ"
+    },
+    {
+     "q": 75,
+     "p": 25,
+     "dot": false,
+     "guides": false,
+     "showP": false,
+     "ql": "Qᴅ"
+    }
+   ],
+   "braces": [
+    {
+     "p": 25,
+     "q1": 25,
+     "q2": 75,
+     "label": "Imports",
+     "below": "in"
     }
    ],
    "caption": "Producers lose and consumers gain, but the consumers' gain is larger, and the shaded wedge is what society is left with on balance."
@@ -1662,7 +2116,79 @@ MathJax = {
    "hlines": [
     {
      "p": 25,
-     "label": "Pᵂ"
+     "label": "Pᵂ",
+     "tag": "World Price"
+    }
+   ],
+   "areas": [
+    {
+     "pts": [
+      [
+       0,
+       25
+      ],
+      [
+       0,
+       100
+      ],
+      [
+       75,
+       25
+      ]
+     ],
+     "label": "CS",
+     "color": "teal",
+     "lp": [
+      32.5,
+      57.5
+     ]
+    },
+    {
+     "pts": [
+      [
+       0,
+       25
+      ],
+      [
+       0,
+       0
+      ],
+      [
+       25,
+       25
+      ]
+     ],
+     "label": "PS",
+     "color": "orange",
+     "lp": [
+      8,
+      15
+     ]
+    }
+   ],
+   "points": [
+    {
+     "q": 50,
+     "p": 50,
+     "pl": "P*",
+     "guides": "p",
+     "showQ": false
+    },
+    {
+     "q": 25,
+     "p": 25,
+     "dot": false,
+     "guides": false,
+     "showP": false,
+     "ql": "Qꜱ"
+    },
+    {
+     "q": 75,
+     "p": 25,
+     "dot": false,
+     "guides": false,
+     "showP": false,
+     "ql": "Qᴅ"
     }
    ],
    "braces": [
@@ -1671,16 +2197,7 @@ MathJax = {
      "q1": 25,
      "q2": 75,
      "label": "Imports",
-     "below": true
-    }
-   ],
-   "points": [
-    {
-     "q": 50,
-     "p": 50,
-     "guides": false,
-     "showP": false,
-     "showQ": false
+     "below": "in"
     }
    ],
    "caption": "At the world price the country buys the gap between what it wants and what it makes from abroad."
@@ -1730,14 +2247,60 @@ MathJax = {
     {
      "p": 25,
      "label": "Pᵂ",
+     "tag": "World Price",
      "color": "grey"
     },
     {
      "p": 40,
-     "label": "Pᵂ+t"
+     "label": "Pᵂ+t",
+     "tag": "World Price + Tariff"
     }
    ],
    "areas": [
+    {
+     "pts": [
+      [
+       0,
+       40
+      ],
+      [
+       0,
+       100
+      ],
+      [
+       60,
+       40
+      ]
+     ],
+     "label": "CS",
+     "color": "teal",
+     "lp": [
+      17,
+      62
+     ]
+    },
+    {
+     "pts": [
+      [
+       0,
+       40
+      ],
+      [
+       0,
+       0
+      ],
+      [
+       40,
+       40
+      ]
+     ],
+     "label": "PS",
+     "color": "orange",
+     "lp": [
+      12.0,
+      18.67
+     ]
+    },
     {
      "pts": [
       [
@@ -1757,12 +2320,8 @@ MathJax = {
        40
       ]
      ],
-     "label": "Revenue",
-     "color": "teal",
-     "lp": [
-      50,
-      32
-     ]
+     "label": "",
+     "color": "navy"
     },
     {
      "pts": [
@@ -1779,8 +2338,12 @@ MathJax = {
        25
       ]
      ],
-     "label": "",
-     "color": "red"
+     "label": "DWL",
+     "color": "red",
+     "lp": [
+      37.5,
+      30.5
+     ]
     },
     {
      "pts": [
@@ -1797,29 +2360,49 @@ MathJax = {
        25
       ]
      ],
-     "label": "",
-     "color": "red"
-    }
-   ],
-   "braces": [
-    {
-     "p": 40,
-     "q1": 40,
-     "q2": 60,
-     "label": "Imports",
-     "below": true
+     "label": "DWL",
+     "color": "red",
+     "lp": [
+      62.5,
+      30.5
+     ]
     }
    ],
    "points": [
     {
      "q": 50,
      "p": 50,
+     "pl": "P*",
+     "guides": "p",
+     "showQ": false
+    },
+    {
+     "q": 40,
+     "p": 40,
+     "dot": false,
      "guides": false,
      "showP": false,
-     "showQ": false
+     "ql": "Qꜱ"
+    },
+    {
+     "q": 60,
+     "p": 40,
+     "dot": false,
+     "guides": false,
+     "showP": false,
+     "ql": "Qᴅ"
     }
    ],
-   "caption": "The price rises by the tariff, so domestic production rises, domestic consumption falls and imports shrink. The government collects the shaded rectangle, and the two red triangles are surplus that nobody gets at all."
+   "braces": [
+    {
+     "p": 25,
+     "q1": 40,
+     "q2": 60,
+     "label": "Imports",
+     "below": "in"
+    }
+   ],
+   "caption": "The price rises by the tariff, so domestic production rises, domestic consumption falls and imports shrink. The government collects the navy rectangle between the two price lines, and the two red wedges are surplus that nobody gets at all."
   }
  }
 }
@@ -1838,9 +2421,8 @@ MathJax = {
   "x": "Q",
   "y": "P",
   "xmax": 90,
-  "ymax": 5.2,
+  "ymax": 5.5,
   "money": true,
-  "cents": true,
   "xticks": [
    20,
    30,
@@ -1848,8 +2430,10 @@ MathJax = {
    60
   ],
   "yticks": [
+   1,
    2,
-   2.5
+   2.5,
+   5
   ]
  },
  "curves": [
@@ -1889,33 +2473,106 @@ MathJax = {
  "hlines": [
   {
    "p": 2,
-   "label": "$2.00"
+   "color": "grey"
   },
   {
    "p": 2.5,
-   "label": "$2.50",
-   "at": 1
-  }
- ],
- "braces": [
-  {
-   "p": 2,
-   "q1": 20,
-   "q2": 60,
-   "label": "40 imported",
-   "below": true,
-   "until": 1
-  },
-  {
-   "p": 2.5,
-   "q1": 30,
-   "q2": 50,
-   "label": "20 imported",
-   "below": true,
    "at": 1
   }
  ],
  "areas": [
+  {
+   "pts": [
+    [
+     0,
+     2
+    ],
+    [
+     0,
+     5
+    ],
+    [
+     60,
+     2
+    ]
+   ],
+   "label": "CS",
+   "color": "teal",
+   "lp": [
+    16,
+    2.9
+   ],
+   "until": 1
+  },
+  {
+   "pts": [
+    [
+     0,
+     2
+    ],
+    [
+     0,
+     1
+    ],
+    [
+     20,
+     2
+    ]
+   ],
+   "label": "PS",
+   "color": "orange",
+   "lp": [
+    3.33,
+    1.5
+   ],
+   "until": 1
+  },
+  {
+   "pts": [
+    [
+     0,
+     2.5
+    ],
+    [
+     0,
+     5
+    ],
+    [
+     50,
+     2.5
+    ]
+   ],
+   "label": "CS",
+   "color": "teal",
+   "lp": [
+    13,
+    3.25
+   ],
+   "at": 1
+  },
+  {
+   "pts": [
+    [
+     0,
+     1
+    ],
+    [
+     0,
+     2.5
+    ],
+    [
+     30,
+     2.5
+    ]
+   ],
+   "label": "PS",
+   "color": "orange",
+   "lp": [
+    3.0,
+    1.7
+   ],
+   "at": 1
+  },
   {
    "pts": [
     [
@@ -1935,12 +2592,8 @@ MathJax = {
      2.5
     ]
    ],
-   "label": "$10",
-   "color": "teal",
-   "lp": [
-    40,
-    2.25
-   ],
+   "label": "",
+   "color": "navy",
    "at": 2
   },
   {
@@ -1984,18 +2637,61 @@ MathJax = {
  ],
  "points": [
   {
-   "q": 40,
-   "p": 3,
-   "guides": false,
-   "showP": false,
-   "showQ": false
+   "q": 20,
+   "p": 2,
+   "dot": false,
+   "guides": "q",
+   "showQ": false,
+   "until": 1
+  },
+  {
+   "q": 60,
+   "p": 2,
+   "dot": false,
+   "guides": "q",
+   "showQ": false,
+   "until": 1
+  },
+  {
+   "q": 30,
+   "p": 2.5,
+   "dot": false,
+   "guides": "q",
+   "showQ": false,
+   "at": 1
+  },
+  {
+   "q": 50,
+   "p": 2.5,
+   "dot": false,
+   "guides": "q",
+   "showQ": false,
+   "at": 1
+  }
+ ],
+ "braces": [
+  {
+   "p": 2,
+   "q1": 20,
+   "q2": 60,
+   "label": "40 imported",
+   "below": true,
+   "until": 1
+  },
+  {
+   "p": 2.5,
+   "q1": 30,
+   "q2": 50,
+   "label": "20 imported",
+   "below": true,
+   "at": 1
   }
  ],
  "steps": [
-  "At the world price of $2 the country supplies 20 units, demands 60, and imports the 40-unit difference.",
-  "The $0.50 tariff raises the price buyers pay to $2.50. Domestic supply rises to 30, demand falls to 50, and imports drop to 20.",
-  "The government collects $0.50 on each of the 20 imported units, which is $10 of tariff revenue.",
-  "The two red triangles are surplus that nobody receives: $5 in all. Ten units are now made at home that cost more than buying them abroad, and ten units are no longer bought at all."
+  "At the world price of $2 the country supplies 20 units, demands 60, and imports the 40-unit difference. Consumer surplus is $90, producer surplus is $10, and total surplus is $100.",
+  "The $0.50 tariff raises the price buyers pay to $2.50. Domestic supply rises to 30, demand falls to 50, and imports drop to 20. Consumer surplus falls to $62.50 while producer surplus rises to $22.50.",
+  "The government collects $0.50 on each of the 20 imported units, which is $10 of tariff revenue — the navy rectangle between the two price lines.",
+  "The two red triangles are surplus that nobody receives: $5 in all. Total surplus falls from $100 to $95, and that $5 is the deadweight loss the tariff creates."
  ]
 }
 </script></div>

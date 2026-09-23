@@ -547,6 +547,21 @@ def fmt_q(v, ax):
     return "{:,}".format(v)
 
 
+def brace_y(b, Y, oy):
+    """Where the engine puts a brace's bracket, and which way its curl points.
+
+    Three positions since v2.14: outside under the Q axis (below:true), inside
+    the plot just under its price line (below:"in"), or just above that line
+    (the default). Modelling "in" as "outside" -- which a plain truth test does,
+    since "in" is truthy -- puts the test's idea of the brace 100px below the
+    drawing and it stops colliding with anything."""
+    if b.get("below") is True:
+        return oy + 22, 1
+    if b.get("below") == "in":
+        return Y(b["p"]) + 8, 1
+    return Y(b["p"]) - 8, -1
+
+
 def box(x, y, text, size, anchor="start", vcenter=False):
     """The rectangle a piece of SVG text occupies.
 
@@ -737,8 +752,12 @@ def guide_segments(pn, X, Y, ox, oy):
     for p in pn.get("points") or []:
         if p.get("guides") is False:
             continue
-        out.append(([(ox, Y(p["p"])), (X(p["q"]), Y(p["p"])), (X(p["q"]), oy)],
-                    "the guides from (%s, %s)" % (p["q"], p["p"]),
+        # v2.14: "p" draws only the leg to the price axis, "q" only the leg to
+        # the quantity axis. Testing the whole elbow either way invents a guide
+        # that is not on the drawing, and misses nothing when it is.
+        elbow = [(ox, Y(p["p"])), (X(p["q"]), Y(p["p"])), (X(p["q"]), oy)]
+        leg = {"p": elbow[:2], "q": elbow[1:]}.get(p.get("guides"), elbow)
+        out.append((leg, "the guides from (%s, %s)" % (p["q"], p["p"]),
                     (p.get("at", 0), p.get("until"))))
     for h in pn.get("hlines") or []:
         out.append(([(ox, Y(h["p"])), (ox + pw + 8, Y(h["p"]))],
@@ -746,15 +765,16 @@ def guide_segments(pn, X, Y, ox, oy):
                     (h.get("at", 0), h.get("until"))))
     for b in pn.get("braces") or []:
         win = (b.get("at", 0), b.get("until"))
-        if not b.get("below"):
+        # the engine draws the drop guides for every brace that is not outside
+        # the axis -- below:"in" included
+        if b.get("below") is not True:
             for q in (b.get("q1"), b.get("q2")):
                 if q is None:
                     continue
                 out.append(([(X(q), Y(b["p"])), (X(q), oy)],
                             "a guide under the %r brace" % b.get("label"), win))
         # the bracket itself
-        y = (oy + 22) if b.get("below") else (Y(b["p"]) - 8)
-        d = 1 if b.get("below") else -1
+        y, d = brace_y(b, Y, oy)
         x1, x2 = X(min(b["q1"], b["q2"])), X(max(b["q1"], b["q2"]))
         m = (x1 + x2) / 2.0
         out.append(([(x1, y), (x1 + 7, y + d * 7), (m - 7, y + d * 7), (m, y + d * 14),
@@ -854,13 +874,22 @@ def check_labels(cfgs, r):
                 for b in pn.get("braces") or []:
                     if not b.get("label"):
                         continue
-                    y = (oy + 22) if b.get("below") else (Y(b["p"]) - 8)
-                    d = 1 if b.get("below") else -1
-                    m = (X(min(b["q1"], b["q2"])) + X(max(b["q1"], b["q2"]))) / 2
-                    boxes.append((box(m, y + d * 14 + (12 if b.get("below") else -4),
+                    y, d = brace_y(b, Y, oy)
+                    x1b, x2b = X(min(b["q1"], b["q2"])), X(max(b["q1"], b["q2"]))
+                    m = (x1b + x2b) / 2
+                    hh = max(2.5, min(7.0, (x2b - x1b) / 4.0))
+                    boxes.append((box(m, y + d * 2 * hh + (12 if d > 0 else -4),
                                       b["label"], 12, "middle"),
                                   "brace label %r" % b["label"],
                                   (b.get("at", 0), b.get("until"))))
+
+                # A price line can name itself at its right-hand end (v2.14).
+                for hh_ in pn.get("hlines") or []:
+                    if not hh_.get("tag"):
+                        continue
+                    boxes.append((box(ox + (W - ox - 36.0) + 6, Y(hh_["p"]) + hh_.get("tagdy", -6), hh_["tag"], 12, "end"),
+                                  "price-line tag %r" % hh_["tag"],
+                                  (hh_.get("at", 0), hh_.get("until"))))
 
                 for b in pn.get("vbraces") or []:
                     if not b.get("label"):
@@ -931,6 +960,11 @@ def check_labels(cfgs, r):
                         if poly_hits(bx, list(seg)):
                             r.fail("labels", "%s: %s sits on %s" % (where, what, desc))
                     for pt in pn.get("points") or []:
+                        # dot:false draws no marker (v2.12) -- only the axis
+                        # label, which is boxed separately above. Testing the
+                        # marker anyway invents an obstacle that is not there.
+                        if pt.get("dot") is False:
+                            continue
                         cx, cy = X(pt["q"]), Y(pt["p"])
                         rad = 6.0 if pt.get("marker") else 4.2
                         own = pt.get("label") and what == "point label %r" % pt["label"]

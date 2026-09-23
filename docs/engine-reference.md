@@ -122,6 +122,13 @@ pixel apart. `scripts/check_file.py` tests for this.
 ```
 
 - Draws a hollow dot with dashed guides to both axes, unless `guides:false`.
+- `guides:"p"` draws only the leg to the price axis and `guides:"q"` only the
+  leg to the quantity axis (**v2.14**). The printed artwork rarely wants the
+  whole elbow: a quantity read off a world-price line gets the vertical alone,
+  because the price line is already drawn through it, and an equilibrium under
+  trade gets the horizontal alone, because its quantity is not the point being
+  made. Drawing both puts a dashed line on the page that the source does not
+  have.
 - `dot:false` (**v2.12**) keeps the axis labels and drops the marker, for a
   quantity that a vertical line already marks. Its name then prints on the axis
   in the same 10.5px tick style as every other number there. Getting that label
@@ -198,13 +205,22 @@ which side is correct depends on the geometry, so check it against a render.
 ### `hlines`
 
 ```json
-{"p": 2, "label": "$2", "at": 1, "color": "red"}
+{"p": 2, "label": "$2", "tag": "World Price", "tagdy": 14, "at": 1, "color": "red"}
 ```
 
 A thick horizontal price line across the plot — a price floor or ceiling, or any
 disequilibrium price. It prints its own label on the P axis when that price is
 not already a tick. Red by default.
 
+
+`label` names the line's **price on the P axis** (suppressed when that price is
+already a `ytick`). `tag` (**v2.14**) names the **line itself**, at its
+right-hand end, the way the artwork writes "World Price" beside the line rather
+than only on the axis. `tagdy` nudges the tag off the line in pixels — the
+default −6 sits above it, and a positive value drops it below, which is what an
+export panel needs because its supply curve climbs into that top-right corner.
+Two price lines close together cannot both carry a tag; label them with ticks
+instead.
 ### `braces`
 
 ```json
@@ -215,7 +231,16 @@ A curly brace spanning `q1`→`q2` at price `p`. Red by default.
 
 `below:true` puts it under the Q axis (and grows the panel from 250 to 268 units
 tall to make room). `below:false` puts it just above the price line **and also
-draws vertical guides** from each end down to the axis.
+draws vertical guides** from each end down to the axis. `below:"in"`
+(**v2.14**) is the third position: inside the plot, hanging just *below* its
+price line, with the same vertical guides.
+
+The three exist because the artwork uses all three. An exports brace goes above
+the world-price line; an imports brace goes below it, because above it is where
+the curves cross; and a numerical example puts the brace under the axis
+entirely. Note that `"in"` is truthy, so any code testing `if b.below` must ask
+`=== true` instead — `check_file.py` reads the position through one helper,
+`brace_y()`, for exactly that reason.
 
 ### `vbraces`
 

@@ -99,7 +99,7 @@
 .sdg .sdg-cap { margin:10px 0 0; padding:10px 12px; background:#fff; border-left:4px solid var(--red); font-size:.92rem; line-height:1.45; min-height:3.2em; }
 </style>
 <script>
-/* ===== sd-graph.js v2.13 — data-driven supply & demand widgets =====
+/* ===== sd-graph.js v2.14 — data-driven supply & demand widgets =====
    Markup:  <div class="sdg"><script type="application/json">{ ...config... }<\/script></div>
    Top-level config:
      title, lede, caption         heading / intro / static caption (caption used only when there are no steps)
@@ -118,11 +118,11 @@
         shiftArrow:false = animate and dim as usual but draw no shift arrow. Use it whenever the
                  widget already shows per-row arrows (table.arrows), which say the same thing once per row.
         curved = smooth through 3+ points (conceptual, non-linear look)
-     points[]: {id, q, p, label, marker, pl, ql, color, at, until, dx, dy, guides:false, showP:false, showQ:false, dot:false}
+     points[]: {id, q, p, label, marker, pl, ql, color, at, until, dx, dy, guides:false|'p'|'q', showP:false, showQ:false, dot:false}
         marker = "1"/"2" numbered circle;  pl/ql = symbolic axis labels ("P₁","Q₁") instead of numbers
      moves[]:  {from:[q,p], to:[q,p], at, until, color, offset}  arrow between two points, drawn `offset` px beside the curve (default 14; negative = other side)
-     hlines[]: {p, label, color, at, until}                       horizontal price line across the plot
-     braces[]: {p, q1, q2, label, at, until, below, color}        curly brace spanning a gap at price p
+     hlines[]: {p, label, tag, tagdy, color, at, until}                       horizontal price line across the plot
+     braces[]: {p, q1, q2, label, at, until, below:true|'in', color}  curly brace spanning a gap at price p
      vbraces[]:{p1, p2, q, label, at, until, left, side, color}   the same brace turned upright, spanning a
         price gap. left:true is the mirror of a brace's below:true: it sits outside the P axis, clear of the
         plot and the tick numbers, with its label running up the axis, and widens the left margin to fit.
@@ -147,7 +147,7 @@
 
   // ---------- one SVG panel ----------
   function buildPanel(cfg) {
-    var ax = cfg.axes, W = 372, below = (cfg.braces || []).some(function (b) { return b.below; }), H = below ? 268 : 250;
+    var ax = cfg.axes, W = 372, below = (cfg.braces || []).some(function (b) { return b.below === true; }), H = below ? 268 : 250;
     // A brace outside the P axis needs margin to sit in, the way a brace below
     // the Q axis needs the extra panel height above.
     var vleft = (cfg.vbraces || []).some(function (b) { return b.left; });
@@ -276,12 +276,20 @@
       var cc = col(l.color || 'red'), grp = el('g', {});
       grp.appendChild(el('line', {class: 'hline', stroke: cc, x1: O.x, y1: Y(l.p), x2: O.x + PW + 8, y2: Y(l.p)}));
       if ((ax.yticks || []).indexOf(l.p) < 0) grp.appendChild(el('text', {class: 'tk strong', x: O.x - 6, y: Y(l.p) + 4, 'text-anchor': 'end', fill: cc}, l.label || fmtP(l.p, ax)));
+      // `label` names the line's price on the P axis; `tag` names the line
+      // itself, at its right-hand end, the way the printed artwork writes
+      // "World Price" beside the line rather than only on the axis.
+      // tagdy nudges it off the line: above by default, below where the
+      // curve that climbs to the right-hand corner is already there.
+      if (l.tag) grp.appendChild(el('text', {class: 'tag', x: O.x + PW + 6, y: Y(l.p) + (l.tagdy != null ? l.tagdy : -6), 'text-anchor': 'end', fill: cc}, l.tag));
       g.appendChild(grp); reg(grp, l);
     });
 
     (cfg.braces || []).forEach(function (b) {
       var cc = col(b.color || 'red'), grp = el('g', {});
-      var x1 = X(Math.min(b.q1, b.q2)), x2 = X(Math.max(b.q1, b.q2)), y = b.below ? O.y + 22 : Y(b.p) - 8, dir = b.below ? 1 : -1, m = (x1 + x2) / 2;
+      var inplot = b.below === 'in', out = b.below === true;
+      var x1 = X(Math.min(b.q1, b.q2)), x2 = X(Math.max(b.q1, b.q2)),
+          y = out ? O.y + 22 : Y(b.p) + (inplot ? 8 : -8), dir = (out || inplot) ? 1 : -1, m = (x1 + x2) / 2;
       // Each half of the curl needs about 2*hh of run. Over a short span a
       // fixed hh makes the segments overlap and the brace reads as a scribble,
       // so it shrinks with the span it has to cover.
@@ -289,8 +297,8 @@
       var d = 'M' + x1 + ' ' + y + ' Q' + x1 + ' ' + (y + dir * hh) + ' ' + (x1 + hh) + ' ' + (y + dir * hh) + ' L' + (m - hh) + ' ' + (y + dir * hh) + ' Q' + m + ' ' + (y + dir * hh) + ' ' + m + ' ' + (y + dir * 2 * hh) +
               ' Q' + m + ' ' + (y + dir * hh) + ' ' + (m + hh) + ' ' + (y + dir * hh) + ' L' + (x2 - hh) + ' ' + (y + dir * hh) + ' Q' + x2 + ' ' + (y + dir * hh) + ' ' + x2 + ' ' + y;
       grp.appendChild(el('path', {class: 'brace', stroke: cc, d: d}));
-      grp.appendChild(el('text', {class: 'tag', x: m, y: y + dir * 2 * hh + (b.below ? 12 : -4), 'text-anchor': 'middle', fill: cc}, b.label));
-      if (!b.below) { [b.q1, b.q2].forEach(function (q) { grp.appendChild(el('line', {class: 'guide', stroke: cc, x1: X(q), y1: Y(b.p), x2: X(q), y2: O.y})); }); }
+      grp.appendChild(el('text', {class: 'tag', x: m, y: y + dir * 2 * hh + ((out || inplot) ? 12 : -4), 'text-anchor': 'middle', fill: cc}, b.label));
+      if (!out) { [b.q1, b.q2].forEach(function (q) { grp.appendChild(el('line', {class: 'guide', stroke: cc, x1: X(q), y1: Y(b.p), x2: X(q), y2: O.y})); }); }
       g.appendChild(grp); reg(grp, b);
     });
 
@@ -332,7 +340,18 @@
 
     (cfg.points || []).forEach(function (p) {
       var cc = col(p.color), grp = el('g', {class: 'ptg'});
-      if (p.guides !== false) grp.appendChild(el('path', {class: 'guide', stroke: cc, d: 'M' + O.x + ' ' + Y(p.p) + ' L' + X(p.q) + ' ' + Y(p.p) + ' L' + X(p.q) + ' ' + O.y}));
+      // guides: the dashed elbow from the P axis across to the point and down
+      // to the Q axis. "p" draws only the leg to the price axis and "q" only
+      // the leg to the quantity axis, because the printed artwork rarely wants
+      // both: a world-price quantity gets a vertical guide only (the price line
+      // is already drawn through it), and an equilibrium under trade gets a
+      // horizontal guide only (its quantity is not the point being made).
+      if (p.guides !== false) {
+        var hleg = 'M' + O.x + ' ' + Y(p.p) + ' L' + X(p.q) + ' ' + Y(p.p),
+            vleg = 'M' + X(p.q) + ' ' + Y(p.p) + ' L' + X(p.q) + ' ' + O.y,
+            gd = p.guides === 'p' ? hleg : p.guides === 'q' ? vleg : hleg + ' L' + X(p.q) + ' ' + O.y;
+        grp.appendChild(el('path', {class: 'guide', stroke: cc, d: gd}));
+      }
       // dot:false keeps the axis labels and drops the marker. A quantity
       // marked by a vertical line wants its name on the axis in the same tick
       // style as every other number there, and nothing drawn on the line

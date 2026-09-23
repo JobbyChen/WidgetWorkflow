@@ -547,12 +547,22 @@ def fmt_q(v, ax):
     return "{:,}".format(v)
 
 
-def box(x, y, text, size, anchor="start"):
+def box(x, y, text, size, anchor="start", vcenter=False):
+    """The rectangle a piece of SVG text occupies.
+
+    `y` is the baseline, so the box hangs mostly above it -- except where the
+    engine sets dominant-baseline:central, which centres the text on `y`
+    instead. Area labels are the only ones drawn that way (v2.13); modelling
+    them as baseline-anchored put this test's idea of them ~3px above where
+    the browser actually draws them, which is the difference between a label
+    centred in its wedge and one lying across the wedge's edge."""
     w = 0.58 * size * max(1, len(str(text)))
     if anchor == "middle":
         x -= w / 2
     elif anchor == "end":
         x -= w
+    if vcenter:
+        return (x, y - size * 0.5, x + w, y + size * 0.5)
     return (x, y - size * 0.78, x + w, y + size * 0.22)
 
 
@@ -884,7 +894,7 @@ def check_labels(cfgs, r):
                                          sum(q[1] for q in pts) / float(len(pts))]
                     boxes.append((box(X(lp[0]) + a.get("ldx", 0),
                                       Y(lp[1]) + a.get("ldy", 0),
-                                      a["label"], 11, "middle"),
+                                      a["label"], 11, "middle", vcenter=True),
                                   "area label %r" % a["label"],
                                   (a.get("at", 0), a.get("until"))))
 
@@ -1042,18 +1052,24 @@ def check_tick_emphasis(cfgs, r):
 
 
 def check_arrows(cfgs, r):
-    n_checked = 0
+    n_checked = n_bad = 0
     for n, cfg, _ in cfgs:
         for label, v in variants(cfg):
             if v.get("preset"):
                 continue
-            # The surplus/shortage pattern is the one with a disequilibrium
-            # price line. An equilibrium-shift widget also carries a brace
-            # labelled Surplus/Shortage -- the gap at the old price -- but it
-            # is the pattern v6 step 4 templates without moves, so keying on
-            # the brace label alone flags those wrongly.
+            # The surplus/shortage pattern needs BOTH a disequilibrium price
+            # line and a brace naming the gap it opens. Neither alone works:
+            # an equilibrium-shift widget carries a Surplus/Shortage brace --
+            # the gap at the old price -- without a line, and is the pattern v6
+            # step 4 templates without moves, so the brace alone flags those
+            # wrongly; a world price is an hline without such a brace, and a
+            # market opened to trade settles away from equilibrium and stays
+            # there, so the line alone flags the trade chapter wrongly. There
+            # is no movement back to draw in either.
             hlines = [h for pn in panels(v) for h in (pn.get("hlines") or [])]
-            if not hlines or not v.get("steps"):
+            gap = [b for pn in panels(v) for b in (pn.get("braces") or [])
+                   if re.search(r"surplus|shortage", str(b.get("label", "")), re.I)]
+            if not hlines or not gap or not v.get("steps"):
                 continue
             n_checked += 1
             last = len(v["steps"]) - 1
@@ -1063,12 +1079,16 @@ def check_arrows(cfgs, r):
                           if m.get("at", 0) <= last and (m.get("until") is None
                                                          or m["until"] > last)]
             if len(moves) < 2:
+                n_bad += 1
                 r.fail("arrows", "widget %d%s: a surplus/shortage walkthrough must end "
                                  "with two movement arrows, found %d"
                        % (n, " (%s)" % label if label else "", len(moves)))
-    if n_checked:
+    # Only claim a pass for the ones that actually passed -- reporting
+    # "N walkthroughs end with two arrows" beside a FAIL for one of them
+    # reads as a green check on a file that just failed.
+    if n_checked - n_bad:
         r.ok("arrows", "%d surplus/shortage walkthrough(s) end with two movement "
-                       "arrows" % n_checked)
+                       "arrows" % (n_checked - n_bad))
 
 
 def check_captions(cfgs, r):

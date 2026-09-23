@@ -129,6 +129,47 @@ case("surplus walkthrough with no movement arrows", lambda r: C.check_arrows(wid
     steps=["one.", "two."]), r)
     or r.has("FAIL", "arrows", "two movement arrows"))
 
+# The other half of the same rule. A world price is an hline and a trade
+# diagram has steps, but the market settles at that price and stays there --
+# there is no movement back to equilibrium to draw, so demanding two arrows
+# flagged all eight widgets of the trade chapter. The brace is what separates
+# the two: a surplus/shortage walkthrough names the gap its price line opens.
+# This case fails if that trigger is ever widened back to the price line alone.
+case("a world-price line is not a surplus walkthrough", lambda r: C.check_arrows(widget(
+    hlines=[{"p": 70, "label": "P\u1d42"}],
+    braces=[{"p": 70, "q1": 20, "q2": 80, "label": "Exports"}],
+    steps=["one.", "two."]), r)
+    or not r.has("FAIL", "arrows", "two movement arrows"))
+
+# ...and the equilibrium-shift widgets, which carry the brace without a line.
+case("a Surplus brace with no price line is not a walkthrough",
+     lambda r: C.check_arrows(widget(
+         braces=[{"p": 70, "q1": 20, "q2": 80, "label": "Surplus"}],
+         steps=["one.", "two."]), r)
+     or not r.has("FAIL", "arrows", "two movement arrows"))
+
+# ---- the text-box model ----------------------------------------------------
+
+# An area label is the one label the engine centres on its anchor point
+# (dominant-baseline:central, v2.13). Modelling it as baseline-anchored like
+# every other label put it ~3px high here, which is exactly the margin between
+# "centred in the wedge" and "lying across the wedge's edge" -- the $10 tariff
+# label rendered 0.7px over its own price line while this file reported PASS.
+def _box_centred(r):
+    b = C.box(100.0, 50.0, "$10", 11, "middle", vcenter=True)
+    mid = (b[1] + b[3]) / 2.0
+    return abs(mid - 50.0) < 0.01
+
+
+def _box_baseline(r):
+    b = C.box(100.0, 50.0, "$10", 11, "middle")
+    mid = (b[1] + b[3]) / 2.0
+    return mid < 50.0 - 2.0          # hangs above the baseline
+
+
+case("an area label's box is centred on its anchor", _box_centred)
+case("every other label's box hangs above its baseline", _box_baseline)
+
 # ---- captions --------------------------------------------------------------
 
 case("'Before -' caption prefix", lambda r: C.check_captions(

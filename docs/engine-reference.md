@@ -174,6 +174,17 @@ producer surplus, `red` for a loss. Default `ink`.
 thin wedge has no room for one, so `lp: [q, p]` places it by hand — outside the
 shape if that is what fits — and `ldx`/`ldy` nudge it in pixels.
 
+An area label is the **only** label the engine centres vertically on its anchor
+point (`dominant-baseline: central`, **v2.13**). Every other piece of text in a
+panel is placed by its baseline and therefore hangs above the point it is given,
+which is what `box()` in `check_file.py` models; area labels need that test's
+`vcenter=True`. Before v2.13 an area label was baseline-anchored like the rest,
+so it sat about 3px **above** the centroid the engine had just computed for it —
+enough that the `$10` tariff label in the trade chapter rendered 0.7px over its
+own price line, and enough that a deadweight label had to be given room by
+widening the wedge rather than by centring the text. If you are placing an area
+label with `lp`, give it the point you want the text centred on.
+
 ### `moves`
 
 ```json

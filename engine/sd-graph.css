@@ -48,7 +48,7 @@
 /* A shaded region reads as a wash behind the graph, never as a block: the
    curves, guides and points all have to stay legible through it. */
 .sdg .area { stroke:none; opacity:.18; }
-.sdg .arlbl { font-size:10px; font-weight:700; }
+.sdg .arlbl { font-size:10px; font-weight:700; dominant-baseline:central; }
 .sdg .curve.thin { stroke-width:2; }
 .sdg .clbl { font-size:13px; font-weight:800; }
 .sdg .guide { fill:none; stroke-width:1.1; stroke-dasharray:4 3; }

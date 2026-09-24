@@ -240,6 +240,14 @@ economics instead of label placement.
   the clear point nearest the centroid, and falls back to just outside the
   shape for a wedge too small to hold a label — which is what the source does
   with its own slivers.
+* **Every class date in the source survives.** A `<p class="date">` carries no
+  content, so condensing or restructuring a chapter drops it with nothing left
+  looking wrong — concise editions of modules dated over three meetings were
+  shipping with none. `check_file.py <file> --source <what it was built from>`
+  fails on a lost one; run it with `--source` whenever there is one. The pill
+  goes immediately before the heading or paragraph that day started with, and
+  where the output merges two of the source's sections, it anchors to that
+  paragraph rather than the merged heading. (Ian, 2026-09-24.)
 * **Where the source figure and the source prose disagree, the prose wins**
   (rule 3's authority order) — and say so in the changelog. The apartment
   figure prints a demand intercept of 1,200 that contradicts its own

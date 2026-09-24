@@ -356,6 +356,33 @@ case("working whose answer alone appears in a different formula",
      or not r.has("FAIL", "calcs", "printed again as prose"))
 
 
+# ---- class dates -----------------------------------------------------------
+
+_DATED = ('<p class="date">Tuesday, 9/22/26</p><h1>Culture</h1><p>Body.</p>'
+          '<p class="date">Wednesday, 9/23/26</p><h2>Banking</h2>')
+
+
+def _dates_case(src, source=None):
+    r = Catch()
+    C.check_dates(src, r, source)
+    return r
+
+
+# a condensed edition keeps the content and silently loses the dates, because
+# they carry none of it
+case("a class date the source has and the file does not", lambda r: r.take(
+    _dates_case('<h1>Culture</h1><p>Body.</p><h2>Banking</h2>', _DATED))
+    or r.has("FAIL", "dates", "does not carry it"))
+
+case("every class date carried over", lambda r: r.take(
+    _dates_case(_DATED, _DATED))
+    or not r.has("FAIL", "dates", "does not carry it"))
+
+case("a file with no class date at all", lambda r: r.take(
+    _dates_case('<h1>Culture</h1><p>Body.</p>'))
+    or r.has("WARN", "dates", "no <p class=\"date\"> line"))
+
+
 # ---- captions --------------------------------------------------------------
 
 case("'Before -' caption prefix", lambda r: C.check_captions(

@@ -1508,6 +1508,49 @@ def check_names(src, cfgs, r):
                % (who, ctx))
 
 
+DATE_RE = re.compile(r'<p class="date">(.*?)</p>', re.S)
+
+
+def check_dates(src, r, source=None):
+    """Every class date in the source survives into the output.
+
+    A chapter's date pills are the only record of which class covered what,
+    and they are the easiest thing in the file to lose: they carry no content,
+    so summarising, restructuring or rebuilding a chapter drops them without
+    leaving a gap anyone notices. A concise edition of a module that its full
+    edition dates over three class meetings, carrying none at all, still reads
+    as a complete document.
+
+    With no source to compare against, a file carrying no date line is worth a
+    look but is not wrong -- a reference page or a prototype has no class
+    behind it. Given the source with --source, a date that was in it and is
+    not in the output is a defect, and fails.
+    """
+    mine = [t.strip() for t in DATE_RE.findall(src)]
+    if source is None:
+        if not mine:
+            r.warn("dates", "no <p class=\"date\"> line in this file -- if it "
+                            "covers a class meeting, its date is missing")
+        else:
+            r.ok("dates", "%d class date(s): %s" % (len(mine), "; ".join(mine)))
+        return
+    theirs = [t.strip() for t in DATE_RE.findall(source)]
+    missing = [d for d in theirs if d not in mine]
+    for d in missing:
+        r.fail("dates", "the source dates a class %r and this file does not "
+                        "carry it" % d)
+    extra = [d for d in mine if d not in theirs]
+    for d in extra:
+        r.warn("dates", "%r is dated here but not in the source" % d)
+    kept = [d for d in theirs if d in mine]
+    if len(kept) > 1 and [d for d in mine if d in theirs] != kept:
+        r.warn("dates", "the class dates appear in a different order than the "
+                        "source has them")
+    if not missing and not extra:
+        r.ok("dates", "all %d class date(s) carried over from the source"
+             % len(theirs))
+
+
 def check_images(src, r):
     marks = re.findall(r"<!--\s*IMAGE POSITION:", src)
     if marks:
@@ -1529,6 +1572,10 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("file")
+    ap.add_argument("--source", metavar="PATH",
+                    help="the file this one was built from (the full edition, "
+                         "the chapter as sent). Its class dates must all "
+                         "survive into FILE.")
     args = ap.parse_args()
     path = pathlib.Path(args.file)
     if not path.exists():
@@ -1555,6 +1602,8 @@ def main():
     check_source(src, cfgs, r)
     check_names(src, cfgs, r)
     check_images(src, r)
+    check_dates(src, r, pathlib.Path(args.source).read_text(encoding="utf-8")
+                if args.source else None)
     r.skip("numbers", "whether each number is the source's number needs the source")
 
     print("\n%d FAIL, %d WARN" % (r.fails, r.warns))

@@ -192,6 +192,8 @@ A guide needs a number at its foot. A dashed line running to a blank spot on the
 Draw the equilibrium's guide once per widget. A later step or panel that does not move it need not draw it again; it is the horizontal that goes, while a vertical still marking a quantity that panel refers to stays.
 One superscript letter after P, never four: Pc, Pf, Pw read at 10.5px where a spelled-out subscript is noise. The line says what it is in full through its tag.
 A dot wherever a price meets a curve, the control price included — the artwork marks all of them. Mark the same readings in every panel of a market, so a series does not change its markings from one figure to the next.
+A value appears in the step it belongs to. Ticks live in axes and cannot step, so a reading belonging to a later step comes from its point instead, which takes at/until. Carry the equilibrium's dot on a second, label-less point present from the start, or the engine rings it as newly revealed.
+A caption must say something the paragraph above it does not: check_file measures each against the prose running up to its widget. Cut a redundant one to what it adds, or drop it -- a scenario widget whose panels are titled needs none, because the buttons name the cases.
 Show the working (calcs) only where the formulas live inside the image, because replacing the image would lose them. Where the chapter prints the same formula as text under the figure, a calcs block says it twice.
 Clip the axis to the region the figure uses. Drawn out to the full intercepts, ticks collide and most of the plot is empty.
 Where the source figure and the source prose disagree, the prose wins, and the changelog says so.

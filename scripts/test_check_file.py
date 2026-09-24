@@ -230,6 +230,35 @@ case("one guide down each quantity", lambda r: C.check_controls(widget(
     points=[{"q": 40, "p": 70, "guides": "q"}, {"q": 60, "p": 30, "guides": "q"}]), r)
     or not r.has("WARN", "controls", "two guides run down"))
 
+case("a guide running to a blank spot on the price axis", lambda r: C.check_controls(widget(
+    axes={"x": "Q", "y": "P", "xmax": 110, "ymax": 110, "xticks": [40], "yticks": [70]},
+    points=[{"q": 40, "p": 55, "guides": "p", "showP": False}]), r)
+    or r.has("FAIL", "controls", "nothing written there"))
+
+# ...and a point that carries its own name is identified without one: the
+# guide leads the eye to "C" or "E2", which is how a symbolic figure marks a
+# position. Every PPF point in shipped work is drawn that way.
+case("a guide to a named point is fine", lambda r: C.check_controls(widget(
+    axes={"x": "Q", "y": "P", "xmax": 110, "ymax": 110, "xticks": [40], "yticks": [70]},
+    points=[{"q": 40, "p": 55, "label": "C", "showP": False, "showQ": False}]), r)
+    or not r.has("FAIL", "controls", "nothing written there"))
+
+case("a guide whose value is a tick is fine", lambda r: C.check_controls(widget(
+    axes={"x": "Q", "y": "P", "xmax": 110, "ymax": 110, "xticks": [40], "yticks": [55]},
+    points=[{"q": 40, "p": 55, "guides": "p", "showP": False}]), r)
+    or not r.has("FAIL", "controls", "nothing written there"))
+
+# A bare drawing still has to say what it is...
+case("a widget with no caption and no steps", lambda r: C.check_schema(widget(), r)
+     or r.has("FAIL", "schema", "neither steps"))
+
+# ...but titled scenario buttons do say it, which is the shape a widget takes
+# when the prose above it already explains the comparison.
+case("titled scenarios need no caption", lambda r: C.check_schema(
+    [(1, {"scenarios": {"a": {"label": "A", "title": "The first case"},
+                        "b": {"label": "B", "title": "The second case"}}}, "")], r)
+    or not r.has("FAIL", "schema", "neither steps"))
+
 # ---- captions --------------------------------------------------------------
 
 case("'Before -' caption prefix", lambda r: C.check_captions(

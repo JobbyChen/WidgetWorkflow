@@ -697,14 +697,8 @@
   "xmax": 820,
   "ymax": 160,
   "money": true,
-  "xticks": [
-   375,
-   562.5
-  ],
-  "yticks": [
-   75,
-   100
-  ]
+  "xticks": [],
+  "yticks": []
  },
  "curves": [
   {
@@ -744,28 +738,33 @@
   {
    "p": 75,
    "tag": "Price ceiling",
-   "at": 1
+   "at": 1,
+   "control": true
   }
  ],
  "points": [
   {
    "q": 500,
    "p": 100,
-   "guides": "p",
+   "until": 1
+  },
+  {
+   "q": 500,
+   "p": 100,
+   "guides": false,
+   "showP": false,
    "showQ": false
   },
   {
    "q": 375,
    "p": 75,
    "guides": "q",
-   "showQ": false,
    "at": 1
   },
   {
    "q": 562.5,
    "p": 75,
    "guides": "q",
-   "showQ": false,
    "at": 1
   }
  ],
@@ -2570,7 +2569,7 @@
    "p": 6
   }
  ],
- "caption": "Consumer surplus is the area below demand and above the price; producer surplus is the area above supply and below it. The consumer surplus is larger here, which depends on the slope of each curve."
+ "caption": "The consumer surplus is the larger of the two here, which depends on how steep each curve is."
 }
 </script></div>
 

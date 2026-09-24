@@ -21,8 +21,9 @@ Groups, in order:
   labels    step 5's x-position test -- for every label, where does each curve
             pass at that label's x? Plus label-on-label and point-on-point.
   arrows    every surplus/shortage walkthrough ends with two movement arrows
-  controls  one dashed guide per quantity
+  controls  one dashed guide per quantity, each ending at a number
   calcs     working is shown only where the chapter does not print it as prose
+  prose     a caption says something the paragraph above it does not
   caption   prose, not slide bullets: no "Before -/After -", no "Price up,
             quantity up", complete sentences
   source    no student-facing text names where the material came from
@@ -478,11 +479,19 @@ def check_schema(cfgs, r):
     for n, cfg, _ in cfgs:
         has_steps = isinstance(cfg.get("steps"), list) and len(cfg["steps"]) >= 2
         static_preset = cfg.get("preset") and cfg.get("static") and cfg.get("scenarios")
-        if not (has_steps or cfg.get("caption") or static_preset
+        # A scenario widget whose panels are each titled is described without a
+        # caption: the buttons name the cases and the titles say what each one
+        # shows. That is the shape a widget takes when the prose above it
+        # already explains the comparison, and requiring a caption there forces
+        # the restatement the prose check exists to remove.
+        titled_scenarios = bool(cfg.get("scenarios")) and all(
+            v.get("title") for _, v in variants(cfg))
+        if not (has_steps or cfg.get("caption") or static_preset or titled_scenarios
                 or any(v.get("caption") or (isinstance(v.get("steps"), list)
                                             and len(v["steps"]) >= 2)
                        for _, v in variants(cfg))):
-            r.fail("schema", "widget %d has neither steps (>=2) nor a caption" % n)
+            r.fail("schema", "widget %d has neither steps (>=2), a caption, nor "
+                             "titled scenarios" % n)
 
         for label, v in variants(cfg):
             steps = v.get("steps") or []
@@ -1177,13 +1186,15 @@ def is_control(h):
 
 
 def check_controls(cfgs, r):
-    """One dashed guide per quantity.
+    """Guides: one per quantity, and each ending at a number.
 
     Two points at the same quantity each draw their own vertical, one straight
     down the other: twice the ink, no more information, and it is most of what
-    makes a busy panel look busy.
+    makes a busy panel look busy. And a dashed line running to a blank spot on
+    an axis is one the reader cannot use -- the value is suppressed, or will not
+    fit beside its neighbour -- so the guide goes and the dot stays.
     """
-    dupes = n = 0
+    dupes = dangling = n = 0
     for idx, cfg, _ in cfgs:
         for label, v in variants(cfg):
             if v.get("preset"):
@@ -1191,9 +1202,43 @@ def check_controls(cfgs, r):
             for pn in panels(v):
                 where = "widget %d%s" % (idx, " (%s)" % label if label else "")
                 n += 1
+                ax = pn.get("axes") or {}
+                yt = set(ax.get("yticks") or [])
+                xt = set(ax.get("xticks") or [])
+                hp = {h["p"] for h in (pn.get("hlines") or [])}
+                # A value is written on the axis if ANY point on the panel
+                # writes it. The gap point in a shift walkthrough sits at the
+                # old price, which the equilibrium has already labelled P1 --
+                # its guide runs to a number, just not one it wrote itself.
+                for _pt in pn.get("points") or []:
+                    if _pt.get("pl") or _pt.get("showP") is not False:
+                        yt.add(_pt["p"])
+                    if _pt.get("ql") or _pt.get("showQ") is not False:
+                        xt.add(_pt["q"])
                 drops = {}
                 for pt in pn.get("points") or []:
                     g = pt.get("guides", True)
+                    # A dashed line has to end at a number. One running to a
+                    # blank spot on an axis -- because the value is suppressed,
+                    # or will not fit beside its neighbour -- is a line the
+                    # reader cannot use. Drop the guide and keep the dot.
+                    # A point carrying its own name is identified already:
+                    # the guide leads the eye to "C" or "E2" rather than to a
+                    # number, which is how a symbolic figure marks a position.
+                    # What this catches is a guide to an anonymous point.
+                    if g is not False and not pt.get("label"):
+                        if g != "q" and not (pt.get("pl") or pt["p"] in yt or pt["p"] in hp
+                                             or pt.get("showP") is not False):
+                            dangling += 1
+                            r.fail("controls", "%s: the guide from (%s, %s) reaches the price "
+                                               "axis with nothing written there"
+                                   % (where, pt["q"], pt["p"]))
+                        if g != "p" and not (pt.get("ql") or pt["q"] in xt
+                                             or pt.get("showQ") is not False):
+                            dangling += 1
+                            r.fail("controls", "%s: the guide from (%s, %s) reaches the quantity "
+                                               "axis with nothing written there"
+                                   % (where, pt["q"], pt["p"]))
                     # a point on the axis has a vertical leg of zero length,
                     # so it is not drawing a second line down anything
                     if g is not False and g != "p" and pt.get("p", 0) > 0:
@@ -1206,8 +1251,8 @@ def check_controls(cfgs, r):
                                 r.warn("controls", "%s: two guides run down q = %s at once"
                                        % (where, q))
                                 break
-    if n and not dupes:
-        r.ok("controls", "no guide is drawn twice")
+    if n and not dupes and not dangling:
+        r.ok("controls", "every guide ends at a number, and none is drawn twice")
 
 
 FORMULA = re.compile(r"\\\(([^)]{0,400}?)\\\)", re.S)
@@ -1251,6 +1296,74 @@ def check_calcs(src, cfgs, r):
                     break
     if n and not dup:
         r.ok("calcs", "%d widget(s) show working the chapter does not print itself" % n)
+
+
+
+STOP = set("""a an the and or but if of to in on at for from by with as is are was were be been
+being it its this that these those there here them they their we you your our not no than then
+so such into over under about which who whom whose what when where while each every both all any
+some more most other another same can will would could should may might must do does did done
+have has had how why very much many few less least also only just even still yet per""".split())
+WORD = re.compile(r"[A-Za-z][A-Za-z'’-]+|\$?\d[\d,.]*")
+
+
+def content(text):
+    out = set()
+    for w in WORD.findall(text or ""):
+        w = w.lower().strip("'’-")
+        if w in STOP or len(w) < 3:
+            continue
+        out.add(w)
+    return out
+
+
+def check_caption_prose(src, cfgs, r):
+    """Does the caption say what the paragraph above it already said?
+
+    Vertical space is the scarce thing on these pages, and a caption that
+    restates the sentence introducing it costs a dozen lines a chapter for
+    nothing. This measures the caption's content words against the prose
+    running up to the widget: one almost entirely contained in that prose is a
+    caption to cut down to whatever it adds, or drop.
+
+    It reports rather than fails, because what to keep is an editorial call --
+    a caption that repeats the setup often still ends with the one sentence
+    the prose does not have.
+    """
+    # Locate each widget by its own body. Searching for the opening tag finds
+    # one more than there are widgets: the engine's header comment quotes the
+    # markup verbatim, which shifted every widget on to the paragraph before
+    # the previous one and made the whole check read the wrong prose.
+    starts, at = [], 0
+    for _idx, _cfg, body in cfgs:
+        i = src.find(body, at)
+        starts.append(i if i >= 0 else at)
+        at = max(at, i + len(body)) if i >= 0 else at
+    n = wordy = 0
+    for pos, (idx, cfg, _) in zip(starts, cfgs):
+        prev = max([e for e in (m.end() for m in re.finditer(r"</div>", src))
+                    if e <= pos] or [0])
+        prose = re.sub(r"<[^>]+>", " ", src[prev:pos])
+        before = content(prose)
+        if len(before) < 8:
+            continue
+        texts = []
+        walk(cfg, lambda d: texts.extend(
+            [d[k] for k in ("caption", "lede") if isinstance(d.get(k), str)]))
+        for t in texts:
+            words = content(t)
+            if len(words) < 8:
+                continue
+            n += 1
+            frac = len(words & before) / float(len(words))
+            if frac >= 0.75:
+                wordy += 1
+                r.warn("prose", "widget %d: %d%% of %r is already in the "
+                                "paragraph above it -- cut it to what it adds"
+                       % (idx, round(frac * 100),
+                          t[:58] + ("..." if len(t) > 58 else "")))
+    if n and not wordy:
+        r.ok("prose", "%d caption(s) say something the prose above them does not" % n)
 
 
 def check_captions(cfgs, r):
@@ -1381,6 +1494,7 @@ def main():
     check_controls(cfgs, r)
     check_calcs(src, cfgs, r)
     check_captions(cfgs, r)
+    check_caption_prose(src, cfgs, r)
     check_source(src, cfgs, r)
     check_names(src, cfgs, r)
     check_images(src, r)

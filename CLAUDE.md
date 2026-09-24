@@ -213,6 +213,19 @@ economics instead of label placement.
   reading in a panel, not just the ones away from the ceiling. The same
   readings appear in every panel of a market, so a series does not change its
   markings figure to figure.
+* **A value appears in the step it belongs to.** Ticks live in `axes` and
+  cannot step, so a reading that belongs to a later step comes from its
+  *point* instead — those take `at`/`until` like anything else. The textbook
+  ceiling shows $100 and 500 while that is the subject, then hands the axis to
+  $75, 375 and 562.5, which is also why 500 and 562.5 never have to share it.
+  Carry the equilibrium's dot on a second, label-less point present from the
+  start, or the engine rings it as newly revealed. (Ian, 2026-09-24.)
+* **A caption must say something the paragraph above it does not.** Vertical
+  space is the scarce thing on these pages. `check_file.py` measures each
+  caption against the prose running up to its widget and reports one that is
+  three-quarters contained in it; cut it to what it adds, or drop it. A
+  scenario widget whose panels are titled needs no caption at all — the
+  buttons name the cases. (Ian, 2026-09-24.)
 * **Show the working only where the artwork does.** `calcs` carries the
   formulas when they live inside the image — replacing the image would
   otherwise lose them. Where the chapter prints the same formula as text under

@@ -1310,8 +1310,10 @@ WORD = re.compile(r"[A-Za-z][A-Za-z'’-]+|\$?\d[\d,.]*")
 def content(text):
     out = set()
     for w in WORD.findall(text or ""):
-        w = w.lower().strip("'’-")
-        if w in STOP or len(w) < 3:
+        w = w.lower().strip("'" + "\u2019-.,;:)")
+        # a short token is noise unless it is a number: $3 and 65 are
+        # two characters each and are the whole content of a caption
+        if w in STOP or (len(w) < 3 and not any(c.isdigit() for c in w)):
             continue
         out.add(w)
     return out
@@ -1340,10 +1342,13 @@ def check_caption_prose(src, cfgs, r):
         starts.append(i if i >= 0 else at)
         at = max(at, i + len(body)) if i >= 0 else at
     n = wordy = 0
+    paras = [(m.start(), m.group(1)) for m in re.finditer(r"<p\b[^>]*>(.*?)</p>", src, re.S)]
     for pos, (idx, cfg, _) in zip(starts, cfgs):
-        prev = max([e for e in (m.end() for m in re.finditer(r"</div>", src))
-                    if e <= pos] or [0])
-        prose = re.sub(r"<[^>]+>", " ", src[prev:pos])
+        # "the paragraph above it" means the last couple of paragraphs, not
+        # everything back to the previous closing tag -- that reached 25,000
+        # characters here, which is most of the chapter and matches anything.
+        run = [t for st, t in paras if st < pos][-2:]
+        prose = re.sub(r"<[^>]+>", " ", " ".join(run))
         before = content(prose)
         if len(before) < 8:
             continue
@@ -1355,8 +1360,13 @@ def check_caption_prose(src, cfgs, r):
             if len(words) < 8:
                 continue
             n += 1
+            # A number the prose does not have is content, whatever the word
+            # overlap says: a caption reading the values off the drawing shares
+            # its vocabulary with the paragraph introducing it and is still the
+            # only place those values appear.
+            new_numbers = {w for w in words - before if any(c.isdigit() for c in w)}
             frac = len(words & before) / float(len(words))
-            if frac >= 0.75:
+            if frac >= 0.75 and not new_numbers:
                 wordy += 1
                 r.warn("prose", "widget %d: %d%% of %r is already in the "
                                 "paragraph above it -- cut it to what it adds"

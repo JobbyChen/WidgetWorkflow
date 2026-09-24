@@ -40,6 +40,10 @@ class Catch:
     def warn(self, n, m):
         self.lines.append(("WARN", n, m))
 
+    def take(self, other):
+        self.lines.extend(other.lines)
+        return False
+
     def fail(self, n, m):
         self.lines.append(("FAIL", n, m))
 
@@ -258,6 +262,36 @@ case("titled scenarios need no caption", lambda r: C.check_schema(
     [(1, {"scenarios": {"a": {"label": "A", "title": "The first case"},
                         "b": {"label": "B", "title": "The second case"}}}, "")], r)
     or not r.has("FAIL", "schema", "neither steps"))
+
+# ---- a caption against the prose above it ----------------------------------
+
+_PROSE = ('<p>The demand curve shows the same information as the schedule, but '
+          'graphically. Price goes on the vertical axis and quantity demanded '
+          'on the horizontal axis.</p><div class="sdg"><script '
+          'type="application/json">%s</script></div>')
+
+
+def _prose_case(caption):
+    import json
+    src = _PROSE % json.dumps({"caption": caption})
+    r = Catch()
+    C.check_caption_prose(src, C.configs(src, Catch()), r)
+    return r
+
+
+# restating the paragraph above costs vertical space and adds nothing
+case("a caption that restates the prose above it", lambda r: r.take(_prose_case(
+    "The demand curve shows the same information as the schedule but "
+    "graphically, with price on the vertical axis and quantity demanded on "
+    "the horizontal axis."))
+    or r.has("WARN", "prose", "already in the paragraph above it"))
+
+# ...but one reading values off the drawing shares that vocabulary and is
+# still the only place the values appear
+case("a caption carrying numbers the prose lacks", lambda r: r.take(_prose_case(
+    "At $15 only 6 drinks are demanded; as the price falls to $3, the "
+    "quantity demanded rises to 65."))
+    or not r.has("WARN", "prose", "already in the paragraph above it"))
 
 # ---- captions --------------------------------------------------------------
 

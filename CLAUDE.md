@@ -283,7 +283,7 @@ not enough to reproduce an implementation.
   `embed_engine.py`'s paths reproduce the delivered file byte-for-byte; all 20
   prototype widgets render with no engine errors; `check_file.py` runs the
   geometric label test over 74 labels in the 263 file with no overlaps.
-* **Engine is v2.22.** Since v2.6: `areas` shade a polygon (v2.11) with
+* **Engine is v2.23.** Since v2.6: `areas` shade a polygon (v2.11) with
   `edge` to outline it (v2.18) and labels centred on their anchor (v2.13);
   `dot:false` drops a marker but keeps the axis label (v2.12); points take
   `guides:"p"`/`"q"` for one leg of the elbow (v2.14); braces take
@@ -293,7 +293,8 @@ not enough to reproduce an implementation.
   are on screen (v2.20); and `calcs` prints the working beside the plot in a
   widget 920px or wider -- where the plot then grows past `--fig` into the
   width the working is not using -- and under it in a narrower one
-  (v2.15/v2.21/v2.22).
+  (v2.15/v2.21/v2.22), scrolling sideways as a block where a formula is wider
+  than the widget (v2.23).
 
 * **PPF works.** The first chapter of Exam 1 material converted to seven widgets
   with no engine gaps hit: frontiers, a combinations table, points on/inside/

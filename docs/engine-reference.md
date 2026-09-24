@@ -1,4 +1,4 @@
-# Engine reference — `engine/sd-graph.js` v2.22
+# Engine reference — `engine/sd-graph.js` v2.23
 
 Written from the engine source. The conversion prompt carries a shorter version
 of this in its own "Engine reference" section; that one is what the model needs
@@ -220,6 +220,14 @@ Each line's closing `" = result"` is split off into a `<span class="res">` and
 set in red with a rule under it — the red underline the source uses. The split
 is on the **last** `" = "`, so `Total surplus = CS + PS = $120` emphasises
 `$120` and nothing else. A line with no `" = "` is printed as-is.
+
+The block scrolls sideways as a unit where a formula is wider than the widget,
+which on these chapters means a phone and nothing else (**v2.23**). Each line
+used to carry its own `overflow-x`, and setting one axis computes the other to
+`auto` as well, so every line was a scroll container in both directions: the
+result's red underline sits a pixel below the line box, and a browser with
+classic scrollbars drew up/down arrows beside every sum. Headless Chromium uses
+overlay scrollbars and showed none of it.
 
 A plain string always shows; `{text, at, until}` takes step windows like
 anything else, so a walkthrough can add each line as it reaches it. Hidden

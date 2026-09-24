@@ -101,9 +101,16 @@
   .sdg-main.has-calc > .sdg-calc { flex:0 0 auto; width:max-content; margin:0; }
   .sdg-main.has-calc .sdg-body:not(.has-table):not(.two) figure { max-width:none; }
 }
+/* The block scrolls, not each line. overflow-x on its own computes overflow-y
+   to auto as well, so every line was a scroll container in both axes -- and
+   the result's red underline sits a pixel or two below the line box, which a
+   browser with classic scrollbars drew as up/down arrows beside every sum.
+   The padding gives that underline its room; only a formula genuinely wider
+   than the widget can scroll now, and it scrolls as a block. */
 .sdg .sdg-calc { margin:10px auto 0; width:fit-content; max-width:100%;
+  overflow-x:auto; overflow-y:hidden; padding-bottom:4px;
   font-size:13px; font-weight:600; color:var(--navy); line-height:1.65; }
-.sdg .sdg-calcline { white-space:nowrap; overflow-x:auto; }
+.sdg .sdg-calcline { white-space:nowrap; }
 .sdg .sdg-calc .res { color:var(--red); font-weight:800;
   border-bottom:2px solid var(--red); padding-bottom:1px; }
 @media (prefers-reduced-motion:reduce){ .sdg .fade, .sdg .move { transition:none; } }
@@ -114,7 +121,7 @@
 .sdg .sdg-cap { margin:10px 0 0; padding:10px 12px; background:#fff; border-left:4px solid var(--red); font-size:.92rem; line-height:1.45; min-height:3.2em; }
 </style>
 <script>
-/* ===== sd-graph.js v2.22 — data-driven supply & demand widgets =====
+/* ===== sd-graph.js v2.23 — data-driven supply & demand widgets =====
    Markup:  <div class="sdg"><script type="application/json">{ ...config... }<\/script></div>
    Top-level config:
      title, lede, caption         heading / intro / static caption (caption used only when there are no steps)

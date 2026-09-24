@@ -88,6 +88,11 @@
 .sdg .move { transition:transform .6s ease, opacity .45s ease; }
 .sdg .off { opacity:0; pointer-events:none; }
 .sdg .hide { display:none; }
+.sdg .sdg-main { display:flex; flex-wrap:wrap; align-items:center; gap:0 22px; }
+.sdg .sdg-main > .sdg-body { flex:1 1 340px; min-width:0; }
+/* The working keeps its natural width: it sits beside the plot only where a
+   whole line of it fits, and drops underneath rather than wrapping mid-sum. */
+.sdg .sdg-main > .sdg-calc { flex:0 0 auto; width:max-content; }
 .sdg .sdg-calc { margin:10px auto 0; width:fit-content; max-width:100%;
   font-size:14px; font-weight:600; color:var(--navy); line-height:1.7; }
 .sdg .sdg-calcline { white-space:nowrap; overflow-x:auto; }
@@ -101,7 +106,7 @@
 .sdg .sdg-cap { margin:10px 0 0; padding:10px 12px; background:#fff; border-left:4px solid var(--red); font-size:.92rem; line-height:1.45; min-height:3.2em; }
 </style>
 <script>
-/* ===== sd-graph.js v2.19 — data-driven supply & demand widgets =====
+/* ===== sd-graph.js v2.21 — data-driven supply & demand widgets =====
    Markup:  <div class="sdg"><script type="application/json">{ ...config... }<\/script></div>
    Top-level config:
      title, lede, caption         heading / intro / static caption (caption used only when there are no steps)
@@ -406,7 +411,16 @@
         if (p.marker) grp.appendChild(el('text', {class: 'mktxt', x: X(p.q), y: Y(p.p) + 2.6, 'text-anchor': 'middle'}, p.marker));
       }
       if (p.label) grp.appendChild(el('text', {class: 'tag', x: X(p.q) + (p.dx != null ? p.dx : 9), y: Y(p.p) + (p.dy != null ? p.dy : -9), fill: cc}, p.label));
-      var pl = p.pl || ((p.showP !== false && (ax.yticks || []).indexOf(p.p) < 0 && !(cfg.hlines || []).some(function (l) { return l.p === p.p; })) ? fmtP(p.p, ax) : null);
+      // A price line only suppresses the point's own label while the two are
+      // on screen together. Ignoring the step windows here silently dropped
+      // $600 from step 1 of the generator figure, because a ceiling appearing
+      // at step 3 sits at that price -- leaving a dashed guide running to a
+      // blank axis three steps before the line existed.
+      function shares(a, b) {
+        var a0 = a.at || 0, a1 = a.until, b0 = b.at || 0, b1 = b.until;
+        return Math.max(a0, b0) < Math.min(a1 == null ? 1e9 : a1, b1 == null ? 1e9 : b1);
+      }
+      var pl = p.pl || ((p.showP !== false && (ax.yticks || []).indexOf(p.p) < 0 && !(cfg.hlines || []).some(function (l) { return l.p === p.p && shares(l, p); })) ? fmtP(p.p, ax) : null);
       var ql = p.ql || ((p.showQ !== false && (ax.xticks || []).indexOf(p.q) < 0) ? fmtQ(p.q, ax) : null);
       if (pl) grp.appendChild(el('text', {class: 'tk strong', x: O.x - 6, y: Y(p.p) + 4, 'text-anchor': 'end', fill: cc}, pl));
       if (ql) grp.appendChild(el('text', {class: 'tk strong', x: X(p.q), y: O.y + 15, 'text-anchor': 'middle', fill: cc}, ql));
@@ -470,9 +484,15 @@
       });
       tbl.appendChild(tbody); var wrap = h('div', 'sdg-tablewrap'); wrap.appendChild(tbl); body.insertBefore(wrap, body.firstChild);
     }
-    host.appendChild(body);
+    // The plot and its working share a row when the widget is wide enough for
+    // both, and the working wraps underneath when it is not. Set under the
+    // plot unconditionally it costs five or six lines of height on a page
+    // where vertical space is the scarce thing.
+    var main = h('div', 'sdg-main');
+    main.appendChild(body);
+    host.appendChild(main);
 
-    // calcs: the working, set under the plot the way the artwork prints it
+    // calcs: the working, set beside the plot the way the artwork prints it
     // beneath each diagram -- a reader who only sees "CS = $80" cannot get
     // there themselves. Each line's closing "= result" is set apart, which is
     // the red underline in the source. Lines take at/until like anything else,
@@ -490,7 +510,7 @@
         cbox.appendChild(line);
         self.calcs.push({node: line, spec: spec});
       });
-      host.appendChild(cbox);
+      main.appendChild(cbox);
     }
 
     if (cfg.steps && cfg.steps.length > 1) {

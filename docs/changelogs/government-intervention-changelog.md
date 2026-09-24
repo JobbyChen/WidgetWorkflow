@@ -112,7 +112,20 @@ Every curve is fixed by two values the chapter states, never drawn to taste:
 * The house script swapped `content/sn25-v5.js` → `studyguide/sn25-v2.js`,
   the TOC fix sanctioned on 2026-09-21. Nothing else in the head or prose.
 
+## Later (2026-09-24)
+
+* **Figure 10 reveals its readings with its steps.** $800 and 1,400 were drawn
+  in step 1, before the storm that produces them. Each reading now arrives with
+  the step it belongs to. Fixing that exposed an engine bug: a price line
+  suppressed a point's own price label even in steps where the line is not yet
+  drawn, which silently dropped $600 from step 1 (engine v2.20).
+* **The working now sits beside the plot** where the column is wide enough for
+  it, and underneath where it is not (engine v2.21). Figures 16 and 18 were
+  spending five or six lines of height on their formulas; on a desktop they now
+  spend none. Nothing to configure, and nothing changes on a phone.
+
 ## Checks
 
-0 FAIL. 8 WARN, all listed above or in Ian's own markup. Every widget renders
-with no engine errors, and all 18 fit with working controls at 390px and 320px.
+0 FAIL. 13 WARN, all listed above, caption-redundancy notes, or Ian's own
+markup. Every widget renders with no engine errors, and all 18 fit with working
+controls at 390px and 320px.

@@ -270,10 +270,18 @@ _PROSE = ('<p>The demand curve shows the same information as the schedule, but '
           'on the horizontal axis.</p><div class="sdg"><script '
           'type="application/json">%s</script></div>')
 
+# A figure introducing a worked question is followed by its answer, and the
+# answer restates what the drawing shows.
+_PROSE_AFTER = ('<div class="sdg"><script type="application/json">%s</script>'
+                '</div><p>The equilibrium quantity is the one for which the '
+                'quantity demanded equals the quantity supplied. Total surplus '
+                'is maximized there. In the diagram the equilibrium price is '
+                '$400 and the equilibrium quantity is 600 units.</p>')
 
-def _prose_case(caption):
+
+def _prose_case(caption, shell=None):
     import json
-    src = _PROSE % json.dumps({"caption": caption})
+    src = (shell or _PROSE) % json.dumps({"caption": caption})
     r = Catch()
     C.check_caption_prose(src, C.configs(src, Catch()), r)
     return r
@@ -284,14 +292,20 @@ case("a caption that restates the prose above it", lambda r: r.take(_prose_case(
     "The demand curve shows the same information as the schedule but "
     "graphically, with price on the vertical axis and quantity demanded on "
     "the horizontal axis."))
-    or r.has("WARN", "prose", "already in the paragraph above it"))
+    or r.has("WARN", "prose", "already in the prose around it"))
 
 # ...but one reading values off the drawing shares that vocabulary and is
 # still the only place the values appear
 case("a caption carrying numbers the prose lacks", lambda r: r.take(_prose_case(
     "At $15 only 6 drinks are demanded; as the price falls to $3, the "
     "quantity demanded rises to 65."))
-    or not r.has("WARN", "prose", "already in the paragraph above it"))
+    or not r.has("WARN", "prose", "already in the prose around it"))
+
+case("a caption restated by the answer below it", lambda r: r.take(_prose_case(
+    "The quantity demanded equals the quantity supplied at a rent of $400, "
+    "where 600 apartments are let. That is the quantity at which total "
+    "surplus is as large as it can be.", _PROSE_AFTER))
+    or r.has("WARN", "prose", "already in the prose around it"))
 
 # ---- captions --------------------------------------------------------------
 

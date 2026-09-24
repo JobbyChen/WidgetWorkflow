@@ -877,7 +877,10 @@ def check_labels(cfgs, r):
                     # or not, and have to be tested.
                     pl = p.get("pl") or (fmt_p(p["p"], ax)
                                          if p.get("showP") is not False
-                                         and p["p"] not in yt and p["p"] not in hl else None)
+                                         and p["p"] not in yt
+                                         and not any(h["p"] == p["p"] and coexist(win, (h.get("at", 0), h.get("until")))
+                                                     for h in (pn.get("hlines") or []))
+                                         else None)
                     ql = p.get("ql") or (fmt_q(p["q"], ax)
                                          if p.get("showQ") is not False
                                          and p["q"] not in xt else None)
@@ -1205,7 +1208,7 @@ def check_controls(cfgs, r):
                 ax = pn.get("axes") or {}
                 yt = set(ax.get("yticks") or [])
                 xt = set(ax.get("xticks") or [])
-                hp = {h["p"] for h in (pn.get("hlines") or [])}
+                hp = {h["p"] for h in (pn.get("hlines") or [])}   # windows checked below
                 # A value is written on the axis if ANY point on the panel
                 # writes it. The gap point in a shift walkthrough sits at the
                 # old price, which the equilibrium has already labelled P1 --
@@ -1323,10 +1326,14 @@ def check_caption_prose(src, cfgs, r):
     """Does the caption say what the paragraph above it already said?
 
     Vertical space is the scarce thing on these pages, and a caption that
-    restates the sentence introducing it costs a dozen lines a chapter for
-    nothing. This measures the caption's content words against the prose
-    running up to the widget: one almost entirely contained in that prose is a
+    restates the sentences around it costs a dozen lines a chapter for
+    nothing. This measures the caption's content words against the paragraphs
+    on either side of the widget: one almost entirely contained in them is a
     caption to cut down to whatever it adds, or drop.
+
+    Both sides count. A figure introducing a worked question is followed by
+    its answer, and the answer restates what the drawing shows, so a caption
+    can be redundant with the paragraph after it as easily as the one before.
 
     It reports rather than fails, because what to keep is an editorial call --
     a caption that repeats the setup often still ends with the one sentence
@@ -1344,11 +1351,13 @@ def check_caption_prose(src, cfgs, r):
     n = wordy = 0
     paras = [(m.start(), m.group(1)) for m in re.finditer(r"<p\b[^>]*>(.*?)</p>", src, re.S)]
     for pos, (idx, cfg, _) in zip(starts, cfgs):
-        # "the paragraph above it" means the last couple of paragraphs, not
-        # everything back to the previous closing tag -- that reached 25,000
-        # characters here, which is most of the chapter and matches anything.
-        run = [t for st, t in paras if st < pos][-2:]
-        prose = re.sub(r"<[^>]+>", " ", " ".join(run))
+        # The paragraphs on either side, not just the ones before. A figure
+        # that introduces a worked question is followed by its answer, and the
+        # answer restates what the drawing shows -- which is where the rental
+        # market's caption was being said a second time.
+        before = [t for st, t in paras if st < pos][-2:]
+        after = [t for st, t in paras if st > pos][:2]
+        prose = re.sub(r"<[^>]+>", " ", " ".join(before + after))
         before = content(prose)
         if len(before) < 8:
             continue
@@ -1364,12 +1373,20 @@ def check_caption_prose(src, cfgs, r):
             # overlap says: a caption reading the values off the drawing shares
             # its vocabulary with the paragraph introducing it and is still the
             # only place those values appear.
-            new_numbers = {w for w in words - before if any(c.isdigit() for c in w)}
+            added = words - before
+            new_numbers = {w for w in added if any(c.isdigit() for c in w)}
             frac = len(words & before) / float(len(words))
-            if frac >= 0.75 and not new_numbers:
+            # Both signals, because either alone misreads a caption. A ratio
+            # alone misses a restatement that is paraphrased ("steep" for
+            # "slope") and so scores lower than it reads; a count alone
+            # punishes a short caption, which adds few words by being short.
+            # A redundant one here does both: two thirds shared, and three to
+            # five words of its own. A number the prose lacks exempts it
+            # outright -- that is content the reader can get nowhere else.
+            if not new_numbers and (frac >= 0.75 or (frac >= 0.6 and len(added) <= 5)):
                 wordy += 1
                 r.warn("prose", "widget %d: %d%% of %r is already in the "
-                                "paragraph above it -- cut it to what it adds"
+                                "prose around it -- cut it to what it adds"
                        % (idx, round(frac * 100),
                           t[:58] + ("..." if len(t) > 58 else "")))
     if n and not wordy:

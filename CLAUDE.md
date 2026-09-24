@@ -280,13 +280,15 @@ not enough to reproduce an implementation.
   `embed_engine.py`'s paths reproduce the delivered file byte-for-byte; all 20
   prototype widgets render with no engine errors; `check_file.py` runs the
   geometric label test over 74 labels in the 263 file with no overlaps.
-* **Engine is v2.18.** Since v2.6: `areas` shade a polygon (v2.11) with
+* **Engine is v2.21.** Since v2.6: `areas` shade a polygon (v2.11) with
   `edge` to outline it (v2.18) and labels centred on their anchor (v2.13);
   `dot:false` drops a marker but keeps the axis label (v2.12); points take
   `guides:"p"`/`"q"` for one leg of the elbow (v2.14); braces take
-  `below:"in"` and `below:"axis"` (v2.14/v2.17) and wrap on `\n` (v2.17);
-  `hlines` take `tag`/`tagdy`/`tagq` to name the line itself (v2.14/v2.16);
-  and `calcs` prints the working under the plot (v2.15).
+  `below:"in"` and `below:"axis"` (v2.14/v2.17) and wrap on `\n` (v2.17), as
+  curve labels do (v2.19); `hlines` take `tag`/`tagdy`/`tagq` to name the line
+  itself (v2.14/v2.16) and suppress a point's own price label only while both
+  are on screen (v2.20); and `calcs` prints the working beside the plot where
+  it fits and under it where it does not (v2.15/v2.21).
 
 * **PPF works.** The first chapter of Exam 1 material converted to seven widgets
   with no engine gaps hit: frontiers, a combinations table, points on/inside/

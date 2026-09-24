@@ -82,6 +82,11 @@
 .sdg .move { transition:transform .6s ease, opacity .45s ease; }
 .sdg .off { opacity:0; pointer-events:none; }
 .sdg .hide { display:none; }
+.sdg .sdg-main { display:flex; flex-wrap:wrap; align-items:center; gap:0 22px; }
+.sdg .sdg-main > .sdg-body { flex:1 1 340px; min-width:0; }
+/* The working keeps its natural width: it sits beside the plot only where a
+   whole line of it fits, and drops underneath rather than wrapping mid-sum. */
+.sdg .sdg-main > .sdg-calc { flex:0 0 auto; width:max-content; }
 .sdg .sdg-calc { margin:10px auto 0; width:fit-content; max-width:100%;
   font-size:14px; font-weight:600; color:var(--navy); line-height:1.7; }
 .sdg .sdg-calcline { white-space:nowrap; overflow-x:auto; }

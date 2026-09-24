@@ -95,3 +95,9 @@ Both were algebraically right and neither was what the source says.
 The chapter's other ten equations were checked against the source and are
 exact. Read by `scripts/doc_formulas.py`, whose `--check` now catches both of
 these.
+
+## Later (2026-09-24)
+
+* **Widget 2's caption dropped.** The paragraph above it already gives both
+  slopes and says why slope will not serve as a measure; the caption said it
+  again in a bordered box. The title and lede carry the figure.

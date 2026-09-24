@@ -119,10 +119,18 @@ Every curve is fixed by two values the chapter states, never drawn to taste:
   the step it belongs to. Fixing that exposed an engine bug: a price line
   suppressed a point's own price label even in steps where the line is not yet
   drawn, which silently dropped $600 from step 1 (engine v2.20).
-* **The working now sits beside the plot** where the column is wide enough for
-  it, and underneath where it is not (engine v2.21). Figures 16 and 18 were
+* **The working now sits beside the plot** in a widget 920px or wider, and
+  underneath in a narrower one (engine v2.21/v2.22). Figures 16 and 18 were
   spending five or six lines of height on their formulas; on a desktop they now
-  spend none. Nothing to configure, and nothing changes on a phone.
+  spend none. Beside the working the plot also grows past its 580px cap, to
+  780px -- the first cut of this kept the cap and produced a smaller graph than
+  the one it replaced.
+* **Four captions cut.** Figures 3 and 11 introduce the questions the chapter
+  then asks, and their captions answered them before the reader could try.
+  Figure 4's caption redefined both surpluses two lines under the paragraph
+  defining them, and now makes only the comparison the prose does not. Figure
+  6's repeated its own lede and the formula printed below it. Each figure keeps
+  its title and lede.
 
 ## Checks
 

@@ -11,7 +11,8 @@
 <style>
 .sdg { --navy:#002060; --ink:#1c2a44; --red:#d62828; --teal:#1a8a8a; --orange:#d8641c; --grey:#8a94a6; --rule:#c9d2e3; --paper:#f6f8fc; --plot:#eef3fd; --fig:580px;
   font-family:"Red Hat Display","Segoe UI",system-ui,sans-serif; color:var(--ink);
-  border:1px solid var(--navy); background:var(--paper); padding:18px 20px 16px; width:80%; margin:24px auto; }
+  border:1px solid var(--navy); background:var(--paper); padding:18px 20px 16px; width:80%; margin:24px auto;
+  container:sdg / inline-size; }
 @media (max-width:640px){ .sdg { width:100%; } }
 .sdg, .sdg *, .sdg *::before, .sdg *::after { box-sizing:border-box; }
 .sdg h4 { margin:0 0 4px; color:var(--navy); font-size:1.05rem; font-weight:700; }
@@ -93,13 +94,20 @@
 .sdg .move { transition:transform .6s ease, opacity .45s ease; }
 .sdg .off { opacity:0; pointer-events:none; }
 .sdg .hide { display:none; }
-.sdg .sdg-main { display:flex; flex-wrap:wrap; align-items:center; gap:0 22px; }
-.sdg .sdg-main > .sdg-body { flex:1 1 340px; min-width:0; }
-/* The working keeps its natural width: it sits beside the plot only where a
-   whole line of it fits, and drops underneath rather than wrapping mid-sum. */
-.sdg .sdg-main > .sdg-calc { flex:0 0 auto; width:max-content; }
+/* The working sits under the plot until the widget itself is wide enough to
+   hold both without shrinking the graph -- measured on the widget, not the
+   window, so a widget in a narrow column behaves the same everywhere. Where
+   it does go beside, the plot stops being capped at --fig and grows into the
+   width the working is no longer using. */
+@container sdg (min-width:920px) {
+  .sdg-main.has-calc { display:flex; align-items:center; justify-content:center;
+    gap:0 26px; }
+  .sdg-main.has-calc > .sdg-body { flex:1 1 460px; min-width:0; max-width:780px; }
+  .sdg-main.has-calc > .sdg-calc { flex:0 0 auto; width:max-content; margin:0; }
+  .sdg-main.has-calc .sdg-body:not(.has-table):not(.two) figure { max-width:none; }
+}
 .sdg .sdg-calc { margin:10px auto 0; width:fit-content; max-width:100%;
-  font-size:14px; font-weight:600; color:var(--navy); line-height:1.7; }
+  font-size:13px; font-weight:600; color:var(--navy); line-height:1.65; }
 .sdg .sdg-calcline { white-space:nowrap; overflow-x:auto; }
 .sdg .sdg-calc .res { color:var(--red); font-weight:800;
   border-bottom:2px solid var(--red); padding-bottom:1px; }
@@ -111,7 +119,7 @@
 .sdg .sdg-cap { margin:10px 0 0; padding:10px 12px; background:#fff; border-left:4px solid var(--red); font-size:.92rem; line-height:1.45; min-height:3.2em; }
 </style>
 <script>
-/* ===== sd-graph.js v2.21 — data-driven supply & demand widgets =====
+/* ===== sd-graph.js v2.22 — data-driven supply & demand widgets =====
    Markup:  <div class="sdg"><script type="application/json">{ ...config... }<\/script></div>
    Top-level config:
      title, lede, caption         heading / intro / static caption (caption used only when there are no steps)
@@ -493,7 +501,7 @@
     // both, and the working wraps underneath when it is not. Set under the
     // plot unconditionally it costs five or six lines of height on a page
     // where vertical space is the scarce thing.
-    var main = h('div', 'sdg-main');
+    var main = h('div', 'sdg-main' + (cfg.calcs && cfg.calcs.length ? ' has-calc' : ''));
     main.appendChild(body);
     host.appendChild(main);
 
@@ -926,8 +934,7 @@
     }
    ]
   }
- ],
- "caption": "These are the same two points on the same demand curve, priced first in dollars and then in cents. Measured as rise over run the left curve has a slope of −0.5 and the right one −50, so slope changes with the units even though nothing about the market has changed. That is why elasticity is expressed as a ratio of percentages instead, which comes out as a pure number."
+ ]
 }
 </script></div>
 

@@ -220,12 +220,15 @@ economics instead of label placement.
   $75, 375 and 562.5, which is also why 500 and 562.5 never have to share it.
   Carry the equilibrium's dot on a second, label-less point present from the
   start, or the engine rings it as newly revealed. (Ian, 2026-09-24.)
-* **A caption must say something the paragraph above it does not.** Vertical
+* **A caption must say something the paragraphs around it do not.** Vertical
   space is the scarce thing on these pages. `check_file.py` measures each
-  caption against the prose running up to its widget and reports one that is
-  three-quarters contained in it; cut it to what it adds, or drop it. A
-  scenario widget whose panels are titled needs no caption at all — the
-  buttons name the cases. (Ian, 2026-09-24.)
+  caption against the prose on either side of its widget and reports one
+  mostly contained in it; cut it to what it adds, or drop it. A title and a
+  lede describe a figure on their own, so a widget left without a caption
+  still passes the schema — and a caption that answers the question the
+  chapter is about to ask should go whether or not it repeats anything. The
+  rule measures captions only: a lede is one line, and naming what the figure
+  shows is its job. (Ian, 2026-09-24.)
 * **Show the working only where the artwork does.** `calcs` carries the
   formulas when they live inside the image — replacing the image would
   otherwise lose them. Where the chapter prints the same formula as text under
@@ -280,15 +283,17 @@ not enough to reproduce an implementation.
   `embed_engine.py`'s paths reproduce the delivered file byte-for-byte; all 20
   prototype widgets render with no engine errors; `check_file.py` runs the
   geometric label test over 74 labels in the 263 file with no overlaps.
-* **Engine is v2.21.** Since v2.6: `areas` shade a polygon (v2.11) with
+* **Engine is v2.22.** Since v2.6: `areas` shade a polygon (v2.11) with
   `edge` to outline it (v2.18) and labels centred on their anchor (v2.13);
   `dot:false` drops a marker but keeps the axis label (v2.12); points take
   `guides:"p"`/`"q"` for one leg of the elbow (v2.14); braces take
   `below:"in"` and `below:"axis"` (v2.14/v2.17) and wrap on `\n` (v2.17), as
   curve labels do (v2.19); `hlines` take `tag`/`tagdy`/`tagq` to name the line
   itself (v2.14/v2.16) and suppress a point's own price label only while both
-  are on screen (v2.20); and `calcs` prints the working beside the plot where
-  it fits and under it where it does not (v2.15/v2.21).
+  are on screen (v2.20); and `calcs` prints the working beside the plot in a
+  widget 920px or wider -- where the plot then grows past `--fig` into the
+  width the working is not using -- and under it in a narrower one
+  (v2.15/v2.21/v2.22).
 
 * **PPF works.** The first chapter of Exam 1 material converted to seven widgets
   with no engine gaps hit: frontiers, a combinations table, points on/inside/
@@ -305,7 +310,9 @@ not enough to reproduce an implementation.
   in widget 9's second panel. Readable, and moving them means moving equilibrium
   labels in shipped work, so they are reported rather than changed. Its three references
   to the class are reworded and its four term labels now keep only the term
-  inside `<strong>`.
+  inside `<strong>`. Widget 5's lede and widget 6's equilibrium caption were
+  trimmed on 2026-09-24: both restated the sentence introducing them, and the
+  caption now says why nothing moves rather than re-reading the graph.
 * **Left as delivered:** the 9/11 prototype's captions predate v6's caption
   rules, and its apples widget puts six brace labels on curves (`below:true`
   would fix it). Both are recorded in `docs/open-issues.md` rather than silently

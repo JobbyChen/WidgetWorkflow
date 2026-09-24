@@ -1,4 +1,4 @@
-# Engine reference — `engine/sd-graph.js` v2.21
+# Engine reference — `engine/sd-graph.js` v2.22
 
 Written from the engine source. The conversion prompt carries a shorter version
 of this in its own "Engine reference" section; that one is what the model needs
@@ -203,11 +203,18 @@ Lines of working, the way the artwork prints them beside or beneath each
 diagram (**v2.15**). A reader given only "CS = $80" cannot get there
 themselves, which is the whole point of the figure.
 
-The block sits **beside the plot** where a whole line of it fits next to a
-plot at least 340px wide, and drops underneath where it does not (**v2.21**) --
-so a desktop pays no height for it and a phone still gets it, and nothing has
-to be configured either way. Vertical space is the scarce thing on these
-pages: five lines of working under a figure is most of a phone screen.
+The block sits **beside the plot** in a widget at least 920px wide, and
+underneath in one narrower than that (**v2.21**/**v2.22**) -- so a desktop pays
+no height for it and a phone still gets it, and nothing has to be configured
+either way. Vertical space is the scarce thing on these pages: five lines of
+working under a figure is most of a phone screen.
+
+The threshold is a **container query on the widget**, not a media query on the
+window, so a widget in a narrow column behaves the same wherever it is. Beside
+the plot the figure stops being capped at `--fig` and grows into the width the
+working is no longer using, up to 780px -- a 580px plot with the working
+squeezed in next to it was smaller than the one it replaced, which is the whole
+reason the first attempt was wrong.
 
 Each line's closing `" = result"` is split off into a `<span class="res">` and
 set in red with a rule under it — the red underline the source uses. The split

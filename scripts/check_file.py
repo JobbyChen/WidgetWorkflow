@@ -486,7 +486,12 @@ def check_schema(cfgs, r):
         # the restatement the prose check exists to remove.
         titled_scenarios = bool(cfg.get("scenarios")) and all(
             v.get("title") for _, v in variants(cfg))
+        # A title and a lede describe a figure in one line each, which is what
+        # a widget is left with once its caption turns out to restate the
+        # paragraph beside it. Requiring a caption there would put the
+        # restatement straight back.
         if not (has_steps or cfg.get("caption") or static_preset or titled_scenarios
+                or cfg.get("lede")
                 or any(v.get("caption") or (isinstance(v.get("steps"), list)
                                             and len(v["steps"]) >= 2)
                        for _, v in variants(cfg))):
@@ -1261,6 +1266,9 @@ def check_controls(cfgs, r):
 FORMULA = re.compile(r"\\\(([^)]{0,400}?)\\\)", re.S)
 
 
+NUM_RE = re.compile(r"\$?\d[\d,]*(?:\.\d+)?")
+
+
 def check_calcs(src, cfgs, r):
     """A widget shows its working only where the chapter does not.
 
@@ -1271,7 +1279,7 @@ def check_calcs(src, cfgs, r):
     equation appears in the prose between this widget and the next.
     """
     dup = n = 0
-    bodies = [m.start() for m in re.finditer(r'<div class="sdg"', src)]
+    bodies = widget_starts(src, cfgs)
     for pos, (idx, cfg, _) in zip(bodies, cfgs):
         lines = []
         walk(cfg, lambda d: lines.extend(
@@ -1282,16 +1290,24 @@ def check_calcs(src, cfgs, r):
         nxt = next((b for b in bodies if b > pos), len(src))
         after = src[pos:nxt]
         for ln in lines:
-            # the result is what a reader would see repeated: match on it plus
-            # the left-hand side, so "= $40,000" alone does not trip on prose
+            # A duplicate shows the same working, so it shows the same
+            # numbers. Matching the result plus the left-hand side alone was
+            # too loose: the chapter's own "TS = CS + PS = $173,333.33 +
+            # $40,000" contains the token CS and the total, and failed a
+            # widget whose working -- the trapezoid split into $66,666.67 and
+            # $106,666.67 -- appears nowhere in the prose. Requiring every
+            # number of the line keeps the rule on formulas the chapter
+            # really does print twice.
             lhs = ln.split("=")[0].strip()
             res = ln.rsplit("=", 1)[-1].strip()
+            nums = NUM_RE.findall(ln)
             if not lhs or not res:
                 continue
             for m in FORMULA.finditer(after):
                 body = m.group(1).replace("\\", "").replace("{", "").replace("}", "")
-                if res.replace(",", "") in body.replace(",", "") and \
-                        lhs.split()[0] in body:
+                flat = body.replace(",", "")
+                if res.replace(",", "") in flat and lhs.split()[0] in body \
+                        and all(x.replace(",", "") in flat for x in nums):
                     dup += 1
                     r.fail("calcs", "widget %d: %r is printed again as prose below the "
                                     "figure -- drop the calcs, the chapter already shows it"
@@ -1322,6 +1338,23 @@ def content(text):
     return out
 
 
+def widget_starts(src, cfgs):
+    """Where each config's widget sits in the file, in document order.
+
+    Searching for the opening tag finds one more than there are widgets: the
+    engine's header comment quotes the markup verbatim. That shifted every
+    widget on to the paragraph before the previous one, so both checks that
+    read the prose around a widget were reading the wrong prose. Locating each
+    widget by its own body cannot drift that way.
+    """
+    starts, at = [], 0
+    for _idx, _cfg, body in cfgs:
+        i = src.find(body, at)
+        starts.append(i if i >= 0 else at)
+        at = max(at, i + len(body)) if i >= 0 else at
+    return starts
+
+
 def check_caption_prose(src, cfgs, r):
     """Does the caption say what the paragraph above it already said?
 
@@ -1339,15 +1372,7 @@ def check_caption_prose(src, cfgs, r):
     a caption that repeats the setup often still ends with the one sentence
     the prose does not have.
     """
-    # Locate each widget by its own body. Searching for the opening tag finds
-    # one more than there are widgets: the engine's header comment quotes the
-    # markup verbatim, which shifted every widget on to the paragraph before
-    # the previous one and made the whole check read the wrong prose.
-    starts, at = [], 0
-    for _idx, _cfg, body in cfgs:
-        i = src.find(body, at)
-        starts.append(i if i >= 0 else at)
-        at = max(at, i + len(body)) if i >= 0 else at
+    starts = widget_starts(src, cfgs)
     n = wordy = 0
     paras = [(m.start(), m.group(1)) for m in re.finditer(r"<p\b[^>]*>(.*?)</p>", src, re.S)]
     for pos, (idx, cfg, _) in zip(starts, cfgs):
@@ -1361,9 +1386,14 @@ def check_caption_prose(src, cfgs, r):
         before = content(prose)
         if len(before) < 8:
             continue
+        # Captions only. A lede is one line under the title and costs nothing
+        # worth reclaiming, while its whole job -- naming what the figure
+        # shows -- guarantees it shares vocabulary with the paragraph that
+        # introduces it. Measuring ledes reported the summaries that were
+        # working as intended.
         texts = []
         walk(cfg, lambda d: texts.extend(
-            [d[k] for k in ("caption", "lede") if isinstance(d.get(k), str)]))
+            [d["caption"]] if isinstance(d.get("caption"), str) else []))
         for t in texts:
             words = content(t)
             if len(words) < 8:

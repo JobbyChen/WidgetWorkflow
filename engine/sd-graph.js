@@ -1,4 +1,4 @@
-/* ===== sd-graph.js v2.21 — data-driven supply & demand widgets =====
+/* ===== sd-graph.js v2.22 — data-driven supply & demand widgets =====
    Markup:  <div class="sdg"><script type="application/json">{ ...config... }<\/script></div>
    Top-level config:
      title, lede, caption         heading / intro / static caption (caption used only when there are no steps)
@@ -380,7 +380,7 @@
     // both, and the working wraps underneath when it is not. Set under the
     // plot unconditionally it costs five or six lines of height on a page
     // where vertical space is the scarce thing.
-    var main = h('div', 'sdg-main');
+    var main = h('div', 'sdg-main' + (cfg.calcs && cfg.calcs.length ? ' has-calc' : ''));
     main.appendChild(body);
     host.appendChild(main);
 

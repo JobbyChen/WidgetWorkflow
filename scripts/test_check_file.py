@@ -307,6 +307,55 @@ case("a caption restated by the answer below it", lambda r: r.take(_prose_case(
     "surplus is as large as it can be.", _PROSE_AFTER))
     or r.has("WARN", "prose", "already in the prose around it"))
 
+# The engine's header comment quotes <div class="sdg"> verbatim, so a raw scan
+# for the opening tag finds one widget too many and reads the prose belonging
+# to the one before. Both prose checks locate widgets by their own body now.
+# The matching paragraph sits beside the real widget and four paragraphs away
+# from the decoy, so a scan that finds the decoy first reads filler and stays
+# silent -- which is exactly how the shift hid itself.
+_FILL = ("<p>Governments sometimes intervene in markets for reasons that have "
+         "nothing to do with efficiency.</p>"
+         "<p>Whether they succeed depends on how buyers and sellers respond "
+         "afterwards.</p>")
+_DECOY = (_FILL
+          + '<script>/* Markup: <div class="sdg">...config...</div> */</script>'
+          + _FILL + _PROSE)
+
+case("a restating caption found past the engine's own markup comment",
+     lambda r: r.take(_prose_case(
+         "The demand curve shows the same information as the schedule but "
+         "graphically, with price on the vertical axis and quantity demanded "
+         "on the horizontal axis.", _DECOY))
+     or r.has("WARN", "prose", "already in the prose around it"))
+
+
+# ---- calcs: working the chapter prints itself ------------------------------
+
+def _calcs_case(line, prose):
+    import json
+    src = ('<div class="sdg"><script type="application/json">%s</script></div>'
+           '<p>%s</p>' % (json.dumps({"calcs": [line]}), prose))
+    r = Catch()
+    C.check_calcs(src, C.configs(src, Catch()), r)
+    return r
+
+
+case("working the chapter reprints as text", lambda r: r.take(_calcs_case(
+    "TS = CS + PS = $150,000 + $90,000 = $240,000",
+    r"Before the ceiling: \(TS = CS + PS = \$150,000 + \$90,000 = \$240,000\)"))
+    or r.has("FAIL", "calcs", "printed again as prose"))
+
+# ...but a chapter formula that merely contains this line's answer is not the
+# same working. "TS = CS + PS = $173,333.33 + $40,000" holds the token CS and
+# the total, while the trapezoid split that produced it appears nowhere.
+case("working whose answer alone appears in a different formula",
+     lambda r: r.take(_calcs_case(
+         "CS = $66,666.67 + $106,666.67 = $173,333.33",
+         r"After the ceiling: \(TS = CS + PS = \$173,333.33 + \$40,000 = "
+         r"\$213,333.33\)"))
+     or not r.has("FAIL", "calcs", "printed again as prose"))
+
+
 # ---- captions --------------------------------------------------------------
 
 case("'Before -' caption prefix", lambda r: C.check_captions(

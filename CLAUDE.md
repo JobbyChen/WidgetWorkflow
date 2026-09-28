@@ -255,6 +255,15 @@ economics instead of label placement.
   sets smaller and lighter (v2.24); small capitals render at full weight and
   read as capitals. Where a curve reaches the axis in the source, draw it
   reaching the axis. (Ian, 2026-09-28.)
+* **A curve runs to the edge of the plot, not to wherever it stopped.** The
+  source draws every curve out to the frame, so a cost curve ending two
+  thirds of the way across reads as truncated beside it — and cutting one
+  short to make room for a label is the wrong fix, since running it further
+  usually moves it clear of the label anyway. The exceptions are ends that
+  mean something: a frontier stops at its intercept, a demand curve at the
+  axis, a tangent is a stub by design. No checker for this — the meaningful
+  ends and the truncated ones look identical to one, and a rule that flagged
+  both would fire on every frontier in the PPF chapter. (Ian, 2026-09-28.)
 * **A curve runs well past the point it is drawn for.** A curve sampled just
   either side of its tangency reads as beginning where it touches. Sample in
   proportion to the point — roughly 0.45× to 6× its x — so the upper branch is

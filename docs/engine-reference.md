@@ -1,4 +1,4 @@
-# Engine reference — `engine/sd-graph.js` v2.23
+# Engine reference — `engine/sd-graph.js` v2.24
 
 Written from the engine source. The conversion prompt carries a shorter version
 of this in its own "Engine reference" section; that one is what the model needs
@@ -95,6 +95,11 @@ pixel apart. `scripts/check_file.py` tests for this.
  "lstart": true, "ldx": -26, "ldy": 15}
 ```
 
+- **`_{...}` in a label or a `tag` sets a word subscript** (**v2.24**), smaller
+  and lighter than the name it hangs off: `S_{Market}`, `d_{Firm} = MR`. Small
+  capitals were the nearest the text could manage alone and render at full
+  weight, so `Sᴍᴀʀᴋᴇᴛ` read as capitals rather than as a subscript. Digits stay
+  as they are — `S₁` and `D₂` are already true subscript characters.
 - `pts` are `[q, p]` pairs in data units. Two points fix a straight line; three
   or more with `curved:true` are smoothed into a Catmull-Rom-style spline — the
   conceptual, non-linear look.

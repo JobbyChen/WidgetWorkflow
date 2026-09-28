@@ -250,10 +250,11 @@ economics instead of label placement.
   paragraph rather than the merged heading. (Ian, 2026-09-24.)
 * **Copy the source figure's own words, including its capitalisation and its
   subscripts.** A panel the source heads "The Entire Market" is not "The
-  entire market", and a curve it labels `S_Market` is not `S`. Small capitals
-  carry the subscript — `Sᴍᴀʀᴋᴇᴛ`, `dꜰɪʀᴍ = MR` — the way `Qᴅ` and `Qꜱ`
-  already do. Where a curve reaches the axis in the source, draw it reaching
-  the axis. (Ian, 2026-09-28.)
+  entire market", and a curve it labels `S_Market` is not `S`. Write the
+  subscript as `_{...}` — `S_{Market}`, `d_{Firm} = MR` — which the engine
+  sets smaller and lighter (v2.24); small capitals render at full weight and
+  read as capitals. Where a curve reaches the axis in the source, draw it
+  reaching the axis. (Ian, 2026-09-28.)
 * **A curve runs well past the point it is drawn for.** A curve sampled just
   either side of its tangency reads as beginning where it touches. Sample in
   proportion to the point — roughly 0.45× to 6× its x — so the upper branch is

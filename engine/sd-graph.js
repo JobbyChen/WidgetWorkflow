@@ -1,4 +1,4 @@
-/* ===== sd-graph.js v2.23 — data-driven supply & demand widgets =====
+/* ===== sd-graph.js v2.24 — data-driven supply & demand widgets =====
    Markup:  <div class="sdg"><script type="application/json">{ ...config... }<\/script></div>
    Top-level config:
      title, lede, caption         heading / intro / static caption (caption used only when there are no steps)
@@ -42,6 +42,23 @@
   var C = {ink: 'var(--ink)', red: 'var(--red)', teal: 'var(--teal)', orange: 'var(--orange)', grey: 'var(--grey)', navy: 'var(--navy)'};
   function col(c) { return C[c || 'ink']; }
   function el(tag, a, text) { var e = document.createElementNS(NS, tag); for (var k in a) if (a[k] != null) e.setAttribute(k, a[k]); if (text != null) e.textContent = text; return e; }
+  // A word subscript -- S_{Market}, d_{Firm} = MR -- set smaller and lighter
+  // than the label it hangs off. Small capitals were the nearest thing the
+  // text could do on its own and they render at full weight, so the subscript
+  // read as capitals rather than as a subscript.
+  function setLabel(node, str, x) {
+    var parts = String(str).split(/_\{([^}]*)\}/), dy = 0;
+    parts.forEach(function (part, i) {
+      if (part === '') return;
+      var sub = i % 2 === 1, a = {};
+      if (x != null && i === 0) a.x = x;
+      if (sub) { a.class = 'sub'; a.dy = 3 - dy; dy = 3; }
+      else if (dy) { a.dy = -dy; dy = 0; }
+      node.appendChild(el('tspan', a, part));
+    });
+    return node;
+  }
+
   function h(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
   function fmtP(v, ax) { if (!ax.money) return String(v); if (ax.cents) return '$' + Number(v).toFixed(2); return '$' + (Number.isInteger(v) ? v : v.toFixed(2)); }
   function fmtQ(v, ax) { if (ax.k && v >= 1000) return (v / 1000) + 'k'; return v.toLocaleString('en-US'); }
@@ -173,7 +190,9 @@
           clx = X(lp[0]) + (c.ldx || 6), cly = Y(lp[1]) + (c.ldy || (up ? 2 : 6)),
           cnode = el('text', {class: 'clbl', x: clx, y: cly, fill: cc});
       crows.forEach(function (row, ri) {
-        cnode.appendChild(el('tspan', {x: clx, dy: ri ? 14 : 0}, row));
+        var line = el('tspan', {x: clx, dy: ri ? 14 : 0});
+        setLabel(line, row);
+        cnode.appendChild(line);
       });
       grp.appendChild(cnode);
       if (c.from && byId[c.from]) {
@@ -201,10 +220,10 @@
       // curve that climbs to the right-hand corner is already there.
       // tagq anchors the name over a chosen quantity instead of the line's
       // right-hand end, for a panel where a curve runs through that corner.
-      if (l.tag) grp.appendChild(el('text', {class: 'tag',
+      if (l.tag) grp.appendChild(setLabel(el('text', {class: 'tag',
         x: l.tagq != null ? X(l.tagq) : O.x + PW + 6,
         y: Y(l.p) + (l.tagdy != null ? l.tagdy : -6),
-        'text-anchor': l.tagq != null ? 'middle' : 'end', fill: cc}, l.tag));
+        'text-anchor': l.tagq != null ? 'middle' : 'end', fill: cc}), l.tag));
       g.appendChild(grp); reg(grp, l);
     });
 

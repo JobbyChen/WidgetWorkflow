@@ -248,6 +248,26 @@ economics instead of label placement.
   goes immediately before the heading or paragraph that day started with, and
   where the output merges two of the source's sections, it anchors to that
   paragraph rather than the merged heading. (Ian, 2026-09-24.)
+* **A curve runs well past the point it is drawn for.** A curve sampled just
+  either side of its tangency reads as beginning where it touches. Sample in
+  proportion to the point — roughly 0.45× to 6× its x — so the upper branch is
+  tall and the tail long whatever x the point sits at. (Ian, 2026-09-28.)
+* **A point sits on one of its curve's own sample points.** A curve is a
+  spline through samples, not the formula behind it, so a point placed from
+  the formula at an x between two samples sits just off the drawn curve — and
+  off any tangent through it. Put every marked basket in the sample list.
+* **A tangency is arithmetic, never drawn by eye.** `y = k/x + b` with
+  `k = m·t²` and `b = c − 2mt` touches the line through `(0,c)` and `(xint,0)`
+  at `x = t`. Eyeballed, it crosses — which is the one thing a tangency figure
+  exists to rule out. A tangent line is a short stub through its point, as the
+  artwork draws it, not a full-width line.
+* **Set the slopes so the lesson is visible.** The marginal-rate-of-
+  substitution figure needs a steep basket and a nearly flat one (−3.0 against
+  −0.2); on a gently bowed curve shared with other figures, both look the
+  same. A figure whose subject is a slope gets its own curve.
+* **Draw what the source draws, and no more.** Extra curves added to
+  illustrate a point the artwork makes with one curve are clutter, and they
+  crowd the labels that matter.
 * **Where the source figure and the source prose disagree, the prose wins**
   (rule 3's authority order) — and say so in the changelog. The apartment
   figure prints a demand intercept of 1,200 that contradicts its own

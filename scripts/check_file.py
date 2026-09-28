@@ -370,6 +370,14 @@ def check_engine(src, r):
     n = src.count(PLACEHOLDER)
     css_m, js_m = CSS_BLOCK.search(src), JS_BLOCK.search(src)
 
+    # A chapter with no graphs in it -- ECO2023 chapter 8 has none at all --
+    # needs no engine, and 22KB of one it never calls is dead weight in every
+    # copy of the page. The missing-widgets warning already says the file has
+    # none, so this stays quiet rather than failing a correct file.
+    if not n and not (css_m or js_m) and '<div class="sdg"' not in blank_code(src):
+        r.ok("engine", "no widgets in this file, so no engine to embed")
+        return
+
     if n == 1 and not (css_m or js_m):
         r.ok("engine", "%s placeholder present once, engine not yet inserted" % PLACEHOLDER)
     elif n:

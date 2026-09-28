@@ -356,6 +356,18 @@ case("working whose answer alone appears in a different formula",
      or not r.has("FAIL", "calcs", "printed again as prose"))
 
 
+# ---- the engine ------------------------------------------------------------
+
+# a chapter with no graphs needs no engine, but one with a widget in it does
+case("no engine in a file that has a widget", lambda r: C.check_engine(
+    '<div class="sdg"><script type="application/json">{}</script></div>', r)
+    or r.has("FAIL", "engine", "no <!--SDG-ENGINE--> placeholder"))
+
+case("no engine in a file with no widget", lambda r: C.check_engine(
+    "<h1>Cardinal Utility</h1><p>No graphs in this chapter.</p>", r)
+    or not r.has("FAIL", "engine", "no <!--SDG-ENGINE--> placeholder"))
+
+
 # ---- class dates -----------------------------------------------------------
 
 _DATED = ('<p class="date">Tuesday, 9/22/26</p><h1>Culture</h1><p>Body.</p>'

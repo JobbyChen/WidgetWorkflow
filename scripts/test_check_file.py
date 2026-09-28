@@ -348,6 +348,13 @@ case("working the chapter reprints as text", lambda r: r.take(_calcs_case(
 # ...but a chapter formula that merely contains this line's answer is not the
 # same working. "TS = CS + PS = $173,333.33 + $40,000" holds the token CS and
 # the total, while the trapezoid split that produced it appears nowhere.
+# prose that states the result by name is worth a look, though not a failure
+case("working the prose states in words", lambda r: r.take(_calcs_case(
+    "Vertical intercept = Income ÷ P_B = $10 ÷ $0.50 = 20 loaves",
+    "We can graph this budget line. The vertical intercept is 20 loaves of "
+    "bread, which is how much bread the consumer could buy."))
+    or r.has("WARN", "calcs", "states"))
+
 case("working whose answer alone appears in a different formula",
      lambda r: r.take(_calcs_case(
          "CS = $66,666.67 + $106,666.67 = $173,333.33",
@@ -366,6 +373,14 @@ case("no engine in a file that has a widget", lambda r: C.check_engine(
 case("no engine in a file with no widget", lambda r: C.check_engine(
     "<h1>Cardinal Utility</h1><p>No graphs in this chapter.</p>", r)
     or not r.has("FAIL", "engine", "no <!--SDG-ENGINE--> placeholder"))
+
+
+# a curve that runs down to the axis parks its label on it -- rule 5 lists the
+# axis lines beside curves, so this fails rather than warns
+case("curve label sitting on the Q axis", lambda r: C.check_labels(widget(
+    curves=[{"id": "D", "label": "IC₁", "pts": [[10, 90], [100, 2]],
+             "curved": True, "ldy": 14}]), r)
+    or r.has("FAIL", "labels", "sits on the axis lines"))
 
 
 # ---- class dates -----------------------------------------------------------

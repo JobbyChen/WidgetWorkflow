@@ -980,8 +980,19 @@ def check_labels(cfgs, r):
                         if not coexist(win, gwin) or exempt(what, gdesc):
                             continue
                         if poly_hits(inflate(bx, 3.0), gpx):
-                            r.warn("labels", "%s: %s is close to %s"
-                                   % (where, what, gdesc))
+                            # Rule 5 names the axis lines alongside curves: a
+                            # label parked on one is as struck through as a
+                            # label on a curve, and IC₁ shipped sitting on the
+                            # Q axis with the file reporting 0 FAIL, because
+                            # the axis lines were reported at the dashed
+                            # guides' severity. Guides stay a warning; the two
+                            # solid axis lines fail.
+                            if gdesc == "the axis lines":
+                                r.fail("labels", "%s: %s sits on %s"
+                                       % (where, what, gdesc))
+                            else:
+                                r.warn("labels", "%s: %s is close to %s"
+                                       % (where, what, gdesc))
                     for c in pn.get("curves") or []:
                         pts = c.get("pts") or []
                         if len(pts) < 2:
@@ -1296,7 +1307,10 @@ def check_calcs(src, cfgs, r):
             continue
         n += 1
         nxt = next((b for b in bodies if b > pos), len(src))
-        after = src[pos:nxt]
+        # from the end of this widget, not its start: the slice used to carry
+        # the widget's own config, so the word scan found every calc line
+        # quoted in its own JSON and failed the file against itself.
+        after = JSON_RE.sub(" ", src[pos:nxt])
         for ln in lines:
             # A duplicate shows the same working, so it shows the same
             # numbers. Matching the result plus the left-hand side alone was
@@ -1311,6 +1325,33 @@ def check_calcs(src, cfgs, r):
             nums = NUM_RE.findall(ln)
             if not lhs or not res:
                 continue
+            # The chapter often states the same working as a sentence
+            # rather than a formula: "The vertical intercept is 20 loaves."
+            # Matching only \( ... \) let a calcs block through that repeated
+            # every number in the paragraph under it.
+            prose_txt = re.sub(r"<[^>]+>", " ", after)
+            flat_prose = re.sub(r"\s+", " ", prose_txt).replace(",", "")
+            # The name and the result have to arrive together, as one
+            # statement: "the vertical intercept is 20 loaves". Testing them
+            # separately failed the trade chapter, whose prose happens to
+            # contain both "total surplus" and the number 120 -- the latter
+            # being units exported, not a surplus.
+            lhs_words = [w for w in re.split(r"[^A-Za-z]+", lhs) if len(w) > 3]
+            said = False
+            if lhs_words and res:
+                phrase = r".{0,40}?".join(re.escape(w) for w in lhs_words)
+                phrase += r".{0,40}?" + re.escape(res.replace(",", ""))
+                said = re.search(phrase, flat_prose, re.I | re.S) is not None
+            if said:
+                # Reported, not failed. A chapter that prints the same working
+                # as a formula is a duplicate by construction; prose naming
+                # the result is a judgement call -- the tax figure's prose
+                # mentions "($9)" in passing while the working behind it
+                # appears nowhere, and dropping that block would lose it.
+                r.warn("calcs", "widget %d: the prose under the figure states "
+                                "%r in words -- check whether the working is "
+                                "still worth showing" % (idx, ln))
+                break
             for m in FORMULA.finditer(after):
                 body = m.group(1).replace("\\", "").replace("{", "").replace("}", "")
                 flat = body.replace(",", "")
@@ -1421,7 +1462,15 @@ def check_caption_prose(src, cfgs, r):
             # A redundant one here does both: two thirds shared, and three to
             # five words of its own. A number the prose lacks exempts it
             # outright -- that is content the reader can get nowhere else.
-            if not new_numbers and (frac >= 0.75 or (frac >= 0.6 and len(added) <= 5)):
+            # A caption can restate the paragraph in fresh words and share
+            # very little vocabulary with it while adding no fact at all. When
+            # it carries numbers and every one of them is already in the
+            # prose, that is what has happened, so the bar drops.
+            numbers = {w for w in words if any(c.isdigit() for c in w)}
+            restated = bool(numbers) and not new_numbers and frac >= 0.45
+            if not new_numbers and (frac >= 0.75
+                                    or (frac >= 0.6 and len(added) <= 5)
+                                    or restated):
                 wordy += 1
                 r.warn("prose", "widget %d: %d%% of %r is already in the "
                                 "prose around it -- cut it to what it adds"

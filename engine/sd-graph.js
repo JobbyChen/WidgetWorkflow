@@ -1,4 +1,4 @@
-/* ===== sd-graph.js v2.26 — data-driven supply & demand widgets =====
+/* ===== sd-graph.js v2.27 — data-driven supply & demand widgets =====
    Markup:  <div class="sdg"><script type="application/json">{ ...config... }<\/script></div>
    Top-level config:
      title, lede, caption         heading / intro / static caption (caption used only when there are no steps)
@@ -70,7 +70,24 @@
     // A brace outside the P axis needs margin to sit in, the way a brace below
     // the Q axis needs the extra panel height above.
     var vleft = (cfg.vbraces || []).some(function (b) { return b.left; });
-    var left = (ax.cents ? 62 : (ax.yticks && ax.yticks.length ? 54 : 40)) + (vleft ? 44 : 0);
+    // The left margin was a fixed 40/54/62, so a price-axis label wider than
+    // that ran off the left of the viewBox and was simply cut in half --
+    // "P* = ATC" rendered as "= ATC", with nothing reporting it. It is sized
+    // to the widest label the axis actually carries now. Subscripts are set
+    // at .72em, so they count for less, the same way check_file measures them.
+    function axw(t) {
+      t = String(t); var subs = 0;
+      var plain = t.replace(/_\{([^}]*)\}/g, function (m, inner) { subs += inner.length; return ''; });
+      return 6.1 * (plain.length + 0.72 * subs);
+    }
+    var widest = 0;
+    (ax.yticks || []).forEach(function (v) { widest = Math.max(widest, axw(fmtP(v, ax))); });
+    (cfg.points || []).forEach(function (pt) {
+      if (pt.showP === false) return;
+      widest = Math.max(widest, axw(pt.pl != null ? pt.pl : fmtP(pt.p, ax)));
+    });
+    var left = Math.max(ax.cents ? 62 : (ax.yticks && ax.yticks.length ? 54 : 40),
+                        Math.ceil(widest) + 12) + (vleft ? 44 : 0);
     var O = {x: left, y: 205}, PW = W - left - 36, PH = 178;
     var X = function (q) { return O.x + (q / ax.xmax) * PW; }, Y = function (p) { return O.y - (p / ax.ymax) * PH; };
     var svg = el('svg', {viewBox: '0 0 ' + W + ' ' + H, role: 'img', 'aria-label': cfg.heading || cfg.title || 'Supply and demand graph'});

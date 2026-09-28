@@ -378,7 +378,7 @@ not enough to reproduce an implementation.
   `embed_engine.py`'s paths reproduce the delivered file byte-for-byte; all 20
   prototype widgets render with no engine errors; `check_file.py` runs the
   geometric label test over 74 labels in the 263 file with no overlaps.
-* **Engine is v2.26.** Since v2.6: `areas` shade a polygon (v2.11) with
+* **Engine is v2.27.** Since v2.6: `areas` shade a polygon (v2.11) with
   `edge` to outline it (v2.18) and labels centred on their anchor (v2.13);
   `dot:false` drops a marker but keeps the axis label (v2.12); points take
   `guides:"p"`/`"q"` for one leg of the elbow (v2.14); braces take
@@ -393,7 +393,10 @@ not enough to reproduce an implementation.
   or a point's axis label (v2.24/v2.25); and an arrow's head scales with its
   length (v2.26), because a fixed 7×3.6 head made a short movement arrow --
   two firms sliding a few units along one cost curve -- read as a blot rather
-  than a direction.
+  than a direction; and the left margin is sized to the widest price-axis
+  label (v2.27), because a fixed one cut `P* = ATC` down to `= ATC` with
+  nothing reporting it -- the text was placed correctly and the panel simply
+  had no room for it.
 
 * **PPF works.** The first chapter of Exam 1 material converted to seven widgets
   with no engine gaps hit: frontiers, a combinations table, points on/inside/

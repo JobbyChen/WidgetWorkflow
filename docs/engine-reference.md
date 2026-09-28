@@ -1,4 +1,4 @@
-# Engine reference — `engine/sd-graph.js` v2.26
+# Engine reference — `engine/sd-graph.js` v2.27
 
 Written from the engine source. The conversion prompt carries a shorter version
 of this in its own "Engine reference" section; that one is what the model needs
@@ -145,6 +145,12 @@ pixel apart. `scripts/check_file.py` tests for this.
   price on the P axis whenever that price is not already a `ytick` and no
   `hline` sits at it; `showQ` does the same on Q. `pl`/`ql` override the number
   with a symbol (`"P₁"`, `"Q₁"`) — which is how symbolic graphs get their axes.
+  **The left margin is sized to the widest of them** (**v2.27**). It used to be
+  a fixed 40, 54 or 62px, so anything longer was cut off at the edge of the
+  viewBox: the monopolistic-competition chapter's `"P* = ATC"` rendered as
+  `"= ATC"`, and no check saw it, because the text itself was placed correctly
+  — the panel simply had no room for it. A wider margin takes its width from
+  the plot, so a long label costs plot width rather than its own first half.
 - **A value the point prints for itself is bold; a tick is not.** That makes
   emphasis depend on which ticks you listed, not on what matters: a point at 85
   comes out bold, and the same point comes out plain the moment you add an `85`

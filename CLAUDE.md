@@ -42,6 +42,7 @@ scripts/
   render_widgets.py           ← Playwright: screenshot every widget × scenario × step for collision review
   mobile_check.py             ← does it fit and still work on a phone? Drives every button at 390/320px
   place_labels.py             ← put every shaded area's label where it is clear, and centred
+  place_curve_labels.py       ← the same for curve labels: the clear ldx/ldy nearest the default
   curve_shapes.py             ← cost families, tangencies, supply fans, crossings. Import, don't retype.
   test_curve_shapes.py        ← tests for it. Run after changing it.
 .claude/commands/             ← /convert, /check, /render
@@ -242,6 +243,22 @@ economics instead of label placement.
   the clear point nearest the centroid, and falls back to just outside the
   shape for a wedge too small to hold a label — which is what the source does
   with its own slivers.
+* **Place curve labels with `scripts/place_curve_labels.py`, never by eye.**
+  A curve label sits at its own end, which is where the other curves converge:
+  MR ends on the Q axis with MC a few units above it and an equilibrium's guide
+  beside it, leaving about nine pixels of room. Guessed offsets trade one
+  collision for another — MR came off MC and straight onto the axis on the
+  first try — and each guess costs a render. The script scores candidates
+  against `check_file`'s own geometry and takes the clear one nearest the
+  engine's default. Where it reports *nowhere clear*, that is a drawing to
+  change (run the curve further, or anchor the label at the other end with
+  `lstart`), not an offset to keep hunting for. **One offset for a series:**
+  where the same market is drawn in several figures, search for an offset clear
+  in all of them at once, or the label moves about from figure to figure.
+* **A curve stops where it leaves the plot, not at the far frame.** A cost
+  curve run out to `xmax` when it exits through the *top* has its last point —
+  and therefore its label — off the panel, so the curve is drawn with no name
+  and nothing reports it. Sample to the edge it actually reaches.
 * **Every class date in the source survives.** A `<p class="date">` carries no
   content, so condensing or restructuring a chapter drops it with nothing left
   looking wrong — concise editions of modules dated over three meetings were

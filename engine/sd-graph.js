@@ -1,4 +1,4 @@
-/* ===== sd-graph.js v2.25 — data-driven supply & demand widgets =====
+/* ===== sd-graph.js v2.26 — data-driven supply & demand widgets =====
    Markup:  <div class="sdg"><script type="application/json">{ ...config... }<\/script></div>
    Top-level config:
      title, lede, caption         heading / intro / static caption (caption used only when there are no steps)
@@ -125,7 +125,13 @@
     });
 
     function arrow(x1, y1, x2, y2, c, cls) {
-      var dx = x2 - x1, dy = y2 - y1, len = Math.hypot(dx, dy), ux = dx / len, uy = dy / len, hh = 7, ww = 3.6, bx = x2 - ux * hh, by = y2 - uy * hh;
+      var dx = x2 - x1, dy = y2 - y1, len = Math.hypot(dx, dy), ux = dx / len, uy = dy / len,
+          // The head was a fixed 7x3.6 however long the arrow was, so a short
+          // movement arrow -- two firms sliding a few units along one cost
+          // curve -- came out almost entirely head. It scales with length now,
+          // down to 55% for the shortest, and is a shade smaller throughout.
+          k = Math.max(0.55, Math.min(1, len / 46)), hh = 6.2 * k, ww = 3.1 * k,
+          bx = x2 - ux * hh, by = y2 - uy * hh;
       return el('path', {class: 'arrow ' + (cls || ''), stroke: c, d: 'M' + x1 + ' ' + y1 + ' L' + x2 + ' ' + y2 + ' M' + (bx - uy * ww) + ' ' + (by + ux * ww) + ' L' + x2 + ' ' + y2 + ' L' + (bx + uy * ww) + ' ' + (by - ux * ww)});
     }
     function pathD(pts, curved) {

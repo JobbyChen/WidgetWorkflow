@@ -1,4 +1,4 @@
-# Engine reference — `engine/sd-graph.js` v2.24
+# Engine reference — `engine/sd-graph.js` v2.26
 
 Written from the engine source. The conversion prompt carries a shorter version
 of this in its own "Engine reference" section; that one is what the model needs
@@ -249,6 +249,13 @@ instead of breaking an equation across two lines.
 An arrow between two points, drawn `offset` px **beside** the line joining them
 so it never lies on the curve. A negative `offset` puts it on the other side —
 which side is correct depends on the geometry, so check it against a render.
+
+**The head scales with the arrow's length** (**v2.26**), from full size at 46px
+and longer down to 55% for the shortest, and the movement arrow's stroke is
+1.9px rather than 2.4. The head used to be a fixed 7×3.6 whatever the arrow
+did, so a short one — two firms sliding a few units along one cost curve — was
+almost entirely head and read as a blot rather than a direction. Longer arrows
+are a shade lighter than before; nothing else about them changed.
 
 ### `hlines`
 

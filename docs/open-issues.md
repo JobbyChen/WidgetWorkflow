@@ -4,6 +4,14 @@ Checkboxes. Keep `CLAUDE.md`'s status paragraph in sync with this file.
 
 ---
 
+- [ ] `ECO2013-263-SupplyAndDemand.html` widget 6, the shortage scenario's
+      last step: two of its three movement arrows touch a dashed guide (0.3px
+      and 0.6px on the rendered geometry). `render_widgets.py` has reported it
+      all along and it predates v2.26 — the smaller arrowhead moved one of them
+      from 0.1px to 0.6px rather than fixing it. The arrows need to start a
+      little further inside the box the guides fence off, which means moving
+      them in shipped work.
+
 ## Found by running the checker on the delivered files
 
 - [x] ~~`ECO2013-263-SupplyAndDemand.html` names the class in its prose.~~ Three

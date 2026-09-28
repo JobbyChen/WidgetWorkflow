@@ -1,0 +1,145 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""The curve shapes these chapters keep needing, generated rather than typed.
+
+Every function here exists because drawing the same shape by eye went wrong
+at least once on the ECO2023 conversions:
+
+* a marginal cost curve that missed the minimum of the average curve it is
+  supposed to cut there,
+* an indifference curve drawn *through* its budget line instead of touching
+  it, which is the one thing a tangency figure exists to show,
+* a basket placed on the formula behind a curve rather than on the curve, so
+  it sat a little off the spline that was actually drawn,
+* an equilibrium dot typed as a coordinate and left behind when the curves
+  around it moved,
+* a supply fan drawn as rays when the source draws it as e^x.
+
+The rule they share: if a point has to lie on something, compute it from the
+thing it lies on. A coordinate typed once and edited later is the failure
+mode, and it is invisible in a screenshot.
+
+    from curve_shapes import cost_family, cross, supply_fan
+"""
+
+import math
+
+__all__ = ["cost_family", "cross", "hyperbola", "on_hyperbola",
+           "tangent_to_hyperbola", "tangent_to_line", "supply_fan", "sample"]
+
+
+def sample(f, xs):
+    """f evaluated at each x, as [q, p] pairs the engine takes."""
+    return [[x, round(f(x), 1)] for x in xs]
+
+
+# ---- cost curves ----------------------------------------------------------
+
+def cost_family(avc_min, atc_min, avc_a=0.018, atc_a=0.032,
+                avc_xs=None, atc_xs=None, mc_xs=None, mc_vertex=None):
+    """AVC, ATC and MC, with MC through the lowest point of each average.
+
+    MC is not a shape anyone should choose: it is fixed by the two crossings
+    it has to make. Solving for it means the dots where it cuts AVC and ATC
+    sit on all three curves at once, which is what those figures are for.
+
+    `avc_a` is deliberately gentler than `atc_a`: average fixed cost shrinks
+    as output grows, so the two averages close on each other and their right
+    arms end up running nearly parallel, which is how the artwork draws them.
+    Returns (AVC, ATC, MC) point lists.
+    """
+    (ax, ay), (tx, ty) = avc_min, atc_min
+    h = mc_vertex if mc_vertex is not None else ax - 16
+    # a(ax-h)^2 + k = ay and a(tx-h)^2 + k = ty
+    a = (ty - ay) / float((tx - h) ** 2 - (ax - h) ** 2)
+    k = ay - a * (ax - h) ** 2
+
+    avc = lambda x: avc_a * (x - ax) ** 2 + ay
+    atc = lambda x: atc_a * (x - tx) ** 2 + ty
+    mc = lambda x: a * (x - h) ** 2 + k
+
+    avc_xs = avc_xs or [ax - 26, ax - 16, ax - 8, ax, ax + 10, ax + 18, ax + 26]
+    atc_xs = atc_xs or [tx - 42, tx - 32, tx - 20, tx - 10, tx, tx + 12,
+                        tx + 24, tx + 38]
+    mc_xs = mc_xs or [h - 14, h - 6, h, h + 8, ax, ax + 8, tx, tx + 10, tx + 18]
+    return sample(avc, avc_xs), sample(atc, atc_xs), sample(mc, mc_xs)
+
+
+# ---- indifference curves and budget lines ---------------------------------
+
+def hyperbola(k, xs):
+    """y = k/x. One curve of a nested family; no member can leave the box."""
+    return sample(lambda x: float(k) / x, xs)
+
+
+def on_hyperbola(k, x):
+    """The basket at x on curve k.
+
+    Use an x that is in the curve's own sample list. A curve is a spline
+    through samples, not the formula behind it, so a point taken from the
+    formula between two samples sits just off the line that is drawn.
+    """
+    return [x, round(float(k) / x, 1)]
+
+
+def tangent_to_hyperbola(k, t, x0, x1):
+    """The short line that touches y = k/x at x = t, drawn from x0 to x1."""
+    m = float(k) / (t * t)
+    y = lambda x: k / float(t) - m * (x - t)
+    return [[x0, round(y(x0), 1)], [x1, round(y(x1), 1)]]
+
+
+def tangent_to_line(c, xint, t, xs):
+    """A convex curve touching the line through (0, c) and (xint, 0) at x = t.
+
+    y = k/x + b with k = m t^2 and b = c - 2mt has the line's slope at t and
+    meets it there, so the tangency is arithmetic. Points whose y leaves the
+    top of the box are dropped.
+    """
+    m = float(c) / xint
+    k, b = m * t * t, c - 2.0 * m * t
+    return [q for q in sample(lambda x: k / x + b, xs) if q[1] <= 106]
+
+
+def around(t, lo=6, hi=108, shares=(0.45, 0.62, 0.8, 1.0, 1.4, 2.0, 3.0, 4.4, 6.0)):
+    """Sampling points either side of t, in proportion to it and in order.
+
+    A curve sampled a fixed distance either side of its tangency reads as
+    beginning where it touches. Shares of t keep the upper branch tall and
+    the tail long whether the basket sits at x = 14 or x = 62. Sorted after
+    clamping, or a low tangency doubles the curve back on itself.
+    """
+    return sorted(set(round(min(hi, max(lo, t * f)), 1) for f in shares))
+
+
+# ---- supply -------------------------------------------------------------
+
+def supply_fan(top, k=3.0, ys=(0, 0.25, 0.45, 0.62, 0.76, 0.88, 1.0), pmax=100.0):
+    """p = A(e^(kq) - 1): along the bottom, then almost vertical at `top`.
+
+    The source's market-supply figure fans four of these out and lays a
+    flatter one to the right of them all. Same k and a larger `top` puts a
+    curve right of every other at every price, which is what the market
+    curve has to do.
+    """
+    denom = math.exp(k) - 1.0
+    return [[round(top * u, 1), round(pmax * (math.exp(k * u) - 1) / denom, 1)]
+            for u in ys]
+
+
+# ---- crossings ----------------------------------------------------------
+
+def cross(a, b):
+    """Where two straight two-point curves meet, as [q, p].
+
+    Name the crossings and build the equilibrium dots from them. Typed as
+    coordinates they get left behind the moment a curve moves, and a dot a
+    few units off its crossing looks deliberate.
+    """
+    (x1, y1), (x2, y2) = a[0], a[-1]
+    (x3, y3), (x4, y4) = b[0], b[-1]
+    d = (x2 - x1) * (y4 - y3) - (y2 - y1) * (x4 - x3)
+    if not d:
+        raise ValueError("those two curves are parallel")
+    t = ((x3 - x1) * (y4 - y3) - (y3 - y1) * (x4 - x3)) / d
+    return [round(x1 + t * (x2 - x1), 1), round(y1 + t * (y2 - y1), 1)]

@@ -42,6 +42,8 @@ scripts/
   render_widgets.py           ← Playwright: screenshot every widget × scenario × step for collision review
   mobile_check.py             ← does it fit and still work on a phone? Drives every button at 390/320px
   place_labels.py             ← put every shaded area's label where it is clear, and centred
+  curve_shapes.py             ← cost families, tangencies, supply fans, crossings. Import, don't retype.
+  test_curve_shapes.py        ← tests for it. Run after changing it.
 .claude/commands/             ← /convert, /check, /render
 ```
 
@@ -255,6 +257,21 @@ economics instead of label placement.
   sets smaller and lighter (v2.24); small capitals render at full weight and
   read as capitals. Where a curve reaches the axis in the source, draw it
   reaching the axis. (Ian, 2026-09-28.)
+* **Generate a shape, never type it.** `scripts/curve_shapes.py` carries the
+  shapes these chapters keep needing, and each function is there because
+  drawing that shape by eye went wrong: `cost_family` solves MC from the two
+  average minima it must cut, so the dots sit on all three curves at once;
+  `tangent_to_line` and `tangent_to_hyperbola` touch rather than cross;
+  `on_hyperbola` puts a basket on a sample point of its own curve, because a
+  curve is a spline through samples and a point taken from the formula
+  between two of them sits just off the line that is drawn; `supply_fan`
+  gives the `p = A(e^(kq) − 1)` shape the market-supply figure needs, flat
+  along the bottom and vertical at the end; `around` samples either side of a
+  basket in proportion to it, sorted, so a low basket cannot double the curve
+  back on itself. **`cross` is the important one**: name every crossing and
+  build the equilibrium dots from it. Typed as coordinates they are left
+  behind the moment a curve moves, and a dot a few units off its crossing
+  looks deliberate. `python scripts/test_curve_shapes.py` must be 0 failing.
 * **A curve runs to the edge of the plot, not to wherever it stopped.** The
   source draws every curve out to the frame, so a cost curve ending two
   thirds of the way across reads as truncated beside it — and cutting one
@@ -307,6 +324,16 @@ run, not just whether it is correct:
 * **Score against the checker's own geometry, never a copy of it.** That is why
   `place_labels` takes 0.3s where a re-run-the-checks loop took three minutes,
   and why the two can never disagree about the same drawing.
+* **Read the WARNs, not just the FAILs.** A curve label sitting on the Q axis
+  was reported for a whole round as a warning while every re-check was
+  grepped for `^FAIL`. Rule 5's severity was wrong — that is fixed — but the
+  habit was worse than the bug.
+* **Prove an edit landed.** Patching a config by string replacement fails
+  silently when the text has moved on, and the build still succeeds, so the
+  next render looks like the fix simply did not work. Assert the match count,
+  and check the property afterwards: chapter 12 shipped equilibrium dots
+  beside their crossings for three rounds because three patches in a row
+  quietly matched nothing.
 * **Know what each step costs.** The whole static toolchain is under a second:
   `check_file` 0.2s, the test suite 0.8s, `place_labels` 0.3s, `embed_engine`
   0.05s — run those freely, and after every change. The browser steps are the

@@ -1,4 +1,4 @@
-/* ===== sd-graph.js v2.24 — data-driven supply & demand widgets =====
+/* ===== sd-graph.js v2.25 — data-driven supply & demand widgets =====
    Markup:  <div class="sdg"><script type="application/json">{ ...config... }<\/script></div>
    Top-level config:
      title, lede, caption         heading / intro / static caption (caption used only when there are no steps)
@@ -333,8 +333,10 @@
       }
       var pl = p.pl || ((p.showP !== false && (ax.yticks || []).indexOf(p.p) < 0 && !(cfg.hlines || []).some(function (l) { return l.p === p.p && shares(l, p); })) ? fmtP(p.p, ax) : null);
       var ql = p.ql || ((p.showQ !== false && (ax.xticks || []).indexOf(p.q) < 0) ? fmtQ(p.q, ax) : null);
-      if (pl) grp.appendChild(el('text', {class: 'tk strong', x: O.x - 6, y: Y(p.p) + 4, 'text-anchor': 'end', fill: cc}, pl));
-      if (ql) grp.appendChild(el('text', {class: 'tk strong', x: X(p.q), y: O.y + 15, 'text-anchor': 'middle', fill: cc}, ql));
+      // through setLabel like the curve labels and tags: a point's axis label
+      // printed _{1} verbatim, braces and all, when it was written that way
+      if (pl) grp.appendChild(setLabel(el('text', {class: 'tk strong', x: O.x - 6, y: Y(p.p) + 4, 'text-anchor': 'end', fill: cc}), pl));
+      if (ql) grp.appendChild(setLabel(el('text', {class: 'tk strong', x: X(p.q), y: O.y + 15, 'text-anchor': 'middle', fill: cc}), ql));
       grp.addEventListener('mouseenter', function () { grp.classList.add('hi'); });
       grp.addEventListener('mouseleave', function () { grp.classList.remove('hi'); });
       g.appendChild(grp); reg(grp, p);

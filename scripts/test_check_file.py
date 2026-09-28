@@ -383,6 +383,21 @@ case("curve label sitting on the Q axis", lambda r: C.check_labels(widget(
     or r.has("FAIL", "labels", "sits on the axis lines"))
 
 
+# a subscript run is drawn at .72em and its braces are markup, so a label
+# carrying one measures narrower than its raw string
+def _sub_width(r):
+    wide = C.box(0, 0, "S_George", 13)[2]
+    sub = C.box(0, 0, "S_{George}", 13)[2]
+    if not (C.box(0, 0, "S", 13)[2] < sub < wide):
+        r.fail("labels", "a subscripted label measures %s, not between %s and %s"
+               % (sub, C.box(0, 0, "S", 13)[2], wide))
+    return r.has("FAIL", "labels", "measures")
+
+
+case("a subscripted label is not measured at full width",
+     lambda r: not _sub_width(r))
+
+
 # ---- class dates -----------------------------------------------------------
 
 _DATED = ('<p class="date">Tuesday, 9/22/26</p><h1>Culture</h1><p>Body.</p>'

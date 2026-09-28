@@ -597,7 +597,14 @@ def box(x, y, text, size, anchor="start", vcenter=False):
     them as baseline-anchored put this test's idea of them ~3px above where
     the browser actually draws them, which is the difference between a label
     centred in its wedge and one lying across the wedge's edge."""
-    w = 0.58 * size * max(1, len(str(text)))
+    # _{...} is a subscript run: the engine sets it at .72em, and the braces
+    # are markup rather than glyphs. Counting them at full width made a label
+    # like S_{George} measure half again as wide as it is drawn, and reported
+    # overlaps between names that sit clear of each other.
+    t = str(text)
+    plain = re.sub(r"_\{[^}]*\}", "", t)
+    subs = "".join(re.findall(r"_\{([^}]*)\}", t))
+    w = 0.58 * size * max(1, len(plain) + 0.72 * len(subs))
     if anchor == "middle":
         x -= w / 2
     elif anchor == "end":

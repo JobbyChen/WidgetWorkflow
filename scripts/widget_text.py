@@ -29,7 +29,15 @@ import pathlib
 import re
 import sys
 
-BLOCK = re.compile(r'(<script type="application/json">\n)(.*?)(\n</script>)', re.S)
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+import check_file as C
+
+# The newlines around the config used to be required, so a widget written
+# without them was not listed at all -- four of the nine in the shipped
+# supply-and-demand file, whose captions a semester swap would then have
+# skipped in silence. This matches whatever whitespace is there, the way
+# check_file's JSON_RE does; the two must agree about what a widget is.
+BLOCK = re.compile(r'(<script type="application/json">\s*)(.*?)(\s*</script>)', re.S)
 
 # What a semester can rename. Anything not on this list is geometry or wiring.
 KEYS = ("title", "lede", "caption", "heading", "label")
@@ -72,7 +80,14 @@ def put(node, path, value):
 
 
 def configs(src):
-    return [(m, json.loads(m.group(2))) for m in BLOCK.finditer(src)]
+    """Every widget config, with the span its JSON occupies in `src`.
+
+    The scan runs over check_file's blanked copy, which keeps offsets but
+    empties the embedded engine -- whose header comment documents this very
+    markup, so a raw scan finds a widget inside it and fails to parse.
+    """
+    return [(m, json.loads(m.group(2)))
+            for m in BLOCK.finditer(C.blank_code(src))]
 
 
 def main():
@@ -89,6 +104,7 @@ def main():
         edits = json.loads(io.open(a.apply, encoding="utf-8").read())
         out, at, changed = [], 0, 0
         for n, (m, cfg) in enumerate(blocks, 1):
+            here = 0
             for addr, text in edits.items():
                 w, _, rest = addr.partition(".")
                 if w != "w%d" % n:
@@ -96,7 +112,14 @@ def main():
                 cur = dict(visit_map(cfg))
                 if rest in cur and cur[rest] != text:
                     put(cfg, rest, text)
-                    changed += 1
+                    here += 1
+            # A widget nothing edited keeps its own formatting. Rewriting it
+            # anyway reflowed hand-written configs into this script's own
+            # indentation, so a no-op round-trip was only byte-identical on
+            # files this toolchain had generated in the first place.
+            if not here:
+                continue
+            changed += here
             body = json.dumps(cfg, indent=1, ensure_ascii=False)
             out.append(src[at:m.start(2)]); out.append(body); at = m.end(2)
         out.append(src[at:])

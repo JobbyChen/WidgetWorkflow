@@ -1487,6 +1487,36 @@ def check_caption_prose(src, cfgs, r):
         r.ok("prose", "%d caption(s) say something the prose above them does not" % n)
 
 
+# About four lines at phone width, and 40% above the median caption already
+# in this repo, so a caption written to the point is nowhere near it.
+CAPTION_MAX = 200
+
+# A caption that shows its working gets more room -- Ian's call, 2026-09-28.
+# It still has to be concise, but the length is carrying the arithmetic rather
+# than padding it: the numbers going in, the step between them, and the answer
+# cannot be cut without losing the reason the caption is there.
+CAPTION_MAX_WORKING = 260
+
+NUMBER = re.compile(r"\d+(?:[.,]\d+)*")
+
+
+def shows_working(text, has_calcs):
+    """Whether a caption is doing arithmetic rather than describing a picture.
+
+    Three numbers is the line, because that is what a worked step costs: the
+    two values going in and the one coming out. Two is a before and after,
+    which is prose. A widget carrying a `calcs` block is working by
+    declaration, whatever its captions happen to say.
+    """
+    return has_calcs or len(NUMBER.findall(text)) >= 3
+
+
+def _walk_has(cfg, key):
+    found = []
+    walk(cfg, lambda d: found.append(True) if d.get(key) is not None else None)
+    return bool(found)
+
+
 def check_captions(cfgs, r):
     bad = 0
     for n, cfg, _ in cfgs:
@@ -1495,6 +1525,7 @@ def check_captions(cfgs, r):
             [d["caption"]] if isinstance(d.get("caption"), str) else []))
         for _, v in variants(cfg):
             texts += [s for s in (v.get("steps") or []) if isinstance(s, str)]
+        has_calcs = any(True for _ in [1] if _walk_has(cfg, "calcs"))
         for c in texts:
             s = c.strip()
             if re.match(r"^(before|after)\s*[-–—:]", s, re.I):
@@ -1512,8 +1543,22 @@ def check_captions(cfgs, r):
                 bad += 1
             elif not re.search(r"[.!?]$", s):
                 r.warn("caption", "widget %d: not a complete sentence: %r" % (n, s[:60]))
+            # Vertical space is the scarce thing on these pages, and the
+            # concise editions are produced by a pipeline that rewrites the
+            # prose and leaves widget captions exactly as they are -- so a
+            # caption that runs long here runs long in every edition. The
+            # cap is the hard ceiling, not the target: the median caption in
+            # this repo is 145 characters, which is where a good one sits.
+            cap = (CAPTION_MAX_WORKING if shows_working(s, has_calcs)
+                   else CAPTION_MAX)
+            if len(s) > cap:
+                r.fail("caption", "widget %d: caption is %d characters, over %d: %r"
+                       % (n, len(s), cap, s[:60]))
+                bad += 1
     if cfgs and not bad:
-        r.ok("caption", "captions are prose")
+        r.ok("caption", "captions are prose, and none over %d characters "
+                        "(%d where one shows its working)"
+                        % (CAPTION_MAX, CAPTION_MAX_WORKING))
 
 
 def visible_text(src, cfgs):

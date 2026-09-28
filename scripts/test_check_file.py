@@ -435,6 +435,41 @@ case("'Price up, quantity up' shorthand", lambda r: C.check_captions(
     [(1, {"steps": ["It settles at $40. Price up, quantity up."]}, "")], r)
     or r.has("FAIL", "caption", "shorthand"))
 
+case("a caption over the character cap", lambda r: C.check_captions(
+    [(1, {"steps": ["x" * C.CAPTION_MAX + "."]}, "")], r)
+    or r.has("FAIL", "caption", "characters"))
+
+case("a caption right at the cap passes", lambda r: C.check_captions(
+    [(1, {"steps": ["x" * (C.CAPTION_MAX - 1) + "."]}, "")], r)
+    or not [l for l in r.lines if "characters" in l])
+
+case("a static caption is measured too, not just steps", lambda r: C.check_captions(
+    [(1, {"caption": "y" * C.CAPTION_MAX + "."}, "")], r)
+    or r.has("FAIL", "caption", "characters"))
+
+case("every scenario's steps are measured", lambda r: C.check_captions(
+    [(1, {"scenarios": {"a": {"label": "A",
+                              "steps": ["z" * C.CAPTION_MAX + "."]}}}, "")], r)
+    or r.has("FAIL", "caption", "characters"))
+
+case("a caption showing its working gets the wider cap", lambda r: C.check_captions(
+    [(1, {"steps": ["Price falls from $21 to $19, a 10% fall on a $20 midpoint. "
+                    + "w" * (C.CAPTION_MAX_WORKING - 90) + "."]}, "")], r)
+    or not [l for l in r.lines if "characters" in l])
+
+case("working does not excuse any length", lambda r: C.check_captions(
+    [(1, {"steps": ["1 2 3 " + "w" * C.CAPTION_MAX_WORKING + "."]}, "")], r)
+    or r.has("FAIL", "caption", "over %d" % C.CAPTION_MAX_WORKING))
+
+case("two numbers is prose, not working", lambda r: C.check_captions(
+    [(1, {"steps": ["from $8 to $9 " + "w" * C.CAPTION_MAX + "."]}, "")], r)
+    or r.has("FAIL", "caption", "over %d" % C.CAPTION_MAX))
+
+case("a calcs block makes every caption in the widget working", lambda r: C.check_captions(
+    [(1, {"calcs": [{"label": "E", "expr": "x"}],
+          "steps": ["no digits here at all " + "w" * (C.CAPTION_MAX + 10) + "."]}, "")], r)
+    or not [l for l in r.lines if "characters" in l])
+
 # ---- the source-word rules, which have been narrowed three times -----------
 
 for txt, tag in [("<p>built from a lecture recording alone.</p>", "a lecture recording"),

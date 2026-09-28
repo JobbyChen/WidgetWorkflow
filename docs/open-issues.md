@@ -12,6 +12,20 @@ Checkboxes. Keep `CLAUDE.md`'s status paragraph in sync with this file.
       little further inside the box the guides fence off, which means moving
       them in shipped work.
 
+- [ ] The nine example files carry captions over rule 9's length cap, from
+      before the cap existed. Ian's call (2026-09-28) was to leave the older
+      files alone and apply the rule from ECO2023 chapter 14 onward, so these
+      are expected, not a regression:
+      - ECO2013-263-InternationalTrade.html                         1
+      - ECO2013-263-SupplyAndDemand.html                            5
+      - ECO2013-263-TradeoffsComparativeAdvantageTheMarketSystem.html  2
+      - ECO2023-263-AllocativeEfficiency.html                       6
+      - ECO2023-263-Elasticity.html                                 4
+      - ECO2023-263-SupplyAndDemand.html                           10
+      - ECO2023-263-ThePPF.html                                    11
+      Say the word and they can be trimmed; the ones showing their working
+      already get the wider 260-character cap, which spares 25 of them.
+
 ## Found by running the checker on the delivered files
 
 - [x] ~~`ECO2013-263-SupplyAndDemand.html` names the class in its prose.~~ Three

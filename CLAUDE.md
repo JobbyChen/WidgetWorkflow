@@ -37,6 +37,7 @@ scripts/
   doc_formulas.py             ← a Word file's MathType equations as text; --check audits a notes file
   add_toc.py                  ← write the TOC in by hand. Only for a file WITHOUT the live script.
   widget_text.py              ← every renamable string in a file's widgets; --apply writes them back
+  test_widget_text.py         ← tests for it. Run after changing it.
   transcript_diff.py          ← does a new term's transcript change this file? Run it BEFORE swapping.
   test_check_file.py          ← tests for check_file.py. Run after changing it.
   render_widgets.py           ← Playwright: screenshot every widget × scenario × step for collision review
@@ -168,9 +169,26 @@ itself still forbids questions outright.
    then PS" needs `at:1` and `at:2`; `at:2` and `at:3` leave step 2 showing
    step 1's picture. `check_file.py` now fails on it, and a figure that is
    genuinely one static diagram takes a `caption` instead of `steps`.
-9. **Captions are prose:** 1–3 complete sentences ending with the P and Q change
-   in words. No "Before –/After –", no fragments, no colon punchlines, no "Price
-   up, quantity up".
+9. **Captions are prose, and short:** 1–3 complete sentences ending with the P
+   and Q change in words. No "Before –/After –", no fragments, no colon
+   punchlines, no "Price up, quantity up".
+
+   **200 characters is the ceiling** — about four lines at phone width, and
+   40% above the median caption already here, so one written to the point is
+   nowhere near it. `check_file.py` fails over it. The concise editions are
+   produced by a pipeline that rewrites the prose and leaves widget captions
+   exactly as they are, so a caption that runs long here runs long in every
+   edition (Ian, 2026-09-28) — the baseline caption is the only place to fix
+   it. **A caption showing its working gets 260** instead: three or more
+   numbers, or a widget carrying a `calcs` block, and the length is carrying
+   the arithmetic rather than padding it. Cutting the values going in, the
+   step between them or the answer loses the reason the caption is there.
+
+   **Files written before the rule are left as they are** (Ian, 2026-09-28),
+   so `check_file.py` reports caption failures on the nine examples. That is
+   known and recorded in `docs/open-issues.md` with the count per file; do not
+   read it as those files being broken, and do not rewrite them without
+   asking. Everything from ECO2023 chapter 14 onward obeys the cap.
 10. **Group cases of one lesson into one widget with scenario buttons** (four
    apple shifts; surplus + shortage; increase + decrease of one schedule;
    substitutes + complements in production).
@@ -408,7 +426,10 @@ not enough to reproduce an implementation.
   it, and outward/inward/pivot shifts all work unchanged — a frontier shift is
   the same `from` mechanic as a supply shift. Four small gaps and the prompt work
   are in `docs/open-issues.md`; the docs themselves have not arrived yet.
-* **`ECO2013-263-SupplyAndDemand.html` is 0 FAIL.** Three WARNs remain, all
+* **The examples report caption-length failures**, from before the cap existed
+  (rule 9). Everything else about them is 0 FAIL, apart from the 9/11
+  prototype. Counts per file are in `docs/open-issues.md`.
+* **`ECO2013-263-SupplyAndDemand.html` is 0 FAIL** on everything but that. Three WARNs remain, all
   crowding: `P₁`/`P₂` are about a pixel apart in widgets 7 and 8, and `S₁`/`S₂`
   in widget 9's second panel. Readable, and moving them means moving equilibrium
   labels in shipped work, so they are reported rather than changed. Its three references

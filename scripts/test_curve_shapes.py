@@ -68,5 +68,31 @@ check("supply leaves the origin flat and ends steep",
 check("a crossing lands where both lines meet",
       C.cross([[8, 8], [96, 96]], [[8, 92], [96, 4]]) == [50.0, 50.0])
 
+# marginal revenue: the same intercept, exactly twice the slope
+d = [[0.0, 100.0], [110.0, 12.0]]
+m = C.mr(d)
+check("marginal revenue starts where demand starts",
+      m[0] == [0.0, 100.0], str(m))
+check("marginal revenue falls exactly twice as fast as price",
+      abs((m[1][1] - m[0][1]) / m[1][0] - 2 * (d[1][1] - d[0][1]) / d[1][0]) < 1e-6,
+      str(m))
+
+# the exponential marginal cost curve: leaves the price axis, passes through
+# the average minimum it cuts, and never doubles back
+mc = C.exp_through(13, (54, 51), (74, 110), through=(47.6,))
+check("marginal cost leaves the price axis, not the corner",
+      mc[0] == [0.0, 13.0], str(mc[0]))
+check("marginal cost rises the whole way",
+      all(b[1] > a[1] for a, b in zip(mc, mc[1:])), str(mc))
+check("the average minimum is a sample of marginal cost, not a point between two",
+      [54.0, 51.0] in mc, str(mc))
+check("a quantity asked for is a sample too",
+      any(abs(q - 47.6) < 1e-6 for q, _ in mc), str(mc))
+check("no two samples crowd into one another",
+      min(b[0] - a[0] for a, b in zip(mc, mc[1:])) > 1.0, str(mc))
+f = C.exp_fit(13, (54, 51), (74, 110))
+check("the fitted curve hits both points it was given",
+      abs(f(54) - 51) < 1e-6 and abs(f(74) - 110) < 1e-6)
+
 print("\n%d failing" % len(FAILS))
 sys.exit(1 if FAILS else 0)

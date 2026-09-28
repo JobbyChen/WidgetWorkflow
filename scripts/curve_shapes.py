@@ -143,3 +143,65 @@ def cross(a, b):
         raise ValueError("those two curves are parallel")
     t = ((x3 - x1) * (y4 - y3) - (y3 - y1) * (x4 - x3)) / d
     return [round(x1 + t * (x2 - x1), 1), round(y1 + t * (y2 - y1), 1)]
+
+
+def exp_fit(y0, hit, top):
+    """The function p = y0 + A(e^(kq) - 1) through (0, y0) and two more points.
+
+    Returned as a callable so a crossing can be solved against the real curve
+    and then handed back as a sample of it -- a dot solved against the polyline
+    instead lands off the drawn spline, which is how chapter 12 shipped
+    equilibrium markers beside their own crossings.
+    """
+    (q1, p1), (q2, p2) = hit, top
+    want = (p2 - y0) / float(p1 - y0)
+    lo, hi = 1e-6, 1.0
+    for _ in range(200):                      # k is monotone in the ratio
+        k = (lo + hi) / 2.0
+        got = (math.exp(k * q2) - 1) / (math.exp(k * q1) - 1)
+        if got < want:
+            lo = k
+        else:
+            hi = k
+    k = (lo + hi) / 2.0
+    a = (p1 - y0) / (math.exp(k * q1) - 1)
+    return lambda q: y0 + a * (math.exp(k * q) - 1)
+
+
+def exp_through(y0, hit, top, qmax=None, n=9, through=()):
+    """p = y0 + A(e^(kq) - 1), starting at the P axis and through two points.
+
+    The chapter 13 marginal cost curve has to do three things at once: leave
+    the price axis rather than the corner, pass exactly through the minimum of
+    the average total cost curve it cuts, and climb out of the top of the plot.
+    A parabola fitted to those three fell to a vertex inside the plot and came
+    out of the axis sloping downwards, which is not what the figure draws; the
+    exponential is the shape Ian asked for -- "more like e to the x" -- and is
+    monotone by construction, so it cannot double back.
+
+    `hit` is the point it must pass through (the average minimum) and `top` is
+    where it should leave the plot. Every quantity in `through`, and `hit`'s
+    own, is forced into the sample list, so a dot placed at one of them sits on
+    the spline the engine draws rather than on the polyline through it.
+    """
+    f = exp_fit(y0, hit, top)
+    end = top[0] if qmax is None else max(top[0], qmax)
+    step = end / float(n - 1)
+    keep = sorted(set([round(q, 4) for q in (hit[0],) + tuple(through)]))
+    grid = [end * i / float(n - 1) for i in range(n)]
+    xs = sorted([x for x in grid
+                 if all(abs(x - q) > step / 2.0 for q in keep)] + keep)
+    return sample(f, xs)
+
+
+def mr(d_pts):
+    """Marginal revenue for a straight demand curve: same intercept, twice the
+    slope, stopped where it reaches zero.
+
+    Drawn by eye it came out at some slope between once and twice, which is the
+    one quantitative fact these figures exist to show.
+    """
+    (q1, p1), (q2, p2) = d_pts[0], d_pts[-1]
+    m = (p2 - p1) / float(q2 - q1)
+    c = p1 - m * q1
+    return [[0.0, round(c, 1)], [round(-c / (2 * m), 1), 0.0]]

@@ -185,6 +185,13 @@ economics instead of label placement.
   not the paragraph beside it: a figure showing consumer surplus, producer
   surplus and five ticks keeps all of it even where the text discusses one
   piece. Drawing only the piece under discussion throws the figure away.
+* **A figure that is not becoming a widget stays the image it is.** Not a
+  table, not a list, not prose. The natural-monopoly chapter's last figure is
+  a ranking on two arrows rather than a graph, so it was rewritten as an HTML
+  table — which reads well and was still wrong: the conversion replaces graphs
+  with widgets and leaves everything else exactly as it was. (Ian,
+  2026-09-28.) The `<img>` tag, its classes and its alt text carry over
+  untouched, the same as any other part of the chapter.
 * **Label every price and quantity the source names** — `P*`, the control
   price, `Qᴅ`/`Qꜱ`, and the intercepts. A dashed guide with no number at its
   foot is worse than no guide: drop the guide instead.

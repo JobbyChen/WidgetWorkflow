@@ -144,7 +144,7 @@
 .sdg .sdg-cap { margin:10px 0 0; padding:10px 12px; background:#fff; border-left:4px solid var(--red); font-size:.92rem; line-height:1.45; min-height:3.2em; }
 </style>
 <script>
-/* ===== sd-graph.js v2.33 — data-driven supply & demand widgets =====
+/* ===== sd-graph.js v2.34 — data-driven supply & demand widgets =====
    Markup:  <div class="sdg"><script type="application/json">{ ...config... }<\/script></div>
    Top-level config:
      title, lede, caption         heading / intro / static caption (caption used only when there are no steps)
@@ -233,8 +233,19 @@
       if (pt.showP === false) return;
       widest = Math.max(widest, axw(pt.pl != null ? pt.pl : fmtP(pt.p, ax)));
     });
+    // A one-line price-axis title is a letter or two and sits just inside the
+    // axis, where it has always sat. A wrapped one is a name -- "Wage /
+    // Rate (W)" -- and the labor chapter puts that name clear to the left of
+    // the axis, not pressed against it (v2.34). So it is anchored the other
+    // way, and the margin carries it the same as a price label.
+    var ytitle = String(ax.y || 'P').split('\n');
+    var ytw = 0;
+    if (ytitle.length > 1) {
+      ytitle.forEach(function (rw) { ytw = Math.max(ytw, 9.8 * rw.length); });
+    }
     var left = Math.max(ax.cents ? 62 : (ax.yticks && ax.yticks.length ? 54 : 40),
-                        Math.ceil(widest) + 12) + (vleft ? 44 : 0);
+                        Math.ceil(widest) + 12,
+                        Math.ceil(ytw) + 22) + (vleft ? 44 : 0);
     // And the same on the right, for the curve labels. A curve drawn out to
     // the edge of the plot puts its name past the edge of the panel, where it
     // is simply cut off: "D = MB = MSB" rendered as "D = M" with every check
@@ -302,7 +313,8 @@
       return t;
     }
     g.appendChild(axisTitle(ax.x || 'Q', O.x + PW + 34, O.y + 16, 'end'));
-    g.appendChild(axisTitle(ax.y || 'P', O.x - 2, 11, 'start'));
+    g.appendChild(axisTitle(ax.y || 'P', ytitle.length > 1 ? O.x - 18 : O.x - 2,
+                            11, ytitle.length > 1 ? 'end' : 'start'));
 
     // Surplus and deadweight loss ARE areas, and before v2.11 the engine drew
     // none: "area fills of any kind" was on the list of things it does not do,
@@ -562,7 +574,22 @@
         grp.appendChild(el('circle', {class: 'pt' + (p.marker ? ' mk' : ''), cx: X(p.q), cy: Y(p.p), r: p.marker ? 6 : 4.2, stroke: cc}));
         if (p.marker) grp.appendChild(el('text', {class: 'mktxt', x: X(p.q), y: Y(p.p) + 2.6, 'text-anchor': 'middle'}, p.marker));
       }
-      if (p.label) grp.appendChild(el('text', {class: 'tag', x: X(p.q) + (p.dx != null ? p.dx : 9), y: Y(p.p) + (p.dy != null ? p.dy : -9), fill: cc}, p.label));
+      // Wraps on \n and runs through setLabel, the way curve labels, braces
+      // and axis labels already do (v2.34). The labor chapter names the two
+      // halves of its supply curve in the source's own words -- "Income
+      // Effect > Substitution Effect" over "W↑ ⇒ LS↓" -- which is two lines
+      // in the source for the good reason that one does not fit.
+      if (p.label) {
+        var lrows = String(p.label).split('\n');
+        var lx = X(p.q) + (p.dx != null ? p.dx : 9);
+        var ly = Y(p.p) + (p.dy != null ? p.dy : -9) - (lrows.length - 1) * 6.5;
+        var lt = el('text', {class: 'tag', x: lx, y: ly, fill: cc});
+        lrows.forEach(function (rw, i) {
+          var ts = el('tspan', {x: lx, dy: i ? 13 : 0});
+          setLabel(ts, rw); lt.appendChild(ts);
+        });
+        grp.appendChild(lt);
+      }
       // A price line only suppresses the point's own label while the two are
       // on screen together. Ignoring the step windows here silently dropped
       // $600 from step 1 of the generator figure, because a ceiling appearing

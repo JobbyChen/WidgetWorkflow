@@ -1,4 +1,4 @@
-# Engine reference — `engine/sd-graph.js` v2.33
+# Engine reference — `engine/sd-graph.js` v2.34
 
 Written from the engine source. The conversion prompt carries a shorter version
 of this in its own "Engine reference" section; that one is what the model needs
@@ -64,7 +64,12 @@ point label**. Set in fixed pixels it was overtaken by the axis titles on a wide
 screen.
 
 **Both axis titles wrap on `\n`** (**v2.33**), stacking downward from where a
-one-line title sits, so nothing already drawn moves. `Amount of Employment (L)`
+one-line title sits, so nothing already drawn moves. **A wrapped price-axis
+title is anchored the other way** (**v2.34**), clear to the left of the axis
+rather than pressed against it, and the left margin carries it like a price
+label: a one-line title is a letter or two and belongs where it has always
+sat, while a wrapped one is a name, and a name against the axis reads as
+part of the plot. `Amount of Employment (L)`
 is 23 characters at 14px and weight 800 — two thirds of the panel on one line,
 and the labor chapter stacks it on two, as it stacks `Wage Rate (W)`. A title
 tall enough to leave the panel is reported like any other label.
@@ -126,6 +131,15 @@ pixel apart. `scripts/check_file.py` tests for this.
   deadweight-loss wedge's three corners come in over two steps, and ringing
   only the last says the other two belong to something else. Declared per
   point, so a step that means to emphasise one dot still can.
+- `divider: true` on a **point** says its dashed guide separates two regions
+  rather than marking a reading, so `check_file.py` does not require a number
+  at its foot (**v2.34**). The labor chapter's supply curve turns at a wage the
+  chapter never names, and the source still draws the line across it, because
+  that is where the two effects balance. Declared, never inferred: a guide
+  running to a blank axis is still a defect everywhere it is not said to be
+  one.
+- A point's `label` wraps on `\n` and takes `_{...}` (**v2.34**), the way curve
+  labels, braces and axis labels already do.
 - `dimAt: 2` fades the curve from step 2 onward (**v2.31**), to a quarter
   opacity, so a label can be read over it. That is the honest way to name a
   gap where the curve bounding it runs through the only place the name fits:

@@ -525,7 +525,14 @@ def check_schema(cfgs, r):
         defaulted = set()
 
         def scan_def(d):
+            # A movement arrow's colour defaults to red, not ink, so "ink" on
+            # one is a decision rather than a restatement -- the labor
+            # chapter's supply figure draws its two arrows black because the
+            # source does. Everything else takes ink by default.
+            is_move = isinstance(d.get("from"), list) and isinstance(d.get("to"), list)
             for k, val in DEFAULTS.items():
+                if k == "color" and is_move:
+                    continue
                 if k in d and d[k] == val:
                     defaulted.add(k)
         walk(cfg, scan_def)
@@ -602,7 +609,11 @@ def vbrace_x(b, pn, ax, ox, X):
 def geom(pn, ax):
     base = 62.0 if ax.get("cents") else (54.0 if ax.get("yticks") else 40.0)
     widest = widest_p(pn, ax)
-    left = max(base, math.ceil(widest) + 12.0)
+    # engine v2.34: a wrapped price-axis title sits left of the axis, anchored
+    # the other way, and the margin carries it like a price label
+    yrows = str(ax.get("y") or "P").split("\n")
+    ytw = max(9.8 * len(rw) for rw in yrows) if len(yrows) > 1 else 0.0
+    left = max(base, math.ceil(widest) + 12.0, math.ceil(ytw) + 22.0)
     # A vbrace with left:true widens the engine's left margin. Miss this and
     # every coordinate below is off by 44px.
     if any(b.get("left") for b in (pn.get("vbraces") or [])):
@@ -955,7 +966,9 @@ def check_labels(cfgs, r):
                 pw = X(float(ax.get("xmax") or 1)) - ox
                 boxes.append((title_box(xt_ttl, ox + pw + 34, oy + 16, "end"),
                               "the %r axis title" % xt_ttl, (0, None)))
-                boxes.append((title_box(yt_ttl, ox - 2.0, 11.0, "start"),
+                _yw = len(str(yt_ttl).split("\n")) > 1
+                boxes.append((title_box(yt_ttl, ox - (18.0 if _yw else 2.0), 11.0,
+                                        "end" if _yw else "start"),
                               "the %r axis title" % yt_ttl, (0, None)))
                 xt = [t for t in (ax.get("xticks") or [])]
                 yt = [t for t in (ax.get("yticks") or [])]
@@ -992,9 +1005,14 @@ def check_labels(cfgs, r):
                 for p in pn.get("points") or []:
                     win = (p.get("at", 0), p.get("until"))
                     if p.get("label"):
+                        # wraps on \n since engine v2.34, as wide as its
+                        # longest row and as tall as all of them
+                        prows = str(p["label"]).split("\n")
                         bx = box(X(p["q"]) + (p.get("dx") if p.get("dx") is not None else 9),
-                                 Y(p["p"]) + (p.get("dy") if p.get("dy") is not None else -9),
-                                 p["label"], 12)
+                                 Y(p["p"]) + (p.get("dy") if p.get("dy") is not None else -9)
+                                 - (len(prows) - 1) * 6.5,
+                                 max(prows, key=label_len), 12)
+                        bx = (bx[0], bx[1], bx[2], bx[3] + (len(prows) - 1) * 13)
                         boxes.append((bx, "point label %r" % p["label"], win))
                     # The engine prints a point's own price and quantity on the
                     # axes unless they are already ticks (or pl/ql override
@@ -1394,7 +1412,16 @@ def check_controls(cfgs, r):
                     # the guide leads the eye to "C" or "E2" rather than to a
                     # number, which is how a symbolic figure marks a position.
                     # What this catches is a guide to an anonymous point.
-                    if g is not False and not pt.get("label"):
+                    # `divider: true` says in the config what the drawing
+                    # cannot: this dashed line separates two regions rather
+                    # than marking a reading, so there is nothing to write at
+                    # its foot. The labor chapter's supply curve turns at a
+                    # wage the chapter never names, and the source still draws
+                    # the line, because it is where the two effects balance.
+                    # Declared, not inferred -- a guide without a number is
+                    # still a defect everywhere it is not said to be one.
+                    if g is not False and not pt.get("label") \
+                            and not pt.get("divider"):
                         if g != "q" and not (pt.get("pl") or pt["p"] in yt or pt["p"] in hp
                                              or pt.get("showP") is not False):
                             dangling += 1

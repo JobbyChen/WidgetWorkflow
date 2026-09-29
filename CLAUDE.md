@@ -238,7 +238,12 @@ economics instead of label placement.
 * **A guide needs a number at its foot.** A dashed line running to a blank spot
   on the axis — because its price is suppressed, or cannot be written beside
   its neighbour — is clutter. Drop the guide and keep the dot; the reading is
-  still marked, and the number appears in the panel whose answer depends on it.
+  still marked, and the number appears in the panel whose answer depends on it. The
+  exception is a line that is not marking a reading at all: the labor supply
+  curve turns at a wage the chapter never names, and the source still draws a
+  dotted line across it because that is where the two effects balance. Say so
+  with `divider: true` on the point — declared, so the rule still fires
+  everywhere else.
 * **Draw the equilibrium's guide once per widget.** If a later step or panel
   does not move it, it does not need drawing again (Ian, 2026-09-23). It is the
   horizontal that goes — it only restates a price already established — while a
@@ -453,7 +458,7 @@ not enough to reproduce an implementation.
   `embed_engine.py`'s paths reproduce the delivered file byte-for-byte; all 20
   prototype widgets render with no engine errors; `check_file.py` runs the
   geometric label test over 74 labels in the 263 file with no overlaps.
-* **Engine is v2.33.** Since v2.6: `areas` shade a polygon (v2.11) with
+* **Engine is v2.34.** Since v2.6: `areas` shade a polygon (v2.11) with
   `edge` to outline it (v2.18) and labels centred on their anchor (v2.13);
   `dot:false` drops a marker but keeps the axis label (v2.12); points take
   `guides:"p"`/`"q"` for one leg of the elbow (v2.14); braces take
@@ -483,7 +488,10 @@ not enough to reproduce an implementation.
   the one that step added (v2.32). Axis titles wrap on `\n` and a `left`
   upright brace sits outside the widest price-axis label (v2.33), both from
   the labor chapter: `Amount of Employment (L)` is two thirds of a panel on
-  one line, and `CWD` was drawn straight through the two wages it spans.
+  one line, and `CWD` was drawn straight through the two wages it spans. A
+  wrapped price-axis title is anchored clear to the *left* of the axis, a
+  point's `label` wraps on `\n`, and `divider: true` on a point says its guide
+  separates two regions rather than marking a reading (v2.34).
 
 * **PPF works.** The first chapter of Exam 1 material converted to seven widgets
   with no engine gaps hit: frontiers, a combinations table, points on/inside/

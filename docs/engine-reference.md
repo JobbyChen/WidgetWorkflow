@@ -1,4 +1,4 @@
-# Engine reference — `engine/sd-graph.js` v2.37
+# Engine reference — `engine/sd-graph.js` v2.38
 
 Written from the engine source. The conversion prompt carries a shorter version
 of this in its own "Engine reference" section; that one is what the model needs
@@ -162,7 +162,9 @@ pixel apart. `scripts/check_file.py` tests for this.
 - `leader: true` draws a curve as a 1px hairline (**v2.37**) — the line from a
   boxed label to the curve it names. `thin` is the weight of a line that is
   part of the drawing (a line of equality, the curve a shift moved away from);
-  a leader points at the drawing, and at `thin` it reads as another curve.
+  a leader points at the drawing, and at `thin` it reads as another curve. It
+  keeps that weight on the step it arrives (**v2.38**), where a curve thickens
+  to mark what the step revealed: a leader is not what the step revealed.
 - `dimAt: 2` fades the curve from step 2 onward (**v2.31**), to a quarter
   opacity, so a label can be read over it. That is the honest way to name a
   gap where the curve bounding it runs through the only place the name fits:

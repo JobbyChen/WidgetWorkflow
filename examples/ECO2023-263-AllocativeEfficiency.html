@@ -74,6 +74,9 @@
    which is the weight of a line that is part of the drawing; a leader is
    pointing at the drawing, and at `thin` it reads as another curve. */
 .sdg .curve.leader { stroke-width:1; }
+/* and it stays a hairline on the step it arrives, where a curve thickens to
+   mark what that step revealed. A leader is not what the step revealed. */
+.sdg .curve-g.new .curve.leader { stroke-width:1; }
 .sdg .clbl { font-size:13px; font-weight:800; }
 /* a word subscript: smaller, and lighter than the name it hangs off */
 .sdg .clbl .sub, .sdg .tag .sub, .sdg .tk .sub { font-size:.72em; font-weight:600; }
@@ -152,7 +155,7 @@
 .sdg .sdg-cap { margin:10px 0 0; padding:10px 12px; background:#fff; border-left:4px solid var(--red); font-size:.92rem; line-height:1.45; min-height:3.2em; }
 </style>
 <script>
-/* ===== sd-graph.js v2.37 — data-driven supply & demand widgets =====
+/* ===== sd-graph.js v2.38 — data-driven supply & demand widgets =====
    Markup:  <div class="sdg"><script type="application/json">{ ...config... }<\/script></div>
    Top-level config:
      title, lede, caption         heading / intro / static caption (caption used only when there are no steps)

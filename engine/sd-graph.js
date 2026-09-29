@@ -1,4 +1,4 @@
-/* ===== sd-graph.js v2.38 — data-driven supply & demand widgets =====
+/* ===== sd-graph.js v2.39 — data-driven supply & demand widgets =====
    Markup:  <div class="sdg"><script type="application/json">{ ...config... }<\/script></div>
    Top-level config:
      title, lede, caption         heading / intro / static caption (caption used only when there are no steps)
@@ -32,6 +32,9 @@
         plot and the tick numbers, with its label running up the axis, and widens the left margin to fit.
         Without left it sits inside the plot at quantity q, opening right unless side:'left'.
      table:    {cols[], series[], rows[[price,q,...]], arrows}    schedule beside the graph; arrows draws row shift arrows
+     matrix:   {rows:{player,labels[]}, cols:{player,labels[]}, cells[[[aPayoff,bPayoff],...],...], marks[]}
+        A payoff matrix instead of a plot. A mark names {row|col|cell}, optionally who:'a'|'b' for one
+        player's line inside it, and pick:true for the one a comparison lands on. Marks take at/until.
    Colors: 'ink' (default, black-navy), 'red' (shifted/new), 'teal', 'orange', 'grey'
    Presets (symbolic graphs, P₁/P₂/Q₁/Q₂, no numbers) — a few keys expand into a full config:
      {"preset":"shift", "shift":"D"|"S", "dir":"right"|"left", "good":"pasta", "event":"The price of pizza rises.", "why":"...", "static":true}
@@ -541,6 +544,13 @@
       });
       host.appendChild(sc);
     }
+    // A payoff matrix is a grid of numbers, not a plot, so it is built as
+    // HTML the way the schedule table is -- and it takes at/until marks like
+    // anything else, which is the whole reason it is a widget: the chapter
+    // walks the reader through the matrix one comparison at a time, and a
+    // picture of the finished grid cannot do that. (v2.39)
+    this.mparts = [];
+    if (cfg.matrix) { this.panels = []; this.buildMatrix(); return this.finish(); }
     var panels = cfg.panels || [cfg];
     this.panels = panels.map(buildPanel);
     var body = h('div', 'sdg-body' + (cfg.table ? ' has-table' : '') + (panels.length > 1 ? ' two' : ''));
@@ -570,6 +580,65 @@
     var main = h('div', 'sdg-main' + (cfg.calcs && cfg.calcs.length ? ' has-calc' : ''));
     main.appendChild(body);
     host.appendChild(main);
+    return this.finish();
+  };
+
+  // The payoff matrix. Two players, two strategies each, and four cells
+  // carrying both players' payoffs -- laid out as the printed matrix is, with
+  // each player's name outside its own strategy labels.
+  Widget.prototype.buildMatrix = function () {
+    var self = this, m = this.cfg.matrix, host = this.host;
+    var rl = m.rows.labels, cl = m.cols.labels;
+    var tbl = h('table', 'sdg-mx'), tb = h('tbody');
+    var r0 = h('tr');
+    r0.appendChild(h('td', 'mx-pad')); r0.appendChild(h('td', 'mx-pad'));
+    var pc = h('td', 'mx-player', m.cols.player); pc.colSpan = cl.length;
+    r0.appendChild(pc); tb.appendChild(r0);
+    var r1 = h('tr');
+    r1.appendChild(h('td', 'mx-pad')); r1.appendChild(h('td', 'mx-pad'));
+    cl.forEach(function (c) { r1.appendChild(h('td', 'mx-head', c)); });
+    tb.appendChild(r1);
+    this.cells = [];
+    rl.forEach(function (rlab, i) {
+      var tr = h('tr'), row = [];
+      if (i === 0) {
+        var pr = h('td', 'mx-player mx-rowp', m.rows.player);
+        pr.rowSpan = rl.length; tr.appendChild(pr);
+      }
+      tr.appendChild(h('td', 'mx-head', rlab));
+      cl.forEach(function (_, j) {
+        var td = h('td', 'mx-cell'), pair = m.cells[i][j], lns = {};
+        ['a', 'b'].forEach(function (who, k) {
+          var ln = h('div', 'ln ln-' + who, pair[k]);
+          td.appendChild(ln); lns[who] = ln;
+        });
+        tr.appendChild(td); row.push({td: td, lns: lns});
+      });
+      tb.appendChild(tr); self.cells.push(row);
+    });
+    tbl.appendChild(tb);
+    var wrap = h('div', 'sdg-mxwrap'); wrap.appendChild(tbl);
+    host.appendChild(wrap);
+    // A mark names a row, a column or one cell, and optionally one player's
+    // line inside it; `pick` is the one the comparison lands on.
+    (m.marks || []).forEach(function (mk) {
+      var targets = [];
+      self.cells.forEach(function (row, i) {
+        row.forEach(function (cell, j) {
+          var hit = mk.cell ? (mk.cell[0] === i && mk.cell[1] === j)
+                  : mk.row != null ? mk.row === i
+                  : mk.col != null ? mk.col === j : false;
+          if (hit) targets.push(mk.who ? cell.lns[mk.who] : cell.td);
+        });
+      });
+      targets.forEach(function (n) {
+        self.mparts.push({node: n, spec: mk, cls: mk.pick ? 'pick' : 'on'});
+      });
+    });
+  };
+
+  Widget.prototype.finish = function () {
+    var cfg = this.cfg, self = this, host = this.host;
 
     // calcs: the working, set beside the plot the way the artwork prints it
     // beneath each diagram -- a reader who only sees "CS = $80" cannot get
@@ -607,6 +676,10 @@
   };
   Widget.prototype.render = function () {
     var s = this.step, cfg = this.cfg;
+    (this.mparts || []).forEach(function (mp) {
+      var at = mp.spec.at || 0, until = mp.spec.until;
+      mp.node.classList.toggle(mp.cls, s >= at && (until == null || s < until));
+    });
     this.panels.forEach(function (pn) {
       pn.parts.forEach(function (pt) {
         var at = pt.spec.at || 0, until = pt.spec.until, on = s >= at && (until == null || s < until);

@@ -1,4 +1,4 @@
-# Engine reference — `engine/sd-graph.js` v2.38
+# Engine reference — `engine/sd-graph.js` v2.39
 
 Written from the engine source. The conversion prompt carries a shorter version
 of this in its own "Engine reference" section; that one is what the model needs
@@ -83,6 +83,36 @@ the tick line it runs back across every number there. The left margin carries
 the price title the way it carries a price label, and a title tall enough to
 leave the panel is reported like any other label.
 
+
+### `matrix`
+
+A payoff matrix instead of a plot (**v2.39**) — a grid of numbers, so it is
+built as HTML the way the schedule `table` is, and it takes the same step
+controls.
+
+```json
+{"matrix": {
+  "rows": {"player": "FIRM B", "labels": ["Comply", "Cheat"]},
+  "cols": {"player": "FIRM A", "labels": ["Comply", "Cheat"]},
+  "cells": [[["A: $200M", "B: $200M"], ["A: $300M", "B: -$50M"]],
+            [["A: -$50M", "B: $300M"], ["A: $0M",   "B: $0M"]]],
+  "marks": [{"row": 0, "who": "a", "at": 1, "until": 2},
+            {"cell": [0, 1], "who": "a", "pick": true, "at": 1, "until": 2}]
+}}
+```
+
+`cells[i][j]` is `[what the column player earns, what the row player earns]`,
+written as the source writes them. A **mark** names a `row`, a `col` or one
+`cell`; `who: "a"|"b"` narrows it to one player's line inside those cells, and
+`pick: true` is the one a comparison lands on — shaded as a step's new point
+is. Marks take `at`/`until` like anything else, and `check_file.py` measures
+the "a step must change the drawing" rule against them, since on a matrix
+that is all a step can change.
+
+This exists because the game-theory chapter argues through its matrix one
+comparison at a time — if B complies A does better cheating, if B cheats A
+still does better cheating, and so on to the Nash cell — which is exactly what
+a picture of the finished grid cannot show.
 
 ### `axes`
 

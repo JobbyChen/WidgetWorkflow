@@ -134,3 +134,30 @@
 .sdg .sdg-ctrl button:disabled { opacity:.4; cursor:default; }
 .sdg .sdg-step { font-size:.85rem; color:var(--navy); font-weight:700; margin-left:auto; }
 .sdg .sdg-cap { margin:10px 0 0; padding:10px 12px; background:#fff; border-left:4px solid var(--red); font-size:.92rem; line-height:1.45; min-height:3.2em; }
+
+/* ---- payoff matrix (v2.39) ----------------------------------------------
+   The chapter works through this grid one comparison at a time -- "if B
+   complies, A does better cheating" -- which is exactly what a picture of
+   the finished grid cannot show. `on` is the pair being compared, `pick` the
+   one the comparison lands on, in the same orange a step's new point uses. */
+.sdg .sdg-mxwrap { overflow-x:auto; margin:0 0 4px; }
+.sdg .sdg-mx { border-collapse:collapse; margin:0 auto; background:#fff; }
+.sdg .sdg-mx td { padding:0; }
+.sdg .mx-player { font-weight:800; color:var(--navy); text-align:center;
+  font-size:1rem; letter-spacing:.02em; padding:4px 10px; }
+/* The row player's name reads across, as the printed matrix sets it, with
+   room between it and the strategy labels it sits outside of. */
+.sdg .mx-rowp { padding-right:16px; white-space:nowrap; }
+.sdg .mx-head { font-weight:700; color:var(--navy); text-align:center; padding:6px 14px; white-space:nowrap; }
+.sdg .mx-cell { border:1.5px solid var(--ink); padding:10px 18px; min-width:118px; text-align:center; }
+.sdg .mx-cell .ln { font-size:1rem; color:var(--ink); padding:2px 4px; border-radius:3px;
+  transition:background .25s ease, color .25s ease; }
+.sdg .mx-cell.on { background:#eef3fd; }
+.sdg .mx-cell .ln.on { background:#eef3fd; font-weight:700; }
+.sdg .mx-cell .ln.pick { background:#fdeadb; color:var(--orange); font-weight:800;
+  box-shadow:0 0 0 1.5px var(--orange) inset; }
+.sdg .mx-cell.pick { background:#fdeadb; box-shadow:0 0 0 3px var(--orange) inset; }
+@media (max-width:640px){
+  .sdg .mx-cell { padding:6px 8px; min-width:0; }
+  .sdg .mx-cell .ln { font-size:.85rem; }
+}

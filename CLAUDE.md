@@ -475,7 +475,7 @@ not enough to reproduce an implementation.
   `embed_engine.py`'s paths reproduce the delivered file byte-for-byte; all 20
   prototype widgets render with no engine errors; `check_file.py` runs the
   geometric label test over 74 labels in the 263 file with no overlaps.
-* **Engine is v2.38.** Since v2.6: `areas` shade a polygon (v2.11) with
+* **Engine is v2.39.** Since v2.6: `areas` shade a polygon (v2.11) with
   `edge` to outline it (v2.18) and labels centred on their anchor (v2.13);
   `dot:false` drops a marker but keeps the axis label (v2.12); points take
   `guides:"p"`/`"q"` for one leg of the elbow (v2.14); braces take
@@ -518,7 +518,12 @@ not enough to reproduce an implementation.
   can be read over the curves it sits on, at 9.5px so the box covers as
   little of the curve as it can; and `leader: true` draws a curve as a 1px
   hairline, the weight of a line that points at the drawing rather than being
-  part of it, and keeps that weight on the step it arrives (v2.37/v2.38).
+  part of it, and keeps that weight on the step it arrives (v2.37/v2.38). And a
+  widget can be a **payoff matrix** rather than a plot (v2.39): a grid built
+  as HTML, like the schedule table, whose steps mark a row, a column or one
+  cell -- because the game-theory chapter argues through its matrix one
+  comparison at a time, which is what a picture of the finished grid cannot
+  show.
 
 * **PPF works.** The first chapter of Exam 1 material converted to seven widgets
   with no engine gaps hit: frontiers, a combinations table, points on/inside/

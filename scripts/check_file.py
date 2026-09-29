@@ -248,6 +248,9 @@ def check_steady_labels(cfgs, r):
 # arrows follow the curves that carry them, so a step that changes nothing else
 # changes nothing there either.
 STEPPABLE = ("curves", "areas", "points", "hlines", "braces", "vbraces", "moves")
+# A payoff matrix has no curves; what its steps change is which cells are
+# marked, so its marks are what this rule measures (engine v2.39).
+MATRIX_STEPPABLE = ("marks",)
 
 
 def check_steps(cfgs, r):
@@ -284,8 +287,12 @@ def check_steps(cfgs, r):
             sigs = []
             for i in range(len(steps)):
                 on = []
-                for pi, pn in enumerate(panels(v)):
-                    for key in STEPPABLE:
+                sources = [(pi, pn, STEPPABLE)
+                           for pi, pn in enumerate(panels(v))]
+                if v.get("matrix"):
+                    sources.append((-1, v["matrix"], MATRIX_STEPPABLE))
+                for pi, pn, keys in sources:
+                    for key in keys:
                         for ei, e in enumerate(pn.get(key) or []):
                             if not isinstance(e, dict):
                                 continue

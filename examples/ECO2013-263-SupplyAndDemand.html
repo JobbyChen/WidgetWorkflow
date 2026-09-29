@@ -15,9 +15,6 @@
   border:1px solid var(--navy); background:var(--paper); padding:18px 20px 16px; width:80%; margin:24px auto;
   container:sdg / inline-size; }
 @media (max-width:640px){ .sdg { width:100%; } }
-/* Two panels split the width, so the 80% that suits one figure costs this
-   widget a fifth of its scale for nothing. It takes the column. */
-.sdg:has(.sdg-body.two) { width:100%; }
 .sdg, .sdg *, .sdg *::before, .sdg *::after { box-sizing:border-box; }
 .sdg h4 { margin:0 0 4px; color:var(--navy); font-size:1.05rem; font-weight:700; }
 .sdg .sdg-lede { margin:0 0 12px; font-size:.92rem; line-height:1.45; }
@@ -30,9 +27,6 @@
 .sdg .sdg-body.has-table { grid-template-columns:minmax(150px,1fr) 2.2fr; }
 .sdg .sdg-body.two { grid-template-columns:1fr 34px 1fr; gap:8px; align-items:center; }
 .sdg .sdg-body.two:not(:has(.sdg-between)) { grid-template-columns:1fr 1fr; gap:14px; }
-/* and each panel is capped like any other figure, or a two-panel widget on a
-   wide screen draws its graphs larger than every single-panel one beside it. */
-.sdg .sdg-body.two figure { max-width:var(--fig); margin:0 auto; width:100%; }
 .sdg .sdg-between svg { width:34px; height:34px; display:block; }
 .sdg .sdg-between path { fill:none; stroke:var(--ink); stroke-width:4; stroke-linecap:round; stroke-linejoin:round; }
 @media (max-width:640px){
@@ -44,26 +38,6 @@
   .sdg .sdg-body.two:not(:has(.sdg-between)) { grid-template-columns:1fr; }
   .sdg .sdg-between svg { transform:rotate(90deg); margin:0 auto; }
   .sdg .sdg-ctrl button, .sdg .sdg-scen button { min-height:44px; }
-}
-/* A two-panel widget splits the width between its panels, so each one is
-   drawn at roughly half the scale of a single-panel widget -- and the
-   smallest thing on it goes first. A subscripted axis label renders at 11.4px
-   in every other figure of a chapter and at 6.3px here, on a window half a
-   desktop wide: not small by design, just drawn at 0.83x where everything
-   else is drawn at 1.51x. So below the width at which a panel would render
-   under its own 372-unit viewBox -- two panels plus the arrow column between
-   them, 794px of body -- the pair stacks instead. Same relative sizes, the
-   same scale and the same --fig cap as every other figure in the file, and
-   the labels are legible rather than merely present. The line is drawn where
-   a panel would fall below 460px -- four fifths the scale a single-panel
-   figure gets, and the point past which the subscript drops under 10px. The
-   640px rule above stays: it is the viewport, this is the widget, and a
-   narrow column on a wide screen needs this one. */
-@container sdg (max-width:970px) {
-  .sdg .sdg-body.two,
-  .sdg .sdg-body.two:not(:has(.sdg-between)) { grid-template-columns:1fr; gap:14px; }
-  .sdg .sdg-body.two figure { max-width:var(--fig); margin:0 auto; width:100%; }
-  .sdg .sdg-body.two .sdg-between svg { transform:rotate(90deg); margin:0 auto; }
 }
 /* The panel heading is HTML at a fixed size while everything inside the plot is
    SVG text that scales with the panel's width, so on a wide screen the axis
@@ -162,7 +136,7 @@
 .sdg .sdg-cap { margin:10px 0 0; padding:10px 12px; background:#fff; border-left:4px solid var(--red); font-size:.92rem; line-height:1.45; min-height:3.2em; }
 </style>
 <script>
-/* ===== sd-graph.js v2.32 — data-driven supply & demand widgets =====
+/* ===== sd-graph.js v2.31 — data-driven supply & demand widgets =====
    Markup:  <div class="sdg"><script type="application/json">{ ...config... }<\/script></div>
    Top-level config:
      title, lede, caption         heading / intro / static caption (caption used only when there are no steps)

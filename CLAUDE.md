@@ -415,7 +415,7 @@ not enough to reproduce an implementation.
   `embed_engine.py`'s paths reproduce the delivered file byte-for-byte; all 20
   prototype widgets render with no engine errors; `check_file.py` runs the
   geometric label test over 74 labels in the 263 file with no overlaps.
-* **Engine is v2.32.** Since v2.6: `areas` shade a polygon (v2.11) with
+* **Engine is v2.31.** Since v2.6: `areas` shade a polygon (v2.11) with
   `edge` to outline it (v2.18) and labels centred on their anchor (v2.13);
   `dot:false` drops a marker but keeps the axis label (v2.12); points take
   `guides:"p"`/`"q"` for one leg of the elbow (v2.14); braces take
@@ -440,12 +440,7 @@ not enough to reproduce an implementation.
   chapter's three-line `Marginal External Cost` could not be written on one
   line and could not be centred rigidly on its brace; it is set at 11px inside
   the plot; and `dimAt` fades a curve from a step so a label can be read over
-  it (v2.31). A two-panel widget is laid out to render at a one-panel
-  widget's scale (v2.32): it takes the full column, each panel is capped at
-  `--fig`, and below a 970px body the pair stacks -- everything in a plot is
-  SVG in a 372-unit viewBox, so half the width is half the scale, and a
-  subscripted tick that renders at 11.4px in a one-panel figure was rendering
-  at 6.3px beside it.
+  it (v2.31).
 
 * **PPF works.** The first chapter of Exam 1 material converted to seven widgets
   with no engine gaps hit: frontiers, a combinations table, points on/inside/

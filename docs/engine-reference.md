@@ -1,4 +1,4 @@
-# Engine reference — `engine/sd-graph.js` v2.32
+# Engine reference — `engine/sd-graph.js` v2.31
 
 Written from the engine source. The conversion prompt carries a shorter version
 of this in its own "Engine reference" section; that one is what the model needs
@@ -62,18 +62,6 @@ and scales with the panel's width, so the heading is sized in container-width
 units to keep one order at every screen size: **heading, then axis title, then
 point label**. Set in fixed pixels it was overtaken by the axis titles on a wide
 screen.
-
-**A two-panel widget is laid out to render at the same scale as a one-panel
-one** (**v2.32**). Everything inside a plot is SVG in a 372-unit viewBox, so a
-panel drawn at half the width is drawn at half the scale, and the smallest text
-on it goes first: a subscripted axis tick that renders at 11.4px in every other
-figure of a chapter rendered at 6.3px here, on a window half a desktop wide.
-Three rules keep the pair honest — the widget takes the full column instead of
-the 80% a single figure uses, each panel is capped at `--fig` like any other
-figure, and below a body of 970px (a panel under 460px, four fifths the scale a
-single figure gets) the two stack and each takes the full width. No config
-controls this; it is layout, and it applies to every two-panel widget already
-written.
 
 ### `axes`
 

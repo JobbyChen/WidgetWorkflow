@@ -1,4 +1,4 @@
-# Engine reference — `engine/sd-graph.js` v2.32
+# Engine reference — `engine/sd-graph.js` v2.33
 
 Written from the engine source. The conversion prompt carries a shorter version
 of this in its own "Engine reference" section; that one is what the model needs
@@ -62,6 +62,13 @@ and scales with the panel's width, so the heading is sized in container-width
 units to keep one order at every screen size: **heading, then axis title, then
 point label**. Set in fixed pixels it was overtaken by the axis titles on a wide
 screen.
+
+**Both axis titles wrap on `\n`** (**v2.33**), stacking downward from where a
+one-line title sits, so nothing already drawn moves. `Amount of Employment (L)`
+is 23 characters at 14px and weight 800 — two thirds of the panel on one line,
+and the labor chapter stacks it on two, as it stacks `Wage Rate (W)`. A title
+tall enough to leave the panel is reported like any other label.
+
 
 ### `axes`
 
@@ -348,8 +355,10 @@ two dollars on a twenty-five dollar axis is drawn small and clean rather than as
 overlapping curves.
 
 `left: true` is the mirror of a horizontal brace's `below: true`: it sits outside
-the P axis, clear of the plot and of the tick numbers, and **widens the left
-margin by 44px** to fit — the same trade a `below` brace makes for 18px of panel
+the P axis and **outside the widest label that axis carries** (**v2.33**) — it
+was a fixed 32px in from the axis, which drew the labor chapter's `CWD` brace
+straight through the `W_{Alaska}` and `W_{Hawaii}` it spans — and **widens the
+left margin by 44px** to fit — the same trade a `below` brace makes for 18px of panel
 height. Its label runs up the axis, because horizontal text does not fit in a
 54px margin.
 

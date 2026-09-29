@@ -565,13 +565,14 @@ def panel_h(pn):
                         for b in (pn.get("braces") or [])) else 250.0
 
 
-def geom(pn, ax):
-    base = 62.0 if ax.get("cents") else (54.0 if ax.get("yticks") else 40.0)
-    # Engine v2.27 sizes the left margin to the widest label the price axis
-    # carries, so this has to as well -- it is a copy of the engine's layout,
-    # and a copy that falls behind puts every coordinate below in the wrong
-    # place. The panel drawing `P* = ATC` was measured 17px out until this
-    # matched.
+def widest_p(pn, ax):
+    """The width of the widest label the price axis carries.
+
+    Engine v2.27 sizes the left margin to it, and v2.33 puts a left-hand
+    upright brace outside it, so this has to match -- it is a copy of the
+    engine's layout, and a copy that falls behind puts every coordinate below
+    in the wrong place. The panel drawing `P* = ATC` was measured 17px out
+    until this matched."""
     widest = 0.0
     for t in (ax.get("yticks") or []):
         widest = max(widest, 6.1 * label_len(fmt_p(t, ax)))
@@ -581,6 +582,26 @@ def geom(pn, ax):
         lab = pt.get("pl")
         widest = max(widest, 6.1 * label_len(
             lab if lab is not None else fmt_p(pt.get("p"), ax)))
+    return widest
+
+
+def vbrace_x(b, pn, ax, ox, X):
+    """Where the engine draws an upright brace's spine.
+
+    `left` puts it outside the price axis -- and since v2.33, outside the
+    widest label that axis carries, because the labor chapter's CWD brace
+    spans two wages named W_{Alaska} and W_{Hawaii} and was drawn straight
+    through both. This lives in one place because it was written down twice,
+    once for the brace and once for its label, and the first fix moved one of
+    them."""
+    if not b.get("left"):
+        return X(b["q"])
+    return min(ox - 32.0, ox - 24.0 - widest_p(pn, ax))
+
+
+def geom(pn, ax):
+    base = 62.0 if ax.get("cents") else (54.0 if ax.get("yticks") else 40.0)
+    widest = widest_p(pn, ax)
     left = max(base, math.ceil(widest) + 12.0)
     # A vbrace with left:true widens the engine's left margin. Miss this and
     # every coordinate below is off by 44px.
@@ -836,14 +857,17 @@ def exempt(desc_a, desc_b, box_a=None, box_b=None):
     return False
 
 
-def guide_segments(pn, X, Y, ox, oy):
+def guide_segments(pn, X, Y, ox, oy, ax):
     """Every dashed guide the engine draws, as pixel polylines.
 
     Rule 5 lists curves, points, arrows and labels -- not guides. But a label
     pressed against the dashed line dropping from its own point reads as
     crowded, so these are tested too, and only ever warn."""
     out = []
-    pw = W - ox - 36.0
+    # The plot's width comes from the mapping, not from a right margin written
+    # down here: v2.28 made that margin depend on the curve labels, and a
+    # constant 36 drew the Q axis line past where the engine draws it.
+    pw = X(float(ax.get("xmax") or 1)) - ox
     # The two axis lines. They are solid, not dashed, and they were the last
     # thing drawn on every panel that nothing tested against: a curve label
     # parked at the end of a curve that runs down to the axis lands on the axis
@@ -885,7 +909,7 @@ def guide_segments(pn, X, Y, ox, oy):
     for b in pn.get("vbraces") or []:
         win = (b.get("at", 0), b.get("until"))
         y1, y2 = Y(max(b["p1"], b["p2"])), Y(min(b["p1"], b["p2"]))
-        x = (ox - 32) if b.get("left") else X(b["q"])
+        x = vbrace_x(b, pn, ax, ox, X)
         d = -1 if (b.get("left") or b.get("side") == "left") else 1
         m = (y1 + y2) / 2.0
         out.append(([(x, y1), (x + d * 7, y1 + 7), (x + d * 7, m - 7), (x + d * 14, m),
@@ -917,10 +941,22 @@ def check_labels(cfgs, r):
                 # category missing from this test, after arrows, ticks and
                 # guides -- a curve label parked in the bottom-right corner
                 # lands on the Q title, which nothing here used to notice.
-                boxes.append((box(W - 2.0, oy + 16, ax.get("x") or "Q", 14, "end", weight=800),
-                              "the %r axis title" % (ax.get("x") or "Q"), (0, None)))
-                boxes.append((box(ox - 2.0, 11.0, ax.get("y") or "P", 14, weight=800),
-                              "the %r axis title" % (ax.get("y") or "P"), (0, None)))
+                # Both titles wrap on \n since engine v2.33, the Q title
+                # stacking upward and the W title downward. And the Q title
+                # follows the plot's right edge, not the panel's -- v2.31
+                # moved it and this went on measuring it at W - 2.
+                def title_box(text, x, y, anchor):
+                    rows = str(text).split("\n")
+                    bx = box(x, y, max(rows, key=label_len), 14, anchor,
+                             weight=800)
+                    return (bx[0], bx[1], bx[2], bx[3] + (len(rows) - 1) * 15)
+                xt_ttl = ax.get("x") or "Q"
+                yt_ttl = ax.get("y") or "P"
+                pw = X(float(ax.get("xmax") or 1)) - ox
+                boxes.append((title_box(xt_ttl, ox + pw + 34, oy + 16, "end"),
+                              "the %r axis title" % xt_ttl, (0, None)))
+                boxes.append((title_box(yt_ttl, ox - 2.0, 11.0, "start"),
+                              "the %r axis title" % yt_ttl, (0, None)))
                 xt = [t for t in (ax.get("xticks") or [])]
                 yt = [t for t in (ax.get("yticks") or [])]
                 hl = [h.get("p") for h in (pn.get("hlines") or [])]
@@ -1015,7 +1051,7 @@ def check_labels(cfgs, r):
                         continue
                     win = (b.get("at", 0), b.get("until"))
                     y1, y2 = Y(max(b["p1"], b["p2"])), Y(min(b["p1"], b["p2"]))
-                    x = (ox - 32) if b.get("left") else X(b["q"])
+                    x = vbrace_x(b, pn, ax, ox, X)
                     d = -1 if (b.get("left") or b.get("side") == "left") else 1
                     m = (y1 + y2) / 2.0
                     if b.get("left"):
@@ -1057,7 +1093,7 @@ def check_labels(cfgs, r):
                 checked += len(boxes)
 
                 arrows = arrow_segments(pn, X, Y)
-                guides = guide_segments(pn, X, Y, ox, oy)
+                guides = guide_segments(pn, X, Y, ox, oy, ax)
 
                 for bx, what, win in boxes:
                     # A label placed correctly in a panel with no room for it

@@ -398,6 +398,11 @@ run, not just whether it is correct:
   from whether the line happened to be named, which was a drawing decision
   standing in for an economic one. A stated fact needs no heuristic and never
   drifts.
+* **Write a shared coordinate down once.** The upright brace's x lived in the
+  checker twice, once for the brace and once for its label, so moving it in
+  v2.33 fixed half the collision and left the other half warning. It is one
+  function now. The same goes for the plot's width, which two places derived
+  from a right margin that stopped being 36 at v2.28.
 * **Score against the checker's own geometry, never a copy of it.** That is why
   `place_labels` takes 0.3s where a re-run-the-checks loop took three minutes,
   and why the two can never disagree about the same drawing.
@@ -448,7 +453,7 @@ not enough to reproduce an implementation.
   `embed_engine.py`'s paths reproduce the delivered file byte-for-byte; all 20
   prototype widgets render with no engine errors; `check_file.py` runs the
   geometric label test over 74 labels in the 263 file with no overlaps.
-* **Engine is v2.32.** Since v2.6: `areas` shade a polygon (v2.11) with
+* **Engine is v2.33.** Since v2.6: `areas` shade a polygon (v2.11) with
   `edge` to outline it (v2.18) and labels centred on their anchor (v2.13);
   `dot:false` drops a marker but keeps the axis label (v2.12); points take
   `guides:"p"`/`"q"` for one leg of the elbow (v2.14); braces take
@@ -475,7 +480,10 @@ not enough to reproduce an implementation.
   the plot; and `dimAt` fades a curve from a step so a label can be read over
   it (v2.31); and `hiAt` re-marks a point from a step on, whenever it
   arrived, so a shape a later step draws rings all of its corners rather than
-  the one that step added (v2.32).
+  the one that step added (v2.32). Axis titles wrap on `\n` and a `left`
+  upright brace sits outside the widest price-axis label (v2.33), both from
+  the labor chapter: `Amount of Employment (L)` is two thirds of a panel on
+  one line, and `CWD` was drawn straight through the two wages it spans.
 
 * **PPF works.** The first chapter of Exam 1 material converted to seven widgets
   with no engine gaps hit: frontiers, a combinations table, points on/inside/

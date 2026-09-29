@@ -130,7 +130,7 @@
 .sdg .sdg-cap { margin:10px 0 0; padding:10px 12px; background:#fff; border-left:4px solid var(--red); font-size:.92rem; line-height:1.45; min-height:3.2em; }
 </style>
 <script>
-/* ===== sd-graph.js v2.32 — data-driven supply & demand widgets =====
+/* ===== sd-graph.js v2.33 — data-driven supply & demand widgets =====
    Markup:  <div class="sdg"><script type="application/json">{ ...config... }<\/script></div>
    Top-level config:
      title, lede, caption         heading / intro / static caption (caption used only when there are no steps)
@@ -274,8 +274,21 @@
     // the x title is anchored to the right edge instead of running off it, and the
     // y title sits in the headroom above the plot instead of inside its top-left
     // corner. Keep axis titles to a word or two: nothing here can wrap them.
-    g.appendChild(el('text', {class: 'axlbl', x: O.x + PW + 34, y: O.y + 16, 'text-anchor': 'end'}, ax.x || 'Q'));
-    g.appendChild(el('text', {class: 'axlbl', x: O.x - 2, y: 11}, ax.y || 'P'));
+    // Axis titles wrap on \n (v2.33). "Amount of Employment (L)" is 23
+    // characters at 14px/800 -- two thirds of the panel on one line, and the
+    // labor chapter stacks it on two, as it stacks "Wage Rate (W)". Both
+    // stack downward from where a one-line title sits, so nothing already
+    // drawn moves; a title tall enough to leave the panel is check_file's to
+    // report, the same as any other label.
+    function axisTitle(text, x, y, anchor) {
+      var t = el('text', {class: 'axlbl', x: x, y: y, 'text-anchor': anchor});
+      String(text).split('\n').forEach(function (rw, i) {
+        t.appendChild(el('tspan', {x: x, dy: i ? 15 : 0}, rw));
+      });
+      return t;
+    }
+    g.appendChild(axisTitle(ax.x || 'Q', O.x + PW + 34, O.y + 16, 'end'));
+    g.appendChild(axisTitle(ax.y || 'P', O.x - 2, 11, 'start'));
 
     // Surplus and deadweight loss ARE areas, and before v2.11 the engine drew
     // none: "area fills of any kind" was on the list of things it does not do,
@@ -457,7 +470,12 @@
     (cfg.vbraces || []).forEach(function (b) {
       var cc = col(b.color || 'red'), grp = el('g', {});
       var y1 = Y(Math.max(b.p1, b.p2)), y2 = Y(Math.min(b.p1, b.p2));
-      var x = b.left ? O.x - 32 : X(b.q);
+      // Outside the widest price-axis label, not a fixed 32px in from the
+      // axis (v2.33): the labor chapter's CWD brace spans two wages named
+      // W_{Alaska} and W_{Hawaii}, and the brace was drawn straight through
+      // both. The 44px this brace already adds to the left margin is what
+      // there is room in.
+      var x = b.left ? Math.min(O.x - 32, O.x - 24 - widest) : X(b.q);
       var dir = (b.left || b.side === 'left') ? -1 : 1, m = (y1 + y2) / 2;
       var hh = Math.max(2.5, Math.min(7, (y2 - y1) / 4));
       var d = 'M' + x + ' ' + y1 +

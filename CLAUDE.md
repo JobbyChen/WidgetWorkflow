@@ -353,7 +353,11 @@ economics instead of label placement.
   along the bottom and vertical at the end; `lorenz` gives `y = x**k`, which
   runs corner to corner and cannot cross the line of equality or another
   Lorenz curve, so an ordering a figure exists to show is a property of the
-  numbers rather than something to check by eye; `around` samples either side of a
+  numbers rather than something to check by eye; `hug` adds the midpoint of each chord, pulled below it, so a curve
+  plotted through a table's readings is convex the whole way -- a spline
+  through the readings alone bows above the chord as often as below, which
+  leaves the bottom early and arrives at the top corner gently, the opposite
+  of what a Lorenz curve does; `around` samples either side of a
   basket in proportion to it, sorted, so a low basket cannot double the curve
   back on itself. **`cross` is the important one**: name every crossing and
   build the equilibrium dots from it. Typed as coordinates they are left
@@ -469,7 +473,7 @@ not enough to reproduce an implementation.
   `embed_engine.py`'s paths reproduce the delivered file byte-for-byte; all 20
   prototype widgets render with no engine errors; `check_file.py` runs the
   geometric label test over 74 labels in the 263 file with no overlaps.
-* **Engine is v2.36.** Since v2.6: `areas` shade a polygon (v2.11) with
+* **Engine is v2.37.** Since v2.6: `areas` shade a polygon (v2.11) with
   `edge` to outline it (v2.18) and labels centred on their anchor (v2.13);
   `dot:false` drops a marker but keeps the axis label (v2.12); points take
   `guides:"p"`/`"q"` for one leg of the elbow (v2.14); braces take
@@ -509,7 +513,10 @@ not enough to reproduce an implementation.
   both from the Lorenz-curve chapter, which plots a cumulative percent
   against a cumulative percent and names both axes in full. A point's label
   takes `boxed: true` (v2.36): a white box with its own border, so the label
-  can be read over the curves it sits on.
+  can be read over the curves it sits on, at 9.5px so the box covers as
+  little of the curve as it can; and `leader: true` draws a curve as a 1px
+  hairline, the weight of a line that points at the drawing rather than being
+  part of it (v2.37).
 
 * **PPF works.** The first chapter of Exam 1 material converted to seven widgets
   with no engine gaps hit: frontiers, a combinations table, points on/inside/

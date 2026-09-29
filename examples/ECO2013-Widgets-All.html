@@ -57,6 +57,10 @@
 .sdg .area { stroke:none; opacity:.18; }
 .sdg .arlbl { font-size:10px; font-weight:700; dominant-baseline:central; }
 .sdg .curve.thin { stroke-width:2; }
+/* The hairline from a boxed label to the curve it names. Thinner than `thin`,
+   which is the weight of a line that is part of the drawing; a leader is
+   pointing at the drawing, and at `thin` it reads as another curve. */
+.sdg .curve.leader { stroke-width:1; }
 .sdg .clbl { font-size:13px; font-weight:800; }
 /* a word subscript: smaller, and lighter than the name it hangs off */
 .sdg .clbl .sub, .sdg .tag .sub, .sdg .tk .sub { font-size:.72em; font-weight:600; }
@@ -97,7 +101,8 @@
 /* A boxed label carries its own background, so it can be read over a curve.
    Three Lorenz curves have no gap between them wide enough for a label. */
 .sdg .lblbox { fill:#fff; stroke-width:1; }
-.sdg .tag.boxed { font-size:11px; }
+/* Small: a boxed name sits on the curve it names, and a big box hides it. */
+.sdg .tag.boxed { font-size:9.5px; }
 .sdg .fade { transition:opacity .45s ease; }
 .sdg .move { transition:transform .6s ease, opacity .45s ease; }
 .sdg .off { opacity:0; pointer-events:none; }
@@ -134,7 +139,7 @@
 .sdg .sdg-cap { margin:10px 0 0; padding:10px 12px; background:#fff; border-left:4px solid var(--red); font-size:.92rem; line-height:1.45; min-height:3.2em; }
 </style>
 <script>
-/* ===== sd-graph.js v2.36 — data-driven supply & demand widgets =====
+/* ===== sd-graph.js v2.37 — data-driven supply & demand widgets =====
    Markup:  <div class="sdg"><script type="application/json">{ ...config... }<\/script></div>
    Top-level config:
      title, lede, caption         heading / intro / static caption (caption used only when there are no steps)
@@ -145,7 +150,7 @@
      heading                      title above the panel (two-market only)
      axes: {x, y, xmax, ymax, xticks[], yticks[], money, cents, pct, k, grid, bg:false}
         x, y = axis titles, default 'Q' and 'P'. A word or two fits; they are never wrapped.
-     curves[]: {id, label, pts:[[q,p],...], color, at, until, from, arrowP, shiftArrow, curved, thin, dashed, lstart, ldx, ldy}
+     curves[]: {id, label, pts:[[q,p],...], color, at, until, from, arrowP, shiftArrow, curved, thin, leader, dashed, lstart, ldx, ldy}
      areas[]:  {pts:[[q,p],...], label, color, edge, lp, ldx, ldy, at, until}   a shaded polygon under the curves (CS, PS, deadweight loss)
         lstart = put the curve label at the first point instead of the last; ldx/ldy nudge it
         label:"" draws no label at all (a lone PPF needs none); omitting label falls back to the id
@@ -413,7 +418,13 @@
 
     (cfg.curves || []).forEach(function (c) {
       var cc = col(c.color), grp = el('g', {class: 'curve-g'});
-      var path = el('path', {class: 'curve' + (c.thin ? ' thin' : ''), d: pathD(c.pts, c.curved), stroke: cc});
+      // `leader` is the hairline that runs from a boxed label to the curve it
+      // names (v2.37). It is thinner than `thin`, which is the weight of a
+      // line that is part of the drawing -- a line of equality, or the curve a
+      // shift moved away from. A leader is not part of the drawing; it is
+      // pointing at it, and at `thin` it reads as another curve.
+      var path = el('path', {class: 'curve' + (c.leader ? ' leader' : c.thin ? ' thin' : ''),
+                             d: pathD(c.pts, c.curved), stroke: cc});
       if (c.dashed) path.setAttribute('stroke-dasharray', '6 4');
       grp.appendChild(path);
       var last = c.pts[c.pts.length - 1], up = last[1] > c.pts[0][1], lp = c.lstart ? c.pts[0] : last;
@@ -591,7 +602,8 @@
       if (p.label) {
         var lrows = String(p.label).split('\n');
         var lx = X(p.q) + (p.dx != null ? p.dx : 9);
-        var ly = Y(p.p) + (p.dy != null ? p.dy : -9) - (lrows.length - 1) * 6.5;
+        var lrh = p.boxed ? 11.5 : 13;
+        var ly = Y(p.p) + (p.dy != null ? p.dy : -9) - (lrows.length - 1) * lrh / 2;
         // boxed:true puts the label in a white box with its own border, so it
         // can be read over the curves it sits on (v2.36). Three Lorenz curves
         // converge on one corner and there is no gap between them wide enough
@@ -604,15 +616,15 @@
           lrows.forEach(function (rw) {
             var bs = 0;
             var bp = rw.replace(/_\{([^}]*)\}/g, function (m, inner) { bs += inner.length; return ''; });
-            bw = Math.max(bw, 6.4 * (bp.length + 0.72 * bs));
+            bw = Math.max(bw, 5.9 * (bp.length + 0.72 * bs));
           });
-          grp.appendChild(el('rect', {class: 'lblbox', x: lx - 5, y: ly - 11,
-            width: bw + 10, height: 13 * lrows.length + 3, stroke: cc}));
+          grp.appendChild(el('rect', {class: 'lblbox', x: lx - 4.5, y: ly - 9,
+            width: bw + 9, height: 11.5 * lrows.length + 2, stroke: cc}));
         }
         var lt = el('text', {class: 'tag' + (p.boxed ? ' boxed' : ''),
                              x: lx, y: ly, fill: cc});
         lrows.forEach(function (rw, i) {
-          var ts = el('tspan', {x: lx, dy: i ? 13 : 0});
+          var ts = el('tspan', {x: lx, dy: i ? lrh : 0});
           setLabel(ts, rw); lt.appendChild(ts);
         });
         grp.appendChild(lt);

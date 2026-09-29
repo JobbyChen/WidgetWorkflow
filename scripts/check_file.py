@@ -1041,14 +1041,16 @@ def check_labels(cfgs, r):
                         prows = str(p["label"]).split("\n")
                         bx = box(X(p["q"]) + (p.get("dx") if p.get("dx") is not None else 9),
                                  Y(p["p"]) + (p.get("dy") if p.get("dy") is not None else -9)
-                                 - (len(prows) - 1) * 6.5,
+                                 - (len(prows) - 1)
+                                 * (11.5 if p.get("boxed") else 13) / 2.0,
                                  max(prows, key=label_len),
-                                 11 if p.get("boxed") else 12)
-                        bx = (bx[0], bx[1], bx[2], bx[3] + (len(prows) - 1) * 13)
+                                 9.5 if p.get("boxed") else 12)
+                        _rh = 11.5 if p.get("boxed") else 13
+                        bx = (bx[0], bx[1], bx[2], bx[3] + (len(prows) - 1) * _rh)
                         if p.get("boxed"):
                             # engine v2.36 draws a white box round it, a few
                             # pixels proud of the text on every side
-                            bx = (bx[0] - 5, bx[1] - 2, bx[2] + 5, bx[3] + 3)
+                            bx = (bx[0] - 4.5, bx[1] - 1, bx[2] + 4.5, bx[3] + 2)
                             BOXED.add("point label %r" % p["label"])
                         boxes.append((bx, "point label %r" % p["label"], win))
                     # The engine prints a point's own price and quantity on the

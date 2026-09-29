@@ -119,5 +119,23 @@ try:
 except ValueError:
     check("lorenz refuses a k below 1", True)
 
+
+# --- hug: a plotted Lorenz curve is convex, so it lies below every chord
+# between two of its own readings. A spline through the readings alone bows
+# above the chord as often as below.
+_read = [[0, 0], [20, 5], [40, 15], [60, 30], [80, 55], [100, 100]]
+_h = C.hug(_read)
+check("hug keeps every reading it was given",
+      all(r in [list(p) for p in _h] for r in _read))
+check("hug adds one sample between each pair", len(_h) == 2 * len(_read) - 1)
+for _i in range(0, len(_h) - 2, 2):
+    (_x0, _y0), (_xm, _ym), (_x1, _y1) = _h[_i], _h[_i + 1], _h[_i + 2]
+    check("hug's sample between %s and %s is below the chord" % (_x0, _x1),
+          _ym < (_y0 + _y1) / 2.0 + 1e-9)
+check("hug stays monotone", all(_h[i][1] <= _h[i + 1][1] + 1e-9
+                                for i in range(len(_h) - 1)))
+check("hug stays below the line of equality",
+      all(y <= x + 1e-9 for x, y in _h))
+
 print("\n%d failing" % len(FAILS))
 sys.exit(1 if FAILS else 0)

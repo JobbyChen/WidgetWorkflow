@@ -1,4 +1,4 @@
-# Engine reference — `engine/sd-graph.js` v2.36
+# Engine reference — `engine/sd-graph.js` v2.37
 
 Written from the engine source. The conversion prompt carries a shorter version
 of this in its own "Engine reference" section; that one is what the model needs
@@ -150,7 +150,7 @@ pixel apart. `scripts/check_file.py` tests for this.
 - A point's `label` wraps on `\n` and takes `_{...}` (**v2.34**), the way curve
   labels, braces and axis labels already do.
 - `boxed: true` puts that label in a white box with a border in the point's own
-  colour, set at 11px (**v2.36**), so it can be **read over the curves it sits
+  colour, set at 9.5px (**v2.36**), so it can be **read over the curves it sits
   on**. Three Lorenz curves converge on one corner and leave no gap between
   them wide enough for a horizontal label — the income-distribution chapter
   boxes each year and runs a short leader to its curve for exactly that reason,
@@ -159,6 +159,10 @@ pixel apart. `scripts/check_file.py` tests for this.
   over them is what it is for, and still measures it against every other label
   and against the panel's edges. Declared on the point, never inferred: an
   unboxed label over a curve is still a defect.
+- `leader: true` draws a curve as a 1px hairline (**v2.37**) — the line from a
+  boxed label to the curve it names. `thin` is the weight of a line that is
+  part of the drawing (a line of equality, the curve a shift moved away from);
+  a leader points at the drawing, and at `thin` it reads as another curve.
 - `dimAt: 2` fades the curve from step 2 onward (**v2.31**), to a quarter
   opacity, so a label can be read over it. That is the honest way to name a
   gap where the curve bounding it runs through the only place the name fits:

@@ -1,4 +1,4 @@
-# Engine reference — `engine/sd-graph.js` v2.34
+# Engine reference — `engine/sd-graph.js` v2.35
 
 Written from the engine source. The conversion prompt carries a shorter version
 of this in its own "Engine reference" section; that one is what the model needs
@@ -63,16 +63,25 @@ units to keep one order at every screen size: **heading, then axis title, then
 point label**. Set in fixed pixels it was overtaken by the axis titles on a wide
 screen.
 
-**Both axis titles wrap on `\n`** (**v2.33**), stacking downward from where a
-one-line title sits, so nothing already drawn moves. **A wrapped price-axis
-title is anchored the other way** (**v2.34**), clear to the left of the axis
-rather than pressed against it, and the left margin carries it like a price
-label: a one-line title is a letter or two and belongs where it has always
-sat, while a wrapped one is a name, and a name against the axis reads as
-part of the plot. `Amount of Employment (L)`
-is 23 characters at 14px and weight 800 — two thirds of the panel on one line,
-and the labor chapter stacks it on two, as it stacks `Wage Rate (W)`. A title
-tall enough to leave the panel is reported like any other label.
+`pct: true` labels both axes as percentages (**v2.35**), money's opposite
+number: the income-distribution chapter plots a cumulative percent against a
+cumulative percent and writes % on every value of both.
+
+**Both axis titles wrap on `\n`** (**v2.33**). `Amount of Employment (L)` is 23
+characters at 14px and weight 800 — two thirds of the panel on one line — and
+the labor chapter stacks it on two, as it stacks `Wage Rate (W)`.
+
+**A wrapped title then goes where a one-line title cannot.** A one-line title
+is a letter or two and belongs where it has always sat; a wrapped one is a
+name, and a name in the same place reads as part of the plot. So the price
+title is anchored the other way, clear to the *left* of the axis (**v2.34**),
+and drops below the topmost tick (**v2.35**) so the two stand one above the
+other — side by side, `100%` and `Cumulative / % of Income` cost 40px of plot
+between them. The quantity title moves *below* the whole tick row, and the
+panel grows to 268 to hold it, the same trade a `below: true` brace makes: on
+the tick line it runs back across every number there. The left margin carries
+the price title the way it carries a price label, and a title tall enough to
+leave the panel is reported like any other label.
 
 
 ### `axes`

@@ -342,7 +342,10 @@ economics instead of label placement.
   curve is a spline through samples and a point taken from the formula
   between two of them sits just off the line that is drawn; `supply_fan`
   gives the `p = A(e^(kq) − 1)` shape the market-supply figure needs, flat
-  along the bottom and vertical at the end; `around` samples either side of a
+  along the bottom and vertical at the end; `lorenz` gives `y = x**k`, which
+  runs corner to corner and cannot cross the line of equality or another
+  Lorenz curve, so an ordering a figure exists to show is a property of the
+  numbers rather than something to check by eye; `around` samples either side of a
   basket in proportion to it, sorted, so a low basket cannot double the curve
   back on itself. **`cross` is the important one**: name every crossing and
   build the equilibrium dots from it. Typed as coordinates they are left
@@ -458,7 +461,7 @@ not enough to reproduce an implementation.
   `embed_engine.py`'s paths reproduce the delivered file byte-for-byte; all 20
   prototype widgets render with no engine errors; `check_file.py` runs the
   geometric label test over 74 labels in the 263 file with no overlaps.
-* **Engine is v2.34.** Since v2.6: `areas` shade a polygon (v2.11) with
+* **Engine is v2.35.** Since v2.6: `areas` shade a polygon (v2.11) with
   `edge` to outline it (v2.18) and labels centred on their anchor (v2.13);
   `dot:false` drops a marker but keeps the axis label (v2.12); points take
   `guides:"p"`/`"q"` for one leg of the elbow (v2.14); braces take
@@ -491,7 +494,12 @@ not enough to reproduce an implementation.
   one line, and `CWD` was drawn straight through the two wages it spans. A
   wrapped price-axis title is anchored clear to the *left* of the axis, a
   point's `label` wraps on `\n`, and `divider: true` on a point says its guide
-  separates two regions rather than marking a reading (v2.34).
+  separates two regions rather than marking a reading (v2.34). `pct: true`
+  labels both axes as percentages and a wrapped axis title gets out of the
+  tick rows' way -- the price title below the topmost tick, the quantity
+  title below the whole row, with the panel grown to 268 to hold it (v2.35),
+  both from the Lorenz-curve chapter, which plots a cumulative percent
+  against a cumulative percent and names both axes in full.
 
 * **PPF works.** The first chapter of Exam 1 material converted to seven widgets
   with no engine gaps hit: frontiers, a combinations table, points on/inside/

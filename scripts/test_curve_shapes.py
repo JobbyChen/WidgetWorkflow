@@ -94,5 +94,30 @@ f = C.exp_fit(13, (54, 51), (74, 110))
 check("the fitted curve hits both points it was given",
       abs(f(54) - 51) < 1e-6 and abs(f(74) - 110) < 1e-6)
 
+# --- lorenz: every Lorenz curve runs corner to corner and bows below the
+# line of equality, and k alone says how far. Two typed by hand for one
+# figure cross each other as often as not.
+for _k in (1.0, 1.45, 2.1, 3.2):
+    _p = C.lorenz(_k)
+    check("lorenz(%s) starts at the origin" % _k,
+          abs(_p[0][0]) < 1e-9 and abs(_p[0][1]) < 1e-9, str(_p[0]))
+    check("lorenz(%s) reaches the far corner" % _k,
+          abs(_p[-1][0] - 100) < 1e-9 and abs(_p[-1][1] - 100) < 1e-9, str(_p[-1]))
+    check("lorenz(%s) never rises above the line of equality" % _k,
+          all(y <= x + 1e-9 for x, y in _p),
+          str([pt for pt in _p if pt[1] > pt[0] + 1e-9]))
+
+_a, _b = C.lorenz(1.5), C.lorenz(3.0)
+check("a bigger k is the less equal curve, at every household share",
+      all(yb <= ya + 1e-9 for (_, ya), (_, yb) in zip(_a, _b)))
+check("and it is a different curve, not the same one",
+      any(yb < ya - 1e-6 for (_, ya), (_, yb) in zip(_a, _b)))
+
+try:
+    C.lorenz(0.8)
+    check("lorenz refuses a k below 1", False, "0.8 was accepted")
+except ValueError:
+    check("lorenz refuses a k below 1", True)
+
 print("\n%d failing" % len(FAILS))
 sys.exit(1 if FAILS else 0)

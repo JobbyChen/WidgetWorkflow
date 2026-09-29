@@ -205,3 +205,18 @@ def mr(d_pts):
     m = (p2 - p1) / float(q2 - q1)
     c = p1 - m * q1
     return [[0.0, round(c, 1)], [round(-c / (2 * m), 1), 0.0]]
+
+
+def lorenz(k, top=100.0, n=9):
+    """A Lorenz curve: y = top*(x/top)**k, sampled from (0,0) to (top, top).
+
+    Every Lorenz curve runs corner to corner and bows below the line of
+    equality, and k alone says how far: k = 1 is the line itself, and larger
+    is less equal. Typed as coordinates, two of them drawn for the same
+    figure cross each other as often as not -- y = x**k cannot, for k above 1,
+    so an ordering the figure exists to show is a property of the numbers
+    rather than something to check by eye."""
+    if k < 1:
+        raise ValueError("a Lorenz curve cannot rise above the line of equality")
+    return [[round(top * i / float(n - 1), 2),
+             round(top * (i / float(n - 1)) ** k, 2)] for i in range(n)]

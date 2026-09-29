@@ -566,8 +566,13 @@ def label_len(text):
     return len(plain) + 0.72 * subs[0]
 
 
-def panel_h(pn):
-    """The engine's viewBox height: 250, or 268 where a brace sits below."""
+def panel_h(pn, ax=None):
+    """The engine's viewBox height: 250, or 268 where something sits below.
+
+    A brace with `below: true`, or (v2.35) a wrapped Q axis title, which drops
+    beneath the tick row rather than running back across it."""
+    if len(str((ax or {}).get("x") or "Q").split("\n")) > 1:
+        return 268.0
     return 268.0 if any(b.get("below") is True
                         for b in (pn.get("braces") or [])) else 250.0
 
@@ -653,6 +658,9 @@ def geom(pn, ax):
 
 
 def fmt_p(v, ax):
+    # engine v2.35: a percent axis, money's opposite number
+    if ax.get("pct"):
+        return "%s%%" % v
     if not ax.get("money"):
         return str(v)
     if ax.get("cents"):
@@ -661,6 +669,8 @@ def fmt_p(v, ax):
 
 
 def fmt_q(v, ax):
+    if ax.get("pct"):
+        return "%s%%" % v
     if ax.get("k") and v >= 1000:
         return "%gk" % (v / 1000.0)
     return "{:,}".format(v)
@@ -964,10 +974,14 @@ def check_labels(cfgs, r):
                 xt_ttl = ax.get("x") or "Q"
                 yt_ttl = ax.get("y") or "P"
                 pw = X(float(ax.get("xmax") or 1)) - ox
-                boxes.append((title_box(xt_ttl, ox + pw + 34, oy + 16, "end"),
+                _xw = len(str(xt_ttl).split("\n")) > 1
+                boxes.append((title_box(xt_ttl, ox + pw + 34,
+                                        oy + (36.0 if _xw else 16.0), "end"),
                               "the %r axis title" % xt_ttl, (0, None)))
                 _yw = len(str(yt_ttl).split("\n")) > 1
-                boxes.append((title_box(yt_ttl, ox - (18.0 if _yw else 2.0), 11.0,
+                boxes.append((title_box(yt_ttl,
+                                        ox - (12.0 if _yw else 2.0),
+                                        52.0 if _yw else 11.0,
                                         "end" if _yw else "start"),
                               "the %r axis title" % yt_ttl, (0, None)))
                 xt = [t for t in (ax.get("xticks") or [])]
@@ -1123,7 +1137,7 @@ def check_labels(cfgs, r):
                     # text in the margins is fine and text past them is not.
                     x0, y0, x1, y1 = bx
                     if x0 < -0.5 or x1 > W + 0.5 or \
-                       y0 < -0.5 or y1 > panel_h(pn) + 0.5:
+                       y0 < -0.5 or y1 > panel_h(pn, ax) + 0.5:
                         r.fail("labels", "%s: %s runs outside the panel -- "
                                "shorten it, wrap it on \\n, or move it inboard"
                                % (where, what))

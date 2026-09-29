@@ -136,7 +136,7 @@
 .sdg .sdg-cap { margin:10px 0 0; padding:10px 12px; background:#fff; border-left:4px solid var(--red); font-size:.92rem; line-height:1.45; min-height:3.2em; }
 </style>
 <script>
-/* ===== sd-graph.js v2.34 — data-driven supply & demand widgets =====
+/* ===== sd-graph.js v2.35 — data-driven supply & demand widgets =====
    Markup:  <div class="sdg"><script type="application/json">{ ...config... }<\/script></div>
    Top-level config:
      title, lede, caption         heading / intro / static caption (caption used only when there are no steps)
@@ -145,7 +145,7 @@
      panels: [panelCfg, panelCfg]  two side-by-side graphs (two-market). Otherwise the panel keys live at top level.
    Panel config:
      heading                      title above the panel (two-market only)
-     axes: {x, y, xmax, ymax, xticks[], yticks[], money, cents, k, grid, bg:false}
+     axes: {x, y, xmax, ymax, xticks[], yticks[], money, cents, pct, k, grid, bg:false}
         x, y = axis titles, default 'Q' and 'P'. A word or two fits; they are never wrapped.
      curves[]: {id, label, pts:[[q,p],...], color, at, until, from, arrowP, shiftArrow, curved, thin, dashed, lstart, ldx, ldy}
      areas[]:  {pts:[[q,p],...], label, color, edge, lp, ldx, ldy, at, until}   a shaded polygon under the curves (CS, PS, deadweight loss)
@@ -199,13 +199,25 @@
   }
 
   function h(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
-  function fmtP(v, ax) { if (!ax.money) return String(v); if (ax.cents) return '$' + Number(v).toFixed(2); return '$' + (Number.isInteger(v) ? v : v.toFixed(2)); }
-  function fmtQ(v, ax) { if (ax.k && v >= 1000) return (v / 1000) + 'k'; return v.toLocaleString('en-US'); }
+  // pct is money's opposite number (v2.35): the income-distribution chapter
+  // plots a cumulative percent against a cumulative percent, and every value
+  // on both axes carries a % in the source.
+  function fmtP(v, ax) { if (ax.pct) return v + '%'; if (!ax.money) return String(v); if (ax.cents) return '$' + Number(v).toFixed(2); return '$' + (Number.isInteger(v) ? v : v.toFixed(2)); }
+  function fmtQ(v, ax) { if (ax.pct) return v + '%'; if (ax.k && v >= 1000) return (v / 1000) + 'k'; return v.toLocaleString('en-US'); }
   function merge(a, b) { var o = {}; for (var k in a) o[k] = a[k]; for (var k2 in b) o[k2] = b[k2]; return o; }
 
   // ---------- one SVG panel ----------
   function buildPanel(cfg) {
-    var ax = cfg.axes, W = 372, below = (cfg.braces || []).some(function (b) { return b.below === true; }), H = below ? 268 : 250;
+    // A one-line Q title is a letter or two and sits beside the tick row. A
+    // wrapped one is a name that runs back across it, so it goes *below* the
+    // ticks and the panel grows to hold it (v2.35) -- the same trade a
+    // below-axis brace makes. The income-distribution chapter writes
+    // "Cumulative % of Households" under its Q axis and the ticks are
+    // percentages all the way along it.
+    var ax = cfg.axes, W = 372;
+    var xtitle = String(ax.x || 'Q').split('\n');
+    var below = (cfg.braces || []).some(function (b) { return b.below === true; });
+    var H = (below || xtitle.length > 1) ? 268 : 250;
     // A brace outside the P axis needs margin to sit in, the way a brace below
     // the Q axis needs the extra panel height above.
     var vleft = (cfg.vbraces || []).some(function (b) { return b.left; });
@@ -304,9 +316,15 @@
       });
       return t;
     }
-    g.appendChild(axisTitle(ax.x || 'Q', O.x + PW + 34, O.y + 16, 'end'));
-    g.appendChild(axisTitle(ax.y || 'P', ytitle.length > 1 ? O.x - 18 : O.x - 2,
-                            11, ytitle.length > 1 ? 'end' : 'start'));
+    g.appendChild(axisTitle(ax.x || 'Q', O.x + PW + 34,
+                            O.y + (xtitle.length > 1 ? 36 : 16), 'end'));
+    // A wrapped title drops below the topmost tick rather than standing
+    // beside it (v2.35), which is where the source puts it and what keeps the
+    // margin down to the title's own width: side by side, "100%" and
+    // "Cumulative / % of Income" cost 40px of plot between them.
+    g.appendChild(axisTitle(ax.y || 'P', ytitle.length > 1 ? O.x - 12 : O.x - 2,
+                            ytitle.length > 1 ? 52 : 11,
+                            ytitle.length > 1 ? 'end' : 'start'));
 
     // Surplus and deadweight loss ARE areas, and before v2.11 the engine drew
     // none: "area fills of any kind" was on the list of things it does not do,

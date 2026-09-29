@@ -1024,8 +1024,16 @@ def check_labels(cfgs, r):
                         h = 0.58 * 12 * len(str(b["label"]))
                         bx = (lx - 7, m - h / 2, lx + 7, m + h / 2)
                     else:
-                        bx = box(x + d * 20, m + 4, b["label"], 12,
+                        # wraps on \n since engine v2.29, as wide as its
+                        # longest line and as tall as all of them, and the
+                        # block is centred on the brace
+                        vrows = str(b["label"]).split("\n")
+                        bx = box(x + d * 20 + b.get("ldx", 0),
+                                 m + 4 - (len(vrows) - 1) * 6.5 + b.get("ldy", 0),
+                                 max(vrows, key=label_len), 12,
                                  "start" if d > 0 else "end")
+                        bx = (bx[0], bx[1], bx[2],
+                              bx[3] + (len(vrows) - 1) * 13)
                     boxes.append((bx, "upright brace label %r" % b["label"], win))
 
                 # An area's label is drawn text like any other, and it was the

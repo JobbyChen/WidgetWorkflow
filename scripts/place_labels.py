@@ -69,8 +69,14 @@ def sentinel(label):
     finding names the label rather than the index, so the one being moved is
     marked out. It must be the SAME LENGTH as the real label: a text box is
     measured from its character count, so scoring a three-letter label as a
-    two-letter stand-in passes positions the checker then rejects."""
-    return MARK * max(1, len(str(label)))
+    two-letter stand-in passes positions the checker then rejects.
+
+    And the same line for line. A wrapped label is as wide as its longest line
+    and as tall as all of them, so flattening "Marginal\nExternal\nCost" into
+    one 22-character run measured it nearly three times too wide -- which is
+    why every placement for it came back as colliding with something."""
+    return "\n".join(MARK * max(1, len(row))
+                     for row in str(label).split("\n"))
 
 
 def findings_for(widget, mark, scn_label):

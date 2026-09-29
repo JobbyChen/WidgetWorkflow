@@ -53,7 +53,11 @@ def findings_for(widget, mark, scn_label):
         subject = m
         for v in VERBS:
             subject = subject.split(v)[0]
-        if mark in subject:
+        # A finding prints the label with %r, so a wrapped one arrives with a
+        # literal backslash-n where the stand-in has a real newline and never
+        # matches. Every multi-line label then scored zero findings and every
+        # placement for it came back clear.
+        if mark in subject or repr(mark)[1:-1] in subject:
             n += 1
     return n
 

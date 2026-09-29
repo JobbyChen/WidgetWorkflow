@@ -137,7 +137,7 @@
 .sdg .sdg-cap { margin:10px 0 0; padding:10px 12px; background:#fff; border-left:4px solid var(--red); font-size:.92rem; line-height:1.45; min-height:3.2em; }
 </style>
 <script>
-/* ===== sd-graph.js v2.28 — data-driven supply & demand widgets =====
+/* ===== sd-graph.js v2.30 — data-driven supply & demand widgets =====
    Markup:  <div class="sdg"><script type="application/json">{ ...config... }<\/script></div>
    Top-level config:
      title, lede, caption         heading / intro / static caption (caption used only when there are no steps)
@@ -479,8 +479,27 @@
         grp.appendChild(el('text', {class: 'tag', x: lx, y: m, 'text-anchor': 'middle',
           transform: 'rotate(-90 ' + lx + ' ' + m + ')', fill: cc}, b.label));
       } else {
-        grp.appendChild(el('text', {class: 'tag', x: x + dir * (2 * hh + 6), y: m + 4,
-          'text-anchor': dir > 0 ? 'start' : 'end', fill: cc}, b.label));
+        // Wraps on \n, the way a horizontal brace (v2.17) and a curve label
+        // (v2.19) already do. Without it the externalities chapter's
+        // "Marginal External Cost" had to be one 22-character run, which fits
+        // nowhere inside a plot -- the source sets it on three lines for
+        // exactly that reason. The block is centred on the brace's middle.
+        // ldx/ldy nudge it, as they do every other label in the schema. It
+        // was centred on the brace and nothing else, so on a panel where the
+        // gap being measured is barely taller than the label -- the external
+        // benefit figures -- there was no position that cleared the curves
+        // either side of it. The source does not centre these either.
+        var vrows = String(b.label).split('\n'),
+            vlx = x + dir * (2 * hh + 6) + (b.ldx || 0),
+            vtxt = el('text', {class: 'tag', x: vlx,
+                               y: m + 4 - (vrows.length - 1) * 6.5 + (b.ldy || 0),
+                               'text-anchor': dir > 0 ? 'start' : 'end', fill: cc});
+        vrows.forEach(function (row, ri) {
+          var vline = el('tspan', {x: vlx, dy: ri ? 13 : 0});
+          setLabel(vline, row);
+          vtxt.appendChild(vline);
+        });
+        grp.appendChild(vtxt);
       }
       g.appendChild(grp); reg(grp, b);
     });

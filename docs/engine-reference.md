@@ -1,4 +1,4 @@
-# Engine reference — `engine/sd-graph.js` v2.28
+# Engine reference — `engine/sd-graph.js` v2.30
 
 Written from the engine source. The conversion prompt carries a shorter version
 of this in its own "Engine reference" section; that one is what the model needs
@@ -342,6 +342,14 @@ height. Its label runs up the axis, because horizontal text does not fit in a
 Without `left`, it sits inside the plot at quantity `q`, opening right unless
 `side: "left"`. Inside the plot it competes with the curves for space, so prefer
 `left` unless the gap has to be shown at a particular quantity.
+
+**The label wraps on `\n`** (**v2.30**), the way a horizontal brace (v2.17) and
+a curve label (v2.19) already do, and **takes `ldx`/`ldy`** like every other
+label in the schema. Both exist because of the externalities chapter: its
+`Marginal External Cost` is three lines in the source for the good reason that
+one line fits nowhere inside a plot, and centring the block rigidly on the
+brace left no clear position at all on a panel where the gap being measured is
+barely taller than the label. The source does not centre these either.
 
 ### `table`
 

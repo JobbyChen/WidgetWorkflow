@@ -264,6 +264,14 @@ economics instead of label placement.
 * **Clip the axis to the region the figure uses.** Drawn out to the full
   intercepts, ticks collide (24 and 30 rendered as "2430") and most of the
   plot is empty.
+* **A curve is drawn only where the source draws it.** Marginal social cost in
+  the externalities figures starts at its crossing with demand and runs up
+  from there, not down to the price axis — which is what leaves the lower left
+  of the panel free for the label naming the gap. Run it full length and it
+  goes straight through that label, and there is then no position on the panel
+  that works. This is the other side of "a curve runs to the edge of the
+  plot": where the source stops one short, the space it leaves is doing a job.
+  (Ian, 2026-09-29.)
 * **Place area labels with `scripts/place_labels.py`, never by eye.** It takes
   the clear point nearest the centroid, and falls back to just outside the
   shape for a wedge too small to hold a label — which is what the source does
@@ -406,7 +414,7 @@ not enough to reproduce an implementation.
   `embed_engine.py`'s paths reproduce the delivered file byte-for-byte; all 20
   prototype widgets render with no engine errors; `check_file.py` runs the
   geometric label test over 74 labels in the 263 file with no overlaps.
-* **Engine is v2.28.** Since v2.6: `areas` shade a polygon (v2.11) with
+* **Engine is v2.30.** Since v2.6: `areas` shade a polygon (v2.11) with
   `edge` to outline it (v2.18) and labels centred on their anchor (v2.13);
   `dot:false` drops a marker but keeps the axis label (v2.12); points take
   `guides:"p"`/`"q"` for one leg of the elbow (v2.14); braces take
@@ -426,7 +434,10 @@ not enough to reproduce an implementation.
   fixed margins cut `P* = ATC` down to `= ATC` and `D = MB = MSB` down to
   `D = M` -- the text was placed correctly and the panel simply had no room
   for it. `check_file.py` fails a label that runs outside the panel now, which
-  is the check that would have caught both.
+  is the check that would have caught both. An upright brace's label wraps on
+  `\n` and takes `ldx`/`ldy` (v2.29/v2.30), because the externalities
+  chapter's three-line `Marginal External Cost` could not be written on one
+  line and could not be centred rigidly on its brace.
 
 * **PPF works.** The first chapter of Exam 1 material converted to seven widgets
   with no engine gaps hit: frontiers, a combinations table, points on/inside/

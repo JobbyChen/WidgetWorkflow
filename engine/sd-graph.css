@@ -88,6 +88,10 @@
 /* A measure named inside the plot is usually two or three words on as
    many lines, and it has to share the space with the curves it spans. */
 .sdg .tag.vin { font-size:11px; }
+/* A boxed label carries its own background, so it can be read over a curve.
+   Three Lorenz curves have no gap between them wide enough for a label. */
+.sdg .lblbox { fill:#fff; stroke-width:1; }
+.sdg .tag.boxed { font-size:11px; }
 .sdg .fade { transition:opacity .45s ease; }
 .sdg .move { transition:transform .6s ease, opacity .45s ease; }
 .sdg .off { opacity:0; pointer-events:none; }

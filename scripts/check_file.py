@@ -849,8 +849,25 @@ def same_spot(a, b, tol=1.5):
     return all(abs(a[i] - b[i]) <= tol for i in range(4))
 
 
+# A boxed label carries its own white background (engine v2.36), so lying over
+# a curve, a guide or an axis line is what it is for -- three Lorenz curves
+# leave no gap between them wide enough for a horizontal label, and the source
+# boxes each year for exactly that reason. It is still measured against every
+# other label and against the panel's own edges. Declared on the point, never
+# inferred: an unboxed label over a curve is still a defect.
+BOXED = set()
+
+
+def masks(desc):
+    """Does this label carry its own background?"""
+    return desc in BOXED
+
+
 def exempt(desc_a, desc_b, box_a=None, box_b=None):
     """Pairs that are adjacent by design, not by accident."""
+    for d, o in ((desc_a, desc_b), (desc_b, desc_a)):
+        if masks(d) and ("curve" in o or "guide" in o or "axis lines" in o):
+            return True
     # A brace's label belongs beside its own bracket.
     if ("brace label" in desc_a and "brace" in desc_b) or \
        ("brace label" in desc_b and "brace" in desc_a):
@@ -1025,8 +1042,14 @@ def check_labels(cfgs, r):
                         bx = box(X(p["q"]) + (p.get("dx") if p.get("dx") is not None else 9),
                                  Y(p["p"]) + (p.get("dy") if p.get("dy") is not None else -9)
                                  - (len(prows) - 1) * 6.5,
-                                 max(prows, key=label_len), 12)
+                                 max(prows, key=label_len),
+                                 11 if p.get("boxed") else 12)
                         bx = (bx[0], bx[1], bx[2], bx[3] + (len(prows) - 1) * 13)
+                        if p.get("boxed"):
+                            # engine v2.36 draws a white box round it, a few
+                            # pixels proud of the text on every side
+                            bx = (bx[0] - 5, bx[1] - 2, bx[2] + 5, bx[3] + 3)
+                            BOXED.add("point label %r" % p["label"])
                         boxes.append((bx, "point label %r" % p["label"], win))
                     # The engine prints a point's own price and quantity on the
                     # axes unless they are already ticks (or pl/ql override
@@ -1188,7 +1211,7 @@ def check_labels(cfgs, r):
                         # this file reporting PASS, so nothing is exempt now --
                         # a line through your own name is still a line through
                         # your own name.
-                        if curve_hits(bx, pts, X, Y):
+                        if curve_hits(bx, pts, X, Y) and not masks(what):
                             r.fail("labels", "%s: %s sits on curve %s" % (where, what, cid))
                     for seg, desc, _aw in arrows:
                         if not coexist(win, _aw):

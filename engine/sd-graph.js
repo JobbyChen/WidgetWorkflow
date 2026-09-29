@@ -1,4 +1,4 @@
-/* ===== sd-graph.js v2.35 — data-driven supply & demand widgets =====
+/* ===== sd-graph.js v2.36 — data-driven supply & demand widgets =====
    Markup:  <div class="sdg"><script type="application/json">{ ...config... }<\/script></div>
    Top-level config:
      title, lede, caption         heading / intro / static caption (caption used only when there are no steps)
@@ -17,7 +17,8 @@
         shiftArrow:false = animate and dim as usual but draw no shift arrow. Use it whenever the
                  widget already shows per-row arrows (table.arrows), which say the same thing once per row.
         curved = smooth through 3+ points (conceptual, non-linear look)
-     points[]: {id, q, p, label, marker, pl, ql, color, at, until, hiAt, dx, dy, guides:false|'p'|'q', showP:false, showQ:false, dot:false}
+     points[]: {id, q, p, label, boxed, marker, pl, ql, color, at, until, hiAt, dx, dy, guides:false|'p'|'q', showP:false, showQ:false, dot:false}
+        boxed: true   the label goes in a white box with its own border, so it can be read over the curves it sits on
         hiAt: n   re-marks the point from step n on, whenever it arrived -- for the corners of a shape a later step draws
         marker = "1"/"2" numbered circle;  pl/ql = symbolic axis labels ("P₁","Q₁") instead of numbers
      moves[]:  {from:[q,p], to:[q,p], at, until, color, offset}  arrow between two points, drawn `offset` px beside the curve (default 14; negative = other side)
@@ -455,7 +456,25 @@
         var lrows = String(p.label).split('\n');
         var lx = X(p.q) + (p.dx != null ? p.dx : 9);
         var ly = Y(p.p) + (p.dy != null ? p.dy : -9) - (lrows.length - 1) * 6.5;
-        var lt = el('text', {class: 'tag', x: lx, y: ly, fill: cc});
+        // boxed:true puts the label in a white box with its own border, so it
+        // can be read over the curves it sits on (v2.36). Three Lorenz curves
+        // converge on one corner and there is no gap between them wide enough
+        // for a horizontal label -- the source boxes each year and runs a
+        // short leader to its curve, and this is what draws that box. The
+        // width is estimated the same way check_file measures a label, so the
+        // two never disagree about where the box is.
+        if (p.boxed) {
+          var bw = 0;
+          lrows.forEach(function (rw) {
+            var bs = 0;
+            var bp = rw.replace(/_\{([^}]*)\}/g, function (m, inner) { bs += inner.length; return ''; });
+            bw = Math.max(bw, 6.4 * (bp.length + 0.72 * bs));
+          });
+          grp.appendChild(el('rect', {class: 'lblbox', x: lx - 5, y: ly - 11,
+            width: bw + 10, height: 13 * lrows.length + 3, stroke: cc}));
+        }
+        var lt = el('text', {class: 'tag' + (p.boxed ? ' boxed' : ''),
+                             x: lx, y: ly, fill: cc});
         lrows.forEach(function (rw, i) {
           var ts = el('tspan', {x: lx, dy: i ? 13 : 0});
           setLabel(ts, rw); lt.appendChild(ts);

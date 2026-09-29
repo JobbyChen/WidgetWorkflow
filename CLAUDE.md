@@ -302,6 +302,14 @@ economics instead of label placement.
   first clear candidate happened to be there, and outside is where a label
   stops naming its own shape. The fallback is for a sliver; anywhere else,
   centred is the answer and a label that is not centred is a drawing to fix.
+* **Where no gap is wide enough, box the label.** Three Lorenz curves converge
+  on one corner, and at its widest the gap between two of them is about 27px
+  against a 28px year — so there is nowhere between them a horizontal label
+  can go, and hunting for one is wasted. `boxed: true` on a point gives the
+  label a white background, which is what lets the source put each year on its
+  own curve with a short leader, and what lets a name for a curve sit on the
+  curve. Ian's call, 2026-09-29, from the reference artwork. Use it where the
+  drawing genuinely has no gap, not to paper over a label that could move.
 * **Place curve labels with `scripts/place_curve_labels.py`, never by eye.**
   A curve label sits at its own end, which is where the other curves converge:
   MR ends on the Q axis with MC a few units above it and an equilibrium's guide
@@ -461,7 +469,7 @@ not enough to reproduce an implementation.
   `embed_engine.py`'s paths reproduce the delivered file byte-for-byte; all 20
   prototype widgets render with no engine errors; `check_file.py` runs the
   geometric label test over 74 labels in the 263 file with no overlaps.
-* **Engine is v2.35.** Since v2.6: `areas` shade a polygon (v2.11) with
+* **Engine is v2.36.** Since v2.6: `areas` shade a polygon (v2.11) with
   `edge` to outline it (v2.18) and labels centred on their anchor (v2.13);
   `dot:false` drops a marker but keeps the axis label (v2.12); points take
   `guides:"p"`/`"q"` for one leg of the elbow (v2.14); braces take
@@ -499,7 +507,9 @@ not enough to reproduce an implementation.
   tick rows' way -- the price title below the topmost tick, the quantity
   title below the whole row, with the panel grown to 268 to hold it (v2.35),
   both from the Lorenz-curve chapter, which plots a cumulative percent
-  against a cumulative percent and names both axes in full.
+  against a cumulative percent and names both axes in full. A point's label
+  takes `boxed: true` (v2.36): a white box with its own border, so the label
+  can be read over the curves it sits on.
 
 * **PPF works.** The first chapter of Exam 1 material converted to seven widgets
   with no engine gaps hit: frontiers, a combinations table, points on/inside/

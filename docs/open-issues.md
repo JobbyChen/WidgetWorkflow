@@ -26,6 +26,16 @@ Checkboxes. Keep `CLAUDE.md`'s status paragraph in sync with this file.
       Say the word and they can be trimmed; the ones showing their working
       already get the wider 260-character cap, which spares 25 of them.
 
+- [ ] **A payoff matrix is not in the engine's schema**, so ECO2023 chapter 15
+      converted to no widgets at all: all four of its figures are matrices or
+      year-by-year tables and stay images. It would make a good widget — click
+      a cell, light up each firm's best response, and the dominant strategy
+      falls out of the picture, which beats a static table with the reasoning
+      in a bullet list underneath. That is an engine feature request (rule 2),
+      not something to hand-write into a notes file. The two shapes the chapter
+      needs are a 2x2 grid of paired payoffs and a year-by-year play table with
+      arrows between the columns.
+
 ## Found by running the checker on the delivered files
 
 - [x] ~~`ECO2013-263-SupplyAndDemand.html` names the class in its prose.~~ Three

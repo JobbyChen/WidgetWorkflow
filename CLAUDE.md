@@ -264,14 +264,15 @@ economics instead of label placement.
 * **Clip the axis to the region the figure uses.** Drawn out to the full
   intercepts, ticks collide (24 and 30 rendered as "2430") and most of the
   plot is empty.
-* **A curve is drawn only where the source draws it.** Marginal social cost in
-  the externalities figures starts at its crossing with demand and runs up
-  from there, not down to the price axis — which is what leaves the lower left
-  of the panel free for the label naming the gap. Run it full length and it
-  goes straight through that label, and there is then no position on the panel
-  that works. This is the other side of "a curve runs to the edge of the
-  plot": where the source stops one short, the space it leaves is doing a job.
-  (Ian, 2026-09-29.)
+* **A label stays on the thing it names; the curve underneath gives way.**
+  Where a measure is named at the quantity it is measured at and a curve runs
+  through the only place the name fits, fade that curve for those steps
+  (`dimAt`) rather than pushing the label off its own brace — Ian's call,
+  2026-09-29, and he had to give it four times. A label nudged clear of its
+  brace stops reading as that brace's name, and a curve shortened to make room
+  starts from nowhere on the steps before its end is marked. Fade only the
+  curve the label actually crosses: `check_file.py` names it, and fading the
+  others greys out half the figure for no reason.
 * **Place area labels with `scripts/place_labels.py`, never by eye.** It takes
   the clear point nearest the centroid, and falls back to just outside the
   shape for a wedge too small to hold a label — which is what the source does
@@ -414,7 +415,7 @@ not enough to reproduce an implementation.
   `embed_engine.py`'s paths reproduce the delivered file byte-for-byte; all 20
   prototype widgets render with no engine errors; `check_file.py` runs the
   geometric label test over 74 labels in the 263 file with no overlaps.
-* **Engine is v2.30.** Since v2.6: `areas` shade a polygon (v2.11) with
+* **Engine is v2.31.** Since v2.6: `areas` shade a polygon (v2.11) with
   `edge` to outline it (v2.18) and labels centred on their anchor (v2.13);
   `dot:false` drops a marker but keeps the axis label (v2.12); points take
   `guides:"p"`/`"q"` for one leg of the elbow (v2.14); braces take
@@ -437,7 +438,9 @@ not enough to reproduce an implementation.
   is the check that would have caught both. An upright brace's label wraps on
   `\n` and takes `ldx`/`ldy` (v2.29/v2.30), because the externalities
   chapter's three-line `Marginal External Cost` could not be written on one
-  line and could not be centred rigidly on its brace.
+  line and could not be centred rigidly on its brace; it is set at 11px inside
+  the plot; and `dimAt` fades a curve from a step so a label can be read over
+  it (v2.31).
 
 * **PPF works.** The first chapter of Exam 1 material converted to seven widgets
   with no engine gaps hit: frontiers, a combinations table, points on/inside/

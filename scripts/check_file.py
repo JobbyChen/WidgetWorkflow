@@ -1030,7 +1030,7 @@ def check_labels(cfgs, r):
                         vrows = str(b["label"]).split("\n")
                         bx = box(x + d * 20 + b.get("ldx", 0),
                                  m + 4 - (len(vrows) - 1) * 6.5 + b.get("ldy", 0),
-                                 max(vrows, key=label_len), 12,
+                                 max(vrows, key=label_len), 11,
                                  "start" if d > 0 else "end")
                         bx = (bx[0], bx[1], bx[2],
                               bx[3] + (len(vrows) - 1) * 13)
@@ -1093,6 +1093,14 @@ def check_labels(cfgs, r):
                     for c in pn.get("curves") or []:
                         pts = c.get("pts") or []
                         if len(pts) < 2:
+                            continue
+                        # A curve asked to fade from a step (dimAt, engine
+                        # v2.31) is drawn at a quarter opacity precisely so a
+                        # label can be read over it. Declared, not inferred:
+                        # nothing is exempt unless the config says so, and it
+                        # only counts while the label and the fading overlap.
+                        _d = c.get("dimAt")
+                        if _d is not None and win[0] >= _d:
                             continue
                         # Only against a curve that is on screen at the same
                         # time. The guides loop has always checked this; these

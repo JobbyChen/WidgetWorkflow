@@ -1,4 +1,4 @@
-# Engine reference — `engine/sd-graph.js` v2.30
+# Engine reference — `engine/sd-graph.js` v2.31
 
 Written from the engine source. The conversion prompt carries a shorter version
 of this in its own "Engine reference" section; that one is what the model needs
@@ -112,6 +112,13 @@ pixel apart. `scripts/check_file.py` tests for this.
   already show the shift once per schedule row, and a fourth arrow at a price
   that is not in the schedule has no point at either end.
 - `thin` draws the original curve of a shift pair; `dashed` dashes it.
+- `dimAt: 2` fades the curve from step 2 onward (**v2.31**), to a quarter
+  opacity, so a label can be read over it. That is the honest way to name a
+  gap where the curve bounding it runs through the only place the name fits:
+  the alternative is pushing the label off its own brace, where it stops
+  reading as that brace's name. `check_file.py` skips a label against a curve
+  that is fading while the label is on screen — declared, never inferred, and
+  only for the steps the config actually asks for.
 - The label sits at the **last** point, or the first with `lstart:true`, nudged
   by `ldx`/`ldy` (defaults `+6` across, `+2` above an upward curve or `+6` below
   a downward one). **`label: ""` draws no label at all** — a lone frontier needs
@@ -344,8 +351,10 @@ Without `left`, it sits inside the plot at quantity `q`, opening right unless
 `left` unless the gap has to be shown at a particular quantity.
 
 **The label wraps on `\n`** (**v2.30**), the way a horizontal brace (v2.17) and
-a curve label (v2.19) already do, and **takes `ldx`/`ldy`** like every other
-label in the schema. Both exist because of the externalities chapter: its
+a curve label (v2.19) already do, takes `ldx`/`ldy` like every other label in
+the schema, and is set at 11px inside the plot (**v2.31**), where it is usually
+two or three words on as many lines and has to share the space with the curves
+it spans. Both exist because of the externalities chapter: its
 `Marginal External Cost` is three lines in the source for the good reason that
 one line fits nowhere inside a plot, and centring the block rigidly on the
 brace left no clear position at all on a panel where the gap being measured is

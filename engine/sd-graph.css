@@ -81,6 +81,13 @@
 .sdg .hline { stroke-width:3; }
 .sdg .brace { fill:none; stroke-width:1.8; }
 .sdg .curve-g.dim .curve { stroke-width:2; opacity:.8; }
+/* `dimAt` fades a curve from a given step so a label can be read over it.
+   Fainter than `dim`, which only marks a curve a shift has moved on from. */
+.sdg .curve-g.faint .curve { stroke-width:2; opacity:.26; }
+.sdg .curve-g.faint .clbl { opacity:.5; }
+/* A measure named inside the plot is usually two or three words on as
+   many lines, and it has to share the space with the curves it spans. */
+.sdg .tag.vin { font-size:11px; }
 .sdg .fade { transition:opacity .45s ease; }
 .sdg .move { transition:transform .6s ease, opacity .45s ease; }
 .sdg .off { opacity:0; pointer-events:none; }

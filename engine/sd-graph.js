@@ -1,4 +1,4 @@
-/* ===== sd-graph.js v2.30 — data-driven supply & demand widgets =====
+/* ===== sd-graph.js v2.31 — data-driven supply & demand widgets =====
    Markup:  <div class="sdg"><script type="application/json">{ ...config... }<\/script></div>
    Top-level config:
      title, lede, caption         heading / intro / static caption (caption used only when there are no steps)
@@ -141,7 +141,7 @@
     // the x title is anchored to the right edge instead of running off it, and the
     // y title sits in the headroom above the plot instead of inside its top-left
     // corner. Keep axis titles to a word or two: nothing here can wrap them.
-    g.appendChild(el('text', {class: 'axlbl', x: W - 2, y: O.y + 16, 'text-anchor': 'end'}, ax.x || 'Q'));
+    g.appendChild(el('text', {class: 'axlbl', x: O.x + PW + 34, y: O.y + 16, 'text-anchor': 'end'}, ax.x || 'Q'));
     g.appendChild(el('text', {class: 'axlbl', x: O.x - 2, y: 11}, ax.y || 'P'));
 
     // Surplus and deadweight loss ARE areas, and before v2.11 the engine drew
@@ -352,7 +352,7 @@
         // either side of it. The source does not centre these either.
         var vrows = String(b.label).split('\n'),
             vlx = x + dir * (2 * hh + 6) + (b.ldx || 0),
-            vtxt = el('text', {class: 'tag', x: vlx,
+            vtxt = el('text', {class: 'tag vin', x: vlx,
                                y: m + 4 - (vrows.length - 1) * 6.5 + (b.ldy || 0),
                                'text-anchor': dir > 0 ? 'start' : 'end', fill: cc});
         vrows.forEach(function (row, ri) {
@@ -530,6 +530,13 @@
         if (pt.node.dataset.dx != null) pt.node.style.transform = on ? 'translate(0,0)' : 'translate(' + (-pt.node.dataset.dx) + 'px,0)';
       });
       (pn.cfg.curves || []).forEach(function (c) { if (c.from && pn.byId[c.from]) pn.byId[c.from].node.classList.toggle('dim', s >= (c.at || 0)); });
+      // dimAt fades a curve from that step on, so a label can be read over it.
+      // The externalities figures name the gap between two cost curves at the
+      // quantity it is measured at, and the curve above runs right through the
+      // only place that label fits.
+      (pn.cfg.curves || []).forEach(function (c) {
+        if (c.dimAt != null && pn.byId[c.id]) pn.byId[c.id].node.classList.toggle('faint', s >= c.dimAt);
+      });
     });
     (this.calcs || []).forEach(function (c) {
       var at = c.spec.at || 0, until = c.spec.until;

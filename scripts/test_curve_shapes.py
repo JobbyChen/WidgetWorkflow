@@ -127,11 +127,15 @@ _read = [[0, 0], [20, 5], [40, 15], [60, 30], [80, 55], [100, 100]]
 _h = C.hug(_read)
 check("hug keeps every reading it was given",
       all(r in [list(p) for p in _h] for r in _read))
-check("hug adds one sample between each pair", len(_h) == 2 * len(_read) - 1)
-for _i in range(0, len(_h) - 2, 2):
-    (_x0, _y0), (_xm, _ym), (_x1, _y1) = _h[_i], _h[_i + 1], _h[_i + 2]
-    check("hug's sample between %s and %s is below the chord" % (_x0, _x1),
-          _ym < (_y0 + _y1) / 2.0 + 1e-9)
+check("hug adds three samples between each pair",
+      len(_h) == 4 * (len(_read) - 1) + 1, str(len(_h)))
+for _i in range(0, len(_h) - 1, 4):
+    (_x0, _y0), (_x1, _y1) = _h[_i], _h[_i + 4]
+    for _k in range(1, 4):
+        _xm, _ym = _h[_i + _k]
+        _t = (_xm - _x0) / float(_x1 - _x0)
+        check("hug's sample at %s is below the chord" % _xm,
+              _ym < _y0 + (_y1 - _y0) * _t + 1e-9)
 check("hug stays monotone", all(_h[i][1] <= _h[i + 1][1] + 1e-9
                                 for i in range(len(_h) - 1)))
 check("hug stays below the line of equality",

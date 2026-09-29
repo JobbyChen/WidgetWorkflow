@@ -222,21 +222,27 @@ def lorenz(k, top=100.0, n=9):
              round(top * (i / float(n - 1)) ** k, 2)] for i in range(n)]
 
 
-def hug(pts, sag=0.12):
+def hug(pts, sag=0.05, n=3):
     """A convex curve through every point given, hugging below the chords.
 
     A Lorenz curve plotted from a table is a spline through five readings, and
-    a spline bows *above* the chord as often as below it -- which draws a
-    curve that leaves the bottom early and arrives at the top corner gently,
-    where the source does the opposite. A Lorenz curve is convex, so it lies
-    below every chord between two of its own points; this adds the midpoint of
-    each chord, pulled down by `sag` of that chord's rise. The stated readings
-    are untouched, so the curve still passes exactly through all of them."""
+    a spline bows *above* the chord as often as below it -- which leaves the
+    bottom early and arrives at the top corner gently, where the source does
+    the opposite. This adds `n` samples inside each chord, pulled below it by
+    a parabola that is `sag` of the chord's rise at its deepest.
+
+    `sag` is small on purpose. One deep sample per chord bows each segment
+    hard and leaves a kink at every reading, which is worse than the problem:
+    several shallow ones read as one smooth curve. The stated readings are
+    untouched, so the curve still passes exactly through all of them."""
     out = []
     for i in range(len(pts) - 1):
         (x0, y0), (x1, y1) = pts[i], pts[i + 1]
         out.append([x0, y0])
-        out.append([round((x0 + x1) / 2.0, 2),
-                    round((y0 + y1) / 2.0 - sag * (y1 - y0), 2)])
+        for k in range(1, n + 1):
+            t = k / float(n + 1)
+            out.append([round(x0 + (x1 - x0) * t, 2),
+                        round(y0 + (y1 - y0) * t
+                              - sag * (y1 - y0) * 4 * t * (1 - t), 2)])
     out.append(list(pts[-1]))
     return out

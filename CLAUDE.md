@@ -353,11 +353,13 @@ economics instead of label placement.
   along the bottom and vertical at the end; `lorenz` gives `y = x**k`, which
   runs corner to corner and cannot cross the line of equality or another
   Lorenz curve, so an ordering a figure exists to show is a property of the
-  numbers rather than something to check by eye; `hug` adds the midpoint of each chord, pulled below it, so a curve
-  plotted through a table's readings is convex the whole way -- a spline
-  through the readings alone bows above the chord as often as below, which
-  leaves the bottom early and arrives at the top corner gently, the opposite
-  of what a Lorenz curve does; `around` samples either side of a
+  numbers rather than something to check by eye; `hug` bows each chord of a curve plotted through a table's readings
+  below itself, so the whole thing is convex -- a spline through the readings
+  alone bows above the chord as often as below, which leaves the bottom early
+  and arrives at the top corner gently, the opposite of what a Lorenz curve
+  does. Several shallow samples per chord, not one deep one: one deep sample
+  bows each segment hard and leaves a kink at every reading, which is more
+  visible than the problem it fixes; `around` samples either side of a
   basket in proportion to it, sorted, so a low basket cannot double the curve
   back on itself. **`cross` is the important one**: name every crossing and
   build the equilibrium dots from it. Typed as coordinates they are left

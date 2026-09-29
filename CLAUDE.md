@@ -366,6 +366,16 @@ run, not just whether it is correct:
 * **Score against the checker's own geometry, never a copy of it.** That is why
   `place_labels` takes 0.3s where a re-run-the-checks loop took three minutes,
   and why the two can never disagree about the same drawing.
+  **The checker holds a copy of the engine's layout, and it goes stale.**
+  `geom()` reproduces the engine's margins so it can turn data coordinates
+  into pixels, so every margin change in the engine is two edits, not one --
+  v2.27 shipped without the second and measured chapter 14's wide-label panel
+  17px out. Change one, change the other, in the same commit.
+* **Measure the drawing, do not estimate it.** The label box was 0.58em a
+  character for everything, which is right for the 700-weight ticks and 17%
+  narrow for the 800-weight curve labels. A label that overflowed its panel by
+  15px was reported as fitting. Chromium's `getBBox` over a rendered file
+  settles these in a minute; the constants now come from it.
 * **Read the WARNs, not just the FAILs.** A curve label sitting on the Q axis
   was reported for a whole round as a warning while every re-check was
   grepped for `^FAIL`. Rule 5's severity was wrong — that is fixed — but the
@@ -396,7 +406,7 @@ not enough to reproduce an implementation.
   `embed_engine.py`'s paths reproduce the delivered file byte-for-byte; all 20
   prototype widgets render with no engine errors; `check_file.py` runs the
   geometric label test over 74 labels in the 263 file with no overlaps.
-* **Engine is v2.27.** Since v2.6: `areas` shade a polygon (v2.11) with
+* **Engine is v2.28.** Since v2.6: `areas` shade a polygon (v2.11) with
   `edge` to outline it (v2.18) and labels centred on their anchor (v2.13);
   `dot:false` drops a marker but keeps the axis label (v2.12); points take
   `guides:"p"`/`"q"` for one leg of the elbow (v2.14); braces take
@@ -412,9 +422,11 @@ not enough to reproduce an implementation.
   length (v2.26), because a fixed 7×3.6 head made a short movement arrow --
   two firms sliding a few units along one cost curve -- read as a blot rather
   than a direction; and the left margin is sized to the widest price-axis
-  label (v2.27), because a fixed one cut `P* = ATC` down to `= ATC` with
-  nothing reporting it -- the text was placed correctly and the panel simply
-  had no room for it.
+  label (v2.27), and the right margin to the curve labels (v2.28), because
+  fixed margins cut `P* = ATC` down to `= ATC` and `D = MB = MSB` down to
+  `D = M` -- the text was placed correctly and the panel simply had no room
+  for it. `check_file.py` fails a label that runs outside the panel now, which
+  is the check that would have caught both.
 
 * **PPF works.** The first chapter of Exam 1 material converted to seven widgets
   with no engine gaps hit: frontiers, a combinations table, points on/inside/

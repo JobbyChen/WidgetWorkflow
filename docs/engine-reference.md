@@ -1,4 +1,4 @@
-# Engine reference — `engine/sd-graph.js` v2.27
+# Engine reference — `engine/sd-graph.js` v2.28
 
 Written from the engine source. The conversion prompt carries a shorter version
 of this in its own "Engine reference" section; that one is what the model needs
@@ -151,6 +151,15 @@ pixel apart. `scripts/check_file.py` tests for this.
   `"= ATC"`, and no check saw it, because the text itself was placed correctly
   — the panel simply had no room for it. A wider margin takes its width from
   the plot, so a long label costs plot width rather than its own first half.
+
+  **The right margin is sized to the curve labels** the same way (**v2.28**).
+  A curve drawn out to the edge of the plot anchors its name past the edge of
+  the panel, where it is cut off: `D = MB = MSB` rendered as `D = M`. The
+  margin was a fixed 36px, which fits `MC` and nothing longer. Widening it
+  narrows the plot, which pulls the anchors back left, so the engine settles
+  on a width over a few passes rather than solving in one, and never lets the
+  plot fall below 120px. Curve labels are 13px at weight 800, about .70em a
+  character — measured in the browser, not guessed.
 - **A value the point prints for itself is bold; a tick is not.** That makes
   emphasis depend on which ticks you listed, not on what matters: a point at 85
   comes out bold, and the same point comes out plain the moment you add an `85`

@@ -135,7 +135,7 @@ MathJax = {
 .sdg .sdg-cap { margin:10px 0 0; padding:10px 12px; background:#fff; border-left:4px solid var(--red); font-size:.92rem; line-height:1.45; min-height:3.2em; }
 </style>
 <script>
-/* ===== sd-graph.js v2.27 — data-driven supply & demand widgets =====
+/* ===== sd-graph.js v2.28 — data-driven supply & demand widgets =====
    Markup:  <div class="sdg"><script type="application/json">{ ...config... }<\/script></div>
    Top-level config:
      title, lede, caption         heading / intro / static caption (caption used only when there are no steps)
@@ -225,7 +225,41 @@ MathJax = {
     });
     var left = Math.max(ax.cents ? 62 : (ax.yticks && ax.yticks.length ? 54 : 40),
                         Math.ceil(widest) + 12) + (vleft ? 44 : 0);
-    var O = {x: left, y: 205}, PW = W - left - 36, PH = 178;
+    // And the same on the right, for the curve labels. A curve drawn out to
+    // the edge of the plot puts its name past the edge of the panel, where it
+    // is simply cut off: "D = MB = MSB" rendered as "D = M" with every check
+    // passing, because a label's width was measured against the other labels
+    // and never against the panel holding them. The margin was a fixed 36,
+    // which fits "MC" and nothing longer. Curve labels are 13px at weight 800,
+    // which measures about .70em a character.
+    function labelChars(c) {
+      var rows = String(c.label == null ? c.id : c.label).split('\n'), n = 0;
+      rows.forEach(function (rw) {
+        var subs = 0;
+        var plain = rw.replace(/_\{([^}]*)\}/g, function (m, inner) { subs += inner.length; return ''; });
+        n = Math.max(n, plain.length + 0.72 * subs);
+      });
+      return n;
+    }
+    var right = 36;
+    // Widening the margin narrows the plot, which pulls the anchors left
+    // again, so this settles rather than solving in one go.
+    for (var pass = 0; pass < 6; pass++) {
+      var pw = W - left - right, want = 36;
+      (cfg.curves || []).forEach(function (c) {
+        var pts = c.pts || [];
+        if (!pts.length || c.label === '') return;
+        var lp = c.lstart ? pts[0] : pts[pts.length - 1];
+        var endsAt = left + (lp[0] / ax.xmax) * pw + (c.ldx == null ? 6 : c.ldx);
+        var overflow = endsAt + 9.1 * labelChars(c) + 4 - W;
+        if (overflow > 0) want = Math.max(want, right + overflow);
+      });
+      if (want <= right + 0.01) break;
+      right = want;
+    }
+    right = Math.min(right, W - left - 120);   // never starve the plot
+
+    var O = {x: left, y: 205}, PW = W - left - right, PH = 178;
     var X = function (q) { return O.x + (q / ax.xmax) * PW; }, Y = function (p) { return O.y - (p / ax.ymax) * PH; };
     var svg = el('svg', {viewBox: '0 0 ' + W + ' ' + H, role: 'img', 'aria-label': cfg.heading || cfg.title || 'Supply and demand graph'});
     var g = el('g', {}); svg.appendChild(g);

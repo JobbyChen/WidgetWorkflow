@@ -543,16 +543,79 @@ def check_schema(cfgs, r):
 W = 372.0
 
 
+def label_len(text):
+    """A label's width in characters, counting a _{...} subscript at .72.
+
+    Mirrors the engine's own measure, which sets a subscript at .72em.
+    """
+    text = str(text)
+    subs = [0]
+
+    def eat(m):
+        subs[0] += len(m.group(1))
+        return ""
+
+    plain = re.sub(r"_\{([^}]*)\}", eat, text)
+    return len(plain) + 0.72 * subs[0]
+
+
+def panel_h(pn):
+    """The engine's viewBox height: 250, or 268 where a brace sits below."""
+    return 268.0 if any(b.get("below") is True
+                        for b in (pn.get("braces") or [])) else 250.0
+
+
 def geom(pn, ax):
-    left = 62.0 if ax.get("cents") else (54.0 if ax.get("yticks") else 40.0)
+    base = 62.0 if ax.get("cents") else (54.0 if ax.get("yticks") else 40.0)
+    # Engine v2.27 sizes the left margin to the widest label the price axis
+    # carries, so this has to as well -- it is a copy of the engine's layout,
+    # and a copy that falls behind puts every coordinate below in the wrong
+    # place. The panel drawing `P* = ATC` was measured 17px out until this
+    # matched.
+    widest = 0.0
+    for t in (ax.get("yticks") or []):
+        widest = max(widest, 6.1 * label_len(fmt_p(t, ax)))
+    for pt in (pn.get("points") or []):
+        if pt.get("showP") is False:
+            continue
+        lab = pt.get("pl")
+        widest = max(widest, 6.1 * label_len(
+            lab if lab is not None else fmt_p(pt.get("p"), ax)))
+    left = max(base, math.ceil(widest) + 12.0)
     # A vbrace with left:true widens the engine's left margin. Miss this and
     # every coordinate below is off by 44px.
     if any(b.get("left") for b in (pn.get("vbraces") or [])):
         left += 44.0
-    ox, oy = left, 205.0
-    pw, ph = W - left - 36.0, 178.0
     xmax = float(ax.get("xmax") or 1)
     ymax = float(ax.get("ymax") or 1)
+    # Engine v2.28 sizes the right margin to the curve labels, the same way
+    # v2.27 sizes the left to the price labels, and for the same reason: a
+    # label anchored at a curve's end had nowhere to go and was drawn cut off.
+    # This has to follow it, or every x below is wrong on exactly the panels
+    # the engine had to widen.
+    right = 36.0
+    for _pass in range(6):
+        pw_try = W - left - right
+        want = 36.0
+        for c in (pn.get("curves") or []):
+            pts = c.get("pts") or []
+            if not pts or c.get("label") == "":
+                continue
+            lp = pts[0] if c.get("lstart") else pts[-1]
+            text = c.get("label")
+            text = c.get("id") if text is None else text
+            chars = max(label_len(row) for row in str(text).split("\n"))
+            ends = left + (lp[0] / xmax) * pw_try + (6 if c.get("ldx") is None
+                                                     else c.get("ldx"))
+            over = ends + 9.1 * chars + 4 - W
+            if over > 0:
+                want = max(want, right + over)
+        if want <= right + 0.01:
+            break
+        right = want
+    right = min(right, W - left - 120.0)
+    ox, oy = left, 205.0
+    pw, ph = W - left - right, 178.0
     return (lambda q: ox + (q / xmax) * pw,
             lambda p: oy - (p / ymax) * ph, ox, oy)
 
@@ -588,7 +651,7 @@ def brace_y(b, Y, oy):
     return Y(b["p"]) - 8, -1
 
 
-def box(x, y, text, size, anchor="start", vcenter=False):
+def box(x, y, text, size, anchor="start", vcenter=False, weight=700):
     """The rectangle a piece of SVG text occupies.
 
     `y` is the baseline, so the box hangs mostly above it -- except where the
@@ -604,7 +667,13 @@ def box(x, y, text, size, anchor="start", vcenter=False):
     t = str(text)
     plain = re.sub(r"_\{[^}]*\}", "", t)
     subs = "".join(re.findall(r"_\{([^}]*)\}", t))
-    w = 0.58 * size * max(1, len(plain) + 0.72 * len(subs))
+    # Measured in the browser rather than guessed: the 700-weight text (ticks,
+    # tags, brace labels) runs at .583 em a character, and the 800-weight curve
+    # labels and axis titles at .646 to .690. One constant of .58 for both put
+    # "D = MB = MSB" 15px narrower than Chromium draws it, which is exactly the
+    # margin by which it ran off the panel while this reported it as fitting.
+    em = 0.70 if weight >= 800 else 0.58
+    w = em * size * max(1, len(plain) + 0.72 * len(subs))
     if anchor == "middle":
         x -= w / 2
     elif anchor == "end":
@@ -848,9 +917,9 @@ def check_labels(cfgs, r):
                 # category missing from this test, after arrows, ticks and
                 # guides -- a curve label parked in the bottom-right corner
                 # lands on the Q title, which nothing here used to notice.
-                boxes.append((box(W - 2.0, oy + 16, ax.get("x") or "Q", 14, "end"),
+                boxes.append((box(W - 2.0, oy + 16, ax.get("x") or "Q", 14, "end", weight=800),
                               "the %r axis title" % (ax.get("x") or "Q"), (0, None)))
-                boxes.append((box(ox - 2.0, 11.0, ax.get("y") or "P", 14),
+                boxes.append((box(ox - 2.0, 11.0, ax.get("y") or "P", 14, weight=800),
                               "the %r axis title" % (ax.get("y") or "P"), (0, None)))
                 xt = [t for t in (ax.get("xticks") or [])]
                 yt = [t for t in (ax.get("yticks") or [])]
@@ -879,7 +948,7 @@ def check_labels(cfgs, r):
                     crows = str(text).split("\n")
                     bx = box(X(lp[0]) + c.get("ldx", 6),
                              Y(lp[1]) + c.get("ldy", 2 if up else 6),
-                             max(crows, key=len), 13)
+                             max(crows, key=len), 13, weight=800)
                     bx = (bx[0], bx[1], bx[2], bx[3] + (len(crows) - 1) * 14)
                     boxes.append((bx, "curve label %r" % text,
                                   (c.get("at", 0), c.get("until"))))
@@ -983,6 +1052,19 @@ def check_labels(cfgs, r):
                 guides = guide_segments(pn, X, Y, ox, oy)
 
                 for bx, what, win in boxes:
+                    # A label placed correctly in a panel with no room for it
+                    # is drawn cut in half, and nothing else here sees it:
+                    # every other test asks what the label overlaps, and the
+                    # edge of the panel is not a curve. `P* = ATC` rendered as
+                    # `= ATC` and `D = MB = MSB` as `D = M`, both with the file
+                    # reporting PASS. The panel is the engine's viewBox, so
+                    # text in the margins is fine and text past them is not.
+                    x0, y0, x1, y1 = bx
+                    if x0 < -0.5 or x1 > W + 0.5 or \
+                       y0 < -0.5 or y1 > panel_h(pn) + 0.5:
+                        r.fail("labels", "%s: %s runs outside the panel -- "
+                               "shorten it, wrap it on \\n, or move it inboard"
+                               % (where, what))
                     for gpx, gdesc, gwin in guides:
                         if not coexist(win, gwin) or exempt(what, gdesc):
                             continue

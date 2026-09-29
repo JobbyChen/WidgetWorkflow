@@ -60,7 +60,13 @@ def findings_for(widget, mark, scn_label):
 
 # Far enough to clear a neighbouring curve, near enough to still read as this
 # curve's name. The engine's own defaults are +6 across and a few pixels up.
-OFFSETS = [0, 4, -4, 8, -8, 12, -12, 16, -16, 20, -20, 26, -26, 32, -32]
+OFFSETS = [0, 4, -4, 8, -8, 12, -12, 16, -16, 20, -20, 26, -26, 32, -32,
+           40, -40, 48, -48, 56, -56, 64, -64, 72, -72, 80, -80]
+# The grid used to stop at 32px, which is fine for a label nudged off a
+# neighbour but not for one that has to come inboard: a curve running to the
+# right-hand edge of the plot leaves "D = MB = MSB" hanging 50px past the
+# panel, and the only clear spot is well back along the curve. The score still
+# prefers the smallest offset, so a label that fits close by stays close by.
 
 
 def best_offset(widget, key, scn_label, ci, curve):

@@ -250,6 +250,13 @@ economics instead of label placement.
   reading in a panel, not just the ones away from the ceiling. The same
   readings appear in every panel of a market, so a series does not change its
   markings figure to figure.
+* **A shape's corners are marked on the shape's own step.** The engine rings
+  what a step revealed, so the corners of a deadweight-loss wedge that came in
+  earlier sit there unringed while the one that step added is highlighted —
+  which reads as the other two belonging to something else. `hiAt` on each
+  corner re-marks them all on the step that shades it (Ian, 2026-09-29). The
+  same correction also moved the corner that is on no curve the reader has
+  been asked about yet: it is the wedge's, so it appears with the wedge.
 * **A value appears in the step it belongs to.** Ticks live in `axes` and
   cannot step, so a reading that belongs to a later step comes from its
   *point* instead — those take `at`/`until` like anything else. The textbook
@@ -441,7 +448,7 @@ not enough to reproduce an implementation.
   `embed_engine.py`'s paths reproduce the delivered file byte-for-byte; all 20
   prototype widgets render with no engine errors; `check_file.py` runs the
   geometric label test over 74 labels in the 263 file with no overlaps.
-* **Engine is v2.31.** Since v2.6: `areas` shade a polygon (v2.11) with
+* **Engine is v2.32.** Since v2.6: `areas` shade a polygon (v2.11) with
   `edge` to outline it (v2.18) and labels centred on their anchor (v2.13);
   `dot:false` drops a marker but keeps the axis label (v2.12); points take
   `guides:"p"`/`"q"` for one leg of the elbow (v2.14); braces take
@@ -466,7 +473,9 @@ not enough to reproduce an implementation.
   chapter's three-line `Marginal External Cost` could not be written on one
   line and could not be centred rigidly on its brace; it is set at 11px inside
   the plot; and `dimAt` fades a curve from a step so a label can be read over
-  it (v2.31).
+  it (v2.31); and `hiAt` re-marks a point from a step on, whenever it
+  arrived, so a shape a later step draws rings all of its corners rather than
+  the one that step added (v2.32).
 
 * **PPF works.** The first chapter of Exam 1 material converted to seven widgets
   with no engine gaps hit: frontiers, a combinations table, points on/inside/

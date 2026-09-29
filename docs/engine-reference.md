@@ -1,4 +1,4 @@
-# Engine reference — `engine/sd-graph.js` v2.31
+# Engine reference — `engine/sd-graph.js` v2.32
 
 Written from the engine source. The conversion prompt carries a shorter version
 of this in its own "Engine reference" section; that one is what the model needs
@@ -112,6 +112,13 @@ pixel apart. `scripts/check_file.py` tests for this.
   already show the shift once per schedule row, and a fourth arrow at a price
   that is not in the schedule has no point at either end.
 - `thin` draws the original curve of a shift pair; `dashed` dashes it.
+- `hiAt: 2` on a **point** re-marks it from step 2 onward, whenever it arrived
+  (**v2.32**). The engine rings what a step just revealed, which is what tells
+  the reader which dot the caption means — but a shape drawn by a later step
+  owns every corner it is built from, not just the one that step added. A
+  deadweight-loss wedge's three corners come in over two steps, and ringing
+  only the last says the other two belong to something else. Declared per
+  point, so a step that means to emphasise one dot still can.
 - `dimAt: 2` fades the curve from step 2 onward (**v2.31**), to a quarter
   opacity, so a label can be read over it. That is the honest way to name a
   gap where the curve bounding it runs through the only place the name fits:

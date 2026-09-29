@@ -130,7 +130,7 @@
 .sdg .sdg-cap { margin:10px 0 0; padding:10px 12px; background:#fff; border-left:4px solid var(--red); font-size:.92rem; line-height:1.45; min-height:3.2em; }
 </style>
 <script>
-/* ===== sd-graph.js v2.31 — data-driven supply & demand widgets =====
+/* ===== sd-graph.js v2.32 — data-driven supply & demand widgets =====
    Markup:  <div class="sdg"><script type="application/json">{ ...config... }<\/script></div>
    Top-level config:
      title, lede, caption         heading / intro / static caption (caption used only when there are no steps)
@@ -149,7 +149,8 @@
         shiftArrow:false = animate and dim as usual but draw no shift arrow. Use it whenever the
                  widget already shows per-row arrows (table.arrows), which say the same thing once per row.
         curved = smooth through 3+ points (conceptual, non-linear look)
-     points[]: {id, q, p, label, marker, pl, ql, color, at, until, dx, dy, guides:false|'p'|'q', showP:false, showQ:false, dot:false}
+     points[]: {id, q, p, label, marker, pl, ql, color, at, until, hiAt, dx, dy, guides:false|'p'|'q', showP:false, showQ:false, dot:false}
+        hiAt: n   re-marks the point from step n on, whenever it arrived -- for the corners of a shape a later step draws
         marker = "1"/"2" numbered circle;  pl/ql = symbolic axis labels ("P₁","Q₁") instead of numbers
      moves[]:  {from:[q,p], to:[q,p], at, until, color, offset}  arrow between two points, drawn `offset` px beside the curve (default 14; negative = other side)
      calcs[]:  "CS = 1/2 x 80 x ($5 - $3) = $80" | {text, at, until}   the working, under the plot
@@ -657,8 +658,13 @@
         // earlier points on screen gives no clue which one the caption means.
         // What this step brought in is highlighted; what an earlier step
         // brought in stays, but steps back.
-        pt.node.classList.toggle('new', on && s > 0 && at === s);
-        pt.node.classList.toggle('prior', on && at > 0 && at < s);
+        // hiAt re-marks a point from that step on, whenever it arrived. A
+        // deadweight-loss wedge has three corners that come in over two steps,
+        // and on the step that shades it all three are its corners -- ringing
+        // only the last one drawn says the other two belong to something else.
+        var hz = pt.spec.hiAt, held = hz != null && s >= hz;
+        pt.node.classList.toggle('new', on && s > 0 && (at === s || held));
+        pt.node.classList.toggle('prior', on && at > 0 && at < s && !held);
         if (pt.node.dataset.dx != null) pt.node.style.transform = on ? 'translate(0,0)' : 'translate(' + (-pt.node.dataset.dx) + 'px,0)';
       });
       (pn.cfg.curves || []).forEach(function (c) { if (c.from && pn.byId[c.from]) pn.byId[c.from].node.classList.toggle('dim', s >= (c.at || 0)); });

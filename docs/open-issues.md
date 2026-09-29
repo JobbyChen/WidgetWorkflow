@@ -304,6 +304,17 @@ or "unattainable" dot) whose exact coordinates are not the lesson.
 - [ ] `scripts/render_widgets.py` needs `pip install playwright`. It uses the
       Chromium already under `/opt/pw-browsers/` rather than downloading one.
 
+- [ ] **A two-panel widget renders at about half a one-panel widget's scale**,
+      so its smallest text — a subscripted axis tick — is 6.3px on a half-width
+      window where every other figure in the file gives it 11.4px. The layout
+      fix (full column, `--fig` cap per panel, stack below a 970px body) was
+      built as v2.32 and **reverted at Ian's request: stacked, the widget is
+      far too tall.** Do not re-propose stacking. The untried option is the
+      subscript itself — `.72em` at weight 600 under a 700–800 weight parent,
+      so both smaller and thinner than the letter it hangs off; matching the
+      parent's weight costs no space. `docs/decisions-and-history.md`,
+      2026-09-29, has the measurements.
+
 - [ ] **Is document 2 a different course from document 1?** `1 - ECO2013 …` is
       Dr. Knight's; `03-ECO2023-Fall26-Exam1-PPF.docx` is Dr. Rush's, with its
       own chapter numbering and its own examples, and the two overlap heavily on

@@ -340,3 +340,60 @@ including every kind of shift; the probe is throwaway and stayed out of the repo
     it spans 487px of 844. The screenshot is the whole widget at 2x device
     scale, which reads as much taller than it is — the reason to measure rather
     than judge a layout by eye.
+
+## 2026-09-29 — externalities, and a scale problem left alone
+
+Chapters 16 and 17 went to seven widgets over one market drawn five times and
+another drawn twice. Four rounds of review came down to one question, asked
+four different ways: where does the label naming a gap go, when the curve
+bounding that gap runs through the only space it fits? Two answers were tried
+and are wrong. Shortening marginal social cost to the segment the source draws
+freed the space and left the curve starting from nowhere on every step before
+its end is marked. Nudging the label clear of its brace cleared the collision
+and stopped the label reading as that brace's name — Ian sent it back twice.
+The answer is `dimAt` (engine v2.31): the label stays on its brace and the
+curve fades to a quarter opacity for the steps that need the room.
+`check_file.py` skips a label against a curve that is fading while the label
+is on screen, and only for the steps the config declares.
+
+### The two-panel widget renders at half scale, and that is being left alone
+
+Ian's last question on the chapter was why `Q_EQ = Q_EFF` looked blurry at
+100% on a half-width window when it is fine zoomed in. Measured in Chromium,
+the cause is not the font and not the subscript ratio:
+
+| | one-panel figure | the two-panel one |
+| --- | --- | --- |
+| 900px viewport | 1.51× — subscript 11.4px | 0.83× — subscript 6.3px |
+
+Everything inside a plot is SVG in a 372-unit viewBox, so a panel given half
+the width is drawn at half the scale, and the smallest text on it goes first.
+The subscripts are the size they are everywhere else; the panel is at 55% the
+scale of every other figure in the file.
+
+A fix was built and reverted (engine v2.32, commit `feccb5d`, reverted in
+`1d089e3`). It was three layout rules: the widget takes the full column
+instead of the 80% a single figure uses, each panel is capped at `--fig` so a
+wide screen does not draw these graphs larger than the ones around them, and
+below a 970px body the pair stacks. It worked — within 11% of the one-panel
+scale at every width from 320 to 2200px, against 55% — and **Ian rejected it:
+stacked, the widget is far too tall.** Two panels at 562px each plus their
+headings run about 2,000px on a 900px-wide window, and you cannot see the
+comparison the figure exists to make.
+
+So the trade stands as it is: side by side and small beats legible and
+unreadable-as-a-pair. Do not re-propose stacking. If the subscripts come up
+again, the untried option is the cheap one — the subscript is `.72em` at
+weight 600 hanging off a 700–800 weight parent, so it is both smaller *and*
+thinner than the letter it belongs to, and matching the parent's weight costs
+no space at all.
+
+### Also from this chapter
+
+* **The subsidy was shifting supply by the other market's gap.** The builder
+  computed the mismatch and printed it, for three rounds, while the figure
+  shipped with its new equilibrium dot off the subsidised curve. Printed
+  self-checks are assertions now.
+* **A figure that is not becoming a widget stays the image it is** — restated
+  here because the goods-classification table is the second one in two
+  chapters that was rewritten as HTML before being put back.

@@ -222,6 +222,15 @@ economics instead of label placement.
   the line is taken (the tariff figures). Under the Q axis *only* where the
   source puts them there. A long label wraps with `\n` rather than moving the
   brace — that is what the artwork does.
+* **A brace's label sits at the brace's midpoint, beside it.** Not under the
+  brace, not under the line it hangs off — Ian's call, 2026-09-29, and he gave
+  it twice in one round ("the tax or fee should be at the point of the brace",
+  then the same of the external benefit). A label pushed off its own brace
+  stops reading as that brace's name and starts reading as a caption for
+  whatever it has landed next to. Inside the plot it is set at 11px (v2.31)
+  and wraps on `\n`, which is what makes a three-word name fit between two
+  curves; where even that does not fit, the curve gives way — see the label
+  rule below — never the label.
 * **One guide per quantity, and the right leg.** An equilibrium gets the full
   elbow; a quantity read off a control price gets `guides:"q"`; a price whose
   quantity is not the point gets `guides:"p"`. Two points at one quantity draw
@@ -276,7 +285,11 @@ economics instead of label placement.
 * **Place area labels with `scripts/place_labels.py`, never by eye.** It takes
   the clear point nearest the centroid, and falls back to just outside the
   shape for a wedge too small to hold a label — which is what the source does
-  with its own slivers.
+  with its own slivers. **Read which of the two it did.** A deadweight-loss
+  triangle with room to spare had its label parked outside it because the
+  first clear candidate happened to be there, and outside is where a label
+  stops naming its own shape. The fallback is for a sliver; anywhere else,
+  centred is the answer and a label that is not centred is a drawing to fix.
 * **Place curve labels with `scripts/place_curve_labels.py`, never by eye.**
   A curve label sits at its own end, which is where the other curves converge:
   MR ends on the Q axis with MC a few units above it and an equilibrium's guide
@@ -351,7 +364,13 @@ economics instead of label placement.
   same. A figure whose subject is a slope gets its own curve.
 * **Draw what the source draws, and no more.** Extra curves added to
   illustrate a point the artwork makes with one curve are clutter, and they
-  crowd the labels that matter.
+  crowd the labels that matter. **Dots count as drawing.** A shifted curve
+  gets a dot where the source puts one, not one at every crossing a guide
+  happens to make with it: the property-rights figure marks one reading on its
+  new supply curve and the widget marked two, which reads as two answers to a
+  question that has one. The ceiling convention above is the same rule seen
+  from the other side — the artwork marks all of them there, so the widget
+  does too.
 * **Where the source figure and the source prose disagree, the prose wins**
   (rule 3's authority order) — and say so in the changelog. The apartment
   figure prints a demand intercept of 1,200 that contradicts its own
@@ -389,6 +408,13 @@ run, not just whether it is correct:
   was reported for a whole round as a warning while every re-check was
   grepped for `^FAIL`. Rule 5's severity was wrong — that is fixed — but the
   habit was worse than the bug.
+* **A printed self-check is not a check.** The builder for the externalities
+  chapter computed whether the subsidised supply curve met demand at the
+  efficient quantity and printed the mismatch. It printed it for three rounds
+  and the figure shipped with its equilibrium dot off the curve, because
+  nothing in the build stopped and a passing build reads as a passing build.
+  `assert` instead: the same arithmetic, in the same place, that cannot be
+  scrolled past. Every relationship a figure depends on is worth one line.
 * **Prove an edit landed.** Patching a config by string replacement fails
   silently when the text has moved on, and the build still succeeds, so the
   next render looks like the fix simply did not work. Assert the match count,

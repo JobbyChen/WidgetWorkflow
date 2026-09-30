@@ -26,15 +26,17 @@ Checkboxes. Keep `CLAUDE.md`'s status paragraph in sync with this file.
       Say the word and they can be trimmed; the ones showing their working
       already get the wider 260-character cap, which spares 25 of them.
 
-- [ ] **A payoff matrix is not in the engine's schema**, so ECO2023 chapter 15
-      converted to no widgets at all: all four of its figures are matrices or
-      year-by-year tables and stay images. It would make a good widget — click
-      a cell, light up each firm's best response, and the dominant strategy
-      falls out of the picture, which beats a static table with the reasoning
-      in a bullet list underneath. That is an engine feature request (rule 2),
-      not something to hand-write into a notes file. The two shapes the chapter
-      needs are a 2x2 grid of paired payoffs and a year-by-year play table with
-      arrows between the columns.
+- [x] ~~**A payoff matrix is not in the engine's schema**, so ECO2023 chapter
+      15 converted to no widgets at all.~~ It is, since v2.39, with `given`
+      added at v2.40 to fill in the move a comparison holds fixed. Chapter 15
+      was reconverted on 2026-09-30: the matrix is a widget at both the places
+      the chapter prints it — six steps walking the dominant-strategy argument
+      in the chapter's own order, and four playing the same grid year by year.
+- [ ] **A repeated-game years table is still not in the schema.** The other
+      half of that request: three rows, a running total per firm, and an arrow
+      carrying one year's move into the next year's answer, stepped a year at
+      a time. Chapter 15's two of them stay images. Worth building if another
+      chapter needs one; on its own it is one figure printed twice.
 
 ## Found by running the checker on the delivered files
 

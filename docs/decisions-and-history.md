@@ -567,3 +567,29 @@ now; the third, a DWL over a marked point, is unchanged.
 `boxed: true` keeps its job for a label over a *gap* in the drawing — the
 importers' rectangle, a Lorenz year on its own curve — where the box reads as
 deliberate because nothing of the shape runs under it.
+
+## 2026-09-30 — chapter 15 reconverted, now that the matrix exists
+
+The game-theory chapter shipped with no widgets at all, because a payoff
+matrix was not in the schema and hand-writing one into a notes file is what
+rule 2 forbids. The matrix went in at v2.39 and `given` at v2.40; the chapter
+is converted now.
+
+Two widgets, both of them the same grid, because that is what the chapter
+prints. The first walks the dominant-strategy argument in the chapter's own
+order — four comparisons, each one filling in the move being held fixed and
+lighting the two payoffs it is between — and lands on the cell both firms
+choose. The second is the repeated game: 2025 both comply, 2026 Firm A
+undercuts, 2027 Firm B answers, so the reader sees where on the matrix each
+year falls before the years table underneath adds them up.
+
+The years tables stay images. A table of a repeated game is not a matrix, and
+the half of the original feature request that covers it — rows, a running
+total, and an arrow carrying one year's move into the next year's answer — is
+still open. It is one figure printed twice, so it waits for a second chapter
+to need it.
+
+The grid is drawn in the house colours rather than the source's plain black,
+which is a choice to revisit if Ian would rather it matched: the source's
+black has no way to mark a step, and marking the step is the whole reason the
+widget exists.

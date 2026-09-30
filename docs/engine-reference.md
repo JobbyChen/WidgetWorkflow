@@ -1,4 +1,4 @@
-# Engine reference — `engine/sd-graph.js` v2.52
+# Engine reference — `engine/sd-graph.js` v2.53
 
 Written from the engine source. The conversion prompt carries a shorter version
 of this in its own "Engine reference" section; that one is what the model needs
@@ -175,6 +175,12 @@ and a sentence that names the year principal overtakes interest. `compare`
 overlays those rates as dashed curves behind a checkbox; `hideCompare` drops
 it. Interest is orange and principal teal, the two colours this set already
 uses for what the other side gets and what you keep.
+
+A chip travels with the point, naming the year and the interest share, so the
+eye never has to leave the curve to read what it is pointing at (**v2.52**).
+The cursor's dashed line is drawn *under* "Interest" and "Principal" and the
+comparison rates' names, the same order an area's name has taken since v2.46;
+the chip itself is the one thing over everything, because it is the reading.
 
 The figure is scrubbable itself (**v2.52**): drag across it, or focus it and
 walk the loan with the arrow keys — a month a press, a year on PageUp/PageDown,
@@ -599,7 +605,10 @@ get for free by filling a deadweight wedge solid black. Points and braces
 still come last: a marked reading is never covered by a name.
 
 **How wide a label is** comes from a per-character table measured in Chromium
-(**v2.45**), in `scripts/em_widths.py`; the engine carries a generated copy
+(**v2.45**, and measured *again* at **v2.53** — the first one recorded the
+fallback font, because nothing waited for Red Hat Display to load;
+`scripts/measure_em.py` refuses to measure until it has). It lives in
+`scripts/em_widths.py`; the engine carries a generated copy
 and `scripts/test_check_file.py` fails if the two drift. Before v2.45 the
 model was an average per case, which is 20% narrow for a capital-heavy string
 — `S + Quota` rendered as `S + Quo`, with every check passing — and before

@@ -152,6 +152,8 @@
 .sdg .am-t-int { fill:var(--orange); }
 .sdg .am-cline { stroke:var(--navy); stroke-width:1.4; stroke-dasharray:4 3; }
 .sdg .am-cdot { fill:#fff; stroke:var(--navy); stroke-width:2.6; }
+.sdg .am-chip { fill:var(--navy); }
+.sdg .am-chiptxt { font-size:11px; font-weight:700; fill:#fff; }
 .sdg .am-ctl { display:grid; gap:4px 12px; margin:10px 0 12px; }
 .sdg .am-row { display:grid; grid-template-columns:8.5em 1fr 7.5em; align-items:center;
   gap:10px; min-height:44px; }
@@ -304,7 +306,7 @@
 }
 </style>
 <script>
-/* ===== sd-graph.js v2.52 — data-driven supply & demand widgets =====
+/* ===== sd-graph.js v2.53 — data-driven supply & demand widgets =====
    Markup:  <div class="sdg"><script type="application/json">{ ...config... }<\/script></div>
    Top-level config:
      title, lede, caption         heading / intro / static caption (caption used only when there are no steps)
@@ -378,6 +380,39 @@
     return node;
   }
 
+// Measured in Chromium, per character (v2.45): ten copies of each between
+  // two H's, so the side bearings cancel. Weights 700 and 800 at 12, 13 and
+  // 14px agree to 0.0002em, so one table serves every label drawn here.
+  // An average per *case* was the model at v2.44 and it was 20% narrow for
+  // "S + Quota" -- a Q, a W or a + is half again an average capital -- so
+  // the margin sized to that label cut it to "S + Quo". The third wrong
+  // width model in three tries, and the first measured per character.
+  // scripts/em_widths.py holds this table and prints it with --js; it is
+  // pasted here, never retyped, and test_check_file.py fails on a drift.
+  var EMW = {
+      ' ':.201,'!':.241,'"':.436,'#':.738,'$':.601,'%':.792,'&':.683,
+      '\'':.251,'(':.412,')':.412,'*':.475,'+':.6,',':.25,'-':.458,'.':.25,
+      '/':.367,0:.684,1:.349,2:.6,3:.591,4:.673,5:.586,6:.6,7:.61,8:.597,
+      9:.633,':':.25,';':.25,'=':.6,'?':.526,A:.755,B:.69,C:.704,D:.737,
+      E:.644,F:.639,G:.793,H:.738,I:.272,J:.625,K:.672,L:.628,M:.881,N:.748,
+      O:.812,P:.68,Q:.812,R:.678,S:.641,T:.66,U:.724,V:.745,W:.931,X:.711,
+      Y:.719,Z:.625,'[':.394,']':.394,a:.555,b:.632,c:.518,d:.632,e:.589,
+      f:.433,g:.628,h:.594,i:.245,j:.245,k:.568,l:.245,m:.905,n:.594,o:.616,
+      p:.632,q:.632,r:.408,s:.491,t:.434,u:.594,v:.603,w:.78,x:.568,y:.589,
+      z:.506,'²':.307,'³':.329,'¹':.195,'×':.6,'÷':.6,'ˢ':.381,'ᵂ':.694,
+      'ᵈ':.479,'ᶜ':.413,'ᶠ':.377,'₀':.438,'₁':.438,'₂':.438,'₃':.438,
+      '₄':.438,'₅':.438,'ₐ':.457,'→':.837,'−':.6,'≤':.837,'≥':.837};
+  function emw(t) {
+    var w = 0;
+    String(t).split('').forEach(function (c) {
+      // Anything unmeasured takes the widest of its class, so it is
+      // over-counted rather than clipped.
+      w += EMW[c] != null ? EMW[c]
+         : /[A-Z]/.test(c) ? 1.102 : /[a-z]/.test(c) ? 1.041
+         : /[0-9]/.test(c) ? 0.695 : 1.001;
+    });
+    return w;
+  }
   function h(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
   // pct is money's opposite number (v2.35): the income-distribution chapter
   // plots a cumulative percent against a cumulative percent, and every value
@@ -409,40 +444,6 @@
     // "P* = ATC" rendered as "= ATC", with nothing reporting it. It is sized
     // to the widest label the axis actually carries now. Subscripts are set
     // at .72em, so they count for less, the same way check_file measures them.
-    // Measured in Chromium, per character (v2.45): ten copies of each between
-    // two H's, so the side bearings cancel. Weights 700 and 800 at 12, 13 and
-    // 14px agree to 0.0002em, so one table serves every label drawn here.
-    // An average per *case* was the model at v2.44 and it was 20% narrow for
-    // "S + Quota" -- a Q, a W or a + is half again an average capital -- so
-    // the margin sized to that label cut it to "S + Quo". The third wrong
-    // width model in three tries, and the first measured per character.
-    // scripts/em_widths.py holds this table and prints it with --js; it is
-    // pasted here, never retyped, and test_check_file.py fails on a drift.
-    var EMW = {
-      ' ':.348,'!':.456,'"':.52,'#':.837,'$':.695,'%':1.001,'&':.871,
-      '\'':.306,'(':.457,')':.457,'*':.522,'+':.837,',':.38,'-':.415,
-      '.':.38,'/':.365,0:.695,1:.695,2:.695,3:.695,4:.695,5:.695,6:.695,
-      7:.695,8:.695,9:.695,':':.4,';':.4,'=':.837,'?':.58,A:.773,B:.761,
-      C:.733,D:.829,E:.682,F:.682,G:.82,H:.836,I:.372,J:.372,K:.774,L:.637,
-      M:.994,N:.836,O:.849,P:.732,Q:.849,R:.769,S:.679,T:.702,U:.811,V:.773,
-      W:1.102,X:.77,Y:.723,Z:.724,'[':.457,']':.457,a:.674,b:.715,c:.592,
-      d:.715,e:.678,f:.405,g:.715,h:.711,i:.343,j:.343,k:.664,l:.343,
-      m:1.041,n:.711,o:.686,p:.715,q:.715,r:.493,s:.595,t:.478,u:.711,
-      v:.651,w:.923,x:.644,y:.651,z:.582,'²':.438,'³':.438,'¹':.438,
-      '×':.837,'÷':.837,'ˢ':.381,'ᵂ':.694,'ᵈ':.479,'ᶜ':.413,'ᶠ':.377,
-      '₀':.438,'₁':.438,'₂':.438,'₃':.438,'₄':.438,'₅':.438,'ₐ':.457,
-      '→':.837,'−':.837,'≤':.837,'≥':.837};
-    function emw(t) {
-      var w = 0;
-      String(t).split('').forEach(function (c) {
-        // Anything unmeasured takes the widest of its class, so it is
-        // over-counted rather than clipped.
-        w += EMW[c] != null ? EMW[c]
-           : /[A-Z]/.test(c) ? 1.102 : /[a-z]/.test(c) ? 1.041
-           : /[0-9]/.test(c) ? 0.695 : 1.001;
-      });
-      return w;
-    }
     function axw(t) {
       t = String(t); var subs = 0;
       var plain = t.replace(/_\{([^}]*)\}/g, function (m, inner) { subs += emw(inner); return ''; });
@@ -1334,17 +1335,29 @@
         svg.appendChild(el('text', {class: 'tk', x: xOf(y * 12, sch.n), y: AH - AM.b + 14, 'text-anchor': 'middle'}, String(y)));
       }
       svg.appendChild(el('text', {class: 'axlbl', x: AW - AM.r, y: AH - 4, 'text-anchor': 'end'}, 'Year'));
+      // The cursor's line goes on before the names, and its dot and chip
+      // after them: a dashed line is part of the drawing and a name is what
+      // the drawing is called, so the line passes behind "Interest" the same
+      // way the curves do. (Ian, 2026-09-30.) The chip is the exception --
+      // it is the reading, and it has to be on top of everything.
+      cLine = el('line', {class: 'am-cline'});
+      svg.appendChild(cLine);
       svg.appendChild(el('text', {class: 'am-areatext am-t-prin', x: AM.l + CWp * 0.74, y: AM.t + 22, 'text-anchor': 'middle'}, 'Principal'));
       svg.appendChild(el('text', {class: 'am-areatext am-t-int', x: AM.l + CWp * 0.26, y: AH - AM.b - 18, 'text-anchor': 'middle'}, 'Interest'));
       cmpLabels.forEach(function (n) { svg.appendChild(n); });
       cursor = el('g', {class: 'am-cursor'});
-      cLine = el('line', {class: 'am-cline'});
       cDot = el('circle', {class: 'am-cdot', r: 4.6});
-      cursor.appendChild(cLine); cursor.appendChild(cDot);
+      // The reading travels with the point (v2.52). Otherwise the year and
+      // the share are down in the cards and the eye has to leave the curve
+      // to read what it is pointing at.
+      cChip = el('rect', {class: 'am-chip', rx: 4, ry: 4, height: 18});
+      cChipT = el('text', {class: 'am-chiptxt', 'text-anchor': 'middle'});
+      cursor.appendChild(cDot);
+      cursor.appendChild(cChip); cursor.appendChild(cChipT);
       svg.appendChild(cursor);
     }
 
-    var cursor, cLine, cDot;
+    var cursor, cLine, cDot, cChip, cChipT;
 
     function update() {
       var m = Math.min(sch.n, Math.max(0, state.month)),
@@ -1353,6 +1366,19 @@
       cLine.setAttribute('x1', x); cLine.setAttribute('x2', x);
       cLine.setAttribute('y1', AM.t); cLine.setAttribute('y2', AH - AM.b);
       cDot.setAttribute('cx', x); cDot.setAttribute('cy', y);
+      // Measured off the character table rather than counted (v2.45), so the
+      // chip fits the words rather than roughly fitting them, and clamped to
+      // the plot at both ends -- it flips below the point near the top.
+      var tag = 'Yr ' + (m % 12 ? (m / 12).toFixed(1) : String(m / 12)) +
+                ': ' + pctTxt(share) + ' interest',
+          tw = 11 * emw(tag) + 14,
+          cx = Math.min(AW - AM.r - tw / 2, Math.max(AM.l + tw / 2, x)),
+          cy = y - 28;
+      if (cy < AM.t + 2) cy = y + 12;
+      cChip.setAttribute('x', cx - tw / 2); cChip.setAttribute('y', cy);
+      cChip.setAttribute('width', tw);
+      cChipT.setAttribute('x', cx); cChipT.setAttribute('y', cy + 12.5);
+      cChipT.textContent = tag;
       cInt.val.textContent = pctTxt(share, 1);
       cPrin.val.textContent = pctTxt(1 - share, 1);
       cPmt.val.textContent = money(sch.pmt);

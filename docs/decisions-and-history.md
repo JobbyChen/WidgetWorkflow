@@ -718,3 +718,43 @@ the drawing before anything was built.
 The chapter's other two figures, the positive and negative equity diagrams,
 converted with no new engine work: two lines and two upright braces each,
 symbolic because the chapter states no dollar figure for either.
+
+## 2026-09-30 — the width table was the fallback font all along
+
+The amortization chip is sized from the character table, and it came out a
+third too wide. Measured against the browser: the table said `1` was 0.695 em
+and Chromium drew it at 0.349; `W` 1.102 against 0.932; `%` 1.001 against
+0.793. Every character was wide, by 6% to 100%.
+
+The table was recorded at v2.45 by loading a chapter and measuring after
+700ms. The font comes from Google Fonts, in this container through the agent
+proxy — which the browser scripts did not pass to Chromium until v2.47. So the
+font could not arrive, and what was measured was the fallback: DejaVu-ish,
+wider throughout, and with tabular digits, which is why `1` was recorded at
+the width of a `0`.
+
+Eight versions of margins and overlap tests were sized from it. Nothing looked
+wrong because every error was in the safe direction: margins too generous,
+overlaps reported that were not there. Re-measuring with the font actually
+loaded dropped four warnings from the government-intervention file, three from
+ECO2013 supply-and-demand, one from international trade and one failure from
+the 9/11 prototype — and added nothing anywhere.
+
+`scripts/measure_em.py` does the measuring now, and **refuses to record
+anything until `document.fonts.check('700 13px "Red Hat Display"')` is true.**
+That is the whole lesson: a measurement of the wrong thing is worse than an
+estimate, because it carries the authority of having been measured. The
+earlier note in this file — *measure the drawing, do not estimate it* — was
+right and still let this through, because it never said to check that the
+drawing was the one the reader gets.
+
+### Also this round
+
+* **A chip travels with the cursor** on the amortization figure, naming the
+  year and the interest share, so the eye does not have to leave the curve to
+  read what it is pointing at.
+* **The cursor's dashed line is drawn under the area names** and under the
+  comparison rates' labels — a dashed line is part of the drawing and a name
+  is what the drawing is called. The chip is the one thing over everything,
+  because it is the reading. (Ian, 2026-09-30, twice: first for the 4% and
+  10% labels, then for Interest and Principal.)

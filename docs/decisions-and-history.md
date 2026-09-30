@@ -452,3 +452,47 @@ reproducible — and the capture then overwrote a placement that had been
 pinned by hand, putting widget 6's consumer-surplus label back on the supply
 curve. Pins are applied after the captured placements now and live in the
 builder, where the placer cannot reach them.
+
+## 2026-09-30 — the width model, measured per character at last
+
+Chapter 7's `S + Quota` rendered as `S + Quo`, with `check_file` reporting the
+label as inside the panel. The engine's right margin and the checker's overlap
+test share one measure of how wide a string is, and that measure had now been
+wrong three times:
+
+* a flat .58 em a character (fixed at v2.27/v2.28),
+* .58 for weight 700 and .70 for weight 800, right about curve labels only
+  because they happen to be uppercase (fixed at v2.44),
+* an average per *case* — upper .690, lower .539, digits .558 — which fixed
+  `P_{WORLD}` and was 20% narrow for `S + Quota`.
+
+The third failed for the reason the first two did: an average over a class
+under-states the members of it that are wide. A capital runs from .372 (`I`)
+to 1.102 (`W`); `+` is .837 and a space .348, against the .25 the model
+allowed. So the margin computed 58.9px for a label that draws at 73.5px and
+concluded it had 1.8px to spare.
+
+**A class average is not a measurement.** `scripts/em_widths.py` holds a
+table measured per character in Chromium — ten copies of each between two H's
+so the side bearings cancel — and prints the engine's copy with `--js`;
+`test_check_file.py` fails if the two ever differ. Weights 700 and 800 at 12,
+13 and 14px agree to 0.0002 em, so one table covers every label the engine
+draws, and a plain 10.5px tick is about 11% narrower than the table says,
+which over-states rather than clips.
+
+Re-measuring every shipped file with it turned up no new overlaps: the three
+in the government-intervention file that v2.44 exposed are still the three.
+
+### And a widget that had never worked
+
+`mobile_check` on that same file reported `main is not defined`. `finish()`
+appends the `calcs` block to a `main` that is a local of `build()`, so every
+widget carrying `calcs` threw on load — and the throw took the step controls
+built after it down as well. One widget in shipped work, dead since the
+`calcs` layout went in, while `check_file` and `render_widgets` both passed
+it: neither of them presses a button. It holds its row on the widget now
+(v2.45).
+
+That is the lesson worth keeping. A static check reads the file and a
+screenshot catches what draws; only `mobile_check` drives the controls, so it
+is the only one that can find a widget that renders and does not work.

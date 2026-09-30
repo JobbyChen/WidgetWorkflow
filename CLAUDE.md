@@ -258,6 +258,10 @@ economics instead of label placement.
   vertical still marking a quantity that panel refers to stays.
 * **One superscript letter after P, never four.** `Pᶜ`, `Pᶠ`, `Pᵂ` read at
   10.5px; `Pᶜᵉⁱˡ` is noise. The line says what it is in full through its `tag`.
+  A `_{...}` subscript is the same rule: `P_{W}`, not `P_{WORLD}` — a word set
+  in capitals on a price axis is the widest thing in the panel and reads as
+  shouting. Ian, again, 2026-09-30. Where dropping to a letter leaves the line
+  unexplained, give the line a `tag`, which is where its name belongs.
 * **A dot wherever a price meets a curve, the control price included.** The
   artwork marks all of them, and Ian's call (2026-09-23) is to match it: every
   reading in a panel, not just the ones away from the ceiling. The same
@@ -468,11 +472,14 @@ run, not just whether it is correct:
   15px was reported as fitting. Chromium's `getBBox` over a rendered file
   settles these in a minute; the constants now come from it. **And measure
   the right thing:** the second version split on weight, .58 against .70, and
-  was right about the curve labels only by luck -- they are uppercase. Width
-  goes with *case* and barely with size or weight at all (upper .690, lower
-  .539, digits .558), which the weight model had 40% narrow for `P_{WORLD}`
-  (v2.44). Sharpening it turned up three overlaps in shipped files that had
-  always been there and had always measured as clear.
+  was right about the curve labels only by luck -- they are uppercase; the
+  third went by *case* (upper .690, lower .539, digits .558), which fixed
+  `P_{WORLD}` and was still 20% narrow for `S + Quota`, because a Q, a W or a
+  + is half again an average capital. **A class average is not a
+  measurement.** The table is per character now (`scripts/em_widths.py`,
+  v2.45), the engine's copy is generated from it, and `test_check_file.py`
+  fails on a drift. Sharpening it twice turned up three overlaps in shipped
+  files that had always been there and had always measured as clear.
 * **Every place a panel writes on an axis has to be counted in its margin.**
   v2.27 sized the left margin to the ticks and the points; a price line writes
   there too, and `P_{WORLD}` came out as `WORLD` (v2.43). When a margin is
@@ -495,6 +502,12 @@ run, not just whether it is correct:
   and check the property afterwards: chapter 12 shipped equilibrium dots
   beside their crossings for three rounds because three patches in a row
   quietly matched nothing.
+* **A check that never drives the thing is not checking it.**
+  `check_file` and `render_widgets` both passed a file whose every `calcs`
+  widget threw on load and lost its step buttons with it, because neither
+  presses a button; `mobile_check` found it a chapter later, since driving
+  every control is what it does. Run it on anything interactive, not only on
+  the question of whether a phone fits.
 * **Know what each step costs.** The whole static toolchain is under a second:
   `check_file` 0.2s, the test suite 0.8s, `place_labels` 0.3s, `embed_engine`
   0.05s — run those freely, and after every change. The browser steps are the
@@ -515,7 +528,7 @@ not enough to reproduce an implementation.
   `embed_engine.py`'s paths reproduce the delivered file byte-for-byte; all 20
   prototype widgets render with no engine errors; `check_file.py` runs the
   geometric label test over 74 labels in the 263 file with no overlaps.
-* **Engine is v2.44.** Since v2.6: `areas` shade a polygon (v2.11) with
+* **Engine is v2.45.** Since v2.6: `areas` shade a polygon (v2.11) with
   `edge` to outline it (v2.18) and labels centred on their anchor (v2.13);
   `dot:false` drops a marker but keeps the axis label (v2.12); points take
   `guides:"p"`/`"q"` for one leg of the elbow (v2.14); braces take
@@ -570,7 +583,14 @@ not enough to reproduce an implementation.
   label wraps on `\n` and takes `boxed` (v2.41); a price line can drop its
   axis price with `showP: false` (v2.42); and the left margin counts those
   price-line labels, which it never did -- `P_{WORLD}` rendered as `WORLD`
-  (v2.43).
+  (v2.43). A character's width comes from a per-character table measured in
+  Chromium (v2.45), which `scripts/em_widths.py` holds and generates the
+  engine's copy of: an average per *case* is 20% narrow for a capital-heavy
+  label, so the margin sized for `S + Quota` cut it to `S + Quo`. And a
+  widget's `calcs` block reaches the row it belongs in through the widget
+  rather than a local of another function (v2.45) -- it threw `main is not
+  defined` and took the step controls down with it, so every `calcs` widget
+  was dead while `check_file` and `render_widgets` both passed.
 
 * **PPF works.** The first chapter of Exam 1 material converted to seven widgets
   with no engine gaps hit: frontiers, a combinations table, points on/inside/

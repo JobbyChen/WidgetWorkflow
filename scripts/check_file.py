@@ -564,24 +564,11 @@ W = 372.0
 # labels only because they happen to be uppercase, and wrong for `P_{WORLD}`,
 # an all-caps subscript on a 700-weight axis label that it measured 40% narrow
 # and let run off the panel.
-EM_UPPER, EM_LOWER, EM_DIGIT, EM_SPACE, EM_OTHER = 0.690, 0.539, 0.558, 0.25, 0.56
-
-
-def em_width(text):
-    """A string's width in em, by the case of its characters."""
-    w = 0.0
-    for ch in str(text):
-        if ch.isupper():
-            w += EM_UPPER
-        elif ch.islower():
-            w += EM_LOWER
-        elif ch.isdigit():
-            w += EM_DIGIT
-        elif ch == " ":
-            w += EM_SPACE
-        else:
-            w += EM_OTHER
-    return w
+# Measured per character, in `scripts/em_widths.py`, which the engine's own
+# copy of the table is generated from. A per-case average lived here through
+# v2.44 and was 20% narrow for a capital-heavy label.
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+from em_widths import em_width  # noqa: E402
 
 
 def label_len(text):

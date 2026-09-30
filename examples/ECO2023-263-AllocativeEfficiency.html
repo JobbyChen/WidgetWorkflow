@@ -186,7 +186,7 @@
 }
 </style>
 <script>
-/* ===== sd-graph.js v2.44 — data-driven supply & demand widgets =====
+/* ===== sd-graph.js v2.45 — data-driven supply & demand widgets =====
    Markup:  <div class="sdg"><script type="application/json">{ ...config... }<\/script></div>
    Top-level config:
      title, lede, caption         heading / intro / static caption (caption used only when there are no steps)
@@ -281,16 +281,37 @@
     // "P* = ATC" rendered as "= ATC", with nothing reporting it. It is sized
     // to the widest label the axis actually carries now. Subscripts are set
     // at .72em, so they count for less, the same way check_file measures them.
-    // Measured in Chromium: a character's width depends on its case and
-    // almost not at all on size or weight (v2.44). A fixed average per
-    // character measured `P_{WORLD}` 40% narrow, so the margin sized to it
-    // cut the P off -- the same defect as v2.27 and v2.28, from the same
-    // cause. check_file.py carries the same constants.
+    // Measured in Chromium, per character (v2.45): ten copies of each between
+    // two H's, so the side bearings cancel. Weights 700 and 800 at 12, 13 and
+    // 14px agree to 0.0002em, so one table serves every label drawn here.
+    // An average per *case* was the model at v2.44 and it was 20% narrow for
+    // "S + Quota" -- a Q, a W or a + is half again an average capital -- so
+    // the margin sized to that label cut it to "S + Quo". The third wrong
+    // width model in three tries, and the first measured per character.
+    // scripts/em_widths.py holds this table and prints it with --js; it is
+    // pasted here, never retyped, and test_check_file.py fails on a drift.
+    var EMW = {
+      ' ':.348,'!':.456,'"':.52,'#':.837,'$':.695,'%':1.001,'&':.871,
+      '\'':.306,'(':.457,')':.457,'*':.522,'+':.837,',':.38,'-':.415,
+      '.':.38,'/':.365,0:.695,1:.695,2:.695,3:.695,4:.695,5:.695,6:.695,
+      7:.695,8:.695,9:.695,':':.4,';':.4,'=':.837,'?':.58,A:.773,B:.761,
+      C:.733,D:.829,E:.682,F:.682,G:.82,H:.836,I:.372,J:.372,K:.774,L:.637,
+      M:.994,N:.836,O:.849,P:.732,Q:.849,R:.769,S:.679,T:.702,U:.811,V:.773,
+      W:1.102,X:.77,Y:.723,Z:.724,'[':.457,']':.457,a:.674,b:.715,c:.592,
+      d:.715,e:.678,f:.405,g:.715,h:.711,i:.343,j:.343,k:.664,l:.343,
+      m:1.041,n:.711,o:.686,p:.715,q:.715,r:.493,s:.595,t:.478,u:.711,
+      v:.651,w:.923,x:.644,y:.651,z:.582,'²':.438,'³':.438,'¹':.438,
+      '×':.837,'÷':.837,'ˢ':.381,'ᵂ':.694,'ᵈ':.479,'ᶜ':.413,'ᶠ':.377,
+      '₀':.438,'₁':.438,'₂':.438,'₃':.438,'₄':.438,'₅':.438,'ₐ':.457,
+      '→':.837,'−':.837,'≤':.837,'≥':.837};
     function emw(t) {
       var w = 0;
       String(t).split('').forEach(function (c) {
-        w += /[A-Z]/.test(c) ? 0.690 : /[a-z]/.test(c) ? 0.539
-           : /[0-9]/.test(c) ? 0.558 : c === ' ' ? 0.25 : 0.56;
+        // Anything unmeasured takes the widest of its class, so it is
+        // over-counted rather than clipped.
+        w += EMW[c] != null ? EMW[c]
+           : /[A-Z]/.test(c) ? 1.102 : /[a-z]/.test(c) ? 1.041
+           : /[0-9]/.test(c) ? 0.695 : 1.001;
       });
       return w;
     }
@@ -351,7 +372,7 @@
         var pts = c.pts || [];
         if (!pts.length || c.label === '') return;
         var lp = c.lstart ? pts[0] : pts[pts.length - 1];
-        var endsAt = left + (lp[0] / ax.xmax) * pw + (c.ldx == null ? 6 : c.ldx);
+        var endsAt = left + (lp[0] / ax.xmax) * pw + (c.ldx || 6);
         var overflow = endsAt + 13 * labelChars(c) + 4 - W;
         if (overflow > 0) want = Math.max(want, right + overflow);
       });
@@ -813,6 +834,13 @@
     var main = h('div', 'sdg-main' + (cfg.calcs && cfg.calcs.length ? ' has-calc' : ''));
     main.appendChild(body);
     host.appendChild(main);
+    // finish() puts the working inside this row, and it is a different
+    // function: reached through the local, it threw "main is not defined" and
+    // took the step controls down with it, so every calcs widget in the
+    // government-intervention file was dead on arrival with check_file and
+    // render_widgets both passing. mobile_check is what saw it, because it is
+    // the one that drives the buttons. (v2.45)
+    this.main = main;
     return this.finish();
   };
 
@@ -904,7 +932,7 @@
         cbox.appendChild(line);
         self.calcs.push({node: line, spec: spec});
       });
-      main.appendChild(cbox);
+      (this.main || host).appendChild(cbox);
     }
 
     if (cfg.steps && cfg.steps.length > 1) {

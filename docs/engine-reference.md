@@ -1,4 +1,4 @@
-# Engine reference — `engine/sd-graph.js` v2.44
+# Engine reference — `engine/sd-graph.js` v2.45
 
 Written from the engine source. The conversion prompt carries a shorter version
 of this in its own "Engine reference" section; that one is what the model needs
@@ -513,6 +513,19 @@ scenarios, each scenario supplying its own `shift`/`dir`.
 | plot height | `178` |
 | `X(q)` | `left + (q / xmax) × PW` |
 | `Y(p)` | `205 − (p / ymax) × PH` |
+
+The left margin grows past those numbers to hold the widest thing written on
+the price axis — a tick, a point's price, or an `hlines` label — and the right
+margin grows to hold the curve labels, so a panel with `P_{WORLD}` on the
+left and `S + Quota` on the right has a narrower plot than the table implies.
+
+**How wide a label is** comes from a per-character table measured in Chromium
+(**v2.45**), in `scripts/em_widths.py`; the engine carries a generated copy
+and `scripts/test_check_file.py` fails if the two drift. Before v2.45 the
+model was an average per case, which is 20% narrow for a capital-heavy string
+— `S + Quota` rendered as `S + Quo`, with every check passing — and before
+v2.44 an average per weight. Measure a new label with
+`python scripts/em_widths.py "<the label>"` rather than counting characters.
 
 `ldx`/`ldy`/`dx`/`dy`/`offset` are all in these SVG units, and `dy` is positive
 downward. `scripts/check_file.py` replicates this geometry to test every label

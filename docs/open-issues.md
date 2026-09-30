@@ -327,7 +327,7 @@ or "unattainable" dot) whose exact coordinates are not the lesson.
       drawing. Recorded in `docs/changelogs/the-ppf-changelog.md`. One for Ian.
 
 - [ ] **Three label overlaps in shipped files became measurable at engine
-      v2.44** and are reported rather than rewritten, per the standing rule:
+      v2.44** (and still the same three at v2.45) and are reported rather than rewritten, per the standing rule:
       a `PS` on a supply curve and two `DWL` labels, all in
       `examples/ECO2013-263-GovernmentIntervention.html`. They were always
       there; the old width model, which split on weight rather than case,

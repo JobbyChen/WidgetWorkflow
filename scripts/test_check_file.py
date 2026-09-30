@@ -538,6 +538,23 @@ case("the current house head order", lambda r: C.check_head(HEAD_OK, r)
      or not r.has("WARN", "head", "stylesheet first"))
 
 
+def engine_carries_the_measured_table(r):
+    """The engine's copy of the character-width table is the generated one.
+
+    It has to carry its own, because it sizes its margins in the browser, and
+    a table typed twice is a table that drifts. `em_widths.py --js` prints the
+    literal; this fails if what is in the engine is not what it prints.
+    """
+    import em_widths
+    js = em_widths.js_literal()
+    src = (ROOT / "engine" / "sd-graph.js").read_text(encoding="utf-8")
+    return ("var EMW = " + js + ";") in src
+
+
+case("the engine's width table is the one em_widths.py generates",
+     engine_carries_the_measured_table)
+
+
 def main():
     bad = 0
     for name, fn in CASES:

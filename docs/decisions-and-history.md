@@ -541,3 +541,29 @@ And the box itself was measured at 5.3px a character, an average from before
 the per-character table: "Importers" hung out of both sides of its own box,
 and the box was a line short of its descenders. Same table as everything
 else now.
+
+### The box came off (same day)
+
+Boxing the name was the wrong half of v2.46. Painting it last is what stops a
+curve striking through it; the white rectangle was a second shape, and in a
+deadweight wedge only a little wider than the word it names, the rectangle's
+edges lie across the wedge's own. Shrinking it does not help — measured at
+10, 9, 8 and 7px against the wedges in both trade figures, the clearance
+never reaches 3px, and 7px is not a size to read a label at.
+
+A halo round the letters was tried and dropped: Ian wanted it like the
+source, and the source has neither. It fills each wedge solid and sets DWL
+straight on it, where the edges vanish under the word simply because the word
+is painted last. Plain text does exactly that here.
+
+So `check_file.py` reports an area label over a curve as a WARN now, not a
+FAIL. Since v2.46 a line cannot be drawn *through* one — it passes behind the
+letters — and whether it still reads is a judgement rather than a
+measurement. It stays a FAIL against a point, a brace and every other label,
+which are painted after it. Two of the three overlaps reported in the
+government-intervention file were area labels over curves and are warnings
+now; the third, a DWL over a marked point, is unchanged.
+
+`boxed: true` keeps its job for a label over a *gap* in the drawing — the
+importers' rectangle, a Lorenz year on its own curve — where the box reads as
+deliberate because nothing of the shape runs under it.

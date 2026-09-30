@@ -320,15 +320,22 @@ economics instead of label placement.
   first clear candidate happened to be there, and outside is where a label
   stops naming its own shape. The fallback is for a sliver; anywhere else,
   centred is the answer and a label that is not centred is a drawing to fix.
-* **A boxed label is drawn over the curves, so let it be.** From v2.46 an
-  area's name goes on top of the lines and masks them, which is how the
-  printed figures name a deadweight wedge: solid black fill, white text, the
-  edges invisible under it. So a wedge narrower than the word it is called
-  keeps its name at its own centre, boxed, rather than being pushed outside
-  on a leader -- Ian's call, 2026-09-30, after four rounds of the name being
-  moved somewhere it fitted. Outside on a hairline is still right where the
-  source itself names a shape from outside (a legend swatch, a tariff's
-  revenue band).
+* **An area's name is drawn over the curves, so let it be -- and leave the
+  box off.** From v2.46 the name goes on top of the lines, which is how the
+  printed figures name a deadweight wedge: solid fill, the word straight on
+  it, the wedge's own edges running under the letters. So a wedge narrower
+  than the word it is called keeps its name at its own centre, in plain text,
+  rather than being pushed outside on a leader or shrunk to fit a box --
+  Ian's call, 2026-09-30, after five rounds of the name being moved or
+  resized. A box round it is a second shape whose edges lie across the
+  wedge's own, and no size small enough to fit one in is big enough to read:
+  measured at every size from 10px down to 7. `boxed: true` is for a label
+  over a *gap* in the drawing -- the importers' rectangle, a Lorenz year --
+  not over a wedge. `check_file.py` reports an area label over a curve as a
+  WARN rather than a FAIL for the same reason: the line passes behind the
+  letters, and whether it reads is a look, not a measurement. Outside on a
+  hairline is still right where the source itself names a shape from outside
+  (a legend swatch, a tariff's revenue band).
 * **Where no gap is wide enough, box the label.** Three Lorenz curves converge
   on one corner, and at its widest the gap between two of them is about 27px
   against a 28px year — so there is nowhere between them a horizontal label

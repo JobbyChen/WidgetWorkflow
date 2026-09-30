@@ -1,4 +1,4 @@
-# Engine reference — `engine/sd-graph.js` v2.53
+# Engine reference — `engine/sd-graph.js` v2.54
 
 Written from the engine source. The conversion prompt carries a shorter version
 of this in its own "Engine reference" section; that one is what the model needs
@@ -182,8 +182,10 @@ The cursor's dashed line is drawn *under* "Interest" and "Principal" and the
 comparison rates' names, the same order an area's name has taken since v2.46;
 the chip itself is the one thing over everything, because it is the reading.
 
-The figure is scrubbable itself (**v2.52**): drag across it, or focus it and
-walk the loan with the arrow keys — a month a press, a year on PageUp/PageDown,
+The figure is the control (**v2.52**): a mouse reads it by moving over it with
+nothing held down (**v2.54**), a finger by dragging — there is no hover to
+track on a touch screen — and the keyboard by focusing it and walking the loan
+with the arrow keys — a month a press, a year on PageUp/PageDown,
 either end on Home/End. `touch-action: pan-y`, so a finger that lands on the
 chart can still scroll the page. The year control is in **months**, which is
 what the schedule is indexed by.

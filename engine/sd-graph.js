@@ -1,4 +1,4 @@
-/* ===== sd-graph.js v2.53 — data-driven supply & demand widgets =====
+/* ===== sd-graph.js v2.54 — data-driven supply & demand widgets =====
    Markup:  <div class="sdg"><script type="application/json">{ ...config... }<\/script></div>
    Top-level config:
      title, lede, caption         heading / intro / static caption (caption used only when there are no steps)
@@ -1122,14 +1122,24 @@
       state.month = Math.round(Math.min(1, Math.max(0, frac)) * sch.n);
       update();
     }
+    // A mouse reads the figure by moving over it, with nothing held down --
+    // there is no reason to make someone click to ask what year 12 looks
+    // like. A finger has no hover, so touch still needs the drag. (Ian,
+    // 2026-09-30; the example does the same.)
+    var dragging = false;
     svg.setAttribute('tabindex', '0');
     svg.addEventListener('pointerdown', function (e) {
-      svg.setPointerCapture(e.pointerId); fromX(e.clientX); e.preventDefault();
+      dragging = true; svg.setPointerCapture(e.pointerId); fromX(e.clientX);
+      e.preventDefault();
     });
     svg.addEventListener('pointermove', function (e) {
-      if (svg.hasPointerCapture(e.pointerId)) fromX(e.clientX);
+      if (dragging || e.pointerType === 'mouse') fromX(e.clientX);
     });
-    svg.addEventListener('pointerup', function (e) { svg.releasePointerCapture(e.pointerId); });
+    svg.addEventListener('pointerup', function (e) {
+      dragging = false;
+      if (svg.hasPointerCapture(e.pointerId)) svg.releasePointerCapture(e.pointerId);
+    });
+    svg.addEventListener('pointercancel', function () { dragging = false; });
     svg.addEventListener('keydown', function (e) {
       var d = e.key === 'ArrowRight' || e.key === 'ArrowUp' ? 1
             : e.key === 'ArrowLeft' || e.key === 'ArrowDown' ? -1

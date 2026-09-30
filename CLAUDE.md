@@ -320,6 +320,15 @@ economics instead of label placement.
   first clear candidate happened to be there, and outside is where a label
   stops naming its own shape. The fallback is for a sliver; anywhere else,
   centred is the answer and a label that is not centred is a drawing to fix.
+* **A boxed label is drawn over the curves, so let it be.** From v2.46 an
+  area's name goes on top of the lines and masks them, which is how the
+  printed figures name a deadweight wedge: solid black fill, white text, the
+  edges invisible under it. So a wedge narrower than the word it is called
+  keeps its name at its own centre, boxed, rather than being pushed outside
+  on a leader -- Ian's call, 2026-09-30, after four rounds of the name being
+  moved somewhere it fitted. Outside on a hairline is still right where the
+  source itself names a shape from outside (a legend swatch, a tariff's
+  revenue band).
 * **Where no gap is wide enough, box the label.** Three Lorenz curves converge
   on one corner, and at its widest the gap between two of them is about 27px
   against a 28px year — so there is nowhere between them a horizontal label
@@ -528,7 +537,7 @@ not enough to reproduce an implementation.
   `embed_engine.py`'s paths reproduce the delivered file byte-for-byte; all 20
   prototype widgets render with no engine errors; `check_file.py` runs the
   geometric label test over 74 labels in the 263 file with no overlaps.
-* **Engine is v2.45.** Since v2.6: `areas` shade a polygon (v2.11) with
+* **Engine is v2.46.** Since v2.6: `areas` shade a polygon (v2.11) with
   `edge` to outline it (v2.18) and labels centred on their anchor (v2.13);
   `dot:false` drops a marker but keeps the axis label (v2.12); points take
   `guides:"p"`/`"q"` for one leg of the elbow (v2.14); braces take
@@ -590,7 +599,12 @@ not enough to reproduce an implementation.
   widget's `calcs` block reaches the row it belongs in through the widget
   rather than a local of another function (v2.45) -- it threw `main is not
   defined` and took the step controls down with it, so every `calcs` widget
-  was dead while `check_file` and `render_widgets` both passed.
+  was dead while `check_file` and `render_widgets` both passed. An area's
+  *name* is drawn over the curves rather than under them (v2.46), so a boxed
+  one masks what runs beneath it -- which is what `check_file` had always
+  assumed and the engine had never done -- and a boxed area label's box is
+  measured with the same table as everything else instead of 5.3px a
+  character, which hung "Importers" out of both sides of its own box.
 
 * **PPF works.** The first chapter of Exam 1 material converted to seven widgets
   with no engine gaps hit: frontiers, a combinations table, points on/inside/

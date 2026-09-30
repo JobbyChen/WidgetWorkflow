@@ -496,3 +496,48 @@ it: neither of them presses a button. It holds its row on the widget now
 That is the lesson worth keeping. A static check reads the file and a
 screenshot catches what draws; only `mobile_check` drives the controls, so it
 is the only one that can find a widget that renders and does not work.
+
+## 2026-09-30 — the label goes on top
+
+Four rounds went into where the deadweight-loss names sit in the trade
+chapter: centred and struck through by their own wedge's hypotenuse, shifted
+clear and then reading as a caption for whatever they had landed beside, then
+outside on hairlines, then the wedges widened to hold them. Ian ended it:
+*"if it's easier just make it like the source where the red line stops or is
+under all the rest — like have the CS, DWL and the grey box be on top."*
+
+Which is right, and it is what the printed figure does. The source fills each
+deadweight wedge solid black and sets DWL in white inside it: the edges are
+invisible under the name because the name is painted last. The engine drew an
+area's fill *and* its label before the curves, so a curve ran over the label.
+
+From v2.46 the fill stays where it was and the name is held back until after
+the curves and the price lines. Points and braces still come after it, so a
+marked reading is never covered.
+
+**`check_file` had assumed this all along.** Its `masks()` exempts a boxed
+label from the curve test, on the grounds that the box covers what passes
+under it — which was simply not true of the engine, so the exemption was
+hiding real strike-throughs rather than describing the drawing. The two agree
+now.
+
+Two things followed from it:
+
+* The chapter's quota figure draws S + Quota from the quota equilibrium
+  upward, as the source does, instead of from the world price. Below that
+  price the quota does not bind and the line has nothing to say, and drawn
+  down through the importers' rectangle it crossed the one label that has to
+  sit in the middle of it.
+* The tariff figure's world price moved from 25 to 15 and its tariff price
+  from 40 to 38. A deadweight wedge on curves of slope 1 is exactly as wide
+  as the tariff is tall, so at 25 and 40 both wedges were narrower than the
+  word "DWL". The prices are symbolic — the chapter states none — so their
+  size is a drawing choice, and the builder now asserts three things about
+  it: the wedge is wider than its own name, the tariff has not closed the
+  import gap, and the tariff price is far enough below the domestic one to
+  tell them apart.
+
+And the box itself was measured at 5.3px a character, an average from before
+the per-character table: "Importers" hung out of both sides of its own box,
+and the box was a line short of its descenders. Same table as everything
+else now.

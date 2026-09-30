@@ -179,7 +179,7 @@
 }
 </style>
 <script>
-/* ===== sd-graph.js v2.45 — data-driven supply & demand widgets =====
+/* ===== sd-graph.js v2.46 — data-driven supply & demand widgets =====
    Markup:  <div class="sdg"><script type="application/json">{ ...config... }<\/script></div>
    Top-level config:
      title, lede, caption         heading / intro / static caption (caption used only when there are no steps)
@@ -422,8 +422,14 @@
     // graphs draw demand and supply as straight lines, so every region the
     // chapter needs -- consumer surplus, producer surplus, total surplus, a
     // deadweight wedge -- has straight edges and is named by its corners.
-    // Drawn here, after the axes and before the curves, so a fill never hides a
-    // line, a point or a label.
+    // The fill is drawn here, after the axes and before the curves, so a wash
+    // never hides a line. Its *name* is not: an area label goes in with the
+    // curves drawn under it (v2.46), because a wash is not a background and a
+    // curve run through a label strikes it through. Boxed, it masks what
+    // passes beneath, which is what the printed figure gets for free by
+    // filling its deadweight wedges solid black. (Ian, 2026-09-30: "have the
+    // CS, DWL and the grey box be on top".)
+    var areaLabels = [];
     (cfg.areas || []).forEach(function (a) {
       var cc = col(a.color), grp = el('g', {class: 'area-g'});
       // edge:true outlines the polygon in its own colour. Two pieces of one
@@ -435,6 +441,7 @@
         style: a.edge ? 'stroke:' + cc + ';stroke-width:1.6;stroke-opacity:1' : null,
         points: a.pts.map(function (p) { return X(p[0]) + ',' + Y(p[1]); }).join(' ')}));
       if (a.label) {
+        var lgrp = el('g', {class: 'area-g'});
         // The centroid keeps a label inside its own shape, which is right for
         // the triangles this draws. A thin wedge has no room for one, so `lp`
         // places it by hand instead -- outside the shape if that is what fits.
@@ -449,10 +456,14 @@
             ax0 = X(lp[0]) + (a.ldx || 0),
             ay0 = Y(lp[1]) + (a.ldy || 0) - (arows.length - 1) * 5;
         if (a.boxed) {
+          // 5.3px a character until v2.46, which is an average and so too
+          // narrow for a word of wide letters: "Importers" hung out of both
+          // sides of its own box. The box was a little short for its
+          // descenders too, so the p sat on the bottom border.
           var aw = 0;
-          arows.forEach(function (rw) { aw = Math.max(aw, 5.3 * rw.length); });
-          grp.appendChild(el('rect', {class: 'lblbox', x: ax0 - aw / 2 - 4,
-            y: ay0 - 8, width: aw + 8, height: 10 * arows.length + 2,
+          arows.forEach(function (rw) { aw = Math.max(aw, 10 * emw(rw)); });
+          lgrp.appendChild(el('rect', {class: 'lblbox', x: ax0 - aw / 2 - 4,
+            y: ay0 - 9, width: aw + 8, height: 11 * arows.length + 3,
             stroke: cc}));
         }
         var at = el('text', {class: 'arlbl', x: ax0, y: ay0,
@@ -460,7 +471,8 @@
         arows.forEach(function (rw, i) {
           at.appendChild(el('tspan', {x: ax0, dy: i ? 10 : 0}, rw));
         });
-        grp.appendChild(at);
+        lgrp.appendChild(at);
+        areaLabels.push({node: lgrp, spec: a});
       }
       g.appendChild(reg(grp, a));
     });
@@ -584,6 +596,11 @@
         'text-anchor': l.tagq != null ? 'middle' : 'end', fill: cc}), l.tag));
       g.appendChild(grp); reg(grp, l);
     });
+
+    // The area names, held back from their fills so the curves and the price
+    // lines draw underneath them (v2.46). Still before the points and braces:
+    // a marked reading is never covered by a name.
+    areaLabels.forEach(function (al) { g.appendChild(reg(al.node, al.spec)); });
 
     (cfg.braces || []).forEach(function (b) {
       var cc = col(b.color || 'red'), grp = el('g', {});

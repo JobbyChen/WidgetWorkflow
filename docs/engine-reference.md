@@ -1,4 +1,4 @@
-# Engine reference — `engine/sd-graph.js` v2.45
+# Engine reference — `engine/sd-graph.js` v2.46
 
 Written from the engine source. The conversion prompt carries a shorter version
 of this in its own "Engine reference" section; that one is what the model needs
@@ -518,6 +518,14 @@ The left margin grows past those numbers to hold the widest thing written on
 the price axis — a tick, a point's price, or an `hlines` label — and the right
 margin grows to hold the curve labels, so a panel with `P_{WORLD}` on the
 left and `S + Quota` on the right has a narrower plot than the table implies.
+
+**Draw order** is: axes, area fills, curves, price lines, **area labels**,
+braces, moves, points. An area's fill goes under the curves so a wash never
+hides a line, and its *name* goes over them (**v2.46**), so a curve running
+through the only place a name fits passes behind it rather than striking it
+through — which is what `boxed: true` is for, and what the printed figures
+get for free by filling a deadweight wedge solid black. Points and braces
+still come last: a marked reading is never covered by a name.
 
 **How wide a label is** comes from a per-character table measured in Chromium
 (**v2.45**), in `scripts/em_widths.py`; the engine carries a generated copy

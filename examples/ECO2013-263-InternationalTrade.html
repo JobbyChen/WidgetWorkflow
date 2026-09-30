@@ -53,10 +53,28 @@ MathJax = {
 .sdg figure { margin:0; background:#fff; border:1px solid var(--rule); padding:8px 8px 2px; container-type:inline-size; }
 .sdg figcaption { font-size:max(1.05rem, 5cqw); font-weight:700; color:var(--navy); text-align:center; margin:0 0 6px; line-height:1.2; }
 .sdg svg { width:100%; height:auto; display:block; }
-.sdg .sdg-table { border-collapse:collapse; width:100%; font-size:.9rem; background:#fff; border:1px solid var(--rule); }
-.sdg .sdg-table th { background:var(--navy); color:#fff; font-weight:700; padding:6px 8px; text-align:center; font-size:.82rem; }
+/* The page's own stylesheet styles every `table:not(.financial)` on it --
+   full width, 16px padding, a blue header, a tinted first column, zebra
+   striping, rounded corners and a shadow -- and one of those rules,
+   `tr:nth-child(odd) td:not(:first-child)`, carries three elements and three
+   pseudo-classes, which outweighs any plain class selector here. It painted
+   white over a schedule row's highlight in every column but the first, and
+   white over the navy behind a `given` label's white lettering, so the label
+   simply vanished. Both had been shipping for weeks: the screenshots here
+   never loaded that stylesheet at all (v2.47).
+
+   A widget's tables opt out of the lot. `!important` is the only thing that
+   reaches those rules, and the sheet is not ours to change; everything the
+   engine wants back is re-declared below, also `!important`, where ordinary
+   specificity decides between the two again. */
+.sdg table { width:auto !important; margin:0 auto !important; border:0 !important;
+  border-radius:0 !important; box-shadow:none !important; overflow:visible !important; }
+.sdg table th, .sdg table td { background:transparent !important;
+  border-bottom:0 !important; border-radius:0 !important; }
+.sdg .sdg-table { border-collapse:collapse; width:100% !important; font-size:.9rem; background:#fff; border:1px solid var(--rule) !important; }
+.sdg .sdg-table th { background:var(--navy) !important; color:#fff; font-weight:700; padding:6px 8px; text-align:center; font-size:.82rem; }
 .sdg .sdg-table td { padding:6px 8px; text-align:center; border-top:1px solid var(--rule); }
-.sdg .sdg-table tr.hi td { background:#fdeadb; font-weight:700; }
+.sdg .sdg-table tr.hi td { background:#fdeadb !important; font-weight:700; }
 .sdg .plotbg { fill:var(--plot); }
 .sdg .grid { stroke:#b9c2d3; stroke-width:1; stroke-dasharray:4 4; }
 .sdg .ax { fill:none; stroke:var(--ink); stroke-width:1.6; }
@@ -160,32 +178,36 @@ MathJax = {
    one the comparison lands on, in the same orange a step's new point uses. */
 .sdg .sdg-mxwrap { overflow-x:auto; margin:0 0 4px; }
 .sdg .sdg-mx { border-collapse:collapse; margin:0 auto; background:#fff; }
-.sdg .sdg-mx td { padding:0; }
+.sdg .sdg-mx td { padding:0; text-align:center; }
 .sdg .mx-player { font-weight:800; color:var(--navy); text-align:center;
   font-size:1rem; letter-spacing:.02em; padding:4px 10px; }
 /* The row player's name reads across, as the printed matrix sets it, with
    room between it and the strategy labels it sits outside of. */
 .sdg .mx-rowp { padding-right:16px; white-space:nowrap; }
+/* Every box in the grid is one size: a strategy label is the same box
+   whether it heads a column or a row, so the fill that marks the move being
+   held fixed reads as the same mark in both places. (Ian, 2026-09-30.) */
 .sdg .mx-head { font-weight:700; color:var(--navy); text-align:center; padding:6px 14px;
-  white-space:nowrap; transition:background .25s ease, color .25s ease; }
-.sdg .mx-cell { border:1.5px solid var(--ink); padding:10px 18px; min-width:118px; text-align:center; }
+  width:118px; white-space:nowrap; transition:background .25s ease, color .25s ease; }
+.sdg .mx-cell { border:1.5px solid var(--ink) !important; padding:10px 18px; width:118px; min-width:118px; text-align:center; }
 .sdg .mx-cell .ln { font-size:1rem; color:var(--ink); padding:2px 4px; border-radius:3px;
   transition:background .25s ease, color .25s ease; }
-.sdg .mx-cell.on { background:#eef3fd; }
+.sdg .mx-cell.on { background:#eef3fd !important; }
 .sdg .mx-cell .ln.on { background:#d8e4fa; font-weight:700; color:var(--navy); }
 /* The move being held fixed -- the "if B complies" half of the argument.
    Without it on the drawing, the two lit payoffs read as arbitrary cells. */
-.sdg .mx-head.given { background:var(--navy); color:#fff; border-radius:3px; }
+.sdg .mx-head.given { background:var(--navy) !important; color:#fff; border-radius:3px !important; }
 .sdg .mx-cell .ln.pick { background:#fdeadb; color:var(--orange); font-weight:800;
   box-shadow:0 0 0 1.5px var(--orange) inset; }
-.sdg .mx-cell.pick { background:#fdeadb; box-shadow:0 0 0 3px var(--orange) inset; }
+.sdg .mx-cell.pick { background:#fdeadb !important; box-shadow:0 0 0 3px var(--orange) inset; }
 @media (max-width:640px){
+  .sdg .mx-head, .sdg .mx-cell { width:auto; }
   .sdg .mx-cell { padding:6px 8px; min-width:0; }
   .sdg .mx-cell .ln { font-size:.85rem; }
 }
 </style>
 <script>
-/* ===== sd-graph.js v2.46 — data-driven supply & demand widgets =====
+/* ===== sd-graph.js v2.47 — data-driven supply & demand widgets =====
    Markup:  <div class="sdg"><script type="application/json">{ ...config... }<\/script></div>
    Top-level config:
      title, lede, caption         heading / intro / static caption (caption used only when there are no steps)

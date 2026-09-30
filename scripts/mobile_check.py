@@ -25,6 +25,7 @@ It clicks every scenario and every step of every widget at that width, so
 
 import argparse
 import json
+import os
 import pathlib
 import sys
 
@@ -37,6 +38,18 @@ def find_chromium():
     for path in sorted(pathlib.Path("/opt/pw-browsers").glob(CHROMIUM_GLOB)):
         return str(path)
     return None
+
+
+# The house stylesheet and script come from S3, and in a sandboxed container
+# the browser only reaches them through the agent proxy. Without it the page
+# is measured with the engine's CSS alone, which is not what a reader loads.
+def launch_kwargs():
+    kw = {"executable_path": find_chromium(),
+          "args": ["--no-sandbox", "--ignore-certificate-errors"]}
+    proxy = os.environ.get("HTTPS_PROXY") or os.environ.get("https_proxy")
+    if proxy:
+        kw["proxy"] = {"server": proxy}
+    return kw
 
 
 PROBE = r"""
@@ -109,7 +122,7 @@ def main():
     probe = PROBE.replace("%TAP%", str(TAP_MIN))
     problems = 0
     with sync_playwright() as pw:
-        b = pw.chromium.launch(executable_path=find_chromium(), args=["--no-sandbox"])
+        b = pw.chromium.launch(**launch_kwargs())
         for f in a.files:
             pg = b.new_page(viewport={"width": a.width, "height": a.height},
                             device_scale_factor=2, is_mobile=True, has_touch=True)

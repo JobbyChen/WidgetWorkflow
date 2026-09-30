@@ -593,3 +593,44 @@ The grid is drawn in the house colours rather than the source's plain black,
 which is a choice to revisit if Ian would rather it matched: the source's
 black has no way to mark a step, and marking the step is the whole reason the
 widget exists.
+
+## 2026-09-30 — the screenshots were never the page
+
+Ian's screenshot of chapter 15's payoff matrix had a hole in it: the row label
+the step was meant to fill in was missing, the grid ran the full width of the
+page, and the boxes were all different sizes. The same file screenshotted here
+looked compact and correct.
+
+`render_widgets.py` and `mobile_check.py` launch Chromium with no proxy, and in
+this container nothing outside reaches the network without one. So neither had
+ever loaded `sn25-v6.css` — the stylesheet every notes file pulls from S3 and
+every reader gets. Every screenshot taken here for weeks was the engine's CSS
+alone.
+
+What the house sheet does to a table is not small. `table:not(.financial)` gets
+full width, 16px padding, rounded corners, a shadow, a tinted first column and
+zebra striping, and the zebra rule — `tr:nth-child(odd) td:not(:first-child)` —
+carries three elements and three pseudo-classes, which outweighs any plain
+class selector in the engine. Two consequences, both shipping:
+
+* **A schedule row's hover highlight painted only its first column.** Every
+  schedule widget in every file, since the day the house sheet gained zebra
+  striping.
+* **A `given` label vanished.** White lettering on a navy fill, with the navy
+  overpainted white.
+
+Both scripts pass the proxy through now, and the engine's tables opt out of
+the house table rules with a small `!important` reset (v2.47) — the only thing
+that reaches a rule that deep, in a sheet that is not ours to change.
+Everything the engine wants back is re-declared the same way, where ordinary
+specificity decides between the two again.
+
+The same pass made every box in a payoff matrix one size, at Ian's request, so
+the fill marking the move being held fixed reads as the same mark whether it
+heads a row or a column.
+
+**And it turned up one thing that is not ours:** at 320px the house sheet's
+16px/20px cell padding pushes a plain prose table in three of the example
+chapters a few pixels past the screen. Reported rather than fixed — it is
+Ian's stylesheet on Ian's own tables, and it has nothing to do with the
+widgets.

@@ -19,6 +19,7 @@ engine's "Widget config error" message. shots/ is gitignored.
 """
 
 import argparse
+import os
 import pathlib
 import sys
 
@@ -30,6 +31,22 @@ def find_chromium():
     for path in sorted(pathlib.Path("/opt/pw-browsers").glob(CHROMIUM_GLOB)):
         return str(path)
     return None  # fall back to Playwright's own download
+
+
+# The house stylesheet and script are loaded from S3 by every notes file, and
+# in a sandboxed container the browser only reaches them through the agent
+# proxy. Without it the page renders with the engine's CSS alone -- which is
+# not what a reader sees, and is why the house table rules stomping on the
+# payoff matrix went unnoticed through a whole conversion: the table came out
+# 943px wide with the house zebra stripe behind a `given` cell's white text,
+# and every screenshot here showed it compact and correct.
+def launch_kwargs():
+    kw = {"executable_path": find_chromium(),
+          "args": ["--no-sandbox", "--ignore-certificate-errors"]}
+    proxy = os.environ.get("HTTPS_PROXY") or os.environ.get("https_proxy")
+    if proxy:
+        kw["proxy"] = {"server": proxy}
+    return kw
 
 
 
@@ -133,7 +150,7 @@ def main():
     shots = 0
 
     with sync_playwright() as pw:
-        browser = pw.chromium.launch(executable_path=find_chromium(), args=["--no-sandbox"])
+        browser = pw.chromium.launch(**launch_kwargs())
         page = browser.new_page(viewport={"width": args.width, "height": 1000})
         page.on("pageerror", lambda e: problems.append("pageerror: %s" % e))
         # A failed resource fetch is the page's own assets (the house CSS/JS and

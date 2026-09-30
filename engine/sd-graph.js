@@ -1,4 +1,4 @@
-/* ===== sd-graph.js v2.46 — data-driven supply & demand widgets =====
+/* ===== sd-graph.js v2.47 — data-driven supply & demand widgets =====
    Markup:  <div class="sdg"><script type="application/json">{ ...config... }<\/script></div>
    Top-level config:
      title, lede, caption         heading / intro / static caption (caption used only when there are no steps)

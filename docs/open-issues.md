@@ -340,3 +340,10 @@ or "unattainable" dot) whose exact coordinates are not the lesson.
       printed leaves demand at its free-trade quantity, so its quota lifts no
       price. Each widget follows its own figure (Ian, 2026-09-30). Worth
       correcting in the artwork. One for Ian.
+
+- [ ] **A prose table overflows a 320px screen in three example chapters**, by
+      a few pixels: the house stylesheet gives every `table:not(.financial)`
+      16px/20px cell padding, and at that width the chapter's own tables do
+      not fit. Found once `mobile_check` started loading that stylesheet
+      (2026-09-30). Nothing to do with the widgets -- one for Ian, since it is
+      his sheet on his own tables.

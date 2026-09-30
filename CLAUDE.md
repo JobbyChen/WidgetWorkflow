@@ -518,6 +518,17 @@ run, not just whether it is correct:
   and check the property afterwards: chapter 12 shipped equilibrium dots
   beside their crossings for three rounds because three patches in a row
   quietly matched nothing.
+* **Render what the reader loads, stylesheet and all.** `render_widgets` and
+  `mobile_check` launched Chromium with no proxy, so in this container the
+  house stylesheet and script -- which every notes file pulls from S3 -- never
+  arrived, and every screenshot taken here showed the engine's CSS alone. The
+  house sheet styles `table:not(.financial)`: full width, 16px padding, a
+  tinted first column, zebra striping. It had been painting over a schedule
+  row's highlight in every column but the first, and over the navy behind a
+  `given` label's white lettering so the label was simply invisible -- for
+  weeks, with every check passing and every screenshot looking right. Both
+  scripts pass the proxy through now. If a widget looks right here and wrong
+  to Ian, this is the first thing to suspect.
 * **A check that never drives the thing is not checking it.**
   `check_file` and `render_widgets` both passed a file whose every `calcs`
   widget threw on load and lost its step buttons with it, because neither
@@ -544,7 +555,7 @@ not enough to reproduce an implementation.
   `embed_engine.py`'s paths reproduce the delivered file byte-for-byte; all 20
   prototype widgets render with no engine errors; `check_file.py` runs the
   geometric label test over 74 labels in the 263 file with no overlaps.
-* **Engine is v2.46.** Since v2.6: `areas` shade a polygon (v2.11) with
+* **Engine is v2.47.** Since v2.6: `areas` shade a polygon (v2.11) with
   `edge` to outline it (v2.18) and labels centred on their anchor (v2.13);
   `dot:false` drops a marker but keeps the axis label (v2.12); points take
   `guides:"p"`/`"q"` for one leg of the elbow (v2.14); braces take
@@ -611,7 +622,12 @@ not enough to reproduce an implementation.
   one masks what runs beneath it -- which is what `check_file` had always
   assumed and the engine had never done -- and a boxed area label's box is
   measured with the same table as everything else instead of 5.3px a
-  character, which hung "Importers" out of both sides of its own box.
+  character, which hung "Importers" out of both sides of its own box. And a
+  widget's tables opt out of the house stylesheet's own table rules (v2.47),
+  which had been painting white over a schedule row's highlight in every
+  column but the first and over the navy behind a `given` label, so the label
+  vanished; every box in a payoff matrix is one size now, so the same mark
+  reads the same whether it heads a row or a column.
 
 * **PPF works.** The first chapter of Exam 1 material converted to seven widgets
   with no engine gaps hit: frontiers, a combinations table, points on/inside/

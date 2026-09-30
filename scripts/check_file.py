@@ -650,7 +650,10 @@ def vbrace_x(b, pn, ax, ox, X):
     them."""
     if not b.get("left"):
         return X(b["q"])
-    return min(ox - 32.0, ox - 24.0 - widest_p(pn, ax))
+    # 12px clear of whatever the axis writes, which is nothing on a panel that
+    # writes nothing (engine v2.51) -- the 32px floor stood the brace out in
+    # empty space, away from the gap it measures.
+    return ox - 12.0 - widest_p(pn, ax)
 
 
 def geom(pn, ax):
@@ -662,9 +665,10 @@ def geom(pn, ax):
     ytw = max(14.0 * em_width(rw) for rw in yrows) if len(yrows) > 1 else 0.0
     left = max(base, math.ceil(widest) + 12.0, math.ceil(ytw) + 22.0)
     # A vbrace with left:true widens the engine's left margin. Miss this and
-    # every coordinate below is off by 44px.
+    # every coordinate below is off by that much. It was 44 until v2.51, which
+    # brought the brace in to 12px clear of the axis's own labels.
     if any(b.get("left") for b in (pn.get("vbraces") or [])):
-        left += 44.0
+        left += 30.0
     xmax = float(ax.get("xmax") or 1)
     ymax = float(ax.get("ymax") or 1)
     # Engine v2.28 sizes the right margin to the curve labels, the same way

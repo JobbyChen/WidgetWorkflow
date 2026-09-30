@@ -300,7 +300,7 @@
 }
 </style>
 <script>
-/* ===== sd-graph.js v2.50 — data-driven supply & demand widgets =====
+/* ===== sd-graph.js v2.51 — data-driven supply & demand widgets =====
    Markup:  <div class="sdg"><script type="application/json">{ ...config... }<\/script></div>
    Top-level config:
      title, lede, caption         heading / intro / static caption (caption used only when there are no steps)
@@ -470,7 +470,7 @@
     }
     var left = Math.max(ax.cents ? 62 : (ax.yticks && ax.yticks.length ? 54 : 40),
                         Math.ceil(widest) + 12,
-                        Math.ceil(ytw) + 22) + (vleft ? 44 : 0);
+                        Math.ceil(ytw) + 22) + (vleft ? 30 : 0);
     // And the same on the right, for the curve labels. A curve drawn out to
     // the edge of the plot puts its name past the edge of the panel, where it
     // is simply cut off: "D = MB = MSB" rendered as "D = M" with every check
@@ -773,12 +773,16 @@
     (cfg.vbraces || []).forEach(function (b) {
       var cc = col(b.color || 'red'), grp = el('g', {});
       var y1 = Y(Math.max(b.p1, b.p2)), y2 = Y(Math.min(b.p1, b.p2));
-      // Outside the widest price-axis label, not a fixed 32px in from the
-      // axis (v2.33): the labor chapter's CWD brace spans two wages named
-      // W_{Alaska} and W_{Hawaii}, and the brace was drawn straight through
-      // both. The 44px this brace already adds to the left margin is what
-      // there is room in.
-      var x = b.left ? Math.min(O.x - 32, O.x - 24 - widest) : X(b.q);
+      // Just outside the widest price-axis label, rather than a fixed 32px
+      // in from the axis (v2.33): the labor chapter's CWD brace spans two
+      // wages named W_{Alaska} and W_{Hawaii} and was drawn straight through
+      // both. The clearance was then measured off the widest label *and*
+      // kept a 32px floor, so on a panel that writes nothing on its price
+      // axis -- the real estate chapter's equity diagrams -- the brace stood
+      // 32px out in empty space, a long way from the gap it was measuring
+      // (v2.51). It is 12px clear of whatever is there, which is nothing
+      // when nothing is there.
+      var x = b.left ? O.x - 12 - widest : X(b.q);
       var dir = (b.left || b.side === 'left') ? -1 : 1, m = (y1 + y2) / 2;
       var hh = Math.max(2.5, Math.min(7, (y2 - y1) / 4));
       var d = 'M' + x + ' ' + y1 +

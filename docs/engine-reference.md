@@ -1,4 +1,4 @@
-# Engine reference — `engine/sd-graph.js` v2.50
+# Engine reference — `engine/sd-graph.js` v2.51
 
 Written from the engine source. The conversion prompt carries a shorter version
 of this in its own "Engine reference" section; that one is what the model needs
@@ -488,8 +488,11 @@ Both kinds of brace size their curl to the span they cover, so a brace across
 two dollars on a twenty-five dollar axis is drawn small and clean rather than as
 overlapping curves.
 
-`left: true` is the mirror of a horizontal brace's `below: true`: it sits outside
-the P axis and **outside the widest label that axis carries** (**v2.33**) — it
+`left: true` is the mirror of a horizontal brace's `below: true`: it sits **12px
+clear of whatever the price axis writes** (**v2.51**) — which is nothing at all
+on a panel with no ticks and no price labels, where the old 32px floor stood the
+brace out in empty space, a long way from the gap it was measuring. It is still
+outside the widest label that axis carries (**v2.33**) — it
 was a fixed 32px in from the axis, which drew the labor chapter's `CWD` brace
 straight through the `W_{Alaska}` and `W_{Hawaii}` it spans — and **widens the
 left margin by 44px** to fit — the same trade a `below` brace makes for 18px of panel

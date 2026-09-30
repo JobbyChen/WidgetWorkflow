@@ -555,7 +555,7 @@ not enough to reproduce an implementation.
   `embed_engine.py`'s paths reproduce the delivered file byte-for-byte; all 20
   prototype widgets render with no engine errors; `check_file.py` runs the
   geometric label test over 74 labels in the 263 file with no overlaps.
-* **Engine is v2.48.** Since v2.6: `areas` shade a polygon (v2.11) with
+* **Engine is v2.49.** Since v2.6: `areas` shade a polygon (v2.11) with
   `edge` to outline it (v2.18) and labels centred on their anchor (v2.13);
   `dot:false` drops a marker but keeps the axis label (v2.12); points take
   `guides:"p"`/`"q"` for one leg of the elbow (v2.14); braces take
@@ -638,7 +638,10 @@ not enough to reproduce an implementation.
   where the next one's begins, measured off the text: set at a fraction of
   the cell instead they land on the closing bracket at one end and on the
   move at the other, and somewhere different again the moment an amount is a
-  character longer.
+  character longer. Its header is one navy band across the top, corner cell
+  included, and `rowhead` names that corner (v2.49): the pale rule the other
+  cells carry drew a line down the middle of the band and set the corner a
+  pixel out of line with the two names.
 
 * **PPF works.** The first chapter of Exam 1 material converted to seven widgets
   with no engine gaps hit: frontiers, a combinations table, points on/inside/

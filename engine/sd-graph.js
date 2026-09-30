@@ -1,4 +1,4 @@
-/* ===== sd-graph.js v2.48 — data-driven supply & demand widgets =====
+/* ===== sd-graph.js v2.49 — data-driven supply & demand widgets =====
    Markup:  <div class="sdg"><script type="application/json">{ ...config... }<\/script></div>
    Top-level config:
      title, lede, caption         heading / intro / static caption (caption used only when there are no steps)
@@ -36,7 +36,7 @@
      matrix:   {rows:{player,labels[]}, cols:{player,labels[]}, cells[[[aPayoff,bPayoff],...],...], marks[]}
         A payoff matrix instead of a plot. A mark names {row|col|cell}, optionally who:'a'|'b' for one
         player's line inside it, and pick:true for the one a comparison lands on. Marks take at/until.
-     plays:    {cols[], years[{label, cells[[move,amount],...], at, until}], total:{label,cells[]}, arrows[{from:[y,c], to:[y,c]}]}
+     plays:    {rowhead, cols[], years[{label, cells[[move,amount],...], at, until}], total:{label,cells[]}, arrows[{from:[y,c], to:[y,c]}]}
         The same game played year after year: one row a year, a running total underneath, and an
         arrow carrying one year's move into the next year's answer. Years, total and arrows take at/until.
    Colors: 'ink' (default, black-navy), 'red' (shifted/new), 'teal', 'orange', 'grey'

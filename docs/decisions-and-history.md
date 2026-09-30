@@ -670,3 +670,13 @@ label. The reset re-asserts the weights the engine means. That is the third
 thing that sheet had quietly taken over, after the zebra striping and the
 first-column tint, and all three were invisible until the screenshots started
 loading it.
+
+### The header band (v2.49)
+
+Ian: the top-left navy block is not in line with the row carrying Firm A and
+Firm B. Measured, the cells were exactly aligned -- 426 to 492 in both rows --
+and what was out of line was the drawing: the corner carried a navy border and
+the two names a pale one, so a rule ran down the middle of the band and the
+corner read as a block sitting beside the header rather than part of it. One
+navy band now, corner included. And it says "Year", also his: a navy block
+with nothing in it invites the question of what the column under it is.

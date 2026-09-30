@@ -211,9 +211,14 @@
 .sdg .sdg-plays { border-collapse:collapse; margin:0 auto; background:#fff;
   font-size:.95rem; }
 .sdg .sdg-plays th, .sdg .sdg-plays td { border:1px solid var(--rule); }
-.sdg .pl-col { background:var(--navy) !important; color:#fff !important;
-  font-weight:800 !important; padding:6px 18px; text-align:center; }
-.sdg .pl-corner { background:var(--navy) !important; border-color:var(--navy) !important; }
+/* One navy band across the top, so the corner is part of the header rather
+   than a block beside it: the pale rule the other cells carry drew a line
+   down the middle of it and set the corner a pixel out of line with the two
+   names. (Ian, 2026-09-30.) */
+.sdg .pl-col, .sdg .pl-corner { background:var(--navy) !important;
+  color:#fff !important; border-color:var(--navy) !important; }
+.sdg .pl-col, .sdg .pl-corner { font-weight:800 !important; padding:6px 18px;
+  text-align:center; }
 .sdg .pl-year { color:var(--navy); font-weight:800 !important; padding:6px 14px;
   text-align:center; white-space:nowrap; }
 /* The arrows run in the channel the side padding leaves between the two
@@ -238,7 +243,7 @@
 }
 </style>
 <script>
-/* ===== sd-graph.js v2.48 — data-driven supply & demand widgets =====
+/* ===== sd-graph.js v2.49 — data-driven supply & demand widgets =====
    Markup:  <div class="sdg"><script type="application/json">{ ...config... }<\/script></div>
    Top-level config:
      title, lede, caption         heading / intro / static caption (caption used only when there are no steps)
@@ -276,7 +281,7 @@
      matrix:   {rows:{player,labels[]}, cols:{player,labels[]}, cells[[[aPayoff,bPayoff],...],...], marks[]}
         A payoff matrix instead of a plot. A mark names {row|col|cell}, optionally who:'a'|'b' for one
         player's line inside it, and pick:true for the one a comparison lands on. Marks take at/until.
-     plays:    {cols[], years[{label, cells[[move,amount],...], at, until}], total:{label,cells[]}, arrows[{from:[y,c], to:[y,c]}]}
+     plays:    {rowhead, cols[], years[{label, cells[[move,amount],...], at, until}], total:{label,cells[]}, arrows[{from:[y,c], to:[y,c]}]}
         The same game played year after year: one row a year, a running total underneath, and an
         arrow carrying one year's move into the next year's answer. Years, total and arrows take at/until.
    Colors: 'ink' (default, black-navy), 'red' (shifted/new), 'teal', 'orange', 'grey'

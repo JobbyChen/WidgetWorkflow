@@ -1,4 +1,4 @@
-# Engine reference — `engine/sd-graph.js` v2.48
+# Engine reference — `engine/sd-graph.js` v2.49
 
 Written from the engine source. The conversion prompt carries a shorter version
 of this in its own "Engine reference" section; that one is what the model needs
@@ -126,6 +126,7 @@ same step controls.
 
 ```json
 {"plays": {
+  "rowhead": "Year",
   "cols": ["Firm A", "Firm B"],
   "years": [{"label": "2025", "cells": [["Comply", "+$200M"], ["Comply", "+$200M"]]},
             {"label": "2026", "cells": [["Cheat", "+$300M"], ["Comply", "-$50M"]], "at": 1}],
@@ -135,7 +136,9 @@ same step controls.
 ```
 
 A cell is `[move, amount]`: the move is set in italic and the amount beside it
-in brackets, as the source sets them. `from` and `to` are `[year, column]`,
+in brackets, as the source sets them. `rowhead` names the corner cell, which
+the header's navy band runs through — left blank it is a navy block with
+nothing in it, and "Year" says what the column under it holds (**v2.49**). `from` and `to` are `[year, column]`,
 and an arrow may run either way, so the figure where both firms answer in kind
 draws its two crossings. Years, `total` and arrows take `at`/`until`, and a
 year that has not arrived keeps its space, so the table does not jump as they

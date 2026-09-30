@@ -281,12 +281,12 @@ economics instead of label placement.
   $75, 375 and 562.5, which is also why 500 and 562.5 never have to share it.
   Carry the equilibrium's dot on a second, label-less point present from the
   start, or the engine rings it as newly revealed. (Ian, 2026-09-24.)
-  **The same across figures, not just steps.** Where one market is drawn
-  before and after a change, each figure takes only the readings its own
-  guides land on — the trade chapter's quota moves domestic output from 30 to
-  40, and all four on one axis put those ten units close enough to render as
-  "3040". Giving both figures the union is the tick-collision defect from a
-  different direction.
+  **So a numeric figure with steps usually has no `xticks` at all.** Splitting
+  the trade chapter's four quantities between its two quota figures stopped
+  them colliding ("3040") and still put each figure's numbers on the axis
+  from its opening state, before anything had marked them — the rule again,
+  one level up. Every quantity comes from the point that reads it; the axis
+  carries a tick only where no point does. (Ian, again, 2026-09-30.)
 * **A caption must say something the paragraphs around it do not.** Vertical
   space is the scarce thing on these pages. `check_file.py` measures each
   caption against the prose on either side of its widget and reports one

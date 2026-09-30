@@ -148,12 +148,16 @@
 /* The row player's name reads across, as the printed matrix sets it, with
    room between it and the strategy labels it sits outside of. */
 .sdg .mx-rowp { padding-right:16px; white-space:nowrap; }
-.sdg .mx-head { font-weight:700; color:var(--navy); text-align:center; padding:6px 14px; white-space:nowrap; }
+.sdg .mx-head { font-weight:700; color:var(--navy); text-align:center; padding:6px 14px;
+  white-space:nowrap; transition:background .25s ease, color .25s ease; }
 .sdg .mx-cell { border:1.5px solid var(--ink); padding:10px 18px; min-width:118px; text-align:center; }
 .sdg .mx-cell .ln { font-size:1rem; color:var(--ink); padding:2px 4px; border-radius:3px;
   transition:background .25s ease, color .25s ease; }
 .sdg .mx-cell.on { background:#eef3fd; }
-.sdg .mx-cell .ln.on { background:#eef3fd; font-weight:700; }
+.sdg .mx-cell .ln.on { background:#d8e4fa; font-weight:700; color:var(--navy); }
+/* The move being held fixed -- the "if B complies" half of the argument.
+   Without it on the drawing, the two lit payoffs read as arbitrary cells. */
+.sdg .mx-head.given { background:var(--navy); color:#fff; border-radius:3px; }
 .sdg .mx-cell .ln.pick { background:#fdeadb; color:var(--orange); font-weight:800;
   box-shadow:0 0 0 1.5px var(--orange) inset; }
 .sdg .mx-cell.pick { background:#fdeadb; box-shadow:0 0 0 3px var(--orange) inset; }

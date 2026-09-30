@@ -1,4 +1,4 @@
-# Engine reference — `engine/sd-graph.js` v2.39
+# Engine reference — `engine/sd-graph.js` v2.40
 
 Written from the engine source. The conversion prompt carries a shorter version
 of this in its own "Engine reference" section; that one is what the model needs
@@ -105,7 +105,10 @@ controls.
 written as the source writes them. A **mark** names a `row`, a `col` or one
 `cell`; `who: "a"|"b"` narrows it to one player's line inside those cells, and
 `pick: true` is the one a comparison lands on — shaded as a step's new point
-is. Marks take `at`/`until` like anything else, and `check_file.py` measures
+is. **`given: true` fills in that row's or column's own strategy label**
+(**v2.40**): the argument is "*if* B complies, A does better cheating", and
+without the "if" half on the drawing the two lit payoffs read as arbitrary
+cells. Marks take `at`/`until` like anything else, and `check_file.py` measures
 the "a step must change the drawing" rule against them, since on a matrix
 that is all a step can change.
 

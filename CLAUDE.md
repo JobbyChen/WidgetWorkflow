@@ -475,7 +475,7 @@ not enough to reproduce an implementation.
   `embed_engine.py`'s paths reproduce the delivered file byte-for-byte; all 20
   prototype widgets render with no engine errors; `check_file.py` runs the
   geometric label test over 74 labels in the 263 file with no overlaps.
-* **Engine is v2.39.** Since v2.6: `areas` shade a polygon (v2.11) with
+* **Engine is v2.40.** Since v2.6: `areas` shade a polygon (v2.11) with
   `edge` to outline it (v2.18) and labels centred on their anchor (v2.13);
   `dot:false` drops a marker but keeps the axis label (v2.12); points take
   `guides:"p"`/`"q"` for one leg of the elbow (v2.14); braces take
@@ -523,7 +523,10 @@ not enough to reproduce an implementation.
   as HTML, like the schedule table, whose steps mark a row, a column or one
   cell -- because the game-theory chapter argues through its matrix one
   comparison at a time, which is what a picture of the finished grid cannot
-  show.
+  show. A mark's `given` fills in the strategy label of the row or column
+  being held fixed (v2.40): the argument is "*if* B complies, A does better
+  cheating", and with the "if" half missing from the drawing the two lit
+  payoffs read as the wrong cells -- which is how they were read.
 
 * **PPF works.** The first chapter of Exam 1 material converted to seven widgets
   with no engine gaps hit: frontiers, a combinations table, points on/inside/

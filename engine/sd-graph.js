@@ -1,4 +1,4 @@
-/* ===== sd-graph.js v2.39 — data-driven supply & demand widgets =====
+/* ===== sd-graph.js v2.40 — data-driven supply & demand widgets =====
    Markup:  <div class="sdg"><script type="application/json">{ ...config... }<\/script></div>
    Top-level config:
      title, lede, caption         heading / intro / static caption (caption used only when there are no steps)
@@ -598,14 +598,18 @@
     r1.appendChild(h('td', 'mx-pad')); r1.appendChild(h('td', 'mx-pad'));
     cl.forEach(function (c) { r1.appendChild(h('td', 'mx-head', c)); });
     tb.appendChild(r1);
-    this.cells = [];
+    this.cells = []; this.rowHeads = []; this.colHeads = [];
+    [].slice.call(r1.querySelectorAll('.mx-head')).forEach(function (td) {
+      self.colHeads.push(td);
+    });
     rl.forEach(function (rlab, i) {
       var tr = h('tr'), row = [];
       if (i === 0) {
         var pr = h('td', 'mx-player mx-rowp', m.rows.player);
         pr.rowSpan = rl.length; tr.appendChild(pr);
       }
-      tr.appendChild(h('td', 'mx-head', rlab));
+      var rh = h('td', 'mx-head', rlab);
+      self.rowHeads.push(rh); tr.appendChild(rh);
       cl.forEach(function (_, j) {
         var td = h('td', 'mx-cell'), pair = m.cells[i][j], lns = {};
         ['a', 'b'].forEach(function (who, k) {
@@ -620,9 +624,18 @@
     var wrap = h('div', 'sdg-mxwrap'); wrap.appendChild(tbl);
     host.appendChild(wrap);
     // A mark names a row, a column or one cell, and optionally one player's
-    // line inside it; `pick` is the one the comparison lands on.
+    // line inside it; `pick` is the one the comparison lands on. `given` is
+    // the move being held fixed -- the row or column the comparison is
+    // conditioned on. Without it the two lit payoffs read as arbitrary cells:
+    // the argument is "if B complies, A does better cheating", and the "if"
+    // half was nowhere on the drawing. (v2.40)
     (m.marks || []).forEach(function (mk) {
       var targets = [];
+      if (mk.given) {
+        var head = mk.row != null ? self.rowHeads[mk.row]
+                 : mk.col != null ? self.colHeads[mk.col] : null;
+        if (head) self.mparts.push({node: head, spec: mk, cls: 'given'});
+      }
       self.cells.forEach(function (row, i) {
         row.forEach(function (cell, j) {
           var hit = mk.cell ? (mk.cell[0] === i && mk.cell[1] === j)

@@ -494,8 +494,20 @@ run, not just whether it is correct:
   + is half again an average capital. **A class average is not a
   measurement.** The table is per character now (`scripts/em_widths.py`,
   v2.45), the engine's copy is generated from it, and `test_check_file.py`
-  fails on a drift. Sharpening it twice turned up three overlaps in shipped
-  files that had always been there and had always measured as clear.
+  fails on a drift. **And measure the font the reader gets.** That table was
+  recorded before Red Hat Display had loaded -- the font comes from Google
+  through the agent proxy, which the browser scripts did not use until v2.47
+  -- so for eight versions it held the *fallback's* widths, 6% to 100% wide
+  depending on the character, with `1` as broad as `0` because the fallback
+  sets its digits tabular and Red Hat Display does not. Every margin was
+  generous and every overlap test pessimistic, which is the safe direction
+  and is exactly why nothing looked wrong. `scripts/measure_em.py` re-measures
+  it and refuses to record anything until `document.fonts.check` says the font
+  is there (v2.53). A measurement of the wrong thing is worse than an estimate,
+  because it carries the authority of having been measured: re-measuring
+  dropped four warnings from the government-intervention file, three from
+  ECO2013 supply-and-demand and a failure from the 9/11 prototype, and added
+  nothing anywhere.
 * **Every place a panel writes on an axis has to be counted in its margin.**
   v2.27 sized the left margin to the ticks and the points; a price line writes
   there too, and `P_{WORLD}` came out as `WORLD` (v2.43). When a margin is
@@ -555,7 +567,7 @@ not enough to reproduce an implementation.
   `embed_engine.py`'s paths reproduce the delivered file byte-for-byte; all 20
   prototype widgets render with no engine errors; `check_file.py` runs the
   geometric label test over 74 labels in the 263 file with no overlaps.
-* **Engine is v2.52.** Since v2.6: `areas` shade a polygon (v2.11) with
+* **Engine is v2.53.** Since v2.6: `areas` shade a polygon (v2.11) with
   `edge` to outline it (v2.18) and labels centred on their anchor (v2.13);
   `dot:false` drops a marker but keeps the axis label (v2.12); points take
   `guides:"p"`/`"q"` for one leg of the elbow (v2.14); braces take
@@ -650,7 +662,9 @@ not enough to reproduce an implementation.
   the axis's own end has to put it. A `left` upright brace sits 12px clear of
   whatever the price axis writes rather than a fixed 32 (v2.51): on a panel
   that writes nothing there it stood out in empty space, away from the gap it
-  measures, which is the one thing a brace has to be next to. The explorer is
+  measures, which is the one thing a brace has to be next to. The character
+  table was re-measured at v2.53, with the web font actually loaded; the
+  explorer is
   scrubbed by dragging the figure itself or by the arrow keys, and its year
   control counts months, which is what the schedule is indexed by -- set in
   months and written back in years, the thumb clamped at its own maximum and

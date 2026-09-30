@@ -52,11 +52,12 @@
 .sdg table { width:auto !important; margin:0 auto !important; border:0 !important;
   border-radius:0 !important; box-shadow:none !important; overflow:visible !important; }
 .sdg table th, .sdg table td { background:transparent !important;
-  border-bottom:0 !important; border-radius:0 !important; }
+  border-bottom:0 !important; border-radius:0 !important;
+  font-weight:inherit !important; }
 .sdg .sdg-table { border-collapse:collapse; width:100% !important; font-size:.9rem; background:#fff; border:1px solid var(--rule) !important; }
-.sdg .sdg-table th { background:var(--navy) !important; color:#fff; font-weight:700; padding:6px 8px; text-align:center; font-size:.82rem; }
+.sdg .sdg-table th { background:var(--navy) !important; color:#fff; font-weight:700 !important; padding:6px 8px; text-align:center; font-size:.82rem; }
 .sdg .sdg-table td { padding:6px 8px; text-align:center; border-top:1px solid var(--rule); }
-.sdg .sdg-table tr.hi td { background:#fdeadb !important; font-weight:700; }
+.sdg .sdg-table tr.hi td { background:#fdeadb !important; font-weight:700 !important; }
 .sdg .plotbg { fill:var(--plot); }
 .sdg .grid { stroke:#b9c2d3; stroke-width:1; stroke-dasharray:4 4; }
 .sdg .ax { fill:none; stroke:var(--ink); stroke-width:1.6; }
@@ -161,7 +162,7 @@
 .sdg .sdg-mxwrap { overflow-x:auto; margin:0 0 4px; }
 .sdg .sdg-mx { border-collapse:collapse; margin:0 auto; background:#fff; }
 .sdg .sdg-mx td { padding:0; text-align:center; }
-.sdg .mx-player { font-weight:800; color:var(--navy); text-align:center;
+.sdg .mx-player { font-weight:800 !important; color:var(--navy); text-align:center;
   font-size:1rem; letter-spacing:.02em; padding:4px 10px; }
 /* The row player's name reads across, as the printed matrix sets it, with
    room between it and the strategy labels it sits outside of. */
@@ -169,7 +170,7 @@
 /* Every box in the grid is one size: a strategy label is the same box
    whether it heads a column or a row, so the fill that marks the move being
    held fixed reads as the same mark in both places. (Ian, 2026-09-30.) */
-.sdg .mx-head { font-weight:700; color:var(--navy); text-align:center; padding:6px 14px;
+.sdg .mx-head { font-weight:700 !important; color:var(--navy); text-align:center; padding:6px 14px;
   width:118px; white-space:nowrap; transition:background .25s ease, color .25s ease; }
 .sdg .mx-cell { border:1.5px solid var(--ink) !important; padding:10px 18px; width:118px; min-width:118px; text-align:center; }
 .sdg .mx-cell .ln { font-size:1rem; color:var(--ink); padding:2px 4px; border-radius:3px;
@@ -186,4 +187,41 @@
   .sdg .mx-head, .sdg .mx-cell { width:auto; }
   .sdg .mx-cell { padding:6px 8px; min-width:0; }
   .sdg .mx-cell .ln { font-size:.85rem; }
+}
+
+/* The same game played year after year (v2.48). One row a year, a running
+   total underneath, and a red arrow carrying one year's move into the next
+   year's answer -- drawn over the table, because each one runs from inside
+   one cell to inside another a row down and there is no cell to put it in.
+   A year arrives at a time, so the reader sees the cheating year pay and the
+   answer come back the year after, which the printed table has to state all
+   at once. */
+.sdg .sdg-playswrap { position:relative; overflow-x:auto; margin:0 0 4px; }
+.sdg .sdg-plays { border-collapse:collapse; margin:0 auto; background:#fff;
+  font-size:.95rem; }
+.sdg .sdg-plays th, .sdg .sdg-plays td { border:1px solid var(--rule); }
+.sdg .pl-col { background:var(--navy) !important; color:#fff !important;
+  font-weight:800 !important; padding:6px 18px; text-align:center; }
+.sdg .pl-corner { background:var(--navy) !important; border-color:var(--navy) !important; }
+.sdg .pl-year { color:var(--navy); font-weight:800 !important; padding:6px 14px;
+  text-align:center; white-space:nowrap; }
+/* The arrows run in the channel the side padding leaves between the two
+   columns, so it is wider here than a table needs. */
+.sdg .pl-cell { padding:6px 24px; text-align:left; white-space:nowrap;
+  min-width:150px; }
+.sdg .pl-move { color:var(--navy); font-style:italic; }
+.sdg .pl-amt { color:var(--navy); margin-left:8px; }
+.sdg .pl-totalrow td { background:#e8f6fb !important; }
+.sdg .pl-total { color:var(--navy); font-weight:800 !important; padding:6px 18px;
+  text-align:center; }
+/* A row or an arrow that this step has not reached keeps its space, so the
+   table does not jump as the years arrive. */
+.sdg .pl-row, .sdg .pl-arrow { opacity:0; transition:opacity .45s ease; }
+.sdg .pl-row.shown, .sdg .pl-arrow.shown { opacity:1; }
+.sdg .pl-arrows { position:absolute; inset:0; pointer-events:none; overflow:visible; }
+.sdg .pl-arrow { fill:none; stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round; }
+@media (max-width:640px){
+  .sdg .sdg-plays { font-size:.82rem; }
+  .sdg .pl-cell { padding:5px 8px; min-width:0; }
+  .sdg .pl-col, .sdg .pl-total { padding:5px 8px; }
 }

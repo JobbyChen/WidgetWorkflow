@@ -32,11 +32,10 @@ Checkboxes. Keep `CLAUDE.md`'s status paragraph in sync with this file.
       was reconverted on 2026-09-30: the matrix is a widget at both the places
       the chapter prints it — six steps walking the dominant-strategy argument
       in the chapter's own order, and four playing the same grid year by year.
-- [ ] **A repeated-game years table is still not in the schema.** The other
-      half of that request: three rows, a running total per firm, and an arrow
-      carrying one year's move into the next year's answer, stepped a year at
-      a time. Chapter 15's two of them stay images. Worth building if another
-      chapter needs one; on its own it is one figure printed twice.
+- [x] ~~**A repeated-game years table is still not in the schema.**~~ Built at
+      v2.48, and chapter 15's two of them are widgets: a row a year, a running
+      total, and a red arrow carrying one year's move into the next year's
+      answer. No image remains in that chapter.
 
 ## Found by running the checker on the delivered files
 

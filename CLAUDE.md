@@ -555,7 +555,7 @@ not enough to reproduce an implementation.
   `embed_engine.py`'s paths reproduce the delivered file byte-for-byte; all 20
   prototype widgets render with no engine errors; `check_file.py` runs the
   geometric label test over 74 labels in the 263 file with no overlaps.
-* **Engine is v2.47.** Since v2.6: `areas` shade a polygon (v2.11) with
+* **Engine is v2.48.** Since v2.6: `areas` shade a polygon (v2.11) with
   `edge` to outline it (v2.18) and labels centred on their anchor (v2.13);
   `dot:false` drops a marker but keeps the axis label (v2.12); points take
   `guides:"p"`/`"q"` for one leg of the elbow (v2.14); braces take
@@ -627,7 +627,14 @@ not enough to reproduce an implementation.
   which had been painting white over a schedule row's highlight in every
   column but the first and over the navy behind a `given` label, so the label
   vanished; every box in a payoff matrix is one size now, so the same mark
-  reads the same whether it heads a row or a column.
+  reads the same whether it heads a row or a column, and the weights the
+  house sheet was thinning -- `td:first-child` is 500 there, which caught
+  FIRM B and whichever row label started its row, so half the grid was a
+  different weight from the other half -- are re-asserted. And a widget can
+  be a **years table** (v2.48): the same game played year after year, a row
+  at a time, with a red arrow carrying one year's move into the next year's
+  answer, which is the whole of tit-for-tat and what the printed table has to
+  state all at once.
 
 * **PPF works.** The first chapter of Exam 1 material converted to seven widgets
   with no engine gaps hit: frontiers, a combinations table, points on/inside/

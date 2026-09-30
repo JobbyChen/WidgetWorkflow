@@ -1,4 +1,4 @@
-# Engine reference — `engine/sd-graph.js` v2.46
+# Engine reference — `engine/sd-graph.js` v2.48
 
 Written from the engine source. The conversion prompt carries a shorter version
 of this in its own "Engine reference" section; that one is what the model needs
@@ -116,6 +116,35 @@ This exists because the game-theory chapter argues through its matrix one
 comparison at a time — if B complies A does better cheating, if B cheats A
 still does better cheating, and so on to the Nash cell — which is exactly what
 a picture of the finished grid cannot show.
+
+### `plays`
+
+The same game played year after year (**v2.48**) — one row a year, a running
+total underneath, and a red arrow carrying one year's move into the next
+year's answer. HTML like the matrix and the schedule `table`, and it takes the
+same step controls.
+
+```json
+{"plays": {
+  "cols": ["Firm A", "Firm B"],
+  "years": [{"label": "2025", "cells": [["Comply", "+$200M"], ["Comply", "+$200M"]]},
+            {"label": "2026", "cells": [["Cheat", "+$300M"], ["Comply", "-$50M"]], "at": 1}],
+  "total": {"label": "Total", "cells": ["+$500M", "+$150M"], "at": 2},
+  "arrows": [{"from": [0, 0], "to": [1, 1], "at": 1}]
+}}
+```
+
+A cell is `[move, amount]`: the move is set in italic and the amount beside it
+in brackets, as the source sets them. `from` and `to` are `[year, column]`,
+and an arrow may run either way, so the figure where both firms answer in kind
+draws its two crossings. Years, `total` and arrows take `at`/`until`, and a
+year that has not arrived keeps its space, so the table does not jump as they
+fill in.
+
+The arrows are drawn over the table rather than in it — each runs from inside
+one cell to inside another a row down, and there is no cell to put it in — so
+they are measured off the laid-out table, again when the web font arrives and
+again whenever the table changes size.
 
 ### `axes`
 

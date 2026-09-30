@@ -634,3 +634,39 @@ heads a row or a column.
 chapters a few pixels past the screen. Reported rather than fixed — it is
 Ian's stylesheet on Ian's own tables, and it has nothing to do with the
 widgets.
+
+## 2026-09-30 — the years table (v2.48)
+
+The other half of the game-theory chapter's request, built. A `plays` widget
+is one row a year, a running total underneath, and a red arrow carrying one
+year's move into the next year's answer — which is the whole of tit-for-tat,
+and the thing the printed table has to state all at once. A year at a time,
+the reader sees the cheating year pay and the answer arrive the year after.
+
+Two decisions in it worth keeping:
+
+* **The arrows are drawn over the table, not in it.** Each runs from inside
+  one cell to inside another a row down, so there is no cell to put one in.
+  They are measured off the laid-out table instead, again when the web font
+  arrives and again on every resize. The first version started them 8px inside
+  each cell and the crossing figure's pair read as a single blot; a quarter of
+  the way in ran them over the text. A sixth of the cell, with the side
+  padding widened to leave a channel between the columns, is about what the
+  printed arrows span.
+* **A year that has not arrived keeps its space.** Opacity, not display, so
+  the table does not jump as the rows fill in and the total stays where the
+  reader last saw it.
+
+Chapter 15 now has no image left in it: the matrix at both the places it is
+printed, and both years tables.
+
+### And the house sheet was thinning half the matrix
+
+Ian, on the same round: FIRM B and one of the two row labels were a lighter
+weight than FIRM A and the column labels. `td:first-child` is `font-weight:500`
+in the house stylesheet, and whichever label happened to start its row got it —
+which on this grid is FIRM B in the first body row and the second row's own
+label. The reset re-asserts the weights the engine means. That is the third
+thing that sheet had quietly taken over, after the zebra striping and the
+first-column tint, and all three were invisible until the screenshots started
+loading it.

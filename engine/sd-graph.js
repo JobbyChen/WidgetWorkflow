@@ -1,4 +1,4 @@
-/* ===== sd-graph.js v2.47 — data-driven supply & demand widgets =====
+/* ===== sd-graph.js v2.48 — data-driven supply & demand widgets =====
    Markup:  <div class="sdg"><script type="application/json">{ ...config... }<\/script></div>
    Top-level config:
      title, lede, caption         heading / intro / static caption (caption used only when there are no steps)
@@ -36,6 +36,9 @@
      matrix:   {rows:{player,labels[]}, cols:{player,labels[]}, cells[[[aPayoff,bPayoff],...],...], marks[]}
         A payoff matrix instead of a plot. A mark names {row|col|cell}, optionally who:'a'|'b' for one
         player's line inside it, and pick:true for the one a comparison lands on. Marks take at/until.
+     plays:    {cols[], years[{label, cells[[move,amount],...], at, until}], total:{label,cells[]}, arrows[{from:[y,c], to:[y,c]}]}
+        The same game played year after year: one row a year, a running total underneath, and an
+        arrow carrying one year's move into the next year's answer. Years, total and arrows take at/until.
    Colors: 'ink' (default, black-navy), 'red' (shifted/new), 'teal', 'orange', 'grey'
    Presets (symbolic graphs, P₁/P₂/Q₁/Q₂, no numbers) — a few keys expand into a full config:
      {"preset":"shift", "shift":"D"|"S", "dir":"right"|"left", "good":"pasta", "event":"The price of pizza rises.", "why":"...", "static":true}
@@ -634,6 +637,7 @@
     // picture of the finished grid cannot do that. (v2.39)
     this.mparts = [];
     if (cfg.matrix) { this.panels = []; this.buildMatrix(); return this.finish(); }
+    if (cfg.plays) { this.panels = []; this.buildPlays(); return this.finish(); }
     var panels = cfg.panels || [cfg];
     this.panels = panels.map(buildPanel);
     var body = h('div', 'sdg-body' + (cfg.table ? ' has-table' : '') + (panels.length > 1 ? ' two' : ''));
@@ -739,6 +743,96 @@
       });
     });
   };
+
+  // The same game played year after year (v2.48): one row a year, a running
+  // total underneath, and a red arrow carrying one year's move into the next
+  // year's answer -- which is the whole of tit-for-tat, and the one thing the
+  // printed table has to state all at once. A year at a time, the reader sees
+  // the cheating year pay and the answer arrive the year after.
+  Widget.prototype.buildPlays = function () {
+    var self = this, pl = this.cfg.plays, host = this.host;
+    var tbl = h('table', 'sdg-plays'), tb = h('tbody');
+    var hr = h('tr', 'pl-headrow');
+    hr.appendChild(h('th', 'pl-corner', pl.rowhead || ''));
+    (pl.cols || []).forEach(function (c) { hr.appendChild(h('th', 'pl-col', c)); });
+    tb.appendChild(hr);
+    self.playCells = [];
+    (pl.years || []).forEach(function (y) {
+      var tr = h('tr', 'pl-row'), row = [];
+      tr.appendChild(h('td', 'pl-year', y.label));
+      (y.cells || []).forEach(function (c) {
+        var td = h('td', 'pl-cell');
+        td.appendChild(h('i', 'pl-move', c[0]));
+        td.appendChild(h('span', 'pl-amt', '(' + c[1] + ')'));
+        tr.appendChild(td); row.push(td);
+      });
+      tb.appendChild(tr); self.playCells.push(row);
+      self.mparts.push({node: tr, spec: y, cls: 'shown'});
+    });
+    if (pl.total) {
+      var tr = h('tr', 'pl-row pl-totalrow');
+      tr.appendChild(h('td', 'pl-year', pl.total.label || 'Total'));
+      (pl.total.cells || []).forEach(function (c) { tr.appendChild(h('td', 'pl-total', c)); });
+      tb.appendChild(tr);
+      self.mparts.push({node: tr, spec: pl.total, cls: 'shown'});
+    }
+    tbl.appendChild(tb);
+    var wrap = h('div', 'sdg-playswrap');
+    wrap.appendChild(tbl);
+    // The arrows are drawn over the table rather than in it, because each one
+    // runs from inside one cell to inside another a row down: there is no cell
+    // to put it in. So they are measured off the laid-out table -- after the
+    // web font arrives, and again whenever the table changes size.
+    var svg = el('svg', {class: 'pl-arrows'});
+    wrap.appendChild(svg);
+    host.appendChild(wrap);
+    self.playArrows = (pl.arrows || []).map(function (a) {
+      var path = el('path', {class: 'arrow pl-arrow', stroke: col(a.color || 'red')});
+      svg.appendChild(path);
+      self.mparts.push({node: path, spec: a, cls: 'shown'});
+      return {spec: a, path: path};
+    });
+    function place() {
+      var box = wrap.getBoundingClientRect();
+      if (!box.width) return;
+      svg.setAttribute('viewBox', '0 0 ' + box.width + ' ' + box.height);
+      svg.setAttribute('width', box.width);
+      svg.setAttribute('height', box.height);
+      self.playArrows.forEach(function (ar) {
+        var f = (self.playCells[ar.spec.from[0]] || [])[ar.spec.from[1]],
+            t = (self.playCells[ar.spec.to[0]] || [])[ar.spec.to[1]];
+        if (!f || !t) return;
+        // Started 8px inside each cell the arrow was two column borders long
+        // and the pair in the crossing figure read as one blot. It reaches a
+        // quarter of the way into each cell now, which is about what the
+        // printed arrows span.
+        var fb = f.getBoundingClientRect(), tb2 = t.getBoundingClientRect(),
+            rightwards = ar.spec.from[1] < ar.spec.to[1],
+            inset = Math.min(34, Math.max(14, fb.width * 0.18)),
+            x1 = (rightwards ? fb.right - inset : fb.left + inset) - box.left,
+            y1 = fb.top + fb.height / 2 - box.top,
+            x2 = (rightwards ? tb2.left + inset : tb2.right - inset) - box.left,
+            y2 = tb2.top + tb2.height / 2 - box.top;
+        ar.path.setAttribute('d', headed(x1, y1, x2, y2));
+      });
+    }
+    self.placePlays = place;
+    place();
+    if (window.ResizeObserver) { new ResizeObserver(place).observe(wrap); }
+    if (document.fonts && document.fonts.ready) { document.fonts.ready.then(place); }
+  };
+
+  // An arrow between two pixel points, head scaled to its length the way the
+  // plot's own arrows are (v2.26).
+  function headed(x1, y1, x2, y2) {
+    var dx = x2 - x1, dy = y2 - y1, len = Math.hypot(dx, dy) || 1,
+        ux = dx / len, uy = dy / len,
+        k = Math.max(0.55, Math.min(1, len / 46)), hh = 6.2 * k, ww = 3.1 * k,
+        bx = x2 - ux * hh, by = y2 - uy * hh;
+    return 'M' + x1 + ' ' + y1 + ' L' + x2 + ' ' + y2 +
+           ' M' + (bx - uy * ww) + ' ' + (by + ux * ww) + ' L' + x2 + ' ' + y2 +
+           ' L' + (bx + uy * ww) + ' ' + (by - ux * ww);
+  }
 
   Widget.prototype.finish = function () {
     var cfg = this.cfg, self = this, host = this.host;

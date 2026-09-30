@@ -70,11 +70,12 @@ MathJax = {
 .sdg table { width:auto !important; margin:0 auto !important; border:0 !important;
   border-radius:0 !important; box-shadow:none !important; overflow:visible !important; }
 .sdg table th, .sdg table td { background:transparent !important;
-  border-bottom:0 !important; border-radius:0 !important; }
+  border-bottom:0 !important; border-radius:0 !important;
+  font-weight:inherit !important; }
 .sdg .sdg-table { border-collapse:collapse; width:100% !important; font-size:.9rem; background:#fff; border:1px solid var(--rule) !important; }
-.sdg .sdg-table th { background:var(--navy) !important; color:#fff; font-weight:700; padding:6px 8px; text-align:center; font-size:.82rem; }
+.sdg .sdg-table th { background:var(--navy) !important; color:#fff; font-weight:700 !important; padding:6px 8px; text-align:center; font-size:.82rem; }
 .sdg .sdg-table td { padding:6px 8px; text-align:center; border-top:1px solid var(--rule); }
-.sdg .sdg-table tr.hi td { background:#fdeadb !important; font-weight:700; }
+.sdg .sdg-table tr.hi td { background:#fdeadb !important; font-weight:700 !important; }
 .sdg .plotbg { fill:var(--plot); }
 .sdg .grid { stroke:#b9c2d3; stroke-width:1; stroke-dasharray:4 4; }
 .sdg .ax { fill:none; stroke:var(--ink); stroke-width:1.6; }
@@ -179,7 +180,7 @@ MathJax = {
 .sdg .sdg-mxwrap { overflow-x:auto; margin:0 0 4px; }
 .sdg .sdg-mx { border-collapse:collapse; margin:0 auto; background:#fff; }
 .sdg .sdg-mx td { padding:0; text-align:center; }
-.sdg .mx-player { font-weight:800; color:var(--navy); text-align:center;
+.sdg .mx-player { font-weight:800 !important; color:var(--navy); text-align:center;
   font-size:1rem; letter-spacing:.02em; padding:4px 10px; }
 /* The row player's name reads across, as the printed matrix sets it, with
    room between it and the strategy labels it sits outside of. */
@@ -187,7 +188,7 @@ MathJax = {
 /* Every box in the grid is one size: a strategy label is the same box
    whether it heads a column or a row, so the fill that marks the move being
    held fixed reads as the same mark in both places. (Ian, 2026-09-30.) */
-.sdg .mx-head { font-weight:700; color:var(--navy); text-align:center; padding:6px 14px;
+.sdg .mx-head { font-weight:700 !important; color:var(--navy); text-align:center; padding:6px 14px;
   width:118px; white-space:nowrap; transition:background .25s ease, color .25s ease; }
 .sdg .mx-cell { border:1.5px solid var(--ink) !important; padding:10px 18px; width:118px; min-width:118px; text-align:center; }
 .sdg .mx-cell .ln { font-size:1rem; color:var(--ink); padding:2px 4px; border-radius:3px;
@@ -205,9 +206,46 @@ MathJax = {
   .sdg .mx-cell { padding:6px 8px; min-width:0; }
   .sdg .mx-cell .ln { font-size:.85rem; }
 }
+
+/* The same game played year after year (v2.48). One row a year, a running
+   total underneath, and a red arrow carrying one year's move into the next
+   year's answer -- drawn over the table, because each one runs from inside
+   one cell to inside another a row down and there is no cell to put it in.
+   A year arrives at a time, so the reader sees the cheating year pay and the
+   answer come back the year after, which the printed table has to state all
+   at once. */
+.sdg .sdg-playswrap { position:relative; overflow-x:auto; margin:0 0 4px; }
+.sdg .sdg-plays { border-collapse:collapse; margin:0 auto; background:#fff;
+  font-size:.95rem; }
+.sdg .sdg-plays th, .sdg .sdg-plays td { border:1px solid var(--rule); }
+.sdg .pl-col { background:var(--navy) !important; color:#fff !important;
+  font-weight:800 !important; padding:6px 18px; text-align:center; }
+.sdg .pl-corner { background:var(--navy) !important; border-color:var(--navy) !important; }
+.sdg .pl-year { color:var(--navy); font-weight:800 !important; padding:6px 14px;
+  text-align:center; white-space:nowrap; }
+/* The arrows run in the channel the side padding leaves between the two
+   columns, so it is wider here than a table needs. */
+.sdg .pl-cell { padding:6px 24px; text-align:left; white-space:nowrap;
+  min-width:150px; }
+.sdg .pl-move { color:var(--navy); font-style:italic; }
+.sdg .pl-amt { color:var(--navy); margin-left:8px; }
+.sdg .pl-totalrow td { background:#e8f6fb !important; }
+.sdg .pl-total { color:var(--navy); font-weight:800 !important; padding:6px 18px;
+  text-align:center; }
+/* A row or an arrow that this step has not reached keeps its space, so the
+   table does not jump as the years arrive. */
+.sdg .pl-row, .sdg .pl-arrow { opacity:0; transition:opacity .45s ease; }
+.sdg .pl-row.shown, .sdg .pl-arrow.shown { opacity:1; }
+.sdg .pl-arrows { position:absolute; inset:0; pointer-events:none; overflow:visible; }
+.sdg .pl-arrow { fill:none; stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round; }
+@media (max-width:640px){
+  .sdg .sdg-plays { font-size:.82rem; }
+  .sdg .pl-cell { padding:5px 8px; min-width:0; }
+  .sdg .pl-col, .sdg .pl-total { padding:5px 8px; }
+}
 </style>
 <script>
-/* ===== sd-graph.js v2.47 — data-driven supply & demand widgets =====
+/* ===== sd-graph.js v2.48 — data-driven supply & demand widgets =====
    Markup:  <div class="sdg"><script type="application/json">{ ...config... }<\/script></div>
    Top-level config:
      title, lede, caption         heading / intro / static caption (caption used only when there are no steps)
@@ -245,6 +283,9 @@ MathJax = {
      matrix:   {rows:{player,labels[]}, cols:{player,labels[]}, cells[[[aPayoff,bPayoff],...],...], marks[]}
         A payoff matrix instead of a plot. A mark names {row|col|cell}, optionally who:'a'|'b' for one
         player's line inside it, and pick:true for the one a comparison lands on. Marks take at/until.
+     plays:    {cols[], years[{label, cells[[move,amount],...], at, until}], total:{label,cells[]}, arrows[{from:[y,c], to:[y,c]}]}
+        The same game played year after year: one row a year, a running total underneath, and an
+        arrow carrying one year's move into the next year's answer. Years, total and arrows take at/until.
    Colors: 'ink' (default, black-navy), 'red' (shifted/new), 'teal', 'orange', 'grey'
    Presets (symbolic graphs, P₁/P₂/Q₁/Q₂, no numbers) — a few keys expand into a full config:
      {"preset":"shift", "shift":"D"|"S", "dir":"right"|"left", "good":"pasta", "event":"The price of pizza rises.", "why":"...", "static":true}
@@ -843,6 +884,7 @@ MathJax = {
     // picture of the finished grid cannot do that. (v2.39)
     this.mparts = [];
     if (cfg.matrix) { this.panels = []; this.buildMatrix(); return this.finish(); }
+    if (cfg.plays) { this.panels = []; this.buildPlays(); return this.finish(); }
     var panels = cfg.panels || [cfg];
     this.panels = panels.map(buildPanel);
     var body = h('div', 'sdg-body' + (cfg.table ? ' has-table' : '') + (panels.length > 1 ? ' two' : ''));
@@ -948,6 +990,96 @@ MathJax = {
       });
     });
   };
+
+  // The same game played year after year (v2.48): one row a year, a running
+  // total underneath, and a red arrow carrying one year's move into the next
+  // year's answer -- which is the whole of tit-for-tat, and the one thing the
+  // printed table has to state all at once. A year at a time, the reader sees
+  // the cheating year pay and the answer arrive the year after.
+  Widget.prototype.buildPlays = function () {
+    var self = this, pl = this.cfg.plays, host = this.host;
+    var tbl = h('table', 'sdg-plays'), tb = h('tbody');
+    var hr = h('tr', 'pl-headrow');
+    hr.appendChild(h('th', 'pl-corner', pl.rowhead || ''));
+    (pl.cols || []).forEach(function (c) { hr.appendChild(h('th', 'pl-col', c)); });
+    tb.appendChild(hr);
+    self.playCells = [];
+    (pl.years || []).forEach(function (y) {
+      var tr = h('tr', 'pl-row'), row = [];
+      tr.appendChild(h('td', 'pl-year', y.label));
+      (y.cells || []).forEach(function (c) {
+        var td = h('td', 'pl-cell');
+        td.appendChild(h('i', 'pl-move', c[0]));
+        td.appendChild(h('span', 'pl-amt', '(' + c[1] + ')'));
+        tr.appendChild(td); row.push(td);
+      });
+      tb.appendChild(tr); self.playCells.push(row);
+      self.mparts.push({node: tr, spec: y, cls: 'shown'});
+    });
+    if (pl.total) {
+      var tr = h('tr', 'pl-row pl-totalrow');
+      tr.appendChild(h('td', 'pl-year', pl.total.label || 'Total'));
+      (pl.total.cells || []).forEach(function (c) { tr.appendChild(h('td', 'pl-total', c)); });
+      tb.appendChild(tr);
+      self.mparts.push({node: tr, spec: pl.total, cls: 'shown'});
+    }
+    tbl.appendChild(tb);
+    var wrap = h('div', 'sdg-playswrap');
+    wrap.appendChild(tbl);
+    // The arrows are drawn over the table rather than in it, because each one
+    // runs from inside one cell to inside another a row down: there is no cell
+    // to put it in. So they are measured off the laid-out table -- after the
+    // web font arrives, and again whenever the table changes size.
+    var svg = el('svg', {class: 'pl-arrows'});
+    wrap.appendChild(svg);
+    host.appendChild(wrap);
+    self.playArrows = (pl.arrows || []).map(function (a) {
+      var path = el('path', {class: 'arrow pl-arrow', stroke: col(a.color || 'red')});
+      svg.appendChild(path);
+      self.mparts.push({node: path, spec: a, cls: 'shown'});
+      return {spec: a, path: path};
+    });
+    function place() {
+      var box = wrap.getBoundingClientRect();
+      if (!box.width) return;
+      svg.setAttribute('viewBox', '0 0 ' + box.width + ' ' + box.height);
+      svg.setAttribute('width', box.width);
+      svg.setAttribute('height', box.height);
+      self.playArrows.forEach(function (ar) {
+        var f = (self.playCells[ar.spec.from[0]] || [])[ar.spec.from[1]],
+            t = (self.playCells[ar.spec.to[0]] || [])[ar.spec.to[1]];
+        if (!f || !t) return;
+        // Started 8px inside each cell the arrow was two column borders long
+        // and the pair in the crossing figure read as one blot. It reaches a
+        // quarter of the way into each cell now, which is about what the
+        // printed arrows span.
+        var fb = f.getBoundingClientRect(), tb2 = t.getBoundingClientRect(),
+            rightwards = ar.spec.from[1] < ar.spec.to[1],
+            inset = Math.min(34, Math.max(14, fb.width * 0.18)),
+            x1 = (rightwards ? fb.right - inset : fb.left + inset) - box.left,
+            y1 = fb.top + fb.height / 2 - box.top,
+            x2 = (rightwards ? tb2.left + inset : tb2.right - inset) - box.left,
+            y2 = tb2.top + tb2.height / 2 - box.top;
+        ar.path.setAttribute('d', headed(x1, y1, x2, y2));
+      });
+    }
+    self.placePlays = place;
+    place();
+    if (window.ResizeObserver) { new ResizeObserver(place).observe(wrap); }
+    if (document.fonts && document.fonts.ready) { document.fonts.ready.then(place); }
+  };
+
+  // An arrow between two pixel points, head scaled to its length the way the
+  // plot's own arrows are (v2.26).
+  function headed(x1, y1, x2, y2) {
+    var dx = x2 - x1, dy = y2 - y1, len = Math.hypot(dx, dy) || 1,
+        ux = dx / len, uy = dy / len,
+        k = Math.max(0.55, Math.min(1, len / 46)), hh = 6.2 * k, ww = 3.1 * k,
+        bx = x2 - ux * hh, by = y2 - uy * hh;
+    return 'M' + x1 + ' ' + y1 + ' L' + x2 + ' ' + y2 +
+           ' M' + (bx - uy * ww) + ' ' + (by + ux * ww) + ' L' + x2 + ' ' + y2 +
+           ' L' + (bx + uy * ww) + ' ' + (by - ux * ww);
+  }
 
   Widget.prototype.finish = function () {
     var cfg = this.cfg, self = this, host = this.host;

@@ -251,6 +251,9 @@ STEPPABLE = ("curves", "areas", "points", "hlines", "braces", "vbraces", "moves"
 # A payoff matrix has no curves; what its steps change is which cells are
 # marked, so its marks are what this rule measures (engine v2.39).
 MATRIX_STEPPABLE = ("marks",)
+# A years table's steps bring in a year, an arrow, or the running total
+# (engine v2.48). `total` is one object rather than a list, so it is wrapped.
+PLAYS_STEPPABLE = ("years", "arrows", "total")
 
 
 def check_steps(cfgs, r):
@@ -291,6 +294,11 @@ def check_steps(cfgs, r):
                            for pi, pn in enumerate(panels(v))]
                 if v.get("matrix"):
                     sources.append((-1, v["matrix"], MATRIX_STEPPABLE))
+                if v.get("plays"):
+                    pl = dict(v["plays"])
+                    if isinstance(pl.get("total"), dict):
+                        pl["total"] = [pl["total"]]
+                    sources.append((-2, pl, PLAYS_STEPPABLE))
                 for pi, pn, keys in sources:
                     for key in keys:
                         for ei, e in enumerate(pn.get(key) or []):

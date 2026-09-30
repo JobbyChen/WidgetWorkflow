@@ -119,6 +119,64 @@
 .sdg .lblbox { fill:#fff; stroke-width:1; }
 /* Small: a boxed name sits on the curve it names, and a big box hides it. */
 .sdg .tag.boxed { font-size:9.5px; }
+/* The amortization explorer (v2.50). Interest orange, principal teal -- the
+   two colours this set already uses for what the other side gets and what you
+   keep -- and the split the printed figure shades. */
+.sdg .am-plot svg { width:100%; height:auto; display:block; }
+.sdg .am-area { stroke:none; }
+.sdg .am-prin { fill:var(--teal); fill-opacity:.30; }
+.sdg .am-int { fill:var(--orange); fill-opacity:.26; }
+.sdg .am-grid { stroke:#fff; stroke-opacity:.8; stroke-width:1; stroke-dasharray:3 4; }
+.sdg .am-line { fill:none; stroke:var(--ink); stroke-width:2.6; stroke-linejoin:round; }
+.sdg .am-cmp { fill:none; stroke:var(--ink); stroke-opacity:.5; stroke-width:1.4;
+  stroke-dasharray:5 4; }
+.sdg .am-cmplbl { font-size:10.5px; font-weight:800; fill:var(--ink);
+  paint-order:stroke; stroke:#fff; stroke-width:3; }
+.sdg .am-areatext { font-size:13px; font-weight:800; paint-order:stroke;
+  stroke:#fff; stroke-width:3; }
+.sdg .am-t-prin { fill:var(--teal); }
+.sdg .am-t-int { fill:var(--orange); }
+.sdg .am-cline { stroke:var(--navy); stroke-width:1.4; stroke-dasharray:4 3; }
+.sdg .am-cdot { fill:#fff; stroke:var(--navy); stroke-width:2.6; }
+.sdg .am-ctl { display:grid; gap:4px 12px; margin:10px 0 12px; }
+.sdg .am-row { display:grid; grid-template-columns:8.5em 1fr 7.5em; align-items:center;
+  gap:10px; min-height:44px; }
+.sdg .am-lab { color:var(--navy); font-weight:700; font-size:.9rem; }
+.sdg .am-range { width:100%; margin:0; accent-color:var(--navy); height:28px;
+  cursor:pointer; }
+.sdg .am-out { font-weight:800; color:var(--navy); font-variant-numeric:tabular-nums;
+  font-size:.92rem; }
+.sdg .am-seg { display:inline-flex; border:1px solid var(--navy); border-radius:4px;
+  overflow:hidden; justify-self:start; }
+.sdg .am-seg button { font:inherit; font-size:.88rem; padding:7px 14px; border:0;
+  background:#fff; color:var(--navy); cursor:pointer; }
+.sdg .am-seg button + button { border-left:1px solid var(--navy); }
+.sdg .am-seg button[aria-pressed="true"] { background:var(--navy); color:#fff;
+  font-weight:700; }
+.sdg .am-cards { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:0 0 10px; }
+.sdg .am-card { border:1px solid var(--rule); border-radius:5px; padding:7px 10px 8px;
+  background:#fff; font-size:.78rem; color:var(--ink); }
+.sdg .am-card b { display:block; font-size:1.02rem; font-weight:800; color:var(--navy);
+  font-variant-numeric:tabular-nums; margin-top:2px; }
+.sdg .am-card.c-orange { background:#fdf1e7; border-color:#f0b46b; }
+.sdg .am-card.c-orange b { color:var(--orange); }
+.sdg .am-card.c-teal { background:#e8f6f6; border-color:#8fc9c9; }
+.sdg .am-card.c-teal b { color:var(--teal); }
+.sdg .am-card.wide { grid-column:1 / -1; }
+.sdg .am-balpct { display:block; font-size:.76rem; color:var(--ink); }
+.sdg .am-bar { margin-top:5px; height:9px; border-radius:5px; background:#eef3fd;
+  border:1px solid var(--rule); overflow:hidden; }
+.sdg .am-bar i { display:block; height:100%; background:var(--navy); }
+.sdg .am-note { margin:0 0 8px; font-size:.9rem; line-height:1.45; color:var(--ink); }
+.sdg .am-check { display:inline-flex; align-items:center; gap:8px; font-size:.86rem;
+  color:var(--ink); cursor:pointer; min-height:44px; }
+.sdg .am-check input { accent-color:var(--navy); width:18px; height:18px; margin:0; }
+@media (max-width:640px){
+  .sdg .am-row { grid-template-columns:1fr; gap:2px; min-height:0; margin-bottom:6px; }
+  .sdg .am-row .am-out { justify-self:end; margin-top:-26px; }
+  .sdg .am-cards { grid-template-columns:1fr; }
+}
+@media (prefers-reduced-motion: reduce) { .sdg .am-bar i { transition:none; } }
 .sdg .fade { transition:opacity .45s ease; }
 .sdg .move { transition:transform .6s ease, opacity .45s ease; }
 .sdg .off { opacity:0; pointer-events:none; }

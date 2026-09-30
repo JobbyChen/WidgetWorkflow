@@ -680,3 +680,41 @@ the two names a pale one, so a rule ran down the middle of the band and the
 corner read as a block sitting beside the header rather than part of it. One
 navy band now, corner included. And it says "Year", also his: a navy block
 with nothing in it invites the question of what the column under it is.
+
+## 2026-09-30 — the first widget that is a model (v2.50)
+
+A real estate chapter, REE3043 — a different course from the two economics
+ones, and the first outside them. Ian's manager asked for the amortization
+figure as "a widget that includes a slider or something where it compares
+interest and principal from year 0 to 30", and then sent a hand-written
+example: an `amort-explorer` div with its own CSS and JS, a rate slider, a
+15/30 term toggle, a year slider, five readouts, a comparison overlay and a
+narrative line.
+
+Rule 2 says a widget is JSON and a gap in the schema is an engine feature
+request, not a reason to hand-write SVG into a notes file — so the example was
+taken as the specification and built into the engine. The chapter carries
+`{"amort": {...}}` and nothing else.
+
+**It is the first config here that states a model rather than a drawing.**
+Every other widget lists the points to draw. This one lists the loan —
+amount, rate, term — and the engine computes the schedule, because the share
+of a payment that is interest depends on all three at once and a table of
+points can hold one of them at a time. A first pass built a generic `slider`
+over a precomputed track and got as far as rendering before that became
+obvious; it was removed rather than left in, since the engine is embedded in
+every published file and a mechanic with no caller is weight on all of them.
+
+Two small things came with it: `pct:"y"` labels the price axis alone, for a
+figure plotting a percentage against something that is not one; and a
+quantity title starting with `\n` drops below the tick row, which is the only
+place it can go when a tick sits at the axis's own end.
+
+The numbers are the manager's — $300,000 at 7% over 30 years — and 7% is also
+the rate the chapter's prose gives for a 30-year loan today, which is why the
+printed curve starts at 87.7% interest. The arithmetic was checked against
+the drawing before anything was built.
+
+The chapter's other two figures, the positive and negative equity diagrams,
+converted with no new engine work: two lines and two upright braces each,
+symbolic because the chapter states no dollar figure for either.

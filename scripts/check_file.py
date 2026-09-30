@@ -513,7 +513,13 @@ def check_schema(cfgs, r):
         # a widget is left with once its caption turns out to restate the
         # paragraph beside it. Requiring a caption there would put the
         # restatement straight back.
-        if not (has_steps or cfg.get("caption") or static_preset or titled_scenarios
+        # A slider is the third way a widget can be worth showing: no steps
+        # and no static caption, but a reading the student scrubs to (v2.50).
+        # An amortization explorer is the third way a widget earns its place:
+        # no steps and no static caption, but a reading the student scrubs to
+        # (v2.50).
+        if not (has_steps or cfg.get("caption") or cfg.get("amort") or static_preset
+                or titled_scenarios
                 or cfg.get("lede")
                 or any(v.get("caption") or (isinstance(v.get("steps"), list)
                                             and len(v["steps"]) >= 2)
@@ -705,7 +711,8 @@ def fmt_p(v, ax):
 
 
 def fmt_q(v, ax):
-    if ax.get("pct"):
+    # pct:true is both axes; pct:"y" is the price axis alone (engine v2.50)
+    if ax.get("pct") is True:
         return "%s%%" % v
     if ax.get("k") and v >= 1000:
         return "%gk" % (v / 1000.0)

@@ -1,4 +1,4 @@
-# Engine reference — `engine/sd-graph.js` v2.49
+# Engine reference — `engine/sd-graph.js` v2.50
 
 Written from the engine source. The conversion prompt carries a shorter version
 of this in its own "Engine reference" section; that one is what the model needs
@@ -154,6 +154,30 @@ closing bracket at one end and on the move at the other, and somewhere
 different again the moment an amount is a character longer. Where the writing
 leaves no room between the columns, on a narrow screen, the arrow straddles
 the border they share instead.
+
+### `amort`
+
+An amortization explorer (**v2.50**) — the one widget here that is a *model*
+rather than a drawing. Every other config states what to draw; this one states
+the loan and the engine works out the schedule, because the share of a payment
+that is interest depends on the amount, the rate and the term at once, and no
+table of points can hold all three.
+
+```json
+{"amort": {"amount": 300000, "rate": 7, "term": 30, "terms": [15, 30],
+           "rateMin": 1, "rateMax": 15, "rateStep": 0.25, "compare": [4, 10]}}
+```
+
+The rate slider and the term buttons redraw the curve; the year slider reads
+the split off it and moves the cursor. Under the plot: the two shares, the
+monthly payment, the interest paid so far, the remaining balance with a bar,
+and a sentence that names the year principal overtakes interest. `compare`
+overlays those rates as dashed curves behind a checkbox; `hideCompare` drops
+it. Interest is orange and principal teal, the two colours this set already
+uses for what the other side gets and what you keep.
+
+A widget carrying one needs no `steps` and no `caption`: the reading the
+student scrubs to is what it is for.
 
 ### `axes`
 
@@ -572,6 +596,11 @@ model was an average per case, which is 20% narrow for a capital-heavy string
 — `S + Quota` rendered as `S + Quo`, with every check passing — and before
 v2.44 an average per weight. Measure a new label with
 `python scripts/em_widths.py "<the label>"` rather than counting characters.
+
+A quantity title whose text starts with `\n` drops below the tick row instead
+of standing beside it — which is where a figure with a tick at the axis's own
+end has to put it, and where the amortization figure's "Year" sits in the
+source.
 
 `ldx`/`ldy`/`dx`/`dy`/`offset` are all in these SVG units, and `dy` is positive
 downward. `scripts/check_file.py` replicates this geometry to test every label

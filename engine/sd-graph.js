@@ -1,4 +1,4 @@
-/* ===== sd-graph.js v2.49 — data-driven supply & demand widgets =====
+/* ===== sd-graph.js v2.50 — data-driven supply & demand widgets =====
    Markup:  <div class="sdg"><script type="application/json">{ ...config... }<\/script></div>
    Top-level config:
      title, lede, caption         heading / intro / static caption (caption used only when there are no steps)
@@ -37,6 +37,10 @@
         A payoff matrix instead of a plot. A mark names {row|col|cell}, optionally who:'a'|'b' for one
         player's line inside it, and pick:true for the one a comparison lands on. Marks take at/until.
      plays:    {rowhead, cols[], years[{label, cells[[move,amount],...], at, until}], total:{label,cells[]}, arrows[{from:[y,c], to:[y,c]}]}
+     amort:    {amount, rate, term, terms:[15,30], rateMin, rateMax, rateStep, compare:[4,10], hideCompare}
+        An amortization explorer: the engine computes the schedule and redraws. Rate and term change
+        the curve; the year slider reads the split off it. The one widget here that is a model, not
+        a drawing -- a share of a payment is a function of three inputs and no table can hold it.
         The same game played year after year: one row a year, a running total underneath, and an
         arrow carrying one year's move into the next year's answer. Years, total and arrows take at/until.
    Colors: 'ink' (default, black-navy), 'red' (shifted/new), 'teal', 'orange', 'grey'
@@ -73,7 +77,10 @@
   // plots a cumulative percent against a cumulative percent, and every value
   // on both axes carries a % in the source.
   function fmtP(v, ax) { if (ax.pct) return v + '%'; if (!ax.money) return String(v); if (ax.cents) return '$' + Number(v).toFixed(2); return '$' + (Number.isInteger(v) ? v : v.toFixed(2)); }
-  function fmtQ(v, ax) { if (ax.pct) return v + '%'; if (ax.k && v >= 1000) return (v / 1000) + 'k'; return v.toLocaleString('en-US'); }
+  // pct:true is both axes; pct:'y' is the price axis alone, for a figure that
+  // plots a percentage against something that is not one -- a share of the
+  // payment against the year of the loan (v2.50).
+  function fmtQ(v, ax) { if (ax.pct === true) return v + '%'; if (ax.k && v >= 1000) return (v / 1000) + 'k'; return v.toLocaleString('en-US'); }
   function merge(a, b) { var o = {}; for (var k in a) o[k] = a[k]; for (var k2 in b) o[k2] = b[k2]; return o; }
 
   // ---------- one SVG panel ----------
@@ -638,6 +645,7 @@
     this.mparts = [];
     if (cfg.matrix) { this.panels = []; this.buildMatrix(); return this.finish(); }
     if (cfg.plays) { this.panels = []; this.buildPlays(); return this.finish(); }
+    if (cfg.amort) { this.panels = []; this.buildAmort(); return this.finish(); }
     var panels = cfg.panels || [cfg];
     this.panels = panels.map(buildPanel);
     var body = h('div', 'sdg-body' + (cfg.table ? ' has-table' : '') + (panels.length > 1 ? ' two' : ''));
@@ -855,6 +863,212 @@
            ' M' + (bx - uy * ww) + ' ' + (by + ux * ww) + ' L' + x2 + ' ' + y2 +
            ' L' + (bx + uy * ww) + ' ' + (by - ux * ww);
   }
+
+  // ---------------------------------------------------------------- amort --
+  // An amortization explorer (v2.50). Every other widget here draws data the
+  // config states; this one is a model, because the share of a payment that
+  // is interest is a function of three inputs -- amount, rate, term -- and a
+  // precomputed track can hold one of them at a time, not all three. The
+  // config states the loan; the engine works out the schedule.
+  //
+  // Interest orange and principal teal, the two colours this set already uses
+  // for "what the other side gets" and "what you keep", and the split the
+  // printed figure shades.
+  var AW = 372, AH = 236, AM = {l: 40, r: 14, t: 14, b: 34};
+
+  function schedule(amount, apr, years) {
+    var r = apr / 1200, n = Math.round(years * 12),
+        pmt = r === 0 ? amount / n : amount * r / (1 - Math.pow(1 + r, -n)),
+        rows = [{bal: amount, cumInt: 0, cumPrin: 0, share: r === 0 ? 0 : amount * r / pmt}],
+        bal = amount, ci = 0, cp = 0;
+    for (var m = 1; m <= n; m++) {
+      var it = bal * r, pr = pmt - it;
+      bal = Math.max(0, bal - pr); ci += it; cp += pr;
+      rows.push({bal: bal, cumInt: ci, cumPrin: cp, share: it / pmt});
+    }
+    return {pmt: pmt, n: n, rows: rows};
+  }
+
+  function money(x) {
+    var v = Math.round(x);
+    return '$' + Math.abs(v).toLocaleString('en-US');
+  }
+  function pctTxt(x, d) { return (x * 100).toFixed(d == null ? 0 : d) + '%'; }
+
+  Widget.prototype.buildAmort = function () {
+    var self = this, a = this.cfg.amort, host = this.host,
+        state = {apr: a.rate != null ? a.rate : 7,
+                 years: a.term != null ? a.term : 30,
+                 amount: a.amount != null ? a.amount : 300000,
+                 month: 0, compare: false},
+        terms = a.terms || [15, 30],
+        cmp = a.compare || [4, 10];
+
+    var svg = el('svg', {viewBox: '0 0 ' + AW + ' ' + AH, role: 'img',
+      'aria-label': 'The share of each payment that goes to interest and to principal over the life of the loan'});
+    var plot = h('div', 'am-plot'); plot.appendChild(svg); host.appendChild(plot);
+
+    var CWp = AW - AM.l - AM.r, CHp = AH - AM.t - AM.b;
+    function xOf(m, n) { return AM.l + CWp * m / n; }
+    function yOf(sh) { return AM.t + CHp * (1 - sh); }
+    function boundary(sch) {
+      var d = '', i;
+      for (i = 0; i <= sch.n; i++) {
+        d += (i ? 'L' : 'M') + xOf(i, sch.n).toFixed(1) + ' ' +
+             yOf(i === 0 ? sch.rows[1].share : sch.rows[i].share).toFixed(1);
+      }
+      return d;
+    }
+
+    // The controls, in the order the question is usually asked: what rate,
+    // over how long, and then where in the loan are we.
+    var ctl = h('div', 'am-ctl');
+    function row(labelText, node, outNode) {
+      var r = h('div', 'am-row');
+      r.appendChild(h('span', 'am-lab', labelText));
+      r.appendChild(node);
+      if (outNode) r.appendChild(outNode);
+      ctl.appendChild(r);
+      return r;
+    }
+    var rateIn = h('input'), rateOut = h('span', 'am-out'),
+        yearIn = h('input'), yearOut = h('span', 'am-out'),
+        seg = h('div', 'am-seg');
+    rateIn.type = 'range'; rateIn.className = 'am-range';
+    rateIn.min = a.rateMin != null ? a.rateMin : 1;
+    rateIn.max = a.rateMax != null ? a.rateMax : 15;
+    rateIn.step = a.rateStep != null ? a.rateStep : 0.25;
+    rateIn.value = state.apr;
+    rateIn.setAttribute('aria-label', 'Interest rate');
+    yearIn.type = 'range'; yearIn.className = 'am-range';
+    yearIn.min = 0; yearIn.step = 1; yearIn.value = 0;
+    yearIn.setAttribute('aria-label', 'Year of the loan');
+    row('Interest rate', rateIn, rateOut);
+    var termBtns = terms.map(function (t) {
+      var b = h('button', null, t + ' yrs'); b.type = 'button';
+      b.addEventListener('click', function () { state.years = t; state.month = 0; redraw(); });
+      seg.appendChild(b); return {btn: b, term: t};
+    });
+    row('Loan term', seg);
+    row('Year', yearIn, yearOut);
+    host.appendChild(ctl);
+
+    var cards = h('div', 'am-cards');
+    function card(cls, name) {
+      var c = h('div', 'am-card' + (cls ? ' ' + cls : '')), v = h('b');
+      c.appendChild(h('span', null, name)); c.appendChild(v);
+      cards.appendChild(c); return {box: c, val: v};
+    }
+    var cInt = card('c-orange', 'Interest share of the payment'),
+        cPrin = card('c-teal', 'Principal share of the payment'),
+        cPmt = card('', 'Monthly payment'),
+        cCum = card('', 'Interest paid so far'),
+        cBal = card('wide', 'Remaining balance');
+    var balPct = h('span', 'am-balpct'), bar = h('div', 'am-bar'), barFill = h('i');
+    bar.appendChild(barFill);
+    cBal.box.appendChild(balPct); cBal.box.appendChild(bar);
+    host.appendChild(cards);
+
+    var note = h('p', 'am-note'); note.setAttribute('aria-live', 'polite');
+    host.appendChild(note);
+
+    if (!a.hideCompare && cmp.length) {
+      var lab = h('label', 'am-check'), box = h('input');
+      box.type = 'checkbox';
+      lab.appendChild(box);
+      lab.appendChild(h('span', null, 'Show ' + cmp.join('% and ') + '% alongside'));
+      box.addEventListener('change', function () { state.compare = box.checked; redraw(); });
+      host.appendChild(lab);
+    }
+
+    var sch;
+
+    function drawPlot() {
+      while (svg.firstChild) svg.removeChild(svg.firstChild);
+      var bp = boundary(sch);
+      svg.appendChild(el('path', {class: 'am-area am-prin', d: bp + ' L' + (AW - AM.r) + ' ' + yOf(1) + ' L' + AM.l + ' ' + yOf(1) + ' Z'}));
+      svg.appendChild(el('path', {class: 'am-area am-int', d: bp + ' L' + (AW - AM.r) + ' ' + yOf(0) + ' L' + AM.l + ' ' + yOf(0) + ' Z'}));
+      [0.25, 0.5, 0.75].forEach(function (gv) {
+        svg.appendChild(el('line', {class: 'am-grid', x1: AM.l, x2: AW - AM.r, y1: yOf(gv), y2: yOf(gv)}));
+      });
+      if (state.compare) {
+        cmp.forEach(function (ap, i) {
+          var c = schedule(state.amount, ap, state.years);
+          svg.appendChild(el('path', {class: 'am-cmp', d: boundary(c)}));
+          var lm = Math.round(c.n * (i === 0 ? 0.14 : 0.6));
+          svg.appendChild(el('text', {class: 'am-cmplbl', x: xOf(lm, c.n) + 4,
+            y: yOf(c.rows[lm].share) - 5}, ap + '%'));
+        });
+      }
+      svg.appendChild(el('path', {class: 'am-line', d: bp}));
+      svg.appendChild(el('path', {class: 'ax', d: 'M' + AM.l + ' ' + AM.t + ' L' + AM.l + ' ' + (AH - AM.b) + ' L' + (AW - AM.r) + ' ' + (AH - AM.b)}));
+      [0, 0.25, 0.5, 0.75, 1].forEach(function (gv) {
+        svg.appendChild(el('text', {class: 'tk', x: AM.l - 6, y: yOf(gv) + 3.6, 'text-anchor': 'end'}, pctTxt(gv)));
+      });
+      var stepY = state.years <= 15 ? 3 : 5;
+      for (var y = 0; y <= state.years; y += stepY) {
+        svg.appendChild(el('text', {class: 'tk', x: xOf(y * 12, sch.n), y: AH - AM.b + 14, 'text-anchor': 'middle'}, String(y)));
+      }
+      svg.appendChild(el('text', {class: 'axlbl', x: AW - AM.r, y: AH - 4, 'text-anchor': 'end'}, 'Year'));
+      svg.appendChild(el('text', {class: 'am-areatext am-t-prin', x: AM.l + CWp * 0.74, y: AM.t + 22, 'text-anchor': 'middle'}, 'Principal'));
+      svg.appendChild(el('text', {class: 'am-areatext am-t-int', x: AM.l + CWp * 0.26, y: AH - AM.b - 18, 'text-anchor': 'middle'}, 'Interest'));
+      cursor = el('g', {class: 'am-cursor'});
+      cLine = el('line', {class: 'am-cline'});
+      cDot = el('circle', {class: 'am-cdot', r: 4.6});
+      cursor.appendChild(cLine); cursor.appendChild(cDot);
+      svg.appendChild(cursor);
+    }
+
+    var cursor, cLine, cDot;
+
+    function update() {
+      var m = Math.min(sch.n, Math.max(0, state.month)),
+          r = sch.rows[m], share = m === 0 ? sch.rows[1].share : r.share,
+          x = xOf(m, sch.n), y = yOf(share);
+      cLine.setAttribute('x1', x); cLine.setAttribute('x2', x);
+      cLine.setAttribute('y1', AM.t); cLine.setAttribute('y2', AH - AM.b);
+      cDot.setAttribute('cx', x); cDot.setAttribute('cy', y);
+      cInt.val.textContent = pctTxt(share, 1);
+      cPrin.val.textContent = pctTxt(1 - share, 1);
+      cPmt.val.textContent = money(sch.pmt);
+      cCum.val.textContent = money(r.cumInt);
+      cBal.val.textContent = money(r.bal);
+      balPct.textContent = pctTxt(r.bal / state.amount) + ' of the original ' + money(state.amount);
+      barFill.style.width = (100 * r.bal / state.amount).toFixed(1) + '%';
+      yearOut.textContent = m === 0 ? 'start' : (m / 12) + (m === 12 ? ' year' : ' years');
+      yearIn.value = m;
+      var cross = null, k;
+      for (k = 1; k <= sch.n; k++) { if (sch.rows[k].share < 0.5) { cross = k; break; } }
+      var t = m === 0
+        ? 'The very first payment is ' + pctTxt(share) + ' interest, and only ' + pctTxt(1 - share) + ' of it comes off the balance.'
+        : 'After ' + (m / 12) + (m === 12 ? ' year' : ' years') + ' you have paid ' + money(r.cumInt) +
+          ' in interest and ' + money(r.cumPrin) + ' of principal, so ' + pctTxt(r.bal / state.amount) + ' of the loan is still owed.';
+      t += cross
+        ? ' Principal does not become the larger half of the payment until year ' + Math.ceil(cross / 12) + '.'
+        : ' Interest stays the larger half of every payment for the whole term.';
+      note.textContent = t;
+    }
+
+    function redraw() {
+      sch = schedule(state.amount, state.apr, state.years);
+      yearIn.max = state.years;
+      state.month = Math.min(state.month, sch.n);
+      rateOut.textContent = (Math.round(state.apr * 100) / 100) + '%';
+      termBtns.forEach(function (tb) {
+        tb.btn.setAttribute('aria-pressed', String(tb.term === state.years));
+      });
+      drawPlot();
+      update();
+    }
+
+    rateIn.addEventListener('input', function () {
+      state.apr = parseFloat(rateIn.value); redraw();
+    });
+    yearIn.addEventListener('input', function () {
+      state.month = Math.round(parseFloat(yearIn.value) * 12); update();
+    });
+    redraw();
+  };
 
   Widget.prototype.finish = function () {
     var cfg = this.cfg, self = this, host = this.host;

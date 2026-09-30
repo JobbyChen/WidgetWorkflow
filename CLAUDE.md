@@ -555,7 +555,7 @@ not enough to reproduce an implementation.
   `embed_engine.py`'s paths reproduce the delivered file byte-for-byte; all 20
   prototype widgets render with no engine errors; `check_file.py` runs the
   geometric label test over 74 labels in the 263 file with no overlaps.
-* **Engine is v2.49.** Since v2.6: `areas` shade a polygon (v2.11) with
+* **Engine is v2.50.** Since v2.6: `areas` shade a polygon (v2.11) with
   `edge` to outline it (v2.18) and labels centred on their anchor (v2.13);
   `dot:false` drops a marker but keeps the axis label (v2.12); points take
   `guides:"p"`/`"q"` for one leg of the elbow (v2.14); braces take
@@ -641,7 +641,13 @@ not enough to reproduce an implementation.
   character longer. Its header is one navy band across the top, corner cell
   included, and `rowhead` names that corner (v2.49): the pale rule the other
   cells carry drew a line down the middle of the band and set the corner a
-  pixel out of line with the two names.
+  pixel out of line with the two names. And a widget can be an **amortization
+  explorer** (v2.50): the first one here that is a model rather than a
+  drawing, because the share of a payment that is interest depends on the
+  amount, the rate and the term at once and no table of points can hold all
+  three. `pct:"y"` labels the price axis alone, and a quantity title starting
+  with `\n` drops below the tick row, which is where a figure with a tick at
+  the axis's own end has to put it.
 
 * **PPF works.** The first chapter of Exam 1 material converted to seven widgets
   with no engine gaps hit: frontiers, a combinations table, points on/inside/

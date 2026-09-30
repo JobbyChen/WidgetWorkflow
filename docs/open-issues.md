@@ -341,7 +341,7 @@ or "unattainable" dot) whose exact coordinates are not the lesson.
       price. Each widget follows its own figure (Ian, 2026-09-30). Worth
       correcting in the artwork. One for Ian.
 
-- [ ] **A prose table overflows a 320px screen in three example chapters**, by
+- [ ] **A prose table overflows a 320px screen in four example chapters**, by
       a few pixels: the house stylesheet gives every `table:not(.financial)`
       16px/20px cell padding, and at that width the chapter's own tables do
       not fit. Found once `mobile_check` started loading that stylesheet

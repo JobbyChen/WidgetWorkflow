@@ -1,4 +1,4 @@
-# Engine reference — `engine/sd-graph.js` v2.51
+# Engine reference — `engine/sd-graph.js` v2.52
 
 Written from the engine source. The conversion prompt carries a shorter version
 of this in its own "Engine reference" section; that one is what the model needs
@@ -175,6 +175,12 @@ and a sentence that names the year principal overtakes interest. `compare`
 overlays those rates as dashed curves behind a checkbox; `hideCompare` drops
 it. Interest is orange and principal teal, the two colours this set already
 uses for what the other side gets and what you keep.
+
+The figure is scrubbable itself (**v2.52**): drag across it, or focus it and
+walk the loan with the arrow keys — a month a press, a year on PageUp/PageDown,
+either end on Home/End. `touch-action: pan-y`, so a finger that lands on the
+chart can still scroll the page. The year control is in **months**, which is
+what the schedule is indexed by.
 
 A widget carrying one needs no `steps` and no `caption`: the reading the
 student scrubs to is what it is for.

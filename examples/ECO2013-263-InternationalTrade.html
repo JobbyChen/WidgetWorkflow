@@ -140,7 +140,11 @@ MathJax = {
 /* The amortization explorer (v2.50). Interest orange, principal teal -- the
    two colours this set already uses for what the other side gets and what you
    keep -- and the split the printed figure shades. */
-.sdg .am-plot svg { width:100%; height:auto; display:block; }
+/* pan-y, not none: the drag that reads the figure is horizontal, so the page
+   can still be scrolled by a finger that happens to land on the chart. */
+.sdg .am-plot svg { width:100%; height:auto; display:block; cursor:crosshair;
+  touch-action:pan-y; }
+.sdg .am-plot svg:focus-visible { outline:2px solid var(--navy); outline-offset:3px; }
 .sdg .am-area { stroke:none; }
 .sdg .am-prin { fill:var(--teal); fill-opacity:.30; }
 .sdg .am-int { fill:var(--orange); fill-opacity:.26; }
@@ -308,7 +312,7 @@ MathJax = {
 }
 </style>
 <script>
-/* ===== sd-graph.js v2.51 — data-driven supply & demand widgets =====
+/* ===== sd-graph.js v2.52 — data-driven supply & demand widgets =====
    Markup:  <div class="sdg"><script type="application/json">{ ...config... }<\/script></div>
    Top-level config:
      title, lede, caption         heading / intro / static caption (caption used only when there are no steps)
@@ -1208,6 +1212,11 @@ MathJax = {
     return '$' + Math.abs(v).toLocaleString('en-US');
   }
   function pctTxt(x, d) { return (x * 100).toFixed(d == null ? 0 : d) + '%'; }
+  function yearTxt(m) {
+    if (m === 0) return 'start';
+    var y = m % 12 ? (m / 12).toFixed(1) : String(m / 12);
+    return y + (m === 12 ? ' year' : ' years');
+  }
 
   Widget.prototype.buildAmort = function () {
     var self = this, a = this.cfg.amort, host = this.host,
@@ -1254,9 +1263,13 @@ MathJax = {
     rateIn.step = a.rateStep != null ? a.rateStep : 0.25;
     rateIn.value = state.apr;
     rateIn.setAttribute('aria-label', 'Interest rate');
+    // In months, which is what the schedule is indexed by. It was set in
+    // months and written back in years, so the thumb clamped at the slider's
+    // own maximum and stayed there while the figure moved underneath it --
+    // and a month's resolution is what lets the arrow keys walk the loan.
     yearIn.type = 'range'; yearIn.className = 'am-range';
     yearIn.min = 0; yearIn.step = 1; yearIn.value = 0;
-    yearIn.setAttribute('aria-label', 'Year of the loan');
+    yearIn.setAttribute('aria-label', 'Month of the loan');
     row('Interest rate', rateIn, rateOut);
     var termBtns = terms.map(function (t) {
       var b = h('button', null, t + ' yrs'); b.type = 'button';
@@ -1305,12 +1318,17 @@ MathJax = {
       [0.25, 0.5, 0.75].forEach(function (gv) {
         svg.appendChild(el('line', {class: 'am-grid', x1: AM.l, x2: AW - AM.r, y1: yOf(gv), y2: yOf(gv)}));
       });
+      // The comparison curves go under the one the controls are set to, so
+      // the reader's own loan stays the dominant line -- but their names go
+      // over everything, or the curve being dragged past a label rubs it out.
+      // (Ian, 2026-09-30; the same order the area names take since v2.46.)
+      var cmpLabels = [];
       if (state.compare) {
         cmp.forEach(function (ap, i) {
           var c = schedule(state.amount, ap, state.years);
           svg.appendChild(el('path', {class: 'am-cmp', d: boundary(c)}));
           var lm = Math.round(c.n * (i === 0 ? 0.14 : 0.6));
-          svg.appendChild(el('text', {class: 'am-cmplbl', x: xOf(lm, c.n) + 4,
+          cmpLabels.push(el('text', {class: 'am-cmplbl', x: xOf(lm, c.n) + 4,
             y: yOf(c.rows[lm].share) - 5}, ap + '%'));
         });
       }
@@ -1326,6 +1344,7 @@ MathJax = {
       svg.appendChild(el('text', {class: 'axlbl', x: AW - AM.r, y: AH - 4, 'text-anchor': 'end'}, 'Year'));
       svg.appendChild(el('text', {class: 'am-areatext am-t-prin', x: AM.l + CWp * 0.74, y: AM.t + 22, 'text-anchor': 'middle'}, 'Principal'));
       svg.appendChild(el('text', {class: 'am-areatext am-t-int', x: AM.l + CWp * 0.26, y: AH - AM.b - 18, 'text-anchor': 'middle'}, 'Interest'));
+      cmpLabels.forEach(function (n) { svg.appendChild(n); });
       cursor = el('g', {class: 'am-cursor'});
       cLine = el('line', {class: 'am-cline'});
       cDot = el('circle', {class: 'am-cdot', r: 4.6});
@@ -1349,13 +1368,13 @@ MathJax = {
       cBal.val.textContent = money(r.bal);
       balPct.textContent = pctTxt(r.bal / state.amount) + ' of the original ' + money(state.amount);
       barFill.style.width = (100 * r.bal / state.amount).toFixed(1) + '%';
-      yearOut.textContent = m === 0 ? 'start' : (m / 12) + (m === 12 ? ' year' : ' years');
+      yearOut.textContent = yearTxt(m);
       yearIn.value = m;
       var cross = null, k;
       for (k = 1; k <= sch.n; k++) { if (sch.rows[k].share < 0.5) { cross = k; break; } }
       var t = m === 0
         ? 'The very first payment is ' + pctTxt(share) + ' interest, and only ' + pctTxt(1 - share) + ' of it comes off the balance.'
-        : 'After ' + (m / 12) + (m === 12 ? ' year' : ' years') + ' you have paid ' + money(r.cumInt) +
+        : 'After ' + yearTxt(m) + ' you have paid ' + money(r.cumInt) +
           ' in interest and ' + money(r.cumPrin) + ' of principal, so ' + pctTxt(r.bal / state.amount) + ' of the loan is still owed.';
       t += cross
         ? ' Principal does not become the larger half of the payment until year ' + Math.ceil(cross / 12) + '.'
@@ -1365,7 +1384,7 @@ MathJax = {
 
     function redraw() {
       sch = schedule(state.amount, state.apr, state.years);
-      yearIn.max = state.years;
+      yearIn.max = sch.n;
       state.month = Math.min(state.month, sch.n);
       rateOut.textContent = (Math.round(state.apr * 100) / 100) + '%';
       termBtns.forEach(function (tb) {
@@ -1379,7 +1398,36 @@ MathJax = {
       state.apr = parseFloat(rateIn.value); redraw();
     });
     yearIn.addEventListener('input', function () {
-      state.month = Math.round(parseFloat(yearIn.value) * 12); update();
+      state.month = Math.round(parseFloat(yearIn.value)); update();
+    });
+
+    // Drag across the figure itself, and walk it a month at a time with the
+    // arrow keys: the reading the widget exists for is "what about year 12",
+    // and reaching for a slider under the plot is a worse way to ask it than
+    // pointing at the year. (Ian, 2026-09-30, from the example.)
+    function fromX(clientX) {
+      var r = svg.getBoundingClientRect();
+      if (!r.width) return;
+      var frac = ((clientX - r.left) / r.width * AW - AM.l) / CWp;
+      state.month = Math.round(Math.min(1, Math.max(0, frac)) * sch.n);
+      update();
+    }
+    svg.setAttribute('tabindex', '0');
+    svg.addEventListener('pointerdown', function (e) {
+      svg.setPointerCapture(e.pointerId); fromX(e.clientX); e.preventDefault();
+    });
+    svg.addEventListener('pointermove', function (e) {
+      if (svg.hasPointerCapture(e.pointerId)) fromX(e.clientX);
+    });
+    svg.addEventListener('pointerup', function (e) { svg.releasePointerCapture(e.pointerId); });
+    svg.addEventListener('keydown', function (e) {
+      var d = e.key === 'ArrowRight' || e.key === 'ArrowUp' ? 1
+            : e.key === 'ArrowLeft' || e.key === 'ArrowDown' ? -1
+            : e.key === 'PageUp' ? 12 : e.key === 'PageDown' ? -12
+            : e.key === 'Home' ? -sch.n : e.key === 'End' ? sch.n : 0;
+      if (!d) return;
+      state.month = Math.min(sch.n, Math.max(0, state.month + d));
+      update(); e.preventDefault();
     });
     redraw();
   };

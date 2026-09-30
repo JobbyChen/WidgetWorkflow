@@ -122,7 +122,11 @@
 /* The amortization explorer (v2.50). Interest orange, principal teal -- the
    two colours this set already uses for what the other side gets and what you
    keep -- and the split the printed figure shades. */
-.sdg .am-plot svg { width:100%; height:auto; display:block; }
+/* pan-y, not none: the drag that reads the figure is horizontal, so the page
+   can still be scrolled by a finger that happens to land on the chart. */
+.sdg .am-plot svg { width:100%; height:auto; display:block; cursor:crosshair;
+  touch-action:pan-y; }
+.sdg .am-plot svg:focus-visible { outline:2px solid var(--navy); outline-offset:3px; }
 .sdg .am-area { stroke:none; }
 .sdg .am-prin { fill:var(--teal); fill-opacity:.30; }
 .sdg .am-int { fill:var(--orange); fill-opacity:.26; }

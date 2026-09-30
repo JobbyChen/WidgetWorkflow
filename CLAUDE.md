@@ -555,7 +555,7 @@ not enough to reproduce an implementation.
   `embed_engine.py`'s paths reproduce the delivered file byte-for-byte; all 20
   prototype widgets render with no engine errors; `check_file.py` runs the
   geometric label test over 74 labels in the 263 file with no overlaps.
-* **Engine is v2.51.** Since v2.6: `areas` shade a polygon (v2.11) with
+* **Engine is v2.52.** Since v2.6: `areas` shade a polygon (v2.11) with
   `edge` to outline it (v2.18) and labels centred on their anchor (v2.13);
   `dot:false` drops a marker but keeps the axis label (v2.12); points take
   `guides:"p"`/`"q"` for one leg of the elbow (v2.14); braces take
@@ -650,7 +650,11 @@ not enough to reproduce an implementation.
   the axis's own end has to put it. A `left` upright brace sits 12px clear of
   whatever the price axis writes rather than a fixed 32 (v2.51): on a panel
   that writes nothing there it stood out in empty space, away from the gap it
-  measures, which is the one thing a brace has to be next to.
+  measures, which is the one thing a brace has to be next to. The explorer is
+  scrubbed by dragging the figure itself or by the arrow keys, and its year
+  control counts months, which is what the schedule is indexed by -- set in
+  months and written back in years, the thumb clamped at its own maximum and
+  never moved (v2.52).
 
 * **PPF works.** The first chapter of Exam 1 material converted to seven widgets
   with no engine gaps hit: frontiers, a combinations table, points on/inside/

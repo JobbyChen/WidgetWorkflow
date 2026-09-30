@@ -634,7 +634,11 @@ not enough to reproduce an implementation.
   be a **years table** (v2.48): the same game played year after year, a row
   at a time, with a red arrow carrying one year's move into the next year's
   answer, which is the whole of tit-for-tat and what the printed table has to
-  state all at once.
+  state all at once. Its arrows run from where one cell's writing ends to
+  where the next one's begins, measured off the text: set at a fraction of
+  the cell instead they land on the closing bracket at one end and on the
+  move at the other, and somewhere different again the moment an amount is a
+  character longer.
 
 * **PPF works.** The first chapter of Exam 1 material converted to seven widgets
   with no engine gaps hit: frontiers, a combinations table, points on/inside/

@@ -1043,18 +1043,26 @@
         var f = (self.playCells[ar.spec.from[0]] || [])[ar.spec.from[1]],
             t = (self.playCells[ar.spec.to[0]] || [])[ar.spec.to[1]];
         if (!f || !t) return;
-        // Started 8px inside each cell the arrow was two column borders long
-        // and the pair in the crossing figure read as one blot. It reaches a
-        // quarter of the way into each cell now, which is about what the
-        // printed arrows span.
+        // An arrow runs from where one cell's writing ends to where the
+        // other's begins, measured off the text rather than set at some
+        // fraction of the cell: a fraction lands on the closing bracket at
+        // one end and on the move at the other, and it lands somewhere
+        // different again the moment an amount is a character longer.
         var fb = f.getBoundingClientRect(), tb2 = t.getBoundingClientRect(),
             rightwards = ar.spec.from[1] < ar.spec.to[1],
-            inset = Math.min(34, Math.max(14, fb.width * 0.18)),
-            x1 = (rightwards ? fb.right - inset : fb.left + inset) - box.left,
+            fs = textSpan(f), ts = textSpan(t), gap = 7,
+            x1 = (rightwards ? fs.r + gap : fs.l - gap),
+            x2 = (rightwards ? ts.l - gap : ts.r + gap),
             y1 = fb.top + fb.height / 2 - box.top,
-            x2 = (rightwards ? tb2.left + inset : tb2.right - inset) - box.left,
             y2 = tb2.top + tb2.height / 2 - box.top;
-        ar.path.setAttribute('d', headed(x1, y1, x2, y2));
+        // Where the writing leaves no room between the columns -- a narrow
+        // screen -- the arrow straddles the border they share instead.
+        if ((rightwards ? x2 - x1 : x1 - x2) < 12) {
+          var mid = rightwards ? (fb.right + tb2.left) / 2 : (tb2.right + fb.left) / 2;
+          x1 = mid - (rightwards ? 9 : -9);
+          x2 = mid + (rightwards ? 9 : -9);
+        }
+        ar.path.setAttribute('d', headed(x1 - box.left, y1, x2 - box.left, y2));
       });
     }
     self.placePlays = place;
@@ -1062,6 +1070,20 @@
     if (window.ResizeObserver) { new ResizeObserver(place).observe(wrap); }
     if (document.fonts && document.fonts.ready) { document.fonts.ready.then(place); }
   };
+
+  // How far the writing inside a cell actually reaches. The cell is mostly
+  // padding by design -- the channel the arrows run in -- so its own edges say
+  // nothing about where the text stops.
+  function textSpan(cell) {
+    var l = Infinity, r = -Infinity;
+    [].slice.call(cell.children).forEach(function (k) {
+      var b = k.getBoundingClientRect();
+      if (!b.width) return;
+      l = Math.min(l, b.left); r = Math.max(r, b.right);
+    });
+    if (l === Infinity) { var cb = cell.getBoundingClientRect(); return {l: cb.left, r: cb.right}; }
+    return {l: l, r: r};
+  }
 
   // An arrow between two pixel points, head scaled to its length the way the
   // plot's own arrows are (v2.26).

@@ -144,7 +144,13 @@ fill in.
 The arrows are drawn over the table rather than in it — each runs from inside
 one cell to inside another a row down, and there is no cell to put it in — so
 they are measured off the laid-out table, again when the web font arrives and
-again whenever the table changes size.
+again whenever the table changes size. Each one runs from where its first
+cell's writing ends to where its second cell's writing begins, measured off
+the text rather than set at some fraction of the cell: a fraction lands on the
+closing bracket at one end and on the move at the other, and somewhere
+different again the moment an amount is a character longer. Where the writing
+leaves no room between the columns, on a narrow screen, the arrow straddles
+the border they share instead.
 
 ### `axes`
 

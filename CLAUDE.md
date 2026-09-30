@@ -400,6 +400,12 @@ economics instead of label placement.
   question that has one. The ceiling convention above is the same rule seen
   from the other side — the artwork marks all of them there, so the widget
   does too.
+* **A figure that is one market before and after a change is one panel with
+  steps, not two panels.** The source prints "No Trade" beside "With Trade"
+  because paper cannot animate; a widget can, and the surplus areas are then
+  seen to move rather than compared across a gap. Two panels stay two panels
+  where they are two *different* markets -- the net exporter beside the net
+  importer. (Trade chapter, 2026-09-30; flag it in the changelog either way.)
 * **Where the source figure and the source prose disagree, the prose wins**
   (rule 3's authority order) — and say so in the changelog. The apartment
   figure prints a demand intercept of 1,200 that contradicts its own
@@ -437,7 +443,18 @@ run, not just whether it is correct:
   character for everything, which is right for the 700-weight ticks and 17%
   narrow for the 800-weight curve labels. A label that overflowed its panel by
   15px was reported as fitting. Chromium's `getBBox` over a rendered file
-  settles these in a minute; the constants now come from it.
+  settles these in a minute; the constants now come from it. **And measure
+  the right thing:** the second version split on weight, .58 against .70, and
+  was right about the curve labels only by luck -- they are uppercase. Width
+  goes with *case* and barely with size or weight at all (upper .690, lower
+  .539, digits .558), which the weight model had 40% narrow for `P_{WORLD}`
+  (v2.44). Sharpening it turned up three overlaps in shipped files that had
+  always been there and had always measured as clear.
+* **Every place a panel writes on an axis has to be counted in its margin.**
+  v2.27 sized the left margin to the ticks and the points; a price line writes
+  there too, and `P_{WORLD}` came out as `WORLD` (v2.43). When a margin is
+  sized to "the labels", enumerate what draws them rather than the ones in
+  front of you.
 * **Read the WARNs, not just the FAILs.** A curve label sitting on the Q axis
   was reported for a whole round as a warning while every re-check was
   grepped for `^FAIL`. Rule 5's severity was wrong — that is fixed — but the
@@ -475,7 +492,7 @@ not enough to reproduce an implementation.
   `embed_engine.py`'s paths reproduce the delivered file byte-for-byte; all 20
   prototype widgets render with no engine errors; `check_file.py` runs the
   geometric label test over 74 labels in the 263 file with no overlaps.
-* **Engine is v2.40.** Since v2.6: `areas` shade a polygon (v2.11) with
+* **Engine is v2.44.** Since v2.6: `areas` shade a polygon (v2.11) with
   `edge` to outline it (v2.18) and labels centred on their anchor (v2.13);
   `dot:false` drops a marker but keeps the axis label (v2.12); points take
   `guides:"p"`/`"q"` for one leg of the elbow (v2.14); braces take
@@ -526,7 +543,11 @@ not enough to reproduce an implementation.
   show. A mark's `given` fills in the strategy label of the row or column
   being held fixed (v2.40): the argument is "*if* B complies, A does better
   cheating", and with the "if" half missing from the drawing the two lit
-  payoffs read as the wrong cells -- which is how they were read.
+  payoffs read as the wrong cells -- which is how they were read. An area's
+  label wraps on `\n` and takes `boxed` (v2.41); a price line can drop its
+  axis price with `showP: false` (v2.42); and the left margin counts those
+  price-line labels, which it never did -- `P_{WORLD}` rendered as `WORLD`
+  (v2.43).
 
 * **PPF works.** The first chapter of Exam 1 material converted to seven widgets
   with no engine gaps hit: frontiers, a combinations table, points on/inside/

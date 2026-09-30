@@ -557,20 +557,47 @@ def check_schema(cfgs, r):
 W = 372.0
 
 
+# Measured in Chromium over Red Hat Display at 10.5, 12, 13 and 14px and at
+# weights 700 and 800: the width of a character depends on its case and
+# almost not at all on size or weight. The old model split on weight instead
+# -- .58 for 700 and .70 for 800 -- which was right for the 800-weight curve
+# labels only because they happen to be uppercase, and wrong for `P_{WORLD}`,
+# an all-caps subscript on a 700-weight axis label that it measured 40% narrow
+# and let run off the panel.
+EM_UPPER, EM_LOWER, EM_DIGIT, EM_SPACE, EM_OTHER = 0.690, 0.539, 0.558, 0.25, 0.56
+
+
+def em_width(text):
+    """A string's width in em, by the case of its characters."""
+    w = 0.0
+    for ch in str(text):
+        if ch.isupper():
+            w += EM_UPPER
+        elif ch.islower():
+            w += EM_LOWER
+        elif ch.isdigit():
+            w += EM_DIGIT
+        elif ch == " ":
+            w += EM_SPACE
+        else:
+            w += EM_OTHER
+    return w
+
+
 def label_len(text):
-    """A label's width in characters, counting a _{...} subscript at .72.
+    """A label's width in em, counting a _{...} subscript at .72 of its own.
 
     Mirrors the engine's own measure, which sets a subscript at .72em.
     """
     text = str(text)
-    subs = [0]
+    subs = []
 
     def eat(m):
-        subs[0] += len(m.group(1))
+        subs.append(m.group(1))
         return ""
 
     plain = re.sub(r"_\{([^}]*)\}", eat, text)
-    return len(plain) + 0.72 * subs[0]
+    return em_width(plain) + 0.72 * sum(em_width(x) for x in subs)
 
 
 def panel_h(pn, ax=None):
@@ -594,13 +621,20 @@ def widest_p(pn, ax):
     until this matched."""
     widest = 0.0
     for t in (ax.get("yticks") or []):
-        widest = max(widest, 6.1 * label_len(fmt_p(t, ax)))
+        widest = max(widest, 10.5 * label_len(fmt_p(t, ax)))
     for pt in (pn.get("points") or []):
         if pt.get("showP") is False:
             continue
         lab = pt.get("pl")
-        widest = max(widest, 6.1 * label_len(
+        widest = max(widest, 10.5 * label_len(
             lab if lab is not None else fmt_p(pt.get("p"), ax)))
+    # A price line writes on the same axis (engine v2.43)
+    for h in (pn.get("hlines") or []):
+        if h.get("showP") is False or h.get("p") in (ax.get("yticks") or []):
+            continue
+        lab = h.get("label")
+        widest = max(widest, 10.5 * label_len(
+            lab if lab is not None else fmt_p(h.get("p"), ax)))
     return widest
 
 
@@ -624,7 +658,7 @@ def geom(pn, ax):
     # engine v2.34: a wrapped price-axis title sits left of the axis, anchored
     # the other way, and the margin carries it like a price label
     yrows = str(ax.get("y") or "P").split("\n")
-    ytw = max(9.8 * len(rw) for rw in yrows) if len(yrows) > 1 else 0.0
+    ytw = max(14.0 * em_width(rw) for rw in yrows) if len(yrows) > 1 else 0.0
     left = max(base, math.ceil(widest) + 12.0, math.ceil(ytw) + 22.0)
     # A vbrace with left:true widens the engine's left margin. Miss this and
     # every coordinate below is off by 44px.
@@ -651,7 +685,7 @@ def geom(pn, ax):
             chars = max(label_len(row) for row in str(text).split("\n"))
             ends = left + (lp[0] / xmax) * pw_try + (6 if c.get("ldx") is None
                                                      else c.get("ldx"))
-            over = ends + 9.1 * chars + 4 - W
+            over = ends + 13.0 * chars + 4 - W
             if over > 0:
                 want = max(want, right + over)
         if want <= right + 0.01:
@@ -713,16 +747,10 @@ def box(x, y, text, size, anchor="start", vcenter=False, weight=700):
     # are markup rather than glyphs. Counting them at full width made a label
     # like S_{George} measure half again as wide as it is drawn, and reported
     # overlaps between names that sit clear of each other.
-    t = str(text)
-    plain = re.sub(r"_\{[^}]*\}", "", t)
-    subs = "".join(re.findall(r"_\{([^}]*)\}", t))
-    # Measured in the browser rather than guessed: the 700-weight text (ticks,
-    # tags, brace labels) runs at .583 em a character, and the 800-weight curve
-    # labels and axis titles at .646 to .690. One constant of .58 for both put
-    # "D = MB = MSB" 15px narrower than Chromium draws it, which is exactly the
-    # margin by which it ran off the panel while this reported it as fitting.
-    em = 0.70 if weight >= 800 else 0.58
-    w = em * size * max(1, len(plain) + 0.72 * len(subs))
+    # label_len is an em width now, measured by case rather than by weight --
+    # see the constants above. `weight` is kept so the callers need not change
+    # and because it costs nothing to ignore.
+    w = size * max(0.55, label_len(text))
     if anchor == "middle":
         x -= w / 2
     elif anchor == "end":
@@ -1008,6 +1036,18 @@ def check_labels(cfgs, r):
                                         52.0 if _yw else 11.0,
                                         "end" if _yw else "start"),
                               "the %r axis title" % yt_ttl, (0, None)))
+                for h in pn.get("hlines") or []:
+                    if h.get("showP") is False:
+                        continue
+                    if h.get("p") in (ax.get("yticks") or []):
+                        continue
+                    _hl = h.get("label")
+                    _hl = _hl if _hl is not None else fmt_p(h.get("p"), ax)
+                    boxes.append((box(ox - 6.0, Y(h["p"]) + 4, _hl, 10.5,
+                                      "end", weight=700),
+                                  "the %r price-axis label" % _hl,
+                                  (h.get("at", 0), h.get("until"))))
+
                 xt = [t for t in (ax.get("xticks") or [])]
                 yt = [t for t in (ax.get("yticks") or [])]
                 hl = [h.get("p") for h in (pn.get("hlines") or [])]
@@ -1148,10 +1188,18 @@ def check_labels(cfgs, r):
                         continue
                     lp = a.get("lp") or [sum(q[0] for q in pts) / float(len(pts)),
                                          sum(q[1] for q in pts) / float(len(pts))]
-                    boxes.append((box(X(lp[0]) + a.get("ldx", 0),
-                                      Y(lp[1]) + a.get("ldy", 0),
-                                      a["label"], 11, "middle", vcenter=True),
-                                  "area label %r" % a["label"],
+                    # wraps on \n and takes `boxed` since engine v2.41
+                    arows = str(a["label"]).split("\n")
+                    abx = box(X(lp[0]) + a.get("ldx", 0),
+                              Y(lp[1]) + a.get("ldy", 0) - (len(arows) - 1) * 5,
+                              max(arows, key=label_len), 11, "middle",
+                              vcenter=True)
+                    abx = (abx[0], abx[1], abx[2],
+                           abx[3] + (len(arows) - 1) * 10)
+                    if a.get("boxed"):
+                        abx = (abx[0] - 4, abx[1] - 1, abx[2] + 4, abx[3] + 1)
+                        BOXED.add("area label %r" % a["label"])
+                    boxes.append((abx, "area label %r" % a["label"],
                                   (a.get("at", 0), a.get("until"))))
 
                 checked += len(boxes)
@@ -1318,6 +1366,9 @@ def check_tick_emphasis(cfgs, r):
     step 5 settles it -- "ticks are the values the prose uses, nothing extra" --
     which makes every point value a tick and the emphasis uniform. A widget that
     mixes the two reads as if the bold ones matter more."""
+    # BOXED is module state, so a second file checked in the same process
+    # would inherit the first one's boxed labels and quietly skip its own.
+    BOXED.clear()
     mixed = 0
     for n, cfg, _ in cfgs:
         for label, v in variants(cfg):
@@ -1415,6 +1466,47 @@ def is_control(h):
     Ian's call (2026-09-23) is to match the artwork, which draws the dot.
     """
     return bool(h.get("control") or h.get("tag"))
+
+
+def check_invented(cfgs, r):
+    """A symbolic panel must not print a coordinate as if it were a price.
+
+    Rule 3: every number on a panel is one the source stated. An hline prints
+    `fmtP(l.p)` on the axis unless it is given a `label`, so a world price
+    drawn at 68 on a symbolic panel wrote "68" beside it -- a number out of
+    thin air, which shipped in the trade chapter with every other check
+    passing. Name the line (`label: "P_{W}"`) or drop it (`showP: false`).
+
+    No script can tell a stated price from an invented one, so this does not
+    try: it fires only where the panel contradicts itself, naming some prices
+    symbolically with `pl` while a line prints a raw coordinate on the same
+    axis. Both the ceilings in the government-intervention file print prices
+    the chapter states, and they are right to; they carry no `pl`, and this
+    leaves them alone."""
+    bad = 0
+    for n, cfg, _ in cfgs:
+        for label, v in variants(cfg):
+            if v.get("preset"):
+                continue
+            for pi, pn in enumerate(panels(v)):
+                ax = pn.get("axes") or {}
+                if ax.get("yticks"):
+                    continue
+                if not any(pt.get("pl") for pt in (pn.get("points") or [])):
+                    continue
+                where = "widget %d%s%s" % (
+                    n, " (%s)" % label if label else "",
+                    " panel %d" % (pi + 1) if len(panels(v)) > 1 else "")
+                for h in pn.get("hlines") or []:
+                    if h.get("label") or h.get("showP") is False:
+                        continue
+                    bad += 1
+                    r.fail("numbers", "%s: the price line at %s prints its own "
+                           "coordinate, on an axis whose other prices are "
+                           "named -- give it a `label` or drop it with "
+                           "`showP: false`" % (where, h.get("p")))
+    if not bad:
+        r.ok("numbers", "no named price axis also prints a raw coordinate")
 
 
 def check_controls(cfgs, r):
@@ -1911,6 +2003,7 @@ def main():
     check_steps(cfgs, r)
     check_steady_labels(cfgs, r)
     check_arrows(cfgs, r)
+    check_invented(cfgs, r)
     check_controls(cfgs, r)
     check_calcs(src, cfgs, r)
     check_captions(cfgs, r)

@@ -1,4 +1,4 @@
-# Engine reference — `engine/sd-graph.js` v2.40
+# Engine reference — `engine/sd-graph.js` v2.44
 
 Written from the engine source. The conversion prompt carries a shorter version
 of this in its own "Engine reference" section; that one is what the model needs

@@ -187,7 +187,7 @@
 }
 </style>
 <script>
-/* ===== sd-graph.js v2.40 — data-driven supply & demand widgets =====
+/* ===== sd-graph.js v2.44 — data-driven supply & demand widgets =====
    Markup:  <div class="sdg"><script type="application/json">{ ...config... }<\/script></div>
    Top-level config:
      title, lede, caption         heading / intro / static caption (caption used only when there are no steps)
@@ -199,7 +199,8 @@
      axes: {x, y, xmax, ymax, xticks[], yticks[], money, cents, pct, k, grid, bg:false}
         x, y = axis titles, default 'Q' and 'P'. A word or two fits; they are never wrapped.
      curves[]: {id, label, pts:[[q,p],...], color, at, until, from, arrowP, shiftArrow, curved, thin, leader, dashed, lstart, ldx, ldy}
-     areas[]:  {pts:[[q,p],...], label, color, edge, lp, ldx, ldy, at, until}   a shaded polygon under the curves (CS, PS, deadweight loss)
+     areas[]:  {pts:[[q,p],...], label, boxed, color, edge, lp, ldx, ldy, at, until}   a shaded polygon under the curves (CS, PS, deadweight loss)
+        label wraps on \n; boxed:true gives it a white box so it can be read over the curves crossing its shape
         lstart = put the curve label at the first point instead of the last; ldx/ldy nudge it
         label:"" draws no label at all (a lone PPF needs none); omitting label falls back to the id
         from   = id of the curve this one shifts away from (animated shift + arrow); arrowP = price height of arrow
@@ -212,7 +213,7 @@
         marker = "1"/"2" numbered circle;  pl/ql = symbolic axis labels ("P₁","Q₁") instead of numbers
      moves[]:  {from:[q,p], to:[q,p], at, until, color, offset}  arrow between two points, drawn `offset` px beside the curve (default 14; negative = other side)
      calcs[]:  "CS = 1/2 x 80 x ($5 - $3) = $80" | {text, at, until}   the working, under the plot
-     hlines[]: {p, label, tag, tagdy, tagq, control, color, at, until}              horizontal price line across the plot
+     hlines[]: {p, label, tag, tagdy, tagq, control, showP:false, color, at, until}   horizontal price line across the plot
                  `control:true` declares a ceiling/floor/world price -- drawn the same, but the
                  checks read it: no dot may sit on it, and it is not a disequilibrium price
      braces[]: {p, q1, q2, label, at, until, below:true|'in'|'axis', color}  curly brace spanning a gap at price p
@@ -281,16 +282,37 @@
     // "P* = ATC" rendered as "= ATC", with nothing reporting it. It is sized
     // to the widest label the axis actually carries now. Subscripts are set
     // at .72em, so they count for less, the same way check_file measures them.
+    // Measured in Chromium: a character's width depends on its case and
+    // almost not at all on size or weight (v2.44). A fixed average per
+    // character measured `P_{WORLD}` 40% narrow, so the margin sized to it
+    // cut the P off -- the same defect as v2.27 and v2.28, from the same
+    // cause. check_file.py carries the same constants.
+    function emw(t) {
+      var w = 0;
+      String(t).split('').forEach(function (c) {
+        w += /[A-Z]/.test(c) ? 0.690 : /[a-z]/.test(c) ? 0.539
+           : /[0-9]/.test(c) ? 0.558 : c === ' ' ? 0.25 : 0.56;
+      });
+      return w;
+    }
     function axw(t) {
       t = String(t); var subs = 0;
-      var plain = t.replace(/_\{([^}]*)\}/g, function (m, inner) { subs += inner.length; return ''; });
-      return 6.1 * (plain.length + 0.72 * subs);
+      var plain = t.replace(/_\{([^}]*)\}/g, function (m, inner) { subs += emw(inner); return ''; });
+      return 10.5 * (emw(plain) + 0.72 * subs);
     }
     var widest = 0;
     (ax.yticks || []).forEach(function (v) { widest = Math.max(widest, axw(fmtP(v, ax))); });
     (cfg.points || []).forEach(function (pt) {
       if (pt.showP === false) return;
       widest = Math.max(widest, axw(pt.pl != null ? pt.pl : fmtP(pt.p, ax)));
+    });
+    // A price line writes on the same axis (v2.43). Counting only the points
+    // cut `P_{WORLD}` down to `WORLD` in the trade chapter -- the same defect
+    // v2.27 and v2.28 fixed for the other two margins, in the one place left
+    // that writes there.
+    (cfg.hlines || []).forEach(function (l) {
+      if (l.showP === false || (ax.yticks || []).indexOf(l.p) >= 0) return;
+      widest = Math.max(widest, axw(l.label != null ? l.label : fmtP(l.p, ax)));
     });
     // A one-line price-axis title is a letter or two and sits just inside the
     // axis, where it has always sat. A wrapped one is a name -- "Wage /
@@ -300,7 +322,7 @@
     var ytitle = String(ax.y || 'P').split('\n');
     var ytw = 0;
     if (ytitle.length > 1) {
-      ytitle.forEach(function (rw) { ytw = Math.max(ytw, 9.8 * rw.length); });
+      ytitle.forEach(function (rw) { ytw = Math.max(ytw, 14 * emw(rw)); });
     }
     var left = Math.max(ax.cents ? 62 : (ax.yticks && ax.yticks.length ? 54 : 40),
                         Math.ceil(widest) + 12,
@@ -316,8 +338,8 @@
       var rows = String(c.label == null ? c.id : c.label).split('\n'), n = 0;
       rows.forEach(function (rw) {
         var subs = 0;
-        var plain = rw.replace(/_\{([^}]*)\}/g, function (m, inner) { subs += inner.length; return ''; });
-        n = Math.max(n, plain.length + 0.72 * subs);
+        var plain = rw.replace(/_\{([^}]*)\}/g, function (m, inner) { subs += emw(inner); return ''; });
+        n = Math.max(n, emw(plain) + 0.72 * subs);
       });
       return n;
     }
@@ -331,7 +353,7 @@
         if (!pts.length || c.label === '') return;
         var lp = c.lstart ? pts[0] : pts[pts.length - 1];
         var endsAt = left + (lp[0] / ax.xmax) * pw + (c.ldx == null ? 6 : c.ldx);
-        var overflow = endsAt + 9.1 * labelChars(c) + 4 - W;
+        var overflow = endsAt + 13 * labelChars(c) + 4 - W;
         if (overflow > 0) want = Math.max(want, right + overflow);
       });
       if (want <= right + 0.01) break;
@@ -406,8 +428,26 @@
         var n = a.pts.length,
             lp = a.lp || [a.pts.reduce(function (t, p) { return t + p[0]; }, 0) / n,
                           a.pts.reduce(function (t, p) { return t + p[1]; }, 0) / n];
-        grp.appendChild(el('text', {class: 'arlbl', x: X(lp[0]) + (a.ldx || 0),
-          y: Y(lp[1]) + (a.ldy || 0), 'text-anchor': 'middle', fill: cc}, a.label));
+        // Wraps on \n and takes `boxed`, the way a point's label does
+        // (v2.41). Set on one line, "Tariff Revenue" is wider than the
+        // rectangle it names and crosses both curves; a wash is not a
+        // background, so the box is what lets it be read there.
+        var arows = String(a.label).split('\n'),
+            ax0 = X(lp[0]) + (a.ldx || 0),
+            ay0 = Y(lp[1]) + (a.ldy || 0) - (arows.length - 1) * 5;
+        if (a.boxed) {
+          var aw = 0;
+          arows.forEach(function (rw) { aw = Math.max(aw, 5.3 * rw.length); });
+          grp.appendChild(el('rect', {class: 'lblbox', x: ax0 - aw / 2 - 4,
+            y: ay0 - 8, width: aw + 8, height: 10 * arows.length + 2,
+            stroke: cc}));
+        }
+        var at = el('text', {class: 'arlbl', x: ax0, y: ay0,
+                             'text-anchor': 'middle', fill: cc});
+        arows.forEach(function (rw, i) {
+          at.appendChild(el('tspan', {x: ax0, dy: i ? 10 : 0}, rw));
+        });
+        grp.appendChild(at);
       }
       g.appendChild(reg(grp, a));
     });
@@ -512,7 +552,12 @@
     (cfg.hlines || []).forEach(function (l) {
       var cc = col(l.color || 'red'), grp = el('g', {});
       grp.appendChild(el('line', {class: 'hline', stroke: cc, x1: O.x, y1: Y(l.p), x2: O.x + PW + 8, y2: Y(l.p)}));
-      if ((ax.yticks || []).indexOf(l.p) < 0) grp.appendChild(el('text', {class: 'tk strong', x: O.x - 6, y: Y(l.p) + 4, 'text-anchor': 'end', fill: cc}, l.label || fmtP(l.p, ax)));
+      // showP:false drops the price from the axis, as it does on a point
+      // (v2.42). A line named only by its tag -- "World Price + Tariff" --
+      // has nothing to write there, and without this it wrote its own
+      // coordinate, which on a symbolic panel is a number out of thin air.
+      if (l.showP !== false && (ax.yticks || []).indexOf(l.p) < 0)
+        grp.appendChild(setLabel(el('text', {class: 'tk strong', x: O.x - 6, y: Y(l.p) + 4, 'text-anchor': 'end', fill: cc}), l.label || fmtP(l.p, ax)));
       // `label` names the line's price on the P axis; `tag` names the line
       // itself, at its right-hand end, the way the printed artwork writes
       // "World Price" beside the line rather than only on the axis.

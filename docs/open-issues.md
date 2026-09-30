@@ -325,3 +325,16 @@ or "unattainable" dot) whose exact coordinates are not the lesson.
       One paragraph says study skills improved more, the next says socializing
       skills did. The drawing says socializing, and the widget follows the
       drawing. Recorded in `docs/changelogs/the-ppf-changelog.md`. One for Ian.
+
+- [ ] **Three label overlaps in shipped files became measurable at engine
+      v2.44** and are reported rather than rewritten, per the standing rule:
+      a `PS` on a supply curve and two `DWL` labels, all in
+      `examples/ECO2013-263-GovernmentIntervention.html`. They were always
+      there; the old width model, which split on weight rather than case,
+      measured them as clear. One for Ian.
+- [ ] **The ECO2023 chapter 7 figures disagree about the quota market** — the
+      prose and figure 06 say 30 / 100, figure 07 says 40 / 70 with a 30M
+      quota, figure 08 says 50 / 100 with a 50M quota, and figure 08 as
+      printed leaves demand at its free-trade quantity, so its quota lifts no
+      price. Each widget follows its own figure (Ian, 2026-09-30). Worth
+      correcting in the artwork. One for Ian.

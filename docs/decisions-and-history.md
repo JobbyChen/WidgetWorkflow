@@ -397,3 +397,58 @@ no space at all.
 * **A figure that is not becoming a widget stays the image it is** — restated
   here because the goods-classification table is the second one in two
   chapters that was rewritten as HTML before being put back.
+
+## 2026-09-30 — the trade chapter, and where a figure outranks the prose
+
+Chapter 7 of the ECO2023 exam-1 material converted to eight widgets. Three of
+them are one panel where the source draws two, because each of those figures
+is one market before and after a change and the change is better seen as a
+step than as a second picture. Two stayed two panels, because there they are
+two different markets.
+
+**The quota market is drawn three times in that chapter on three different
+sets of numbers**, and figure 08 agrees with neither the prose nor the two
+figures before it. Rule 3's authority order says the prose wins, so widget 8
+was first built on the prose's numbers — and Ian overruled it: *"it should be
+50 to 100 million on the x axis."* Each widget follows its own figure. The
+rule has a boundary now: the prose settles a figure that contradicts *itself*
+(the apartment figure's impossible intercept), not a figure that is simply a
+different example. A reader is comparing one figure against the widget beside
+it, not the chapter against itself, and the disagreement belongs in the
+changelog rather than in the drawing.
+
+Widget 8 therefore sits in its own market, with its own curves and its own
+ticks, and is the one figure in the file that does not continue the ethanol
+one.
+
+### Three drawing corrections, all of them about where a name landed
+
+* **The tariff band had nowhere to put "Imports".** It is fifteen units deep
+  and holds the revenue rectangle and both deadweight triangles.
+  `below: "axis"` was the documented answer and is only half of one: it sets
+  the bracket down by the Q axis but leaves the label reaching back up into
+  the band, which is where the triangles' names are. `below: true` puts the
+  whole thing under the axis, the way the quota figure next to it already
+  draws its own, and the marked quantities supply the drop guides the brace
+  gives up.
+* **Widget 8's axis was drawn out to demand's own intercept.** A quarter of
+  the panel was empty while five names fought over the middle band; clipped
+  to the region the figure uses, every unit is 23% wider and the crowding is
+  gone. Demand then leaves through the side rather than the axis, so the
+  world price is named below its line and short of the frame — at the line's
+  right end, demand runs straight through it.
+* **The ethanol ticks read "3040".** The quota moves domestic output from 30
+  to 40, and both figures carried all four readings. A tick cannot step, so
+  each figure takes only the two its own guides land on — which is the
+  step-scoped rule from the ceiling chapter seen across figures instead of
+  across steps.
+
+### On capturing what the placers do
+
+`place_labels.py` and `place_curve_labels.py` write into the built HTML, not
+into the config, so a rebuild drops them. Chapter 7's builder reads a
+`placed.json` captured from the built file, which makes the build
+reproducible — and the capture then overwrote a placement that had been
+pinned by hand, putting widget 6's consumer-surplus label back on the supply
+curve. Pins are applied after the captured placements now and live in the
+builder, where the placer cannot reach them.

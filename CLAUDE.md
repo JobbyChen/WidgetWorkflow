@@ -222,6 +222,14 @@ economics instead of label placement.
   the line is taken (the tariff figures). Under the Q axis *only* where the
   source puts them there. A long label wraps with `\n` rather than moving the
   brace — that is what the artwork does.
+
+  **`"axis"` sets the bracket down but leaves the label reaching back up**,
+  which is only a fix where what crowds it is right against the price line.
+  A tariff band holds the revenue rectangle and both deadweight triangles,
+  and their names sit where that label lands — so the trade chapter's imports
+  brace is `below: true`, fully under the Q axis, the same as the quota
+  figure's. It gives up the brace's own drop guides, which the marked
+  quantities already draw.
 * **A brace's label sits at the brace's midpoint, beside it.** Not under the
   brace, not under the line it hangs off — Ian's call, 2026-09-29, and he gave
   it twice in one round ("the tax or fee should be at the point of the brace",
@@ -269,6 +277,12 @@ economics instead of label placement.
   $75, 375 and 562.5, which is also why 500 and 562.5 never have to share it.
   Carry the equilibrium's dot on a second, label-less point present from the
   start, or the engine rings it as newly revealed. (Ian, 2026-09-24.)
+  **The same across figures, not just steps.** Where one market is drawn
+  before and after a change, each figure takes only the readings its own
+  guides land on — the trade chapter's quota moves domestic output from 30 to
+  40, and all four on one axis put those ten units close enough to render as
+  "3040". Giving both figures the union is the tick-collision defect from a
+  different direction.
 * **A caption must say something the paragraphs around it do not.** Vertical
   space is the scarce thing on these pages. `check_file.py` measures each
   caption against the prose on either side of its widget and reports one
@@ -410,6 +424,15 @@ economics instead of label placement.
   (rule 3's authority order) — and say so in the changelog. The apartment
   figure prints a demand intercept of 1,200 that contradicts its own
   equilibrium; the prose's numbers force 1,080.
+
+  **That is for a figure that contradicts itself, not for one that is simply
+  a different example.** The trade chapter draws the quota market three times
+  on three sets of numbers, and the third was redrawn on the prose's — which
+  Ian overruled on 2026-09-30: each widget follows its own figure, so that
+  one gets its own market, its own curves and its own ticks. A reader looking
+  from the page to the widget beside it is comparing one figure against one
+  widget, not the chapter against itself. Say in the changelog that the
+  figures disagree; do not resolve it by redrawing one of them.
 
 `check_file.py` enforces the guide, control-price and `calcs` rules, so they
 fail the file rather than waiting for someone to notice.

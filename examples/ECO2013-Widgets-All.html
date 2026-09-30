@@ -302,7 +302,7 @@
 }
 </style>
 <script>
-/* ===== sd-graph.js v2.54 — data-driven supply & demand widgets =====
+/* ===== sd-graph.js v2.55 — data-driven supply & demand widgets =====
    Markup:  <div class="sdg"><script type="application/json">{ ...config... }<\/script></div>
    Top-level config:
      title, lede, caption         heading / intro / static caption (caption used only when there are no steps)
@@ -1203,8 +1203,7 @@
   function pctTxt(x, d) { return (x * 100).toFixed(d == null ? 0 : d) + '%'; }
   function yearTxt(m) {
     if (m === 0) return 'start';
-    var y = m % 12 ? (m / 12).toFixed(1) : String(m / 12);
-    return y + (m === 12 ? ' year' : ' years');
+    return (m / 12) + (m === 12 ? ' year' : ' years');
   }
 
   Widget.prototype.buildAmort = function () {
@@ -1252,17 +1251,21 @@
     rateIn.step = a.rateStep != null ? a.rateStep : 0.25;
     rateIn.value = state.apr;
     rateIn.setAttribute('aria-label', 'Interest rate');
-    // In months, which is what the schedule is indexed by. It was set in
-    // months and written back in years, so the thumb clamped at the slider's
-    // own maximum and stayed there while the figure moved underneath it --
-    // and a month's resolution is what lets the arrow keys walk the loan.
+    // Whole years (Ian, 2026-09-30). The schedule is indexed by month, so the
+    // reading is still taken from a month -- but always the first of a year,
+    // and every way in snaps to one: the slider, the arrow keys and a drag
+    // across the figure. A chart that answers "14.3 years" is answering a
+    // question nobody asked of a figure whose own ticks are 0, 15 and 30.
     yearIn.type = 'range'; yearIn.className = 'am-range';
     yearIn.min = 0; yearIn.step = 1; yearIn.value = 0;
-    yearIn.setAttribute('aria-label', 'Month of the loan');
+    yearIn.setAttribute('aria-label', 'Year of the loan');
     row('Interest rate', rateIn, rateOut);
     var termBtns = terms.map(function (t) {
       var b = h('button', null, t + ' yrs'); b.type = 'button';
-      b.addEventListener('click', function () { state.years = t; state.month = 0; redraw(); });
+      // Keep the year when the term changes, clamped into the new one: what
+      // the toggle is for is "year 13 of a 30-year loan against year 13 of a
+      // 15-year one", and resetting to the start throws that comparison away.
+      b.addEventListener('click', function () { state.years = t; redraw(); });
       seg.appendChild(b); return {btn: b, term: t};
     });
     row('Loan term', seg);
@@ -1383,7 +1386,7 @@
       balPct.textContent = pctTxt(r.bal / state.amount) + ' of the original ' + money(state.amount);
       barFill.style.width = (100 * r.bal / state.amount).toFixed(1) + '%';
       yearOut.textContent = yearTxt(m);
-      yearIn.value = m;
+      yearIn.value = m / 12;
       var cross = null, k;
       for (k = 1; k <= sch.n; k++) { if (sch.rows[k].share < 0.5) { cross = k; break; } }
       var t = m === 0
@@ -1398,8 +1401,8 @@
 
     function redraw() {
       sch = schedule(state.amount, state.apr, state.years);
-      yearIn.max = sch.n;
-      state.month = Math.min(state.month, sch.n);
+      yearIn.max = state.years;
+      state.month = Math.min(Math.round(state.month / 12) * 12, sch.n);
       rateOut.textContent = (Math.round(state.apr * 100) / 100) + '%';
       termBtns.forEach(function (tb) {
         tb.btn.setAttribute('aria-pressed', String(tb.term === state.years));
@@ -1412,7 +1415,7 @@
       state.apr = parseFloat(rateIn.value); redraw();
     });
     yearIn.addEventListener('input', function () {
-      state.month = Math.round(parseFloat(yearIn.value)); update();
+      state.month = Math.round(parseFloat(yearIn.value)) * 12; update();
     });
 
     // Drag across the figure itself, and walk it a month at a time with the
@@ -1423,7 +1426,7 @@
       var r = svg.getBoundingClientRect();
       if (!r.width) return;
       var frac = ((clientX - r.left) / r.width * AW - AM.l) / CWp;
-      state.month = Math.round(Math.min(1, Math.max(0, frac)) * sch.n);
+      state.month = Math.round(Math.min(1, Math.max(0, frac)) * state.years) * 12;
       update();
     }
     // A mouse reads the figure by moving over it, with nothing held down --
@@ -1447,10 +1450,10 @@
     svg.addEventListener('keydown', function (e) {
       var d = e.key === 'ArrowRight' || e.key === 'ArrowUp' ? 1
             : e.key === 'ArrowLeft' || e.key === 'ArrowDown' ? -1
-            : e.key === 'PageUp' ? 12 : e.key === 'PageDown' ? -12
-            : e.key === 'Home' ? -sch.n : e.key === 'End' ? sch.n : 0;
+            : e.key === 'PageUp' ? 5 : e.key === 'PageDown' ? -5
+            : e.key === 'Home' ? -state.years : e.key === 'End' ? state.years : 0;
       if (!d) return;
-      state.month = Math.min(sch.n, Math.max(0, state.month + d));
+      state.month = Math.min(sch.n, Math.max(0, state.month + d * 12));
       update(); e.preventDefault();
     });
     redraw();

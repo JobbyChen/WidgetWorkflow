@@ -567,7 +567,7 @@ not enough to reproduce an implementation.
   `embed_engine.py`'s paths reproduce the delivered file byte-for-byte; all 20
   prototype widgets render with no engine errors; `check_file.py` runs the
   geometric label test over 74 labels in the 263 file with no overlaps.
-* **Engine is v2.54.** Since v2.6: `areas` shade a polygon (v2.11) with
+* **Engine is v2.55.** Since v2.6: `areas` shade a polygon (v2.11) with
   `edge` to outline it (v2.18) and labels centred on their anchor (v2.13);
   `dot:false` drops a marker but keeps the axis label (v2.12); points take
   `guides:"p"`/`"q"` for one leg of the elbow (v2.14); braces take
@@ -667,9 +667,10 @@ not enough to reproduce an implementation.
   explorer is
   read by moving a mouse over the figure with nothing held down (v2.54), by
   dragging a finger, or by the arrow keys, and its year
-  control counts months, which is what the schedule is indexed by -- set in
-  months and written back in years, the thumb clamped at its own maximum and
-  never moved (v2.52).
+  reading is a whole year however it is asked for (v2.55), on a figure whose
+  own ticks are 0, 15 and 30; underneath, the schedule is indexed by month,
+  and setting that in months while writing it back in years clamped the thumb
+  at its own maximum so it never moved (v2.52).
 
 * **PPF works.** The first chapter of Exam 1 material converted to seven widgets
   with no engine gaps hit: frontiers, a combinations table, points on/inside/

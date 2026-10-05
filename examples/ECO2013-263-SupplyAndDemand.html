@@ -1860,11 +1860,50 @@
 
 <!-- IMAGE POSITION: below-referenced paragraph -->
 <div class="sdg"><script type="application/json">
-{ "title":"Supply of lemonade",
-  "axes":{"xmax":340,"ymax":4.6,"money":true,"xticks":[150,300],"yticks":[2,3,4]},
-  "curves":[{"id":"S","label":"S","pts":[[0,2],[300,4]]}],
-  "points":[{"q":150,"p":3},{"q":300,"p":4}],
-  "caption":"At $3 the market supplies 150 cups of lemonade, and at $4 it supplies 300 cups. The curve meets the price axis at $2, so no firm is willing to sell lemonade if the price is below $2. Once the price rises above $2, some firms want to sell." }
+{
+ "title": "Supply of lemonade",
+ "axes": {
+  "xmax": 340,
+  "ymax": 4.6,
+  "money": true,
+  "xticks": [
+   150,
+   300
+  ],
+  "yticks": [
+   2,
+   3,
+   4
+  ]
+ },
+ "curves": [
+  {
+   "id": "S",
+   "label": "S",
+   "pts": [
+    [
+     0,
+     2
+    ],
+    [
+     340,
+     4.27
+    ]
+   ]
+  }
+ ],
+ "points": [
+  {
+   "q": 150,
+   "p": 3
+  },
+  {
+   "q": 300,
+   "p": 4
+  }
+ ],
+ "caption": "The line's slope is the law of supply in numbers: every extra $1 of price brings out 150 more cups."
+}
 </script></div>
 
 <p>The price on the vertical axis is the price of the good, meaning the price at which one unit can be sold. It is <em>not</em> the cost of producing the good.</p>
@@ -1942,43 +1981,385 @@
 
 <!-- IMAGE POSITION: below-referenced paragraph -->
 <div class="sdg"><script type="application/json">
-{ "lede":"The left panel shows the good whose price changed; the right panel shows the related good.",
-  "scenarios":{
-    "sub":{"label":"Substitutes in production: the price of butter rises",
-      "title":"Butter and ice cream are substitutes in production",
-      "panels":[
-        {"heading":"Market for butter","axes":{"xmax":100,"ymax":100},
-         "curves":[{"id":"S","label":"S","pts":[[20,10],[45,35],[60,60],[70,90]],"curved":true}],
-         "points":[{"q":45,"p":35,"pl":"P₁","ql":"Q₁"},{"q":60,"p":60,"pl":"P₂","ql":"Q₂","at":1}],
-         "moves":[{"from":[48,40],"to":[53,48],"at":1,"color":"red"}]},
-        {"heading":"Market for ice cream","axes":{"xmax":100,"ymax":100},
-         "curves":[{"id":"D","label":"D","pts":[[15,85],[30,60],[50,45],[85,28]],"curved":true},
-                   {"id":"S1","label":"S₁","pts":[[22,10],[40,30],[50,45],[62,80],[68,95]],"curved":true},
-                   {"id":"S2","label":"S₂","pts":[[0,10],[18,30],[28,45],[40,80],[46,95]],"curved":true,"color":"red","from":"S1","at":2,"arrowP":78}],
-         "points":[{"q":50,"p":45,"pl":"P₁","ql":"Q₁"},{"q":32.5,"p":58,"pl":"P₂","ql":"Q₂","color":"red","at":3}]}
-      ],
-      "steps":["Each market starts at its own equilibrium.",
-               "The price of butter rises from P₁ to P₂. Dairies respond by making more butter, which is a movement up along the butter supply curve from Q₁ to Q₂. The quantity supplied of butter changes, but the supply of butter does not.",
-               "Milk is limited, so more butter means less milk left for ice cream. At every price of ice cream, less is supplied, so the ice cream supply curve shifts left, from S₁ to S₂.",
-               "The ice cream market settles at a new equilibrium. The equilibrium price of ice cream rises to P₂ and the equilibrium quantity falls to Q₂."]},
-    "comp":{"label":"Complements in production: the price of gasoline rises",
-      "title":"Gasoline and kerosene are complements in production",
-      "panels":[
-        {"heading":"Market for gasoline","axes":{"xmax":100,"ymax":100},
-         "curves":[{"id":"S","label":"S","pts":[[20,10],[45,35],[60,60],[70,90]],"curved":true}],
-         "points":[{"q":45,"p":35,"pl":"P₁","ql":"Q₁"},{"q":60,"p":60,"pl":"P₂","ql":"Q₂","at":1}],
-         "moves":[{"from":[48,40],"to":[53,48],"at":1,"color":"red"}]},
-        {"heading":"Market for kerosene","axes":{"xmax":100,"ymax":100},
-         "curves":[{"id":"D","label":"D","pts":[[15,85],[30,60],[50,45],[85,28]],"curved":true},
-                   {"id":"S1","label":"S₁","pts":[[22,10],[40,30],[50,45],[62,80],[68,95]],"curved":true},
-                   {"id":"S2","label":"S₂","pts":[[46,10],[64,30],[74,45],[86,80],[92,95]],"curved":true,"color":"red","from":"S1","at":2,"arrowP":78}],
-         "points":[{"q":50,"p":45,"pl":"P₁","ql":"Q₁"},{"q":70.6,"p":35,"pl":"P₂","ql":"Q₂","color":"red","at":3}]}
-      ],
-      "steps":["Each market starts at its own equilibrium.",
-               "The price of gasoline rises from P₁ to P₂. Refiners respond by making more gasoline, which is a movement up along the gasoline supply curve from Q₁ to Q₂. The quantity supplied of gasoline changes, but the supply of gasoline does not.",
-               "Kerosene comes out of the same refining process, so more gasoline means more kerosene. At every price of kerosene, more is supplied, so the kerosene supply curve shifts right, from S₁ to S₂.",
-               "The kerosene market settles at a new equilibrium. The equilibrium price of kerosene falls to P₂ and the equilibrium quantity rises to Q₂."]}
-  } }
+{
+ "lede": "The left panel shows the good whose price changed; the right panel shows the related good.",
+ "scenarios": {
+  "sub": {
+   "label": "Substitutes in production: the price of butter rises",
+   "title": "Butter and ice cream are substitutes in production",
+   "panels": [
+    {
+     "heading": "Market for butter",
+     "axes": {
+      "xmax": 100,
+      "ymax": 100
+     },
+     "curves": [
+      {
+       "id": "S",
+       "label": "S",
+       "pts": [
+        [
+         20,
+         10
+        ],
+        [
+         45,
+         35
+        ],
+        [
+         60,
+         60
+        ],
+        [
+         70,
+         90
+        ]
+       ],
+       "curved": true
+      }
+     ],
+     "points": [
+      {
+       "q": 45,
+       "p": 35,
+       "pl": "P₁",
+       "ql": "Q₁"
+      },
+      {
+       "q": 60,
+       "p": 60,
+       "pl": "P₂",
+       "ql": "Q₂",
+       "at": 1
+      }
+     ],
+     "moves": [
+      {
+       "from": [
+        48,
+        40
+       ],
+       "to": [
+        53,
+        48
+       ],
+       "at": 1,
+       "color": "red"
+      }
+     ]
+    },
+    {
+     "heading": "Market for ice cream",
+     "axes": {
+      "xmax": 100,
+      "ymax": 100
+     },
+     "curves": [
+      {
+       "id": "D",
+       "label": "D",
+       "pts": [
+        [
+         15,
+         85
+        ],
+        [
+         30,
+         60
+        ],
+        [
+         32.53,
+         57.28
+        ],
+        [
+         50,
+         45
+        ],
+        [
+         85,
+         28
+        ]
+       ],
+       "curved": true
+      },
+      {
+       "id": "S1",
+       "label": "S₁",
+       "pts": [
+        [
+         22,
+         10
+        ],
+        [
+         40,
+         30
+        ],
+        [
+         50,
+         45
+        ],
+        [
+         62,
+         80
+        ],
+        [
+         68,
+         95
+        ]
+       ],
+       "curved": true
+      },
+      {
+       "id": "S2",
+       "label": "S₂",
+       "pts": [
+        [
+         0,
+         10
+        ],
+        [
+         18,
+         30
+        ],
+        [
+         28,
+         45
+        ],
+        [
+         32.53,
+         57.28
+        ],
+        [
+         40,
+         80
+        ],
+        [
+         46,
+         95
+        ]
+       ],
+       "curved": true,
+       "color": "red",
+       "from": "S1",
+       "at": 2,
+       "arrowP": 78
+      }
+     ],
+     "points": [
+      {
+       "q": 50,
+       "p": 45,
+       "pl": "P₁",
+       "ql": "Q₁"
+      },
+      {
+       "q": 32.53,
+       "p": 57.28,
+       "pl": "P₂",
+       "ql": "Q₂",
+       "color": "red",
+       "at": 3
+      }
+     ]
+    }
+   ],
+   "steps": [
+    "Each market starts at its own equilibrium.",
+    "The price of butter rises from P₁ to P₂, and dairies move up the butter supply curve from Q₁ to Q₂. The quantity supplied changes; the supply of butter does not.",
+    "Milk is limited, so more butter means less milk left for ice cream. At every price of ice cream, less is supplied, so the ice cream supply curve shifts left, from S₁ to S₂.",
+    "The ice cream market settles at a new equilibrium. The equilibrium price of ice cream rises to P₂ and the equilibrium quantity falls to Q₂."
+   ]
+  },
+  "comp": {
+   "label": "Complements in production: the price of gasoline rises",
+   "title": "Gasoline and kerosene are complements in production",
+   "panels": [
+    {
+     "heading": "Market for gasoline",
+     "axes": {
+      "xmax": 100,
+      "ymax": 100
+     },
+     "curves": [
+      {
+       "id": "S",
+       "label": "S",
+       "pts": [
+        [
+         20,
+         10
+        ],
+        [
+         45,
+         35
+        ],
+        [
+         60,
+         60
+        ],
+        [
+         70,
+         90
+        ]
+       ],
+       "curved": true
+      }
+     ],
+     "points": [
+      {
+       "q": 45,
+       "p": 35,
+       "pl": "P₁",
+       "ql": "Q₁"
+      },
+      {
+       "q": 60,
+       "p": 60,
+       "pl": "P₂",
+       "ql": "Q₂",
+       "at": 1
+      }
+     ],
+     "moves": [
+      {
+       "from": [
+        48,
+        40
+       ],
+       "to": [
+        53,
+        48
+       ],
+       "at": 1,
+       "color": "red"
+      }
+     ]
+    },
+    {
+     "heading": "Market for kerosene",
+     "axes": {
+      "xmax": 100,
+      "ymax": 100
+     },
+     "curves": [
+      {
+       "id": "D",
+       "label": "D",
+       "pts": [
+        [
+         15,
+         85
+        ],
+        [
+         30,
+         60
+        ],
+        [
+         50,
+         45
+        ],
+        [
+         68.65,
+         35.61
+        ],
+        [
+         85,
+         28
+        ]
+       ],
+       "curved": true
+      },
+      {
+       "id": "S1",
+       "label": "S₁",
+       "pts": [
+        [
+         22,
+         10
+        ],
+        [
+         40,
+         30
+        ],
+        [
+         50,
+         45
+        ],
+        [
+         62,
+         80
+        ],
+        [
+         68,
+         95
+        ]
+       ],
+       "curved": true
+      },
+      {
+       "id": "S2",
+       "label": "S₂",
+       "pts": [
+        [
+         46,
+         10
+        ],
+        [
+         64,
+         30
+        ],
+        [
+         68.65,
+         35.61
+        ],
+        [
+         74,
+         45
+        ],
+        [
+         86,
+         80
+        ],
+        [
+         92,
+         95
+        ]
+       ],
+       "curved": true,
+       "color": "red",
+       "from": "S1",
+       "at": 2,
+       "arrowP": 78
+      }
+     ],
+     "points": [
+      {
+       "q": 50,
+       "p": 45,
+       "pl": "P₁",
+       "ql": "Q₁"
+      },
+      {
+       "q": 68.65,
+       "p": 35.61,
+       "pl": "P₂",
+       "ql": "Q₂",
+       "color": "red",
+       "at": 3
+      }
+     ]
+    }
+   ],
+   "steps": [
+    "Each market starts at its own equilibrium.",
+    "The price of gasoline rises from P₁ to P₂, and refiners move up the gasoline supply curve from Q₁ to Q₂. The quantity supplied changes; the supply of gasoline does not.",
+    "Kerosene comes out of the same refining process, so more gasoline means more kerosene. At every price of kerosene, more is supplied, so the kerosene supply curve shifts right, from S₁ to S₂.",
+    "The kerosene market settles at a new equilibrium. The equilibrium price of kerosene falls to P₂ and the equilibrium quantity rises to Q₂."
+   ]
+  }
+ }
+}
 </script></div>
 
 <p>In both cases the good whose price changed only experiences a change in quantity supplied, while the related good experiences a change in supply. Some textbooks also list the state of nature and the number of suppliers as shifters; they are not emphasized here.</p>
@@ -1992,24 +2373,13 @@
 <p>Simply pointing at the intersection is an assertion. To see <em>why</em> it is the equilibrium, look at what happens at other prices. Pick a price below and step through the market's response.</p>
 
 <!-- IMAGE POSITION: below-referenced paragraph -->
-<div class="sdg"><script type="application/json">{
+<div class="sdg"><script type="application/json">
+{
  "title": "Market for chicken thighs: equilibrium, shortage, and surplus",
  "axes": {
   "xmax": 420,
   "ymax": 10,
-  "money": true,
-  "xticks": [
-   80,
-   150,
-   200,
-   240,
-   350
-  ],
-  "yticks": [
-   4,
-   5,
-   8
-  ]
+  "money": true
  },
  "curves": [
   {
@@ -2093,11 +2463,11 @@
     {
      "from": [
       170,
-      4.4
+      4.6
      ],
      "to": [
       187,
-      4.75
+      4.85
      ],
      "at": 3,
      "color": "red",
@@ -2106,11 +2476,11 @@
     {
      "from": [
       224,
-      4.4
+      4.6
      ],
      "to": [
       210,
-      4.75
+      4.85
      ],
      "at": 3,
      "color": "red",
@@ -2121,7 +2491,7 @@
     "At $5 the market clears at 200 units.",
     "Suppose the price is $4 instead. Buyers now want 240 units, but sellers are only willing to supply 150 units.",
     "The quantity demanded exceeds the quantity supplied by 90 units, which is a shortage. Only 150 units actually get bought and sold, because every sale needs both a willing buyer and a willing seller.",
-    "Whenever there is a shortage, the price is expected to rise toward the equilibrium price. As it rises, the quantity demanded falls and the quantity supplied rises until the two meet again at $5 and 200 units."
+    "A shortage pushes the price up toward equilibrium. As it rises the quantity demanded falls and the quantity supplied rises, until the two meet again at $5 and 200 units."
    ]
   },
   "surp": {
@@ -2192,11 +2562,12 @@
     "At $5 the market clears at 200 units.",
     "Suppose the price is $8 instead. Sellers now want to supply 350 units, but buyers only want 80 units.",
     "The quantity supplied exceeds the quantity demanded by 270 units, which is a surplus. Only 80 units actually get bought and sold, since that is all buyers are willing to take at $8.",
-    "Whenever there is a surplus, the price is expected to fall toward the equilibrium price. As it falls, the quantity supplied drops and the quantity demanded rises until the two meet again at $5 and 200 units."
+    "A surplus pushes the price down toward equilibrium. As it falls the quantity supplied drops and the quantity demanded rises, until the two meet again at $5 and 200 units."
    ]
   }
  }
-}</script></div>
+}
+</script></div>
 
 <p>At a price below the equilibrium price, the quantity demanded exceeds the quantity supplied and there is a <strong>shortage</strong>. At $4, the quantity demanded is 240 units and the quantity supplied is 150 units, a shortage of 90 units. Whenever there is a shortage, the price is expected to rise toward the equilibrium price. At a price above the equilibrium price, the quantity supplied exceeds the quantity demanded and there is a <strong>surplus</strong>. At $8, the quantity supplied is 350 units and the quantity demanded is 80 units, a surplus of 270 units. Whenever there is a surplus, the price is expected to fall toward the equilibrium price. Taken together, these two forces explain why the equilibrium price is the price expected to prevail: any other price sets off a natural mechanism that pushes the price back. (Government policies that block this adjustment are covered later.) Neither case involves any change in the curves themselves; the price is simply away from equilibrium and moving back.</p>
 
@@ -2221,7 +2592,8 @@
 <p>Start in the market for chips at an equilibrium price of $2 per bag and an equilibrium quantity of 500 bags. Who cares most directly? Since these are complements (not complements in production), this is a demand-side relationship, so the demand for chips shifts. In which direction? When the price of a complement falls, consumers want more chips, so demand shifts right. Step through the drawing below.</p>
 
 <!-- IMAGE POSITION: below-referenced paragraph -->
-<div class="sdg"><script type="application/json">{
+<div class="sdg"><script type="application/json">
+{
  "title": "Chips and Nutella are complements; the price of Nutella falls",
  "axes": {
   "xmax": 110,
@@ -2262,12 +2634,12 @@
    "label": "D₂",
    "pts": [
     [
-     20,
+     30,
      100
     ],
     [
-     104,
-     16
+     110,
+     20
     ]
    ],
    "color": "red",
@@ -2284,7 +2656,7 @@
    "ql": "Q₁"
   },
   {
-   "q": 70,
+   "q": 80,
    "p": 50,
    "color": "red",
    "at": 2,
@@ -2294,8 +2666,8 @@
    "guides": "p"
   },
   {
-   "q": 60,
-   "p": 60,
+   "q": 65.0,
+   "p": 65.0,
    "pl": "P₂",
    "ql": "Q₂",
    "color": "red",
@@ -2306,7 +2678,7 @@
   {
    "p": 50,
    "q1": 50,
-   "q2": 70,
+   "q2": 80,
    "label": "Shortage",
    "below": true,
    "at": 2,
@@ -2319,7 +2691,8 @@
   "At the original price of $2 there is now a shortage of chips, because the quantity demanded on D₂ is greater than the quantity supplied. A shortage puts upward pressure on the price.",
   "The price rises until the market clears again at P₂ and Q₂, which here are $3 and 700 bags. When demand shifts right, the equilibrium price and the equilibrium quantity both increase."
  ]
-}</script></div>
+}
+</script></div>
 
 <p>The specific numbers do not matter; what matters is the direction. The price rose because, once demand had shifted right, the original price of $2 left a shortage. The equilibrium price rose to $3 and the equilibrium quantity rose from 500 to 700 units.</p>
 
@@ -2328,7 +2701,8 @@
 <p>Cheese is made in water, and as it coagulates, pieces of byproduct float to the top. Those pieces, beer-battered and deep fried, are cheese curds. Making cheese always produces curds, and making curds requires making cheese, so the two are complements in production. Start in the market for cheese at an equilibrium price of $7 and an equilibrium quantity of 450 units. The words "in production" signal a supply-side relationship, so the supply of cheese shifts. When the price of cheese curds rises, producers want to make more curds, which means making more cheese, so the supply of cheese shifts right.</p>
 
 <!-- IMAGE POSITION: below-referenced paragraph -->
-<div class="sdg"><script type="application/json">{
+<div class="sdg"><script type="application/json">
+{
  "title": "Cheese and cheese curds are complements in production; the price of cheese curds rises",
  "axes": {
   "xmax": 110,
@@ -2369,12 +2743,12 @@
    "label": "S₂",
    "pts": [
     [
-     28,
+     38,
      8
     ],
     [
-     104,
-     84
+     110,
+     80
     ]
    ],
    "color": "red",
@@ -2391,7 +2765,7 @@
    "ql": "Q₁"
   },
   {
-   "q": 70,
+   "q": 80,
    "p": 50,
    "color": "red",
    "at": 2,
@@ -2401,8 +2775,8 @@
    "guides": "p"
   },
   {
-   "q": 60,
-   "p": 40,
+   "q": 65.0,
+   "p": 35.0,
    "pl": "P₂",
    "ql": "Q₂",
    "color": "red",
@@ -2413,7 +2787,7 @@
   {
    "p": 50,
    "q1": 50,
-   "q2": 70,
+   "q2": 80,
    "label": "Surplus",
    "below": true,
    "at": 2,
@@ -2426,7 +2800,8 @@
   "At the original price of $7 there is now a surplus of cheese, because the quantity supplied on S₂ is greater than the quantity demanded. A surplus puts downward pressure on the price.",
   "The price falls until the market clears again at P₂ and Q₂, which here are $5 and 500 units. When supply shifts right, the equilibrium price decreases and the equilibrium quantity increases."
  ]
-}</script></div>
+}
+</script></div>
 
 <h2>When Supply and Demand Shift at the Same Time</h2>
 
@@ -2434,21 +2809,207 @@
 
 <!-- IMAGE POSITION: below-referenced paragraph -->
 <div class="sdg"><script type="application/json">
-{"title":"Supply and demand both increase",
- "link":false,
- "panels":[
-  {"heading":"Supply shifts by more","axes":{"xmax":110,"ymax":110},
-   "curves":[{"id":"D1","label":"D₁","pts":[[4,96],[92,8]],"thin":true},{"id":"S1","label":"S₁","pts":[[8,8],[100,100]],"thin":true},{"id":"D2","label":"D₂","pts":[[15,100],[104,11]],"color":"red","from":"D1","at":1,"arrowP":45},{"id":"S2","label":"S₂","pts":[[48,8],[104,64]],"color":"red","from":"S1","at":2,"arrowP":60}],
-   "points":[{"q":50,"p":50,"pl":"P₁","ql":"Q₁","marker":"1"},{"q":77.5,"p":37.5,"pl":"P₂","ql":"Q₂","color":"red","marker":"2","at":3}]},
-  {"heading":"Demand shifts by more","axes":{"xmax":110,"ymax":110},
-   "curves":[{"id":"D1","label":"D₁","pts":[[4,96],[92,8]],"thin":true},{"id":"S1","label":"S₁","pts":[[8,8],[100,100]],"thin":true},{"id":"D2","label":"D₂","pts":[[40,100],[104,36]],"color":"red","from":"D1","at":1,"arrowP":75},{"id":"S2","label":"S₂","pts":[[23,8],[104,89]],"color":"red","from":"S1","at":2,"arrowP":80}],
-   "points":[{"q":50,"p":50,"pl":"P₁","ql":"Q₁","marker":"1"},{"q":77.5,"p":62.5,"pl":"P₂","ql":"Q₂","color":"red","marker":"2","at":3}]}
+{
+ "title": "Supply and demand both increase",
+ "link": false,
+ "panels": [
+  {
+   "heading": "Supply shifts by more",
+   "axes": {
+    "xmax": 110,
+    "ymax": 110
+   },
+   "curves": [
+    {
+     "id": "D1",
+     "label": "D₁",
+     "pts": [
+      [
+       4,
+       96
+      ],
+      [
+       92,
+       8
+      ]
+     ],
+     "thin": true
+    },
+    {
+     "id": "S1",
+     "label": "S₁",
+     "pts": [
+      [
+       8,
+       8
+      ],
+      [
+       100,
+       100
+      ]
+     ],
+     "thin": true
+    },
+    {
+     "id": "D2",
+     "label": "D₂",
+     "pts": [
+      [
+       15,
+       100
+      ],
+      [
+       104,
+       11
+      ]
+     ],
+     "color": "red",
+     "from": "D1",
+     "at": 1,
+     "arrowP": 45
+    },
+    {
+     "id": "S2",
+     "label": "S₂",
+     "pts": [
+      [
+       48,
+       8
+      ],
+      [
+       104,
+       64
+      ]
+     ],
+     "color": "red",
+     "from": "S1",
+     "at": 2,
+     "arrowP": 60,
+     "ldy": 4
+    }
+   ],
+   "points": [
+    {
+     "q": 50,
+     "p": 50,
+     "pl": "P₁",
+     "ql": "Q₁",
+     "marker": "1"
+    },
+    {
+     "q": 77.5,
+     "p": 37.5,
+     "pl": "P₂",
+     "ql": "Q₂",
+     "color": "red",
+     "marker": "2",
+     "at": 3
+    }
+   ]
+  },
+  {
+   "heading": "Demand shifts by more",
+   "axes": {
+    "xmax": 110,
+    "ymax": 110
+   },
+   "curves": [
+    {
+     "id": "D1",
+     "label": "D₁",
+     "pts": [
+      [
+       4,
+       96
+      ],
+      [
+       92,
+       8
+      ]
+     ],
+     "thin": true
+    },
+    {
+     "id": "S1",
+     "label": "S₁",
+     "pts": [
+      [
+       8,
+       8
+      ],
+      [
+       100,
+       100
+      ]
+     ],
+     "thin": true
+    },
+    {
+     "id": "D2",
+     "label": "D₂",
+     "pts": [
+      [
+       40,
+       100
+      ],
+      [
+       104,
+       36
+      ]
+     ],
+     "color": "red",
+     "from": "D1",
+     "at": 1,
+     "arrowP": 75
+    },
+    {
+     "id": "S2",
+     "label": "S₂",
+     "pts": [
+      [
+       23,
+       8
+      ],
+      [
+       104,
+       89
+      ]
+     ],
+     "color": "red",
+     "from": "S1",
+     "at": 2,
+     "arrowP": 80,
+     "ldy": 4
+    }
+   ],
+   "points": [
+    {
+     "q": 50,
+     "p": 50,
+     "pl": "P₁",
+     "ql": "Q₁",
+     "marker": "1"
+    },
+    {
+     "q": 77.5,
+     "p": 62.5,
+     "pl": "P₂",
+     "ql": "Q₂",
+     "color": "red",
+     "marker": "2",
+     "at": 3
+    }
+   ]
+  }
  ],
- "lede":"The only difference between the two panels is which curve shifts by more.",
- "steps":["Both markets start in equilibrium at P₁ and Q₁ (Point 1).",
-          "Demand increases, so the demand curve shifts right from D₁ to D₂. In the left panel the demand shift is small; in the right panel it is large.",
-          "Supply also increases, so the supply curve shifts right from S₁ to S₂. In the left panel the supply shift is large; in the right panel it is small.",
-          "Each market settles at Point 2. The equilibrium quantity increases in both panels. The equilibrium price falls when supply shifts by more and rises when demand shifts by more, so without knowing which shift is larger the change in price is ambiguous."]}
+ "lede": "The only difference between the two panels is which curve shifts by more.",
+ "steps": [
+  "Both markets start in equilibrium at P₁ and Q₁ (Point 1).",
+  "Demand increases, so the demand curve shifts right from D₁ to D₂. In the left panel the demand shift is small; in the right panel it is large.",
+  "Supply also increases, so the supply curve shifts right from S₁ to S₂. In the left panel the supply shift is large; in the right panel it is small.",
+  "Each market settles at Point 2. The quantity rises in both panels, but the price falls where supply shifts by more and rises where demand shifts by more, so the change in price is ambiguous."
+ ]
+}
 </script></div>
 
 <p>When both curves shift and you do not know which one shifts by more, one of the two outcomes is certain and the other is ambiguous. The table summarizes all four combinations; a question mark means the change cannot be determined without more information.</p>

@@ -4,30 +4,32 @@ Checkboxes. Keep `CLAUDE.md`'s status paragraph in sync with this file.
 
 ---
 
-- [ ] `ECO2013-263-SupplyAndDemand.html` widget 6, the shortage scenario's
+- [x] ~~`ECO2013-263-SupplyAndDemand.html` widget 6, the shortage scenario's
       last step: two of its three movement arrows touch a dashed guide (0.3px
-      and 0.6px on the rendered geometry). `render_widgets.py` has reported it
-      all along and it predates v2.26 — the smaller arrowhead moved one of them
-      from 0.1px to 0.6px rather than fixing it. The arrows need to start a
-      little further inside the box the guides fence off, which means moving
-      them in shipped work.
+      and 0.6px on the rendered geometry).~~ Fixed in the 2026-10-05 redo,
+      which is the ask that moving arrows in shipped work needed. Searched
+      against the rendered geometry: of 75 placements tried, raising both
+      arrows a fifth of a dollar further inside the box the guides fence off
+      is the only one that clears, and it clears by 3.2px against the 3px
+      threshold. The panel is genuinely crowded — three elbows, two curves and
+      two arrows between them — so that margin is the measurement, not a
+      preference.
 
 - [ ] The nine example files carry captions over rule 9's length cap, from
       before the cap existed. Ian's call (2026-09-28) was to leave the older
       files alone and apply the rule from ECO2023 chapter 14 onward, so these
       are expected, not a regression:
       - ECO2013-263-InternationalTrade.html                         1
-      - ECO2013-263-SupplyAndDemand.html                            5
       - ECO2023-263-AllocativeEfficiency.html                       6
       - ECO2023-263-Elasticity.html                                 4
       - ECO2023-263-SupplyAndDemand.html                           10
       - ECO2023-263-ThePPF.html                                    11
       Say the word and they can be trimmed; the ones showing their working
       already get the wider 260-character cap, which spares 25 of them.
-      ECO2013-263-TradeoffsComparativeAdvantageTheMarketSystem.html came off
-      this list on 2026-10-05: Ian asked for that chapter to be redone, and a
-      redo is the asking rule 9 wants before an older file's captions are
-      rewritten.
+      ECO2013-263-TradeoffsComparativeAdvantageTheMarketSystem.html and
+      ECO2013-263-SupplyAndDemand.html came off this list on 2026-10-05: Ian
+      asked for both chapters to be redone, and a redo is the asking rule 9
+      wants before an older file's captions are rewritten.
 
 - [x] ~~**A payoff matrix is not in the engine's schema**, so ECO2023 chapter
       15 converted to no widgets at all.~~ It is, since v2.39, with `given`
@@ -286,9 +288,12 @@ or "unattainable" dot) whose exact coordinates are not the lesson.
       `ECO2013-263-SupplyAndDemand.html`. `MIN_ROW_GAP` is 2px, and row arrows
       are exempt from the guide rule entirely -- they cross the schedule grid by
       construction.
-- [ ] **The delivered `ECO2013-263-SupplyAndDemand.html` has eight arrows over a
-      guide or a curve** (widgets 5 and 6). It is Ian's file, so this is
-      reported rather than rewritten. One for Ian.
+- [x] ~~**The delivered `ECO2013-263-SupplyAndDemand.html` has eight arrows over
+      a guide or a curve** (widgets 5 and 6). It is Ian's file, so this is
+      reported rather than rewritten.~~ Ian asked for the chapter to be redone
+      on 2026-10-05, and `render_widgets.py` now reports no arrow within reach
+      of any curve or guide anywhere in the file. Widget 6's pair was the last
+      of them; the margin and how it was searched for are two items up.
 
 - [x] **Nothing made a semester swap mechanical.** Mode (d) says only the
       wording changes when the good changes, but the wording was buried among

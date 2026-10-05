@@ -37,7 +37,14 @@ from place_labels import Catch, sentinel, slots
 # merely mentions the stand-in therefore blamed the label being scored for
 # its neighbour's collision, and reported "nowhere clear" for a label that was
 # never the problem. Only the subject counts.
-VERBS = (" sits on", " is close to", " overlaps")
+# Every phrasing check_file uses between a label and what it ran into.
+# " is crowded against" was missing, so a crowding WARN never had its
+# subject trimmed: the whole message was tested, the stand-in matched
+# wherever it appeared in it, and the label being scored was blamed for
+# its neighbour's collision at every offset -- including the ones that
+# would have cleared it. The one finding the placer exists to fix was
+# the one it could not act on.
+VERBS = (" sits on", " is close to", " overlaps", " is crowded against")
 
 
 def findings_for(widget, mark, scn_label):

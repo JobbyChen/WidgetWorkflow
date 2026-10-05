@@ -689,14 +689,21 @@ not enough to reproduce an implementation.
 * **The examples report caption-length failures**, from before the cap existed
   (rule 9). Everything else about them is 0 FAIL, apart from the 9/11
   prototype. Counts per file are in `docs/open-issues.md`.
-* **`ECO2013-263-SupplyAndDemand.html` is 0 FAIL** on everything but that. Three WARNs remain, all
-  crowding: `P₁`/`P₂` are about a pixel apart in widgets 7 and 8, and `S₁`/`S₂`
-  in widget 9's second panel. Readable, and moving them means moving equilibrium
-  labels in shipped work, so they are reported rather than changed. Its three references
-  to the class are reworded and its four term labels now keep only the term
-  inside `<strong>`. Widget 5's lede and widget 6's equilibrium caption were
-  trimmed on 2026-09-24: both restated the sentence introducing them, and the
-  caption now says why nothing moves rather than re-reading the graph.
+* **`ECO2013-263-SupplyAndDemand.html` is 0 FAIL and 0 WARN** — the only
+  example that reports nothing at all, since the **2026-10-05 redo** at Ian's
+  ask. The three crowding WARNs are gone (the equilibrium moves further in
+  widgets 7 and 8, `S₂`'s label drops 4px in both of widget 9's panels), widget
+  6's numbers come from its points rather than from ticks every scenario
+  shares, widget 5's new equilibrium is the crossing of the drawn splines
+  rather than a typed coordinate, and widget 6's two converging arrows clear
+  the guides for the first time. `transcript_diff.py` is 45/45 and 38/38 before
+  and after, so no number changed.
+  `docs/changelogs/supply-and-demand-eco2013-changelog.md` has the rest. Its
+  three references to the class are reworded and its four term labels now keep
+  only the term inside `<strong>`. Widget 5's lede and widget 6's equilibrium
+  caption were trimmed on 2026-09-24: both restated the sentence introducing
+  them, and the caption now says why nothing moves rather than re-reading the
+  graph.
 * **Left as delivered:** the 9/11 prototype's captions predate v6's caption
   rules, and its apples widget puts six brace labels on curves (`below:true`
   would fix it). Both are recorded in `docs/open-issues.md` rather than silently

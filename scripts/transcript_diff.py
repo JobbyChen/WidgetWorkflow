@@ -40,7 +40,25 @@ import pathlib
 import re
 import sys
 
-BLOCK = re.compile(r'(<script type="application/json">\n)(.*?)(\n</script>)', re.S)
+# A widget's JSON is found the way check_file finds it, rather than by a
+# regex of this script's own. The old one required a newline on both sides of
+# the config, and four of the nine blocks in ECO2013-263-SupplyAndDemand.html
+# are written <script type="application/json">{ ... }</script> instead -- so
+# they were skipped in silence and the file still reported "nothing in this
+# file is unsupported" having looked at five widgets out of nine. A swap check
+# that quietly reads half the file is worse than none.
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+import check_file as C
+
+
+def widget_configs(src):
+    """Every widget's parsed config, in document order."""
+    out = []
+    for body in C.widget_bodies(src):
+        blocks = C.JSON_RE.findall(body)
+        if blocks:
+            out.append(blocks[0])
+    return out
 
 ONES = ("zero one two three four five six seven eight nine ten eleven twelve "
         "thirteen fourteen fifteen sixteen seventeen eighteen nineteen").split()
@@ -148,13 +166,22 @@ def main():
     src = io.open(a.file, encoding="utf-8").read()
 
     tot_v = tot_vs = tot_w = tot_wu = 0
-    for n, m in enumerate(BLOCK.finditer(src), 1):
-        body = m.group(2)
+    for n, body in enumerate(widget_configs(src), 1):
         cfg = json.loads(body)
         # No ticks and P1/Q1 labels means a symbolic graph: its coordinates are
         # the engine's 110-scale convention, and rule 3 says they are what you
         # draw precisely BECAUSE the source states no numbers.
-        symbolic = not re.search(r'"[xy]ticks"', body) or bool(re.search(r'"[pq]l"', body))
+        # "No ticks" stopped meaning "symbolic" the day the convention became
+        # that a numeric figure with steps usually has no xticks at all: the
+        # chicken-thigh market's five quantities and three prices moved off the
+        # axes and onto the points that read them, and this check promptly
+        # filed the whole widget as symbolic and stopped looking at any of its
+        # numbers. A widget that writes dollars, carries a schedule, or ticks
+        # an axis is showing the source's values whatever else it does; what
+        # makes a graph symbolic is that it is drawn on the 110-scale, and
+        # pl/ql says so outright.
+        symbolic = bool(re.search(r'"[pq]l"\s*:', body)) or not re.search(
+            r'"[xy]ticks"|"money"\s*:\s*true|"table"\s*:', body)
         bins, wds = {"value": [], "draw": []}, []
         collect(cfg, bins)
         words(cfg, wds)

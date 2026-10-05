@@ -136,3 +136,93 @@ compared line by line; the other thirteen were already exact, including the
 Lego-set definition that the source genuinely states twice. `scripts/doc_formulas.py`
 is what did the reading, and `--check` now reports this class of defect against
 the file.
+
+## Redo, 2026-10-05 — the seven widgets re-read against the source figures
+
+Ian asked for this chapter to be done again. The prose, the heading levels, the
+exam tips, the three date pills and the fourteen equations were left exactly as
+they are; what changed is the seven widgets, re-read off the source document's
+own shape groups (3, 4, 6, 7, 9, 10, and 13/15) and brought up to the drawing
+conventions that have been settled since 17 September.
+
+The file now reports **0 FAIL**. Its one WARN is the standing question of
+whether the professor may be named — Ian's call every time, never a script's.
+
+### What the source figures actually draw, and what was wrong
+
+- **Dashed guides.** The figures draw an elbow only where a reading is worth
+  marking: three in the tissues and Lego figure (B, C and D), three in the
+  bowed-out one (A, B and C), none at all in the Good 1 / Good 2 figure or the
+  unemployment one. The widgets drew one at every point, including at points
+  whose values are suppressed, so five dashed lines ran to blank spots on an
+  axis and two more ran down the axis lines themselves. Guides are now off at
+  every intercept, off at both points of the unemployment figure, and off at C
+  and D of the first figure. Only Point E keeps its elbow, because the pair of
+  numbers it reads — 200 of Good 1 *and* 400 of Good 2 — is the combination the
+  prose says the nation cannot have.
+- **The bowed-out frontier was five typed points and a spline.** It is now
+  seventeen samples from `curve_shapes.hug`, which keeps A, B and C exactly
+  where the source's own guides put them and bows every chord outward, so the
+  whole frontier is concave by construction — asserted in the builder rather
+  than judged by eye. Its intercepts are the source's: about 95 chai lattes and
+  about 71 burritos, against the 93 and 68 that were there. Dropping `curved`
+  with the curve sampled this finely also stopped the spline overshooting below
+  the quantity axis at the end, and means the checker measures the line that is
+  actually drawn.
+- **The growth panels are named in the source's words**, capitals included:
+  "Increased Resources or Productivity for Both Pizza and Burritos", and the
+  two pivots likewise. The buttons had been paraphrasing them.
+- **The unemployment figure's two points moved** to where the source puts them,
+  about (24, 24) and (37, 43). Both are inside the frontier — the earlier
+  changelog's table says B is on it, which is wrong, and the step caption had
+  it right all along.
+- **Both trade panels carry each nation's intercepts and nothing else**, which
+  is what the source's axes carry. The consumption coordinates were ticked from
+  the opening state; they now come from the point that reads them, so they
+  appear on the step that places it. The specialization dots sit on an axis, so
+  they keep neither a guide nor a value of their own.
+- **The origin is numbered** on the bowed-out figure, as the source numbers it.
+
+### Captions
+
+The two over the 200-character cap were rewritten, which is what being asked to
+redo the chapter settles: rule 9 leaves pre-cap files alone *unless asked*. The
+bowed-out figure's third step now carries the comparison that makes it worth
+reading (1.5 chai lattes a burrito against 0.5 before), and the unemployment
+figure's second step says the frontier does not move and B is still inside it,
+in 186 characters instead of 279.
+
+Two scenario captions ended "pizza becomes dearer", which is both the wrong
+register and vaguer than the source: they now say what a pizza costs in
+burritos, which is the sentence the chapter is making. Two British spellings
+("specialisation", "specialises") are American now, as the source has them.
+
+### Not changed, and why
+
+- **The combinations table has no Point column.** The source's has one (A–E);
+  the engine's schedule table is a price column plus one quantity column per
+  series. The letters are on the graph beside their rows, and hovering a row
+  still lights its dot.
+- **The pizza-only pivot's arrow runs horizontally.** The source draws that one
+  vertically, because what moves is the vertical intercept. A shift arrow is
+  always horizontal in the engine, so this is an engine gap rather than
+  something to hand-draw around; it is written up in `docs/open-issues.md` as
+  `arrowQ`. The arrow still shows the shift and the caption names the intercept.
+- **The exam-dates table overflows a 320px screen by 15px.** It is Ian's own
+  prose table and the overflow is the house stylesheet's cell padding, not a
+  widget; it was there before this redo and is unchanged by it. Every widget
+  fits and stays usable at both 390px and 320px.
+
+### Checks
+
+`check_file.py` 0 FAIL / 1 WARN (the name). `render_widgets.py` 24 screenshots,
+no engine errors, no arrow within reach of a curve or a guide, and every one
+looked at. `mobile_check.py` 0 problems at 390px, and at 320px only the prose
+table above. `doc_formulas.py --check` against the source: 14 equations, 0
+words missing. `test_check_file.py` and `test_curve_shapes.py` 0 failing.
+
+One tool fix came out of this: `render_widgets.py` slugged a scenario's
+screenshots from the first 40 characters of its button label, and all three
+growth buttons now agree for the first 44, so each scenario's shots overwrote
+the last one's and the set looked complete at 24 files when it held 20. The
+slug carries the scenario's number now.

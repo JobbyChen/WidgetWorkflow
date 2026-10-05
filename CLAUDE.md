@@ -676,7 +676,11 @@ not enough to reproduce an implementation.
   with no engine gaps hit: frontiers, a combinations table, points on/inside/
   outside, opportunity cost with both braces, a bowed-out frontier, three growth
   cases as scenarios, and two-country gains from trade. Only three panels in one
-  figure had to be restructured, into scenario buttons.
+  figure had to be restructured, into scenario buttons. **Redone 2026-10-05**
+  at Ian's ask, against the source document's own shape groups: it is the one
+  example at 0 FAIL, and
+  `docs/changelogs/tradeoffs-comparative-advantage-changelog.md` says what the
+  figures draw that the first pass did not.
 * **PPF is feasible without new architecture.** Probed against the real engine:
   the frontier, its combinations table, points on/inside/outside, movement along
   it, and outward/inward/pivot shifts all work unchanged — a frontier shift is

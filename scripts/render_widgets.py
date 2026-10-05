@@ -182,6 +182,12 @@ def main():
                 else:
                     label = "base"
                 slug = "".join(c if c.isalnum() else "-" for c in label).strip("-").lower()[:40] or "base"
+                # Three buttons whose labels agree for their first 40
+                # characters -- the growth chapter's "Increased Resources or
+                # Productivity for ..." -- slug identically, so each scenario
+                # overwrote the last one's shots and the set looked complete.
+                if n_scen:
+                    slug = "s%d-%s" % (si + 1, slug)
 
                 step = 1
                 while True:

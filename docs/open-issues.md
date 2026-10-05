@@ -18,13 +18,16 @@ Checkboxes. Keep `CLAUDE.md`'s status paragraph in sync with this file.
       are expected, not a regression:
       - ECO2013-263-InternationalTrade.html                         1
       - ECO2013-263-SupplyAndDemand.html                            5
-      - ECO2013-263-TradeoffsComparativeAdvantageTheMarketSystem.html  2
       - ECO2023-263-AllocativeEfficiency.html                       6
       - ECO2023-263-Elasticity.html                                 4
       - ECO2023-263-SupplyAndDemand.html                           10
       - ECO2023-263-ThePPF.html                                    11
       Say the word and they can be trimmed; the ones showing their working
       already get the wider 260-character cap, which spares 25 of them.
+      ECO2013-263-TradeoffsComparativeAdvantageTheMarketSystem.html came off
+      this list on 2026-10-05: Ian asked for that chapter to be redone, and a
+      redo is the asking rule 9 wants before an older file's captions are
+      rewritten.
 
 - [x] ~~**A payoff matrix is not in the engine's schema**, so ECO2023 chapter
       15 converted to no widgets at all.~~ It is, since v2.39, with `given`
@@ -220,6 +223,17 @@ or "unattainable" dot) whose exact coordinates are not the lesson.
       an inside offset drops the arrow below the axis, and the only way to stop
       it short is to fake the `to` coordinate (the gumballs widget's D→E arrow
       ends at `[3.8, 0.9]`). An explicit trim or a `shorten` would be honest.
+- [ ] **A shift arrow is always horizontal.** `arrowP` sets the price it is
+      drawn at, and the arrow then runs from the old curve to the new one at
+      that height. A pivot about the quantity axis is the movement of the
+      *vertical* intercept, and the source draws its arrow vertically for
+      exactly that reason -- the growth figure in
+      `ECO2013-263-TradeoffsComparativeAdvantageTheMarketSystem.html` has a
+      horizontal arrow near the x axis for the burritos-only pivot (which
+      matches) and a horizontal one high on the panel for the pizza-only pivot
+      (which does not). An `arrowQ`, the same thing measured down a vertical,
+      would settle it. Not worth an engine version on its own: the horizontal
+      arrow still shows the shift, and the caption names which intercept moved.
 
 - [ ] **No area fill in the engine.** The total revenue figure in
       `ECO2023-263-Elasticity.html` shades the price-times-quantity rectangle

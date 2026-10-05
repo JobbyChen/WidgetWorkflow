@@ -1776,14 +1776,16 @@
    "p": 400,
    "label": "A",
    "dx": 8,
-   "dy": -6
+   "dy": -6,
+   "guides": false
   },
   {
    "q": 200,
    "p": 0,
    "label": "B",
    "dx": 10,
-   "dy": -15
+   "dy": -15,
+   "guides": false
   },
   {
    "q": 95,
@@ -1793,7 +1795,8 @@
    "dx": 10,
    "dy": -8,
    "showP": false,
-   "showQ": false
+   "showQ": false,
+   "guides": false
   },
   {
    "q": 50,
@@ -1803,7 +1806,8 @@
    "dx": 10,
    "dy": 6,
    "showP": false,
-   "showQ": false
+   "showQ": false,
+   "guides": false
   },
   {
    "q": 200,
@@ -1815,7 +1819,7 @@
   }
  ],
  "steps": [
-  "At Point A the nation puts every resource into Good 2 and produces 400 units of it and none of Good 1. At Point B it does the reverse, producing 200 units of Good 1 and no Good 2. These are the points of specialisation.",
+  "At Point A the nation puts every resource into Good 2 and produces 400 units of it and none of Good 1. At Point B it does the reverse, producing 200 units of Good 1 and no Good 2. These are the points of specialization.",
   "Point D lies on the frontier. Every resource is in use, so it is both attainable and production-efficient.",
   "Point C lies inside the frontier. It is attainable, but resources are idle or badly used, so it is production-inefficient.",
   "Point E lies beyond the frontier, at 200 units of Good 1 and 400 units of Good 2 together. The nation would prefer it, but with current resources and technology it is simply unattainable."
@@ -1883,7 +1887,8 @@
    "p": 100,
    "label": "A",
    "dx": 9,
-   "dy": -9
+   "dy": -9,
+   "guides": false
   },
   {
    "q": 10,
@@ -1911,7 +1916,8 @@
    "p": 0,
    "label": "E",
    "dx": 9,
-   "dy": -9
+   "dy": -9,
+   "guides": false
   },
   {
    "q": 10,
@@ -2043,7 +2049,8 @@
    "p": 100,
    "label": "A",
    "dx": 8,
-   "dy": -6
+   "dy": -6,
+   "guides": false
   },
   {
    "q": 10,
@@ -2071,7 +2078,8 @@
    "p": 0,
    "label": "E",
    "dx": 8,
-   "dy": -6
+   "dy": -6,
+   "guides": false
   }
  ],
  "moves": [
@@ -2180,11 +2188,13 @@
   "xmax": 85,
   "ymax": 100,
   "xticks": [
+   0,
    20,
    40,
    60
   ],
   "yticks": [
+   0,
    50,
    80,
    90
@@ -2197,26 +2207,73 @@
    "pts": [
     [
      0,
-     93
+     95
+    ],
+    [
+     5,
+     93.94
+    ],
+    [
+     10,
+     92.75
+    ],
+    [
+     15,
+     91.44
     ],
     [
      20,
      90
     ],
     [
+     25,
+     87.88
+    ],
+    [
+     30,
+     85.5
+    ],
+    [
+     35,
+     82.88
+    ],
+    [
      40,
      80
+    ],
+    [
+     45,
+     73.62
+    ],
+    [
+     50,
+     66.5
+    ],
+    [
+     55,
+     58.62
     ],
     [
      60,
      50
     ],
     [
-     68,
+     62.75,
+     39.38
+    ],
+    [
+     65.5,
+     27.5
+    ],
+    [
+     68.25,
+     14.38
+    ],
+    [
+     71,
      0
     ]
    ],
-   "curved": true,
    "ldx": 8,
    "ldy": 10
   }
@@ -2274,7 +2331,7 @@
  "steps": [
   "Some resources suit chai lattes and others suit burritos, so the frontier bows outward instead of running straight.",
   "Moving from Point A to Point B, 20 more burritos cost 10 chai lattes, which is half a chai latte per burrito.",
-  "Moving from Point B to Point C, another 20 burritos cost 30 chai lattes, or one and a half chai lattes each. The cost per burrito has risen, because the resources still available are the ones least suited to making burritos."
+  "Moving from Point B to Point C, another 20 burritos cost 30 chai lattes — 1.5 each, against 0.5 before. The cost rises because the resources left over are the ones least suited to making burritos."
  ]
 }
 </script></div>
@@ -2346,7 +2403,7 @@
  },
  "scenarios": {
   "both": {
-   "label": "More resources or productivity for both pizza and burritos",
+   "label": "Increased Resources or Productivity for Both Pizza and Burritos",
    "curves": [
     {
      "id": "PPF1",
@@ -2392,7 +2449,7 @@
    ]
   },
   "burritos": {
-   "label": "More resources or productivity for burritos but not pizza",
+   "label": "Increased Resources or Productivity for Burritos but not Pizza",
    "curves": [
     {
      "id": "PPF1",
@@ -2434,11 +2491,11 @@
    ],
    "steps": [
     "The nation can produce any combination on its current frontier.",
-    "Growth in burritos alone swings the horizontal intercept outward and leaves the vertical intercept where it was. The frontier gets flatter, so burritos become cheaper and pizza becomes dearer."
+    "Growth in burritos alone swings the horizontal intercept out and leaves the vertical one where it was. The frontier gets flatter, so a burrito costs less pizza and a pizza costs more burritos."
    ]
   },
   "pizza": {
-   "label": "More resources or productivity for pizza but not burritos",
+   "label": "Increased Resources or Productivity for Pizza but not Burritos",
    "curves": [
     {
      "id": "PPF1",
@@ -2481,7 +2538,7 @@
    ],
    "steps": [
     "The nation can produce any combination on its current frontier.",
-    "Growth in pizza alone swings the vertical intercept outward and leaves the horizontal intercept where it was. The frontier gets steeper, so pizza becomes cheaper and burritos become dearer."
+    "Growth in pizza alone swings the vertical intercept out and leaves the horizontal one where it was. The frontier gets steeper, so a pizza costs fewer burritos and a burrito costs more pizza."
    ]
   }
  }
@@ -2530,34 +2587,36 @@
  ],
  "points": [
   {
-   "q": 30,
-   "p": 30,
+   "q": 24,
+   "p": 24,
    "label": "A",
    "dx": -20,
    "dy": 16,
    "showP": false,
-   "showQ": false
+   "showQ": false,
+   "guides": false
   },
   {
-   "q": 45,
-   "p": 40,
+   "q": 37,
+   "p": 43,
    "label": "B",
    "at": 1,
    "dx": 11,
    "dy": 16,
    "showP": false,
-   "showQ": false
+   "showQ": false,
+   "guides": false
   }
  ],
  "moves": [
   {
    "from": [
-    32,
-    31
+    26.5,
+    27.5
    ],
    "to": [
-    42,
-    37
+    33.5,
+    38
    ],
    "at": 1,
    "offset": 0
@@ -2565,7 +2624,7 @@
  ],
  "steps": [
   "When workers are unemployed and factories sit idle, the nation produces inside its frontier, at a point such as A.",
-  "Putting some of those resources back to work moves production from A to a point closer to the frontier, such as B. B still lies inside the frontier, so some resources remain idle, and the frontier itself has not moved, because the nation's resources and technology are unchanged."
+  "Putting idle resources back to work moves production from A to B, nearer the frontier but still inside it. The frontier itself does not move, because resources and technology are unchanged."
  ]
 }
 </script></div>
@@ -2608,12 +2667,10 @@
     "ymax": 230,
     "xticks": [
      0,
-     200,
      300
     ],
     "yticks": [
      0,
-     100,
      200
     ]
    },
@@ -2639,7 +2696,10 @@
     {
      "q": 300,
      "p": 0,
-     "at": 1
+     "at": 1,
+     "showP": false,
+     "showQ": false,
+     "guides": false
     },
     {
      "q": 200,
@@ -2660,12 +2720,10 @@
     "ymax": 175,
     "xticks": [
      0,
-     50,
      100
     ],
     "yticks": [
      0,
-     50,
      150
     ]
    },
@@ -2691,7 +2749,10 @@
     {
      "q": 0,
      "p": 150,
-     "at": 1
+     "at": 1,
+     "showP": false,
+     "showQ": false,
+     "guides": false
     },
     {
      "q": 100,
@@ -2706,7 +2767,7 @@
  ],
  "steps": [
   "The United States can produce 200 strawberries or 300 apples; Mexico can produce 150 strawberries or 100 apples. The United States can make more of both, yet Mexico gives up less to grow a strawberry.",
-  "Each nation specialises where its opportunity cost is lower. The United States puts everything into apples and produces 300; Mexico puts everything into strawberries and produces 150.",
+  "Each nation specializes where its opportunity cost is lower. The United States puts everything into apples and produces 300; Mexico puts everything into strawberries and produces 150.",
   "They trade 100 apples for 100 strawberries. The United States ends up with 200 apples and 100 strawberries, and Mexico with 100 apples and 50 strawberries — both beyond what either could have produced alone."
  ]
 }

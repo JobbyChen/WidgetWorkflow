@@ -1979,7 +1979,18 @@ def check_images(src, r):
         r.ok("images", "%d IMAGE POSITION comment(s) preserved" % len(marks))
     else:
         r.warn("images", "no IMAGE POSITION comments")
-    imgs = re.findall(r"<img\b[^>]*>", src, re.I)
+    # An image the conversion decided to keep says so for itself, the way a
+    # point declares `divider` or `boxed`: <!-- KEEP: why --> immediately
+    # before it. The macro chapters are full of images this rule fires on and
+    # is wrong about -- a published chart of real data carrying its own source
+    # credit, a photograph whose alt text happens to say "market" -- and a
+    # FAIL that is routinely wrong is a FAIL nobody reads. The comment is the
+    # record of the decision, so the changelog and the file agree, and nothing
+    # is skipped that did not ask to be.
+    kept = len(re.findall(r"<!--\s*KEEP:[^>]*-->\s*(?:<p[^>]*>\s*)?<img\b", src, re.I))
+    imgs = [m.group(0) for m in re.finditer(r"<img\b[^>]*>", src, re.I)
+            if not re.search(r"<!--\s*KEEP:[^>]*-->\s*(?:<p[^>]*>\s*)?$",
+                             src[:m.start()], re.I)]
     graphy = [i for i in imgs if re.search(
         r"curve|graph|shift|equilibrium|surplus|shortage|supply|demand|market",
         i, re.I)]
@@ -1988,6 +1999,8 @@ def check_images(src, r):
                % (len(graphy), graphy[0][:80]))
     elif imgs:
         r.ok("images", "%d <img> remain, none of them graphs" % len(imgs))
+    if kept:
+        r.ok("images", "%d <img> kept on a declared KEEP comment" % kept)
 
 
 def main():

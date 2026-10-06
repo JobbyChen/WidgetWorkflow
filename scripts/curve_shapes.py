@@ -25,7 +25,8 @@ mode, and it is invisible in a screenshot.
 import math
 
 __all__ = ["cost_family", "cross", "hyperbola", "on_hyperbola",
-           "tangent_to_hyperbola", "tangent_to_line", "supply_fan", "sample"]
+           "tangent_to_hyperbola", "tangent_to_line", "supply_fan", "sample",
+           "saturating", "cycle"]
 
 
 def sample(f, xs):
@@ -246,3 +247,85 @@ def hug(pts, sag=0.05, n=3):
                               - sag * (y1 - y0) * 4 * t * (1 - t), 2)])
     out.append(list(pts[-1]))
     return out
+
+
+# ---- macro shapes ---------------------------------------------------------
+
+def saturating(through, xmax, n=15, extra=()):
+    """y = top*(1 - e**(-x/tau)) from the origin through two stated readings.
+
+    The macroeconomic production function. Output rises with labour and every
+    extra worker adds less than the one before, which is the law of
+    diminishing returns the figure exists to show -- so the curve cannot be a
+    spline through the readings alone: a spline through three points that lie
+    on a concave curve bows the wrong way between them as readily as the right
+    way, and the chapter's whole point is the shape between the readings.
+
+    Two readings fix `top` and `tau` (bisection on tau; the curve through the
+    origin is concave exactly when the second reading falls short of the
+    straight line through the first). A third is checked against the fitted
+    curve and raises rather than being fitted, because a chapter whose stated
+    numbers do not lie on one curve is a thing to find out about, not to draw
+    smooth. `extra` lists x values to force into the sample list, so a point
+    the figure marks sits on one of the curve's own samples (v2.45's rule).
+    """
+    (x1, y1), (x2, y2) = through[0], through[1]
+    if not (0 < x1 < x2) or not (0 < y1 < y2):
+        raise ValueError("readings must rise, left to right")
+    if y2 >= y1 * x2 / float(x1):
+        raise ValueError("(%s, %s) is not below the ray through (%s, %s): "
+                         "no concave curve fits" % (x2, y2, x1, y1))
+
+    def miss(tau):
+        return y1 * (1 - math.exp(-x2 / tau)) / (1 - math.exp(-x1 / tau)) - y2
+
+    lo, hi = x1 * 1e-3, x1 * 1e6
+    for _ in range(200):
+        mid = (lo + hi) / 2.0
+        if miss(mid) > 0:
+            hi = mid
+        else:
+            lo = mid
+    tau = (lo + hi) / 2.0
+    top = y1 / (1 - math.exp(-x1 / tau))
+
+    def f(x):
+        return top * (1 - math.exp(-x / tau))
+
+    for x3, y3 in through[2:]:
+        if abs(f(x3) - y3) > max(1.0, abs(y3) * 0.005):
+            raise ValueError("(%s, %s) is not on the curve the first two fix "
+                             "(it gives %.1f there)" % (x3, y3, f(x3)))
+
+    xs = sorted(set([round(xmax * i / float(n - 1), 4) for i in range(n)]
+                    + [float(x) for x, _ in through] + [float(x) for x in extra]))
+    return sample(f, xs), top, tau
+
+
+def cycle(trough, period, lo, hi, xmax, trend=0.0, n=49, x0=0.0):
+    """A stylised business cycle, and its own turning points.
+
+    y = mid + trend*x - amp*cos(2*pi*(x - trough)/period), so the first trough
+    is where you put it and peaks and troughs alternate every half period. The
+    turning points come back read off the **samples**, not off the formula: the
+    engine draws a spline through the samples, so a peak marked from the
+    formula between two of them sits just off the line that is drawn, and with
+    a trend the drawn maximum is not quite where the cosine's is anyway.
+
+    Returns (pts, peaks, troughs), each turning point one of `pts`.
+    """
+    mid, amp = (lo + hi) / 2.0, (hi - lo) / 2.0
+
+    def f(x):
+        return mid + trend * x - amp * math.cos(2 * math.pi * (x - trough) / period)
+
+    xs = [x0 + (xmax - x0) * i / float(n - 1) for i in range(n)]
+    pts = sample(f, xs)
+    peaks, troughs = [], []
+    for i in range(1, len(pts) - 1):
+        a, b, c = pts[i - 1][1], pts[i][1], pts[i + 1][1]
+        if b > a and b >= c:
+            peaks.append(pts[i])
+        if b < a and b <= c:
+            troughs.append(pts[i])
+    return pts, peaks, troughs

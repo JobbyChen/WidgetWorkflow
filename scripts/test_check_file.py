@@ -555,6 +555,25 @@ case("the engine's width table is the one em_widths.py generates",
      engine_carries_the_measured_table)
 
 
+# ---- images the conversion decided to keep ---------------------------------
+
+_GRAPHY = ('<img src="x.png" alt="supply and demand in the market for eggs">')
+
+case("an image that still looks like a graph is reported",
+     lambda r: C.check_images("<body>%s</body>" % _GRAPHY, r)
+     or r.has("FAIL", "images", "looks like a graph"))
+
+case("a KEEP comment exempts the image under it",
+     lambda r: C.check_images(
+         "<body><!-- KEEP: a photograph -->%s</body>" % _GRAPHY, r)
+     or not r.has("FAIL", "images", "looks like a graph"))
+
+case("a KEEP comment exempts only the image under it",
+     lambda r: C.check_images(
+         "<body><!-- KEEP: a photograph -->%s\n%s</body>" % (_GRAPHY, _GRAPHY), r)
+     or r.has("FAIL", "images", "looks like a graph"))
+
+
 def main():
     bad = 0
     for name, fn in CASES:

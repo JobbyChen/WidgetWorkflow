@@ -141,5 +141,51 @@ check("hug stays monotone", all(_h[i][1] <= _h[i + 1][1] + 1e-9
 check("hug stays below the line of equality",
       all(y <= x + 1e-9 for x, y in _h))
 
+# the production function passes through every reading, bends the right way,
+# and refuses a third reading that is not on the curve the first two fix
+_pf, _top, _tau = C.saturating([[100, 400], [200, 600], [300, 700]], 520,
+                               extra=[100, 200, 300])
+_pfd = dict((x, y) for x, y in _pf)
+check("saturating hits its first reading", _pfd.get(100.0) == 400.0, str(_pfd.get(100.0)))
+check("saturating hits its second reading", _pfd.get(200.0) == 600.0, str(_pfd.get(200.0)))
+check("saturating hits a third reading that lies on it", _pfd.get(300.0) == 700.0,
+      str(_pfd.get(300.0)))
+check("saturating starts at the origin", _pf[0] == [0.0, 0.0], str(_pf[0]))
+check("saturating rises everywhere",
+      all(_pf[i][1] <= _pf[i + 1][1] + 1e-9 for i in range(len(_pf) - 1)))
+# the samples are not evenly spaced -- the readings are forced into the grid --
+# so diminishing returns is a falling slope, not a falling rise per sample
+_slope = [(_pf[i + 1][1] - _pf[i][1]) / (_pf[i + 1][0] - _pf[i][0])
+          for i in range(len(_pf) - 1)]
+check("saturating's slope falls everywhere",
+      all(b <= a + 1e-9 for a, b in zip(_slope, _slope[1:])),
+      str([round(v, 3) for v in _slope]))
+try:
+    C.saturating([[100, 400], [200, 600], [300, 760]], 520)
+    check("saturating refuses a reading off its own curve", False)
+except ValueError:
+    check("saturating refuses a reading off its own curve", True)
+try:
+    C.saturating([[100, 400], [200, 850]], 520)
+    check("saturating refuses readings no concave curve fits", False)
+except ValueError:
+    check("saturating refuses readings no concave curve fits", True)
+
+# the business cycle's turning points are its own sample points
+_w, _pk, _tr = C.cycle(trough=18, period=42, lo=30, hi=80, xmax=108, n=55)
+check("cycle troughs are sample points", all(t in _w for t in _tr))
+check("cycle peaks are sample points", all(p in _w for p in _pk))
+check("cycle's first trough is where it was asked for", _tr and _tr[0][0] == 18.0,
+      str(_tr[0] if _tr else None))
+check("cycle alternates trough, peak, trough",
+      _tr[0][0] < _pk[0][0] < _tr[1][0], str((_tr[0][0], _pk[0][0], _tr[1][0])))
+check("cycle stays inside the band it was given",
+      all(29.9 <= y <= 80.1 for _, y in _w))
+_wt, _pkt, _trt = C.cycle(trough=18, period=42, lo=30, hi=80, xmax=108, trend=0.35, n=55)
+check("a trend lifts every later reading",
+      all(b > a for a, b in zip([y for _, y in _w][1:], [y for _, y in _wt][1:])))
+check("a trend keeps the turning points on the curve",
+      all(t in _wt for t in _trt + _pkt))
+
 print("\n%d failing" % len(FAILS))
 sys.exit(1 if FAILS else 0)

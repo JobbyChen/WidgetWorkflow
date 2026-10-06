@@ -454,6 +454,58 @@ economics instead of label placement.
   widget, not the chapter against itself. Say in the changelog that the
   figures disagree; do not resolve it by redrawing one of them.
 
+* **A value arrives with its step — so a stepped numeric figure has no ticks.**
+  Ian caught "$19" standing on the axis from step 1 of a five-step build whose
+  AE line, the thing $19 names, arrives at step 5. The rule above already said
+  it; this is the mechanical form, and `check_file.py` fails on it now: any
+  tick whose value is a point's own reading at a later step. The production
+  function in the growth chapter had the same slip on six values. Write every
+  reading as its point and leave `xticks`/`yticks` out (2026-10-06).
+* **A gap too small to arrow is written, not arrowed.** A $2T shift on a $50T
+  axis is 8px, and a $3T shift on a half-width panel 13px: the engine's head
+  scales down to 55% and the arrow is still almost all head ("a blot rather
+  than a direction", v2.26's own words), and an upright brace in the margin
+  across 8px is a curl beside a rotated name six times its length. Ian asked
+  for both to go (2026-10-06). Below about 18px of gap, drop the stub arrow
+  and the margin brace; keep the first intercept on the axis and write the
+  change once in plain text beside the new line's start ("+$2T"). The
+  animation of the shifted line is the movement. Where the gap is 20px or
+  more, the arrow stays — **standing off both lines**, its ends inset 3–4px,
+  because drawn from line to line its head and tail sit on the lines it is
+  meant to separate (Ian, same day). `check_file.py` warns on a movement arrow
+  under 18px.
+* **Two side-by-side panels halve every gap.** Rule 10 (group cases of one
+  lesson under scenario buttons) has a second reason: a two-panel widget gives
+  each plot half a screen, and two readings 20 units apart on a 165-unit axis
+  rendered as "120140". When the two panels would be the same market twice —
+  a rise beside a fall, two readings of one economy — make it one full-width
+  panel with a button per case. Keep two panels for two *different* markets
+  (the labor market beside the production function), and then let each panel
+  mark only what it is about: the output panel takes `guides:"p"` and
+  `showQ:false`, because the quantity is read off the other panel's axis.
+* **A slope triangle is drawn whole.** The consumption-function figure marks
+  ΔY and ΔC with two dotted legs — across from the first point to under the
+  second, then up to the second — and the brace hangs under the run. Drawn
+  with the brace's own drop guides alone, the vertical leg stopped at the
+  brace and the reader saw it "not continue" to the point (Ian, 2026-10-06).
+  Draw both legs as `thin`+`dashed` curve segments, and wrap the brace's name
+  on `\n` until it fits *inside* the brace's drop guides, or the guides run
+  through the text.
+* **A point's name sits level with its dot, to the right.** At a crossing,
+  above-right is along whichever curve rises there (SAS, S), and below-right
+  along the one that falls. `dx 12, dy 4` was clear at every A, B and C in the
+  AD-AS chapter; `dy −6` put nine of them on a curve.
+* **A flat line's name cannot be nudged along the line.** `lstart` plus `ldx`
+  on a horizontal curve puts the name on the curve itself. Three flat lines two
+  units apart (I = $6T, G = $4T, NX = $2T) fit only by shortening the quantity
+  axis — it carries no numbers, so its scale is free — until a unit is tall
+  enough for a 13px name, and staggering the names up and down at one end.
+* **An image that stays an image says why.** `<!-- KEEP: why -->` immediately
+  before the `<img>`, declared the way a point declares `divider` or `boxed`,
+  and `check_file.py` stops reporting it as a graph. The macro chapters are
+  full of published charts, photographs and bar charts the "looks like a
+  graph" rule is wrong about.
+
 `check_file.py` enforces the guide, control-price and `calcs` rules, so they
 fail the file rather than waiting for someone to notice.
 

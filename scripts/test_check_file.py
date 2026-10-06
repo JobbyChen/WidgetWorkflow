@@ -555,6 +555,35 @@ case("the engine's width table is the one em_widths.py generates",
      engine_carries_the_measured_table)
 
 
+# ---- a tick ahead of its step ----------------------------------------------
+
+case("a tick that is a later step's reading is reported", lambda r: C.check_tick_steps(widget(
+    axes={"x": "Q", "y": "P", "xmax": 110, "ymax": 110, "yticks": [19], "xticks": []},
+    points=[{"q": 0, "p": 19, "at": 4}]), r)
+    or r.has("FAIL", "ticks", "arrives at step 4"))
+
+case("a tick that is a step-0 reading is fine", lambda r: C.check_tick_steps(widget(
+    axes={"x": "Q", "y": "P", "xmax": 110, "ymax": 110, "yticks": [7]},
+    points=[{"q": 0, "p": 7}]), r)
+    or not r.has("FAIL", "ticks", "arrives at step"))
+
+case("a tick ahead of its step is found inside a scenario", lambda r: C.check_tick_steps(widget(
+    scenarios={"a": {"label": "A", "axes": {"x": "Q", "y": "P", "xmax": 10, "ymax": 10, "xticks": [5]},
+                     "points": [{"q": 5, "p": 5, "at": 1}]}}), r)
+    or r.has("FAIL", "ticks", "(A)"))
+
+# ---- arrows too short to read ----------------------------------------------
+
+case("a stub of a movement arrow is reported", lambda r: C.check_short_arrows(widget(
+    axes={"x": "Q", "y": "P", "xmax": 50, "ymax": 50},
+    moves=[{"from": [5, 13.3], "to": [5, 15.3], "offset": 0}]), r)
+    or r.has("WARN", "arrows", "almost all head"))
+
+case("a movement arrow of ordinary length is not", lambda r: C.check_short_arrows(widget(
+    axes={"x": "Q", "y": "P", "xmax": 110, "ymax": 110},
+    moves=[{"from": [30, 70], "to": [70, 30]}]), r)
+    or not r.has("WARN", "arrows", "almost all head"))
+
 # ---- images the conversion decided to keep ---------------------------------
 
 _GRAPHY = ('<img src="x.png" alt="supply and demand in the market for eggs">')

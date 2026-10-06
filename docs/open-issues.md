@@ -67,6 +67,41 @@ Checkboxes. Keep `CLAUDE.md`'s status paragraph in sync with this file.
       confirmed identical before and after the v2.1 change. Left as delivered
       along with the captions above.
 
+## Found by the 2026-10-06 rules (the Summer '26 macro conversions)
+
+- [ ] **Two shipped examples carry ticks that stand on the axis ahead of their
+      step**, which `check_file.py` fails on since 2026-10-06 (`check_tick_steps`).
+      `examples/ECO2013-263-TradeoffsComparativeAdvantageTheMarketSystem.html`
+      reports 11 (widgets 1, 2 and 7); `examples/ECO2013-Widgets-All.html` 24,
+      on top of its 28 earlier failures. Left as delivered, per the standing
+      rule; the fix is to drop each such tick and let the point print its
+      value at its own step. One for Ian.
+- [ ] **A prose table pushes the AD-AS chapter sideways on a phone** -- by 99px
+      at 390px and 169px at 320px. It is the chapter's five-column summary
+      table under the house sheet's 16px cell padding, not a widget; the AE
+      chapter's three-column consumption table does the same by 18px at 320px.
+      Same cause as the 320px item below, now at the common phone width. The
+      fix that holds for every chapter is a phone-width padding rule in
+      `sn25-v6.css`. One for Ian.
+
+## Engine feature requests from the macro chapters
+
+- [ ] **Stacked panels.** The growth chapter stacks the labor market above the
+      production function and runs one dashed line down through both; the
+      engine draws two panels across. Drawn across, the two readings on the
+      output panel's quantity axis collided and were dropped (`guides:"p"`,
+      `showQ:false`), with the quantity read off the labor panel.
+- [ ] **A unit suffix on a tick.** The source writes 120M, $35B, $50M, $19T;
+      the engine has `k` for quantities and nothing else. Units sit in the
+      axis titles ("L (millions)", "Q of Loanable Funds ($B)", "AE ($T)").
+- [ ] **A price axis that does not start at 0.** Fig. 05 of the AD-AS chapter
+      compares price levels 100 and 110 on a vertical LAS; to scale from 0 both
+      sit in the top tenth of the panel. Drawn symbolically with the two
+      values as the points' `pl` labels.
+- [ ] **A brace without drop guides.** Every in-plot horizontal brace draws
+      guides to the Q axis; the consumption-function slope triangle wants the
+      brace under its dotted run and nothing to the axis.
+
 ## PPF (production possibilities frontier)
 
 Docs not yet supplied. Probed against the real engine on 2026-09-17: the

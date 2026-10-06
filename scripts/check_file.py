@@ -1420,6 +1420,76 @@ def check_tick_emphasis(cfgs, r):
         r.ok("ticks", "point values are emphasised consistently")
 
 
+def check_tick_steps(cfgs, r):
+    """A tick whose value is a later step's reading is on the axis before the
+    thing it labels.
+
+    Ticks live in `axes` and cannot step, so "$19" stood on the price axis from
+    step 1 of a five-step build whose AE line -- the thing $19 names -- arrived
+    at step 5, and the growth chapter's production function did the same on
+    six values. A reading that belongs to a later step comes from its point,
+    which takes `at`; a stepped numeric figure usually has no ticks at all."""
+    bad = checked = 0
+    for n, cfg, _ in cfgs:
+        for label, v in variants(cfg):
+            if v.get("preset"):
+                continue
+            panels = v.get("panels") or [v]
+            for pi, pn in enumerate(panels, 1):
+                ax = pn.get("axes") or {}
+                where = "widget %d%s%s" % (n, " (%s)" % label if label else "",
+                                           " panel %d" % pi if len(panels) > 1 else "")
+                for key, ticks in (("p", ax.get("yticks") or []), ("q", ax.get("xticks") or [])):
+                    for pt in pn.get("points") or []:
+                        checked += 1
+                        if pt.get("at", 0) > 0 and pt.get(key) in ticks:
+                            bad += 1
+                            r.fail("ticks", "%s: the %s tick on %s is a point's reading that "
+                                   "arrives at step %d -- it is on the axis before the thing it "
+                                   "labels. Drop the tick and let the point print it."
+                                   % (where, pt[key], "P" if key == "p" else "Q", pt["at"]))
+    if checked and not bad:
+        r.ok("ticks", "no tick stands on the axis ahead of the step its reading belongs to")
+
+
+SHORT_ARROW_PX = 18.0
+
+
+def check_short_arrows(cfgs, r):
+    """A movement arrow too short to read is a blot, not a direction.
+
+    The engine's head scales down to 55% for the shortest arrows (v2.26) and a
+    $2T shift on a $50T axis is still 8px, almost all head: Ian asked for two
+    of them to go (2026-10-06). Under about 18px the honest drawing is no
+    arrow -- write the change beside the new line, and let the shifted line's
+    own animation be the movement -- or a wider axis, or one full-width panel
+    where two half-width panels halved every gap. Measured off the checker's
+    own geometry, the same one every label test uses."""
+    short = checked = 0
+    for n, cfg, _ in cfgs:
+        for label, v in variants(cfg):
+            if v.get("preset"):
+                continue
+            panels = v.get("panels") or [v]
+            for pi, pn in enumerate(panels, 1):
+                ax = pn.get("axes") or {}
+                X, Y, ox, oy = geom(pn, ax)
+                for m in pn.get("moves") or []:
+                    (q1, p1), (q2, p2) = m.get("from"), m.get("to")
+                    checked += 1
+                    px = math.hypot(X(q2) - X(q1), Y(p2) - Y(p1))
+                    if px < SHORT_ARROW_PX:
+                        short += 1
+                        r.warn("arrows", "widget %d%s%s: the movement arrow %s->%s is %.0fpx long, "
+                               "which is almost all head. Write the change beside the line "
+                               "instead, or widen the axis."
+                               % (n, " (%s)" % label if label else "",
+                                  " panel %d" % pi if len(panels) > 1 else "",
+                                  m.get("from"), m.get("to"), px))
+    if checked and not short:
+        r.ok("arrows", "every movement arrow is long enough to read (%d checked)" % checked)
+
+
 def check_arrows(cfgs, r):
     n_checked = n_bad = 0
     for n, cfg, _ in cfgs:
@@ -2027,9 +2097,11 @@ def main():
     check_schema(cfgs, r)
     check_labels(cfgs, r)
     check_tick_emphasis(cfgs, r)
+    check_tick_steps(cfgs, r)
     check_steps(cfgs, r)
     check_steady_labels(cfgs, r)
     check_arrows(cfgs, r)
+    check_short_arrows(cfgs, r)
     check_invented(cfgs, r)
     check_controls(cfgs, r)
     check_calcs(src, cfgs, r)

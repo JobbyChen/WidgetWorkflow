@@ -161,9 +161,11 @@ itself still forbids questions outright.
    "open" is the emoji, not the `<details>`. Both list `h1`, `h2` *and* `h3`. `<p class="date">` per class date, `<h1>`/`<h2>` only
    (never `<h3>`), `.exam-tip` with an `<h4>`, plain tables; `<strong>` for
    vocabulary terms only, `<b>` for emphasis and labels, never `<u>` -- except
-   that **a centred equation written as text keeps its `<strong>`** (Ian,
-   2026-10-07: blue and bold is how the house format sets a displayed
-   formula, and `check_file.py` does not count one as a swallowed term); keep every
+   that **a centred equation the source sets in `<strong>` keeps it** (Ian,
+   2026-10-07, and he asked for it as a rule: where the source has a
+   centred, bold equation, the output has the same -- blue and bold is how
+   the house format sets a displayed formula. `check_file.py` skips a
+   centred paragraph when it looks for `<strong>` swallowing a sentence); keep every
    `<!-- IMAGE POSITION: … -->` comment where the image was.
 8. **A step must change the drawing.** Ian's rule, and he has had to give it
    twice: a caption that advances while the picture holds still reads as a
@@ -521,6 +523,18 @@ economics instead of label placement.
   in every curve name, caption, heading and the chapter's own prose. The
   longer names crowd a neighbour at a curve's lower-left end more often, so
   run `place_curve_labels.py` after renaming and carry one offset per series.
+* **A widget's title and its panel headings are in Title Case** ("A Cut in
+  the Personal Income Tax", "The Real Economy"), the way the source heads its
+  own panels (Ian, 2026-10-07). Ledes, captions and steps stay sentence case.
+  A word with a capital inside it (AD₁, LRAS, U.S.) is left as written.
+* **The original curve of a shift pair is drawn at full weight: no `thin`.**
+  Ian, 2026-10-07 ("why is AD₁ not as thick as the other lines"). `thin` was
+  the older examples' convention for the curve a shift moves away from, and
+  it made that curve the lightest line on the panel before anything had
+  moved. The engine already fades the original (2px, 80%) from the step the
+  shifted curve arrives, which is the printed grey-original convention; that
+  is the only weight change a shift pair gets. `thin` is for a line that is
+  genuinely secondary in the drawing, such as the 45-degree line.
 * **An image that stays an image says why.** `<!-- KEEP: why -->` immediately
   before the `<img>`, declared the way a point declares `divider` or `boxed`,
   and `check_file.py` stops reporting it as a graph. The macro chapters are

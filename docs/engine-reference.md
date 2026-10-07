@@ -246,7 +246,10 @@ pixel apart. `scripts/check_file.py` tests for this.
   Set it on any widget whose `table` has `arrows: true`: the per-row arrows
   already show the shift once per schedule row, and a fourth arrow at a price
   that is not in the schedule has no point at either end.
-- `thin` draws the original curve of a shift pair; `dashed` dashes it.
+- `thin` draws a secondary line at 2px (a 45-degree line, a line of equality);
+  `dashed` dashes it. **Not** the original curve of a shift pair: that is
+  drawn at full weight, and the engine's own `dim` lightens it once the
+  shifted curve arrives (Ian, 2026-10-07; CLAUDE.md drawing conventions).
 - `hiAt: 2` on a **point** re-marks it from step 2 onward, whenever it arrived
   (**v2.32**). The engine rings what a step just revealed, which is what tells
   the reader which dot the caption means — but a shape drawn by a later step

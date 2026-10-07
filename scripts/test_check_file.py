@@ -507,6 +507,12 @@ case("up or down inside a sentence", lambda r: C.check_captions(widget(
 
 case("<u> in the body", lambda r: C.check_markup("<body><p>a <u>term</u></p></body>", r)
      or r.has("FAIL", "markup", "<u>"))
+case("a long <strong> in prose is reported", lambda r: C.check_markup(
+    "<body><p><strong>Tax Burden = 6% of the first $50,000 plus 30% of the rest.</strong></p></body>", r)
+    or r.has("WARN", "markup", "swallows"))
+case("a centred equation keeps its <strong>", lambda r: C.check_markup(
+    '<body><p style="text-align: center;"><strong>Tax Burden = 6% of the first $50,000 plus 30% of the rest.</strong></p></body>', r)
+    or not r.has("WARN", "markup", "swallows"))
 case("<h3> in the body", lambda r: C.check_markup("<body><h3>Sub</h3></body>", r)
      or r.has("FAIL", "markup", "<h3>"))
 TOC_PAGE = ('<body><details class="toc-box"><nav><ul>'

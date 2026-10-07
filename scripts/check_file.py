@@ -425,7 +425,11 @@ def check_markup(src, r):
                          "<strong> when the word is a term")
     if re.search(r"<h3\b", body, re.I):
         r.fail("markup", "<h3> is not part of the house format; use <h2>")
-    loose = [s for s in re.findall(r"<strong>(.*?)</strong>", body, re.S)
+    # A centred equation written as text keeps its <strong> (Ian, 2026-10-07):
+    # blue and bold is how the house format sets a displayed formula, so a
+    # centred paragraph is not measured here.
+    uncentred = re.sub(r'<p\s+style="[^"]*text-align:\s*center[^"]*"[^>]*>.*?</p>', '', body, flags=re.S | re.I)
+    loose = [s for s in re.findall(r"<strong>(.*?)</strong>", uncentred, re.S)
              if len(s.split()) > 6 or s.rstrip().endswith((".", ":"))]
     if loose:
         r.warn("markup", "%d <strong> swallows more than the term itself -- a "

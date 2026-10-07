@@ -165,7 +165,19 @@ itself still forbids questions outright.
    2026-10-07, and he asked for it as a rule: where the source has a
    centred, bold equation, the output has the same -- blue and bold is how
    the house format sets a displayed formula. `check_file.py` skips a
-   centred paragraph when it looks for `<strong>` swallowing a sentence); keep every
+   centred paragraph when it looks for `<strong>` swallowing a sentence).
+
+   **From the next chapter on, a displayed definition is bold whether or not
+   the source sets it so** (Ian, 2026-10-07, looking at the multiplier
+   definitions in the fiscal chapter: "most of these equations should be
+   strong text even if the source is not"). A displayed formula that
+   *defines* a term -- the government spending multiplier, the tax
+   multiplier, the money multiplier, the reserve requirement -- is written as
+   a centred `<p style="text-align: center;"><strong>\( … \)</strong></p>`,
+   the same shape as the budget-balance line. A worked line of arithmetic
+   under it (`\frac{+\$2T}{…} = 1.33`) is not a definition and stays as the
+   source has it. The Exam 3 fiscal chapter is **not** to be redone for this;
+   it applies from the next conversion onward.); keep every
    `<!-- IMAGE POSITION: … -->` comment where the image was.
 8. **A step must change the drawing.** Ian's rule, and he has had to give it
    twice: a caption that advances while the picture holds still reads as a

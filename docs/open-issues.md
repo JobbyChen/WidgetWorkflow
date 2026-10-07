@@ -86,6 +86,15 @@ Checkboxes. Keep `CLAUDE.md`'s status paragraph in sync with this file.
 
 ## Engine feature requests from the macro chapters
 
+- [ ] **A `flow` widget kind for process diagrams** (Ian asked whether the
+  Fed open-market flowcharts in Exam 3 Monetary Policy could be widgets,
+  2026-10-07; "maybe another time"). Two parties, the arrows between them
+  with their labels, and a chain of effects revealed a step at a time
+  (reserves credited, then monetary base, money supply, interest rates, GDP).
+  Built as HTML and inline SVG from JSON the way the payoff matrix was. The
+  conversion prompt's "figure mode" is the same idea and has never existed in
+  the engine. Until then those two figures carry a KEEP note.
+
 - [ ] **Stacked panels.** The growth chapter stacks the labor market above the
       production function and runs one dashed line down through both; the
       engine draws two panels across. Drawn across, the two readings on the

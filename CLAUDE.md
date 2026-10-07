@@ -160,7 +160,10 @@ itself still forbids questions outright.
    corner. Neither sets `open`; both say so in a comment, so a TOC that looks
    "open" is the emoji, not the `<details>`. Both list `h1`, `h2` *and* `h3`. `<p class="date">` per class date, `<h1>`/`<h2>` only
    (never `<h3>`), `.exam-tip` with an `<h4>`, plain tables; `<strong>` for
-   vocabulary terms only, `<b>` for emphasis and labels, never `<u>`; keep every
+   vocabulary terms only, `<b>` for emphasis and labels, never `<u>` -- except
+   that **a centred equation written as text keeps its `<strong>`** (Ian,
+   2026-10-07: blue and bold is how the house format sets a displayed
+   formula, and `check_file.py` does not count one as a swallowed term); keep every
    `<!-- IMAGE POSITION: … -->` comment where the image was.
 8. **A step must change the drawing.** Ian's rule, and he has had to give it
    twice: a caption that advances while the picture holds still reads as a

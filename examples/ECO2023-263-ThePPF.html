@@ -306,7 +306,7 @@
 }
 </style>
 <script>
-/* ===== sd-graph.js v2.55 — data-driven supply & demand widgets =====
+/* ===== sd-graph.js v2.56 — data-driven supply & demand widgets =====
    Markup:  <div class="sdg"><script type="application/json">{ ...config... }<\/script></div>
    Top-level config:
      title, lede, caption         heading / intro / static caption (caption used only when there are no steps)
@@ -663,6 +663,41 @@
       var f = S[0], l = S[S.length - 1];
       return f[1] === l[1] ? f[0] : f[0] + (y - f[1]) * (l[0] - f[0]) / (l[1] - f[1]);
     }
+    // The drawn curve's direction where it crosses height y, as |dx|,|dy| of a
+    // unit vector -- what a horizontal arrow's clearance from it depends on.
+    function dirAtPx(pts, curved, y) {
+      var S = samplePx(pts, curved);
+      for (var i = 0; i < S.length - 1; i++) {
+        var a = S[i], b = S[i + 1];
+        if ((y - a[1]) * (y - b[1]) <= 0 && a[1] !== b[1]) {
+          var dx = b[0] - a[0], dy = b[1] - a[1], l = Math.hypot(dx, dy);
+          return [Math.abs(dx) / l, Math.abs(dy) / l];
+        }
+      }
+      return [0, 1];
+    }
+    // How far each end of a shift arrow stands off its curve (v2.56). A fixed
+    // 11px along the arrow is 11px from a steep curve but only 5.7px from one
+    // at 31 degrees -- every symbolic preset -- which left 2.7px of white
+    // between the head and the line it points at once both strokes were drawn.
+    // So the inset is solved for the slope: the tail, the tip and both barbs
+    // clear their curve by ARROW_GAP, edge to edge, at the thickest either line
+    // is ever drawn (3.6px curve and 3.4px arrow on the step they arrive).
+    // Never less than the old 11. Two curves close together get the smallest
+    // head the engine draws (55%, which arrow() picks for a short arrow), and
+    // only where even that leaves under 10px of arrow does the old 11 stand.
+    var ARROW_GAP = 3.5, ARROW_REACH = ARROW_GAP + 1.8 + 1.7;
+    function shiftInsets(src, c, yA, x0, x1) {
+      var u0 = dirAtPx(src.pts, src.curved, yA), u1 = dirAtPx(c.pts, c.curved, yA),
+          sy0 = Math.max(u0[1], 0.1), sy1 = Math.max(u1[1], 0.1), span = Math.abs(x1 - x0);
+      var d0 = Math.max(11, Math.min(40, ARROW_REACH / sy0));
+      // the barbs reach hh back and ww out: 6.2 x 3.1 at full size
+      function head(hh, ww) { return Math.max(11, Math.min(40, Math.max(ARROW_REACH / sy1, (ARROW_REACH + ww * u1[0]) / sy1 - hh))); }
+      var d1 = head(6.2, 3.1);
+      if (span - d0 - d1 >= 14) return [d0, d1];
+      d1 = head(3.4, 1.7);
+      return span - d0 - d1 >= 10 ? [d0, d1] : [11, 11];
+    }
     function qAt(pts, p) {
       for (var i = 0; i < pts.length - 1; i++) { var a = pts[i], b = pts[i + 1]; if ((p - a[1]) * (p - b[1]) <= 0 && a[1] !== b[1]) return a[0] + (p - a[1]) * (b[0] - a[0]) / (b[1] - a[1]); }
       var a2 = pts[0], b2 = pts[pts.length - 1]; return a2[0] + (p - a2[1]) * (b2[0] - a2[0]) / (b2[1] - a2[1]);
@@ -703,9 +738,12 @@
         grp.dataset.dx = x1 - x0; grp.dataset.dy = 0; grp.classList.add('move');
         // shiftArrow:false keeps the slide and the dimming but drops the arrow, for
         // widgets whose per-row arrows already show the shift once per schedule row.
-        // The 11px inset is measured off the drawn curves, so the arrow clears
-        // both of them however far the spline bows.
-        if (c.shiftArrow !== false) g.appendChild(reg(arrow(x0 + s * 11, yA, x1 - s * 11, yA, cc, 'shift'), {at: c.at || 0, until: c.until}));
+        // The insets are measured off the drawn curves, so the arrow clears
+        // both of them however far the spline bows and whatever its slope.
+        if (c.shiftArrow !== false) {
+          var ins = shiftInsets(src, c, yA, x0, x1);
+          g.appendChild(reg(arrow(x0 + s * ins[0], yA, x1 - s * ins[1], yA, cc, 'shift'), {at: c.at || 0, until: c.until}));
+        }
       }
       g.appendChild(grp); reg(grp, c);
     });
@@ -1553,14 +1591,55 @@
     [4, 104].forEach(function (q) { var p = intercept + slope * q; if (p < lo) { p = lo; } if (p > hi) { p = hi; } pts.push([(p - intercept) / slope, p]); });
     return pts;
   }
+  // A preset's own default height for a shift arrow (v2.56). Every line a
+  // preset draws is straight, so a clear price is arithmetic: both ends on the
+  // plot (a leftward demand shift at 88 put the new curve past the P axis and
+  // the arrow across it), no other line or marked point inside the arrow's
+  // span, and away from the curve labels at the lines' ends. The nearest such
+  // price to the old default wins, so a panel that was clear is unchanged.
+  // A price that also keeps clear of the marks' dashed guides is preferred;
+  // one that crosses a guide is taken only where nothing else is clear, which
+  // is the house rule for arrows and guides.
+  // lines: [{q: fn(p)}]; pair: [srcIndex, dstIndex]; marks: [[q, p]].
+  function presetArrowP(lines, pair, pref, marks) {
+    function offGuides(p, lo, hi) {
+      return marks.every(function (m) {
+        var crossesV = p < m[1] + 4 && m[0] > lo - 4 && m[0] < hi + 4,   // the leg down to Q
+            crossesH = Math.abs(p - m[1]) < 4 && lo < m[0] + 4;           // the leg across to P
+        return !crossesV && !crossesH;
+      });
+    }
+    function clear(p, strict) {
+      var q0 = lines[pair[0]].q(p), q1 = lines[pair[1]].q(p), lo = Math.min(q0, q1), hi = Math.max(q0, q1);
+      if (lo < 12 || hi > 100 || hi - lo < 8) return false;
+      for (var i = 0; i < lines.length; i++) {
+        if (i === pair[0] || i === pair[1]) continue;
+        var q = lines[i].q(p); if (q > lo - 6 && q < hi + 6) return false;
+      }
+      if (!marks.every(function (m) { return Math.abs(m[1] - p) >= 8 || m[0] < lo - 6 || m[0] > hi + 6; })) return false;
+      return !strict || offGuides(p, lo, hi);
+    }
+    for (var pass = 0; pass < 2; pass++) {
+      for (var k = 0; k <= 76; k++) {
+        var up = pref + k, dn = pref - k;
+        if (dn >= 16 && dn <= 92 && clear(dn, !pass)) return dn;
+        if (up >= 16 && up <= 92 && clear(up, !pass)) return up;
+      }
+    }
+    return pref;
+  }
   function shiftPanel(o) { // o: {shift:'D'|'S', dir:'left'|'right', size, static, heading, labels}
     var d = (o.size || 20) * (o.dir === 'left' ? -1 : 1), D = o.shift === 'D', at1 = o.static ? 0 : 1, at3 = o.static ? 0 : 3;
     var S = clipLine(0, 1, 8, 100), Dl = clipLine(100, -1, 8, 100);
     var S2 = clipLine(-d, 1, 8, 100), D2 = clipLine(100 + d, -1, 8, 100);
     var e2 = D ? [50 + d / 2, 50 + d / 2] : [50 + d / 2, 50 - d / 2];
     var gap = D ? [50, 50 + d] : [50, 50 + d]; // quantity at P1 on the shifted curve
-    var curves = D ? [{id: 'S', label: 'S', pts: S}, {id: 'D1', label: 'D₁', pts: Dl, thin: true}, {id: 'D2', label: 'D₂', pts: D2, color: 'red', from: 'D1', at: at1, arrowP: 88}]
-                   : [{id: 'D', label: 'D', pts: Dl}, {id: 'S1', label: 'S₁', pts: S, thin: true}, {id: 'S2', label: 'S₂', pts: S2, color: 'red', from: 'S1', at: at1, arrowP: 88}];
+    var lineS = {q: function (p) { return p; }}, lineD = {q: function (p) { return 100 - p; }},
+        lineS2 = {q: function (p) { return p + d; }}, lineD2 = {q: function (p) { return 100 + d - p; }};
+    var ap = D ? presetArrowP([lineD, lineD2, lineS], [0, 1], 88, [[50, 50]])
+               : presetArrowP([lineS, lineS2, lineD], [0, 1], 88, [[50, 50]]);
+    var curves = D ? [{id: 'S', label: 'S', pts: S}, {id: 'D1', label: 'D₁', pts: Dl, thin: true}, {id: 'D2', label: 'D₂', pts: D2, color: 'red', from: 'D1', at: at1, arrowP: ap}]
+                   : [{id: 'D', label: 'D', pts: Dl}, {id: 'S1', label: 'S₁', pts: S, thin: true}, {id: 'S2', label: 'S₂', pts: S2, color: 'red', from: 'S1', at: at1, arrowP: ap}];
     var isShort = (D && d > 0) || (!D && d < 0);
     var pn = {heading: o.heading, axes: {xmax: 110, ymax: 110}, curves: curves,
       points: [{q: 50, p: 50, pl: 'P₁', ql: 'Q₁'}, {q: e2[0], p: e2[1], pl: 'P₂', ql: 'Q₂', color: 'red', at: at3}]};
@@ -1584,15 +1663,16 @@
   function doublePanel(o) { // o: {demand:'left'|'right', supply:'left'|'right', dD, dS, heading, static}
     var dD = (o.dD || 20) * (o.demand === 'left' ? -1 : 1), dS = (o.dS || 20) * (o.supply === 'left' ? -1 : 1);
     var q2 = (100 + dD + dS) / 2, p2 = q2 - dS, a1 = o.static ? 0 : 1, a2 = o.static ? 0 : 2, a3 = o.static ? 0 : 3;
+    var L = [{q: function (p) { return 100 - p; }}, {q: function (p) { return 100 + dD - p; }},
+             {q: function (p) { return p; }}, {q: function (p) { return p + dS; }}],
+        marks = [[50, 50], [q2, p2]];
     return {heading: o.heading, axes: {xmax: 110, ymax: 110},
       curves: [{id: 'D1', label: 'D₁', pts: clipLine(100, -1, 8, 100), thin: true}, {id: 'S1', label: 'S₁', pts: clipLine(0, 1, 8, 100), thin: true},
-               // A shift arrow only clears the pair it belongs to. The other
-               // pair can still lie across it, so arrowD/arrowS let a config
-               // move it: at price p the demand arrow spans q = 100+dD-p to
-               // 100-p, and S1 sits at q = p, which is inside that span
-               // whenever (100+dD)/2 < p < 100 - dD/2 for a leftward shift.
-               {id: 'D2', label: 'D₂', pts: clipLine(100 + dD, -1, 8, 100), color: 'red', from: 'D1', at: a1, arrowP: o.arrowD != null ? o.arrowD : 32},
-               {id: 'S2', label: 'S₂', pts: clipLine(-dS, 1, 8, 100), color: 'red', from: 'S1', at: a2, arrowP: o.arrowS != null ? o.arrowS : 88}],
+               // A shift arrow only clears the pair it belongs to; the other
+               // pair can lie across it. presetArrowP finds a height where it
+               // does not (v2.56). arrowD/arrowS still override it.
+               {id: 'D2', label: 'D₂', pts: clipLine(100 + dD, -1, 8, 100), color: 'red', from: 'D1', at: a1, arrowP: o.arrowD != null ? o.arrowD : presetArrowP(L, [0, 1], 32, marks)},
+               {id: 'S2', label: 'S₂', pts: clipLine(-dS, 1, 8, 100), color: 'red', from: 'S1', at: a2, arrowP: o.arrowS != null ? o.arrowS : presetArrowP(L, [2, 3], 88, marks)}],
       points: [{q: 50, p: 50, pl: 'P₁', ql: 'Q₁', marker: '1'}, {q: q2, p: p2, pl: 'P₂', ql: 'Q₂', color: 'red', marker: '2', at: a3}]};
   }
   function doubleSteps(o, q2, p2) {

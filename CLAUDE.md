@@ -512,6 +512,12 @@ economics instead of label placement.
   units apart (I = $6T, G = $4T, NX = $2T) fit only by shortening the quantity
   axis — it carries no numbers, so its scale is free — until a unit is tall
   enough for a 13px name, and staggering the names up and down at one end.
+* **Aggregate supply is `SRAS` and `LRAS`, never `SAS` and `LAS`.** Ian's
+  call, 2026-10-07, after the AD-AS and fiscal chapters shipped with the
+  source figures' `SAS`/`LAS`: the abbreviations say short-run and long-run,
+  in every curve name, caption, heading and the chapter's own prose. The
+  longer names crowd a neighbour at a curve's lower-left end more often, so
+  run `place_curve_labels.py` after renaming and carry one offset per series.
 * **An image that stays an image says why.** `<!-- KEEP: why -->` immediately
   before the `<img>`, declared the way a point declares `divider` or `boxed`,
   and `check_file.py` stops reporting it as a graph. The macro chapters are

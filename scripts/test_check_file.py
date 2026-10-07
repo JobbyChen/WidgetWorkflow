@@ -482,6 +482,7 @@ for txt, tag in [("<p>built from a lecture recording alone.</p>", "a lecture rec
          (lambda t: lambda r: C.check_source(t, [], r) or r.has("FAIL", "source", ""))(txt))
 
 for txt, tag in [("<p>the class average was below 74.</p>", "the class average"),
+                 ("<p>a 14-year term on the Board of Governors.</p>", "on the Board of Governors"),
                  ("<p>you may be sitting in class.</p>", "sitting in class"),
                  ("<p>the board of a firm sets the price.</p>", "the board of a firm"),
                  ("<p>one class of goods behaves differently.</p>", "a class of goods"),

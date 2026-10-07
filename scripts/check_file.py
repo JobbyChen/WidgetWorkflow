@@ -65,7 +65,7 @@ SOURCE_NOUNS = ["transcript", "lecture", "recording", "classroom"]
 # "on the board" and not "the board": a company has one of those too, and the
 # rule is about the classroom whiteboard. "the class" likewise skips "the class
 # of goods", which is ordinary economics.
-SOURCE_PHRASES = ["on the board", "at the board", "the slides",
+SOURCE_PHRASES = ["the slides",
                   "the handout", "the video", "the notes say", "the reading",
                   "he said", "she said", "they said in",
                   "the professor", "our professor", "the instructor",
@@ -75,6 +75,9 @@ SOURCE_PHRASES = ["on the board", "at the board", "the slides",
 # attributed to what happened there.
 SOURCE_GUARDED = [
     (r"the class\b(?!\s+(?:average|of\b))", "the class"),
+    # the whiteboard, not a seat "on the Board of Governors" (the Money chapter
+    # has a Fed chair's 14-year term there) or "on the board of directors"
+    (r"(?:on|at) the board\b(?!\s+of\b)", "on the board"),
     (r"(?:said|says|noted|explained|mentioned|covered|discussed|showed|drew|"
      r"went over)[^.]{0,40}\bin class\b", "in class"),
     (r"\bin class\b[^.]{0,40}(?:said|says|noted|explained|mentioned)", "in class"),

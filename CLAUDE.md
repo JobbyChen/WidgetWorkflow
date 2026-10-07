@@ -491,6 +491,18 @@ economics instead of label placement.
   Draw both legs as `thin`+`dashed` curve segments, and wrap the brace's name
   on `\n` until it fits *inside* the brace's drop guides, or the guides run
   through the text.
+* **No movement arrow between two crossings a few units apart.** The AD-AS
+  shocks mark A and B on the fixed curve one crossing apart: LAS runs through
+  A and the shifted curve through B, so a short arrow beside the segment lies
+  across one line or the other whichever side it takes, and its head lands
+  on the dot it points at. Ian: make them clear or remove them (2026-10-07).
+  Removed: the dots, the shift arrow and the caption carry the movement. The
+  movement arrow belongs to a *single* curve read at two prices (the peso
+  market, a demand schedule), where nothing else crosses the segment.
+  **And a shift arrow across LAS has a price where it is not.** A SAS moving
+  across LAS straddles it at any price between the two crossings and is on one
+  side of it above or below that band; `clear_p()` in the AD-AS build scans
+  for that price rather than guessing an `arrowP`.
 * **A point's name sits level with its dot, to the right.** At a crossing,
   above-right is along whichever curve rises there (SAS, S), and below-right
   along the one that falls. `dx 12, dy 4` was clear at every A, B and C in the

@@ -167,6 +167,17 @@ itself still forbids questions outright.
    the house format sets a displayed formula. `check_file.py` skips a
    centred paragraph when it looks for `<strong>` swallowing a sentence).
 
+   **And the source's `<strong>` stays `<strong>`, every one of them.** Ian,
+   2026-10-07, after a day of restoring what the conversion had demoted to
+   `<b>`: the centred equations, then the two bold rules and the three
+   closing banners in the exchange-rate chapter ("keep these as strong").
+   Blue bold is how the house format marks anything the author wanted to
+   stand out, and a list label, a stressed sentence or a banner the source
+   set that way is the author's call, not the conversion's. The "`<strong>`
+   for terms only" rule above governs text *you* write; what the source
+   already has is left as it is. `check_file.py`'s "swallows more than the
+   term" is a WARN to read, never a reason to edit the source's markup.
+
    **From the next chapter on, a displayed definition is bold whether or not
    the source sets it so** (Ian, 2026-10-07, looking at the multiplier
    definitions in the fiscal chapter: "most of these equations should be

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Put widgets into a notes file from a map, without touching anything else.
 
-    python scripts/apply_widgets.py SOURCE.html MAP.json OUT.html [--anchors]
+    python scripts/apply_widgets.py SOURCE.html MAP.json OUT.html [--anchors] [--toc]
 
 The job the UCF project asked for (2026-10-12): a copy of each Full, Balanced
 and Concise chapter with widgets in place of its graph images and nothing
@@ -13,7 +13,13 @@ fourth:
   2. Replaces each `<img>` whose src basename is in the map's `images` with
      that image's widget. The IMAGE POSITION comment beside it stays where
      it is; the tag's own attributes are gone with the tag.
-  3. With --anchors, inserts a widget after an anchor element, for a file
+  3. With --toc, swaps the head's house script for the live table-of-contents
+     script, `studyguide/sn25-v2.js` (Ian, 2026-10-12: "one thing you can fix
+     is the toc"). The UCF files carry `content/sn25-v5.js`, which puts its
+     box above everything in <body>; the live script builds the same box
+     before the first <h1>. No UCF file has a written-in TOC, so nothing is
+     doubled.
+  4. With --anchors, inserts a widget after an anchor element, for a file
      with no `<img>` (the Concise editions): each entry in `anchors` names a
      unique substring of the file and the widget goes after the block element
      containing it. Without the flag `anchors` is ignored, so one map serves
@@ -56,6 +62,8 @@ IMG_RE = re.compile(r"<img\b[^>]*?>", re.S)
 SRC_RE = re.compile(r'src="([^"]*)"')
 HOUSE_SCRIPT_RE = re.compile(r'^[ \t]*<script[^>]*src="[^"]*sn25-v\d+\.js"[^>]*>\s*</script>[ \t]*\n',
                              re.M)
+TOC_SCRIPT = "https://smokinnotes.s3.us-east-1.amazonaws.com/studyguide/sn25-v2.js"
+OLD_SCRIPT_RE = re.compile(r'https://smokinnotes\.s3\.us-east-1\.amazonaws\.com/content/sn25-v\d+\.js')
 BLOCK_OPEN_RE = re.compile(r"<(p|ul|ol|table|div|h[1-6]|li|tr|td|th|blockquote)\b", re.I)
 
 
@@ -89,7 +97,12 @@ def block_end(src, pos):
     return end + len(close)
 
 
-def apply(src, m, name, use_anchors=False):
+def apply(src, m, name, use_anchors=False, toc=False):
+    if toc:
+        n = len(OLD_SCRIPT_RE.findall(src))
+        if n != 1:
+            sys.exit("%s: expected one content/sn25-v*.js script line, found %d" % (name, n))
+        src = OLD_SCRIPT_RE.sub(TOC_SCRIPT, src)   # the proof below compares against this
     images = m.get("images", {})
     anchors = m.get("anchors", []) if use_anchors else []
     used = set()
@@ -180,10 +193,12 @@ def main():
     ap.add_argument("out")
     ap.add_argument("--anchors", action="store_true",
                     help="apply the map's anchors (the Concise edition)")
+    ap.add_argument("--toc", action="store_true",
+                    help="swap content/sn25-v*.js for the live TOC script")
     args = ap.parse_args()
     src = pathlib.Path(args.source).read_text(encoding="utf-8")
     m = json.loads(pathlib.Path(args.map).read_text(encoding="utf-8"))
-    out, n = apply(src, m, args.source, args.anchors)
+    out, n = apply(src, m, args.source, args.anchors, args.toc)
     pathlib.Path(args.out).parent.mkdir(parents=True, exist_ok=True)
     pathlib.Path(args.out).write_text(out, encoding="utf-8")
     print("%s: %d widgets -> %s" % (os.path.basename(args.source), n, args.out))

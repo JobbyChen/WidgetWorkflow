@@ -37,7 +37,11 @@ MAP.json:
 An image entry is a widget config or `{"keep": why}`. A kept image is left as
 the tag it is -- no comment is added, because the file's other content is not
 this script's to change -- and the reason goes in the changelog. `anchors`
-reuse a config from `images` by name, or carry their own under `widget`.
+reuse a config from `images` by name, or carry their own under `widget`; an
+anchor may instead carry `html`, a block of plain HTML (a `<table>` of the
+figure's numbers) to insert in place of a widget where a Concise edition has
+no room for one (Ian, 2026-10-12: a figure that is numbers the Concise text
+lacks becomes a table of text, never a run of widgets back to back).
 
 Every `<img>` in the file must be in the map (a graph nobody decided about is
 a mistake), every anchor must match exactly once, and every mapped config
@@ -135,17 +139,26 @@ def apply(src, m, name, use_anchors=False, toc=False):
         if n != 1:
             problems.append("anchor matches %d times, not once: %r" % (n, needle[:60]))
             continue
-        cfg = a.get("widget")
-        if cfg is None:
-            cfg = images.get(a.get("image"))
-            if cfg is None or "keep" in cfg:
-                problems.append("anchor names no usable widget: %r" % needle[:60])
+        if "html" in a:
+            if "</script" in a["html"].lower() or '<div class="sdg"' in a["html"]:
+                problems.append("an html anchor may not carry a script or a widget: %r" % needle[:60])
                 continue
-            used.add(a["image"])
+            if a.get("image"):
+                used.add(a["image"])     # the figure this table stands in for
+            body = a["html"].strip()
+        else:
+            cfg = a.get("widget")
+            if cfg is None:
+                cfg = images.get(a.get("image"))
+                if cfg is None or "keep" in cfg:
+                    problems.append("anchor names no usable widget: %r" % needle[:60])
+                    continue
+                used.add(a["image"])
+            body = widget_html(cfg)
         pos = out.find(needle)
         end = block_end(out, pos)
         comment = a.get("comment", "below-referenced paragraph")
-        ins = "\n<!-- IMAGE POSITION: %s -->\n%s\n" % (comment, widget_html(cfg))
+        ins = "\n<!-- IMAGE POSITION: %s -->\n%s\n" % (comment, body)
         inserted.append(ins)
         out = out[:end] + ins + out[end:]
 

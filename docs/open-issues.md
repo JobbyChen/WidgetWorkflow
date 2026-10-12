@@ -409,3 +409,19 @@ or "unattainable" dot) whose exact coordinates are not the lesson.
       not fit. Found once `mobile_check` started loading that stylesheet
       (2026-09-30). Nothing to do with the widgets -- one for Ian, since it is
       his sheet on his own tables.
+
+- [ ] **`render_widgets.py` measures arrows centre to centre against 4px**,
+      which is about 1.3px of visible gap with a 3px curve and a 2.4px arrow,
+      and never tests an arrow against the axes or labels. v2.56 fixed every
+      shift arrow that measure was missing; movement arrows still have three
+      edge-to-edge contacts with curves in ECO2013 supply-and-demand. Moving the
+      measure to edge-to-edge would surface them -- worth doing with Ian, since
+      it changes what passes. (2026-10-07)
+- [ ] **ECO2023 supply-and-demand, "one shift is bigger" (widget 8).** The
+      demand arrow crosses Point 1's vertical guide at every price where both
+      demand curves are on the plot, so v2.56 takes the crossing (price 27)
+      rather than the D₂ label it sat on; `render_widgets` reports it. And the
+      12-unit supply shift leaves its arrow 2.8px from S₂: no arrow 10px long
+      fits 3.5px clear of both lines in that gap. A larger `dS`, or no supply
+      arrow, would settle both if Ian wants them gone. (2026-10-07)
+

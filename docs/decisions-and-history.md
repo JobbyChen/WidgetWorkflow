@@ -758,3 +758,38 @@ drawing was the one the reader gets.
   is what the drawing is called. The chip is the one thing over everything,
   because it is the reading. (Ian, 2026-09-30, twice: first for the 4% and
   10% labels, then for Interest and Principal.)
+
+## 2026-10-07 — v2.56: shift arrows that clear their curves
+
+Measured edge to edge over every example, shift arrows came within 2.7–2.9px
+of the curve they point at on every symbolic preset: the fixed 11px inset is
+11px from a steep line but 5.7px from one at 31 degrees, which is the slope of
+every preset line on a full-width panel, and the strokes take most of that.
+`render_widgets.py` passed them because it measures centre line to centre line
+against 4px -- about 1.3px of visible white once a 3px curve and a 2.4px arrow
+are drawn. The inset is now solved for the slope (tail, tip and both barbs at
+least 3.5px clear, at the thickest either line is drawn), never below the old
+11, falling back to the smallest head where two curves are close.
+`check_file.py`'s copy of the arrow geometry, which still said "8px", moved
+with it.
+
+The presets' fixed heights were wrong in two ways nobody had measured: a
+leftward demand shift at 88 puts D₂ past the P axis, so the arrow lay across
+the axis; and a rightward supply shift at 88 runs S₂ off the right edge.
+Every preset line is straight, so a clear height is arithmetic, and the
+presets now take the price nearest the old default that keeps both lines on
+the plot and every other line, point, guide and end label clear.
+
+Two hand-set heights had the same defect from the other side: `arrowP: 88` on
+an S₂ that stops at 80 (ECO2013 widget 8) and 84 (ECO2023 widget 3), so the
+arrow pointed past the curve's end onto its name. Both are 70 now, and
+`check_file.py` warns on an `arrowP` outside either curve's range. ECO2023's
+"one shift is bigger" scenario dropped its `arrowD: 8`, which sat on D₂'s label.
+
+Not done, on purpose: the runtime arrow mover tried in the published copies
+(which carry v2.7) re-placed arrows after drawing them. Here it would put the
+page out of step with `check_file.py`'s geometry, and it costs time on every
+load; deterministic insets and arithmetic preset heights get the same result.
+Static checks are unchanged on all nine examples; arrow contacts went from 76
+shift-arrow contacts to 5 (prototype: 23 render problems to 20).
+

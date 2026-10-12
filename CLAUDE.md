@@ -531,6 +531,9 @@ economics instead of label placement.
   across LAS straddles it at any price between the two crossings and is on one
   side of it above or below that band; `clear_p()` in the AD-AS build scans
   for that price rather than guessing an `arrowP`.
+* **A shift arrow's `arrowP` lies inside both of its curves.** Above the
+  shorter one's end the arrow points at nothing and its head lands on that
+  curve's name; `check_file.py` warns (2026-10-07).
 * **A point's name sits level with its dot, to the right.** At a crossing,
   above-right is along whichever curve rises there (SAS, S), and below-right
   along the one that falls. `dx 12, dy 4` was clear at every A, B and C in the
@@ -677,7 +680,7 @@ not enough to reproduce an implementation.
   `embed_engine.py`'s paths reproduce the delivered file byte-for-byte; all 20
   prototype widgets render with no engine errors; `check_file.py` runs the
   geometric label test over 74 labels in the 263 file with no overlaps.
-* **Engine is v2.55.** Since v2.6: `areas` shade a polygon (v2.11) with
+* **Engine is v2.56.** Since v2.6: `areas` shade a polygon (v2.11) with
   `edge` to outline it (v2.18) and labels centred on their anchor (v2.13);
   `dot:false` drops a marker but keeps the axis label (v2.12); points take
   `guides:"p"`/`"q"` for one leg of the elbow (v2.14); braces take
@@ -780,7 +783,10 @@ not enough to reproduce an implementation.
   reading is a whole year however it is asked for (v2.55), on a figure whose
   own ticks are 0, 15 and 30; underneath, the schedule is indexed by month,
   and setting that in months while writing it back in years clamped the thumb
-  at its own maximum so it never moved (v2.52).
+  at its own maximum so it never moved (v2.52). A shift arrow's ends are inset
+  for the curve's slope, so the head clears the line it points at by 3.5px
+  rather than 2.7px on every symbolic preset, and the presets choose a clear
+  arrow height instead of a fixed 88 or 32 (v2.56).
 
 * **PPF works.** The first chapter of Exam 1 material converted to seven widgets
   with no engine gaps hit: frontiers, a combinations table, points on/inside/

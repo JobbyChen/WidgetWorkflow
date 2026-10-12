@@ -1,4 +1,4 @@
-# Engine reference — `engine/sd-graph.js` v2.55
+# Engine reference — `engine/sd-graph.js` v2.56
 
 Written from the engine source. The conversion prompt carries a shorter version
 of this in its own "Engine reference" section; that one is what the model needs
@@ -241,7 +241,12 @@ pixel apart. `scripts/check_file.py` tests for this.
 - `from` names the curve this one shifts away from. It does three things: the
   new curve **animates** in from the old one's position, a red shift arrow is
   drawn between them at price `arrowP`, and the original curve is **dimmed**
-  (thinner, slightly transparent) from that step onward.
+  (thinner, slightly transparent) from that step onward. Each end of the arrow
+  stands off its curve by at least 3.5px edge to edge, solved for the curve's
+  slope at that price (**v2.56**): 11px along the arrow on a steep curve, more
+  on a shallow one. Keep `arrowP` inside the price range of *both* curves;
+  outside it the arrow points at the line's extension, past its end, and
+  `check_file.py` warns.
 - `shiftArrow: false` keeps the animation and the dimming but draws no arrow.
   Set it on any widget whose `table` has `arrows: true`: the per-row arrows
   already show the shift once per schedule row, and a fourth arrow at a price
@@ -581,11 +586,14 @@ crosses that price.
 `static:true` collapses everything to step 0 and draws **no brace**, which is
 what makes the four-cases-in-one-widget scenario set work.
 
-`arrowD` and `arrowS` move the two shift arrows of a `double`. A shift arrow is
-inset from the pair it belongs to, but the *other* pair can still lie across it,
-and the defaults (32 and 88) put the demand arrow through S₁ for some shift
-sizes. `scripts/render_widgets.py` measures every arrow against every curve and
-reports anything closer than 4px, which is how that gets caught.
+Both presets choose their own shift-arrow height (**v2.56**): the price nearest
+the old default (88, or 32 for a `double`'s demand arrow) where both of the
+pair's lines are on the plot, no other line or marked point lies inside the
+arrow's span, the curve labels at the lines' ends are clear, and -- where any
+such price exists -- no dashed guide is crossed. Before v2.56 a leftward demand
+shift drew its arrow across the P axis and some `double` shift sizes put the
+demand arrow through S₁. `arrowD` and `arrowS` still override the choice for a
+`double`; leave them out unless a measurement says otherwise.
 
 Presets combine with `title`/`lede`/`caption`/`steps` overrides and with
 scenarios, each scenario supplying its own `shift`/`dir`.

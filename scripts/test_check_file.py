@@ -591,6 +591,19 @@ case("a movement arrow of ordinary length is not", lambda r: C.check_short_arrow
     moves=[{"from": [30, 70], "to": [70, 30]}]), r)
     or not r.has("WARN", "arrows", "almost all head"))
 
+_SHIFT = [{"id": "S1", "label": "S1", "pts": [[8, 8], [100, 100]]},
+          {"id": "S2", "label": "S2", "pts": [[38, 8], [110, 80]], "from": "S1"}]
+
+case("a shift arrow above where its curve ends is reported",
+     lambda r: C.check_short_arrows(widget(
+         curves=[dict(_SHIFT[0]), dict(_SHIFT[1], arrowP=88)]), r)
+     or r.has("WARN", "arrows", "past the curve's end"))
+
+case("a shift arrow inside both curves is not",
+     lambda r: C.check_short_arrows(widget(
+         curves=[dict(_SHIFT[0]), dict(_SHIFT[1], arrowP=70)]), r)
+     or not r.has("WARN", "arrows", "past the curve's end"))
+
 # ---- images the conversion decided to keep ---------------------------------
 
 _GRAPHY = ('<img src="x.png" alt="supply and demand in the market for eggs">')

@@ -849,12 +849,44 @@ def q_at(pts, p):
     return a[0] + (p - a[1]) * (b[0] - a[0]) / (b[1] - a[1])
 
 
+# The engine's shiftInsets (v2.56), so the label test measures the arrow where
+# it is drawn. Change one, change the other, in the same commit. The engine
+# reads the slope off the drawn spline; this reads it off the polyline, which
+# is the same thing for every straight curve and close for a curved one.
+ARROW_REACH = 3.5 + 1.8 + 1.7
+
+
+def dir_at(pts, p, X, Y):
+    for a, b in zip(pts, pts[1:]):
+        if (p - a[1]) * (p - b[1]) <= 0 and a[1] != b[1]:
+            dx, dy = X(b[0]) - X(a[0]), Y(b[1]) - Y(a[1])
+            ln = math.hypot(dx, dy) or 1
+            return abs(dx) / ln, abs(dy) / ln
+    return 0.0, 1.0
+
+
+def shift_insets(spts, pts, ap, x0, x1, X, Y):
+    ux0, uy0 = dir_at(spts, ap, X, Y)
+    ux1, uy1 = dir_at(pts, ap, X, Y)
+    sy0, sy1, span = max(uy0, 0.1), max(uy1, 0.1), abs(x1 - x0)
+    d0 = max(11, min(40, ARROW_REACH / sy0))
+
+    def head(hh, ww):
+        return max(11, min(40, max(ARROW_REACH / sy1, (ARROW_REACH + ww * ux1) / sy1 - hh)))
+    d1 = head(6.2, 3.1)
+    if span - d0 - d1 >= 14:
+        return d0, d1
+    d1 = head(3.4, 1.7)
+    return (d0, d1) if span - d0 - d1 >= 10 else (11, 11)
+
+
 def arrow_segments(pn, X, Y):
     """Every arrow the engine will draw, as pixel endpoints with a description.
 
     Rule 5 forbids a label touching an arrow, not just a curve, so these have to
     be in the collision test too. Shift arrows are reconstructed the way the
-    engine places them (at price arrowP, inset 8px at each end); `moves` are
+    engine places them (at price arrowP, each end inset by shift_insets, the
+    engine's shiftInsets); `moves` are
     displaced perpendicular by `offset`, which is what puts them beside the
     curve rather than on it."""
     out = []
@@ -869,7 +901,8 @@ def arrow_segments(pn, X, Y):
         ap = c["arrowP"] if c.get("arrowP") is not None else (pts[0][1] + pts[-1][1]) / 2.0
         q0, q1 = q_at(spts, ap), q_at(pts, ap)
         sgn = 1 if q1 > q0 else (-1 if q1 < q0 else 0)
-        out.append((((X(q0) + sgn * 8, Y(ap)), (X(q1) - sgn * 8, Y(ap))),
+        d0, d1 = shift_insets(spts, pts, ap, X(q0), X(q1), X, Y)
+        out.append((((X(q0) + sgn * d0, Y(ap)), (X(q1) - sgn * d1, Y(ap))),
                     "the %s shift arrow" % (c.get("label") or c.get("id")),
                     (c.get("at", 0), c.get("until"))))
     for m in pn.get("moves") or []:
@@ -1493,6 +1526,29 @@ def check_short_arrows(cfgs, r):
                                % (n, " (%s)" % label if label else "",
                                   " panel %d" % pi if len(panels) > 1 else "",
                                   m.get("from"), m.get("to"), px))
+                # A shift arrow drawn at a price one of its curves never
+                # reaches points at the line's extrapolation, past its end --
+                # where its name usually is. Two examples set arrowP: 88 on an
+                # S2 that stops at 80 and 84, and the head landed on "S2".
+                byid = {c.get("id"): c for c in pn.get("curves") or [] if c.get("id")}
+                for c in pn.get("curves") or []:
+                    src = byid.get(c.get("from"))
+                    if not src or c.get("shiftArrow") is False or len(c.get("pts") or []) < 2:
+                        continue
+                    pts = c["pts"]
+                    ap = c["arrowP"] if c.get("arrowP") is not None else (pts[0][1] + pts[-1][1]) / 2.0
+                    for cv in (src, c):
+                        ps = [q[1] for q in cv.get("pts") or []]
+                        if ps and not (min(ps) <= ap <= max(ps)):
+                            r.warn("arrows", "widget %d%s%s: the %s shift arrow is at price %g, but %s is "
+                                   "only drawn from %g to %g -- the arrow points past the curve's end. "
+                                   "Set arrowP inside both curves."
+                                   % (n, " (%s)" % label if label else "",
+                                      " panel %d" % pi if len(panels) > 1 else "",
+                                      c.get("label") or c.get("id"), ap,
+                                      cv.get("label") or cv.get("id"), min(ps), max(ps)))
+                            short += 1
+                            break
     if checked and not short:
         r.ok("arrows", "every movement arrow is long enough to read (%d checked)" % checked)
 

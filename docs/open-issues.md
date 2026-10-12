@@ -42,6 +42,23 @@ Checkboxes. Keep `CLAUDE.md`'s status paragraph in sync with this file.
       total, and a red arrow carrying one year's move into the next year's
       answer. No image remains in that chapter.
 
+## From the 2026-10-12 review of Ian's chapter files
+
+Ian's checklist, with his own ticks: https://claude.ai/artifact/NWBQ4YoLGbnMKbdonVFDyF
+
+- [x] ~~Priority 1–2 items (broken widgets, heading structure, layout).~~
+      Fixed in branch `claude/toc-markup-issue-3cwiam` of the `Widget` repo,
+      under `Checking-fixed/`. They were made from the original
+      `Checking.zip`, so if Ian has edited his own copies since, the fixes
+      are merged into his, never copied over them.
+- [ ] **Upload `Checking-fixed/sn25-v6.css` to S3 as `content/sn25-v6.css`.**
+      It adds the phone rule that lets a wide table scroll inside its own box
+      instead of pushing the page sideways. Until it is live, every chapter
+      with a wide prose table still scrolls the page at 320px (see the
+      four-chapter overflow item under *Workflow*). Only Ian can do this.
+- [ ] Priority 3–5 items (content, missing information, housekeeping) are on
+      the checklist; some are already ticked there.
+
 ## Found by running the checker on the delivered files
 
 - [x] ~~`ECO2013-263-SupplyAndDemand.html` names the class in its prose.~~ Three

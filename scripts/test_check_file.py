@@ -477,6 +477,7 @@ for txt, tag in [("<p>built from a lecture recording alone.</p>", "a lecture rec
                  ("<p>he drew it on the board during the review.</p>", "on the board"),
                  ("<p>roughly 20% of the class said otherwise.</p>", "the class said"),
                  ("<p>he explained the model in class last week.</p>", "in class"),
+                 ("<p>his slide shows the shift going right.</p>", "his slide"),
                  ("<p>the professor said demand shifts right.</p>", "the professor said")]:
     case("source: %s" % tag,
          (lambda t: lambda r: C.check_source(t, [], r) or r.has("FAIL", "source", ""))(txt))

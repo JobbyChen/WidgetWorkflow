@@ -82,6 +82,9 @@ SOURCE_GUARDED = [
     (r"(?:said|says|noted|explained|mentioned|covered|discussed|showed|drew|"
      r"went over)[^.]{0,40}\bin class\b", "in class"),
     (r"\bin class\b[^.]{0,40}(?:said|says|noted|explained|mentioned)", "in class"),
+    # "his slide" / "her slides": the deck belongs to whoever taught it, which
+    # names the source as surely as "the slides" (Ian, 2026-10-12)
+    (r"(?:his|her|their) slides?\b", "his slide"),
 ]
 
 CSS_BLOCK = re.compile(r"<style>\s*\n(\.sdg \{.*?)\n</style>", re.S)

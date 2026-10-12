@@ -159,7 +159,8 @@ itself still forbids questions outright.
    uses 📘 BLUE BOOK and inserts before the first `<h1>`, so the date keeps its
    corner. Neither sets `open`; both say so in a comment, so a TOC that looks
    "open" is the emoji, not the `<details>`. Both list `h1`, `h2` *and* `h3`. `<p class="date">` per class date, `<h1>`/`<h2>`, with
-   `<h3>` allowed (Concise uses them, often ending in a colon; Ian, 2026-10-12), `.exam-tip` with an `<h4>`, plain tables; `<strong>` for
+   `<h3>` only on Concise pages, where headings are changed by hand and often
+   end in a colon (Ian, 2026-10-12; check_file.py warns on one elsewhere), `.exam-tip` with an `<h4>`, plain tables; `<strong>` for
    vocabulary terms only, `<b>` for emphasis and labels, never `<u>` -- except
    that **a centred equation the source sets in `<strong>` keeps it** (Ian,
    2026-10-07, and he asked for it as a rule: where the source has a

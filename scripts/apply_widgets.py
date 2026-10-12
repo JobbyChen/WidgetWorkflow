@@ -160,7 +160,8 @@ def apply(src, m, name, use_anchors=False, toc=False):
         sys.exit("%s:\n  " % name + "\n  ".join(problems))
 
     # 1. engine
-    if '<div class="sdg"' not in out:
+    n_widgets = out.count('<div class="sdg"')   # before the engine's own doc comment joins the file
+    if not n_widgets:
         return out, 0
     if PLACEHOLDER not in out and not embed_engine.CSS_BLOCK.search(out):
         hm = HOUSE_SCRIPT_RE.search(out)
@@ -182,7 +183,7 @@ def apply(src, m, name, use_anchors=False, toc=False):
     if back != orig:
         sys.exit("%s: the output differs from the source beyond the widgets "
                  "and the engine; not written" % name)
-    return out, out.count('<div class="sdg"')
+    return out, n_widgets
 
 
 def main():

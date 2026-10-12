@@ -793,3 +793,23 @@ load; deterministic insets and arithmetic preset heights get the same result.
 Static checks are unchanged on all nine examples; arrow contacts went from 76
 shift-arrow contacts to 5 (prototype: 23 render problems to 20).
 
+## 2026-10-12 — the review conventions, written down
+
+Ian reviewed a set of his own chapter files (Full, Balanced and Concise
+editions) against the repo's rules, and three of the review's findings were
+wrong about the house format rather than about the files. They are rules now:
+
+* **Glossary and Key Takeaways are `<h2>`s** by design, not promoted headings.
+* **An `<h3>` ending in a colon is normal on a Concise page**, where the
+  headings are edited by hand. `check_file.py` allows an `<h3>` on any page
+  whose file name contains "concise" (PRs #2 and #3) and warns elsewhere.
+* **"in class" and "his slide" are source references** the same as "the
+  slides". The checker already guarded "in class" behind an attribution verb;
+  "his/her/their slide(s)" is in its list now, with a test.
+
+Also written down: how a review is delivered (findings only, in a fixed
+priority order, nothing changed until asked), what the three editions are,
+and that `x-ignore` folders are skipped. The repo's new home
+(`ian-sn2/WidgetWorkflow`) and default branch are in `CLAUDE.md`'s head.
+The one open item from the review that is outside this repo — uploading the
+stylesheet with the phone table rule to S3 — is in `docs/open-issues.md`.

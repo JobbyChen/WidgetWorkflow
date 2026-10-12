@@ -8,7 +8,8 @@ semester is a config edit, and students can step through a graph instead of
 reading a finished picture.
 
 **Start with `CLAUDE.md`**, then `docs/decisions-and-history.md` and
-`docs/open-issues.md`.
+`docs/open-issues.md`. The repo lives at `ian-sn2/WidgetWorkflow`; its
+default branch is `claude/eco-interactive-graph-widgets-yrl3jz`.
 
 ## Layout
 

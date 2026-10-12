@@ -6,6 +6,13 @@ widgets, so a new semester's examples (different good, different numbers,
 different shift) are a config edit rather than new artwork. The project began in
 a Claude.ai project ("ECO2013 widgets", 2026-09-11 → 09-16) and moved here.
 
+The repo lives at **`ian-sn2/WidgetWorkflow`** (it moved from
+`JobbyChen/WidgetWorkflow` in October 2026); the default branch is
+`claude/eco-interactive-graph-widgets-yrl3jz`. Work goes up as a pull request
+against that branch. The browser scripts need `pip install playwright` once
+per container; Chromium is already under `/opt/pw-browsers`, so never run
+`playwright install`.
+
 **Read this file, then `docs/decisions-and-history.md`, then
 `docs/open-issues.md`.**
 
@@ -85,8 +92,8 @@ itself still forbids questions outright.
    one. Authority order: user message > notes prose > notes labels > transcript >
    image > alt text.
 4. **Student-facing text never mentions its source.** No "the transcript", "the
-   lecture", "the recording", "on the board", "the slides", "the class", "the
-   file" — in captions, labels, or prose. Attributing content to whoever taught
+   lecture", "the recording", "on the board", "the slides", "his slide", "in
+   class", "the class", "the file" — in captions, labels, or prose. Attributing content to whoever taught
    it ("the professor said") is the same violation whoever they are. This is
    also Ian's standing preference for all study-guide work: paraphrase in
    original wording, never copy textbook/printed phrasing, and flag anything
@@ -191,6 +198,14 @@ itself still forbids questions outright.
    source has it. The Exam 3 fiscal chapter is **not** to be redone for this;
    it applies from the next conversion onward.); keep every
    `<!-- IMAGE POSITION: … -->` comment where the image was.
+
+   **Glossary and Key Takeaways are `<h2>`s, on purpose.** They are not
+   promoted sections and not a heading the source lacks: the house format
+   ends every chapter with them at that level (Ian, 2026-10-12). Do not
+   report them in a review. The same day's other two confirmations, already
+   above: an `<h3>` ending in a colon is normal on a Concise page, where the
+   headings are edited by hand, and `.exam-tip` boxes take an `<h4>` while
+   class dates go in `<p class="date">`.
 8. **A step must change the drawing.** Ian's rule, and he has had to give it
    twice: a caption that advances while the picture holds still reads as a
    broken button. The usual cause is off-by-one rather than carelessness —
@@ -945,6 +960,26 @@ Ian changed this rule on 2026-09-17, and the change applies **here only**:
   finish the output. This file governs work done here, with Ian present. If v6
   is ever given a question-asking step, it needs a bump to v7 and a note about
   unattended runs.
+
+### Reviewing Ian's work
+
+When Ian asks for a check of files he has written or edited (a chapter, a
+Concise edition, a zip of a module), the deliverable is the findings. **Report
+and change nothing** unless he asks for the fix (Ian, 2026-10-12). Report in
+this order, most costly first:
+
+1. Broken widgets and wrong heading structure.
+2. Layout and page errors (a table pushing the page sideways, a lost date).
+3. Wrong or contradictory content.
+4. Missing information.
+5. Housekeeping.
+
+Three editions of a chapter exist. **Full** is the source as converted.
+**Balanced** is close to Full. **Concise** is produced by a pipeline that
+rewrites the prose: it usually carries no images, may use tables or widgets
+where Full has a figure, and is the one edition where `<h3>` is expected.
+Review each against what its edition is meant to be, not against Full.
+Folders marked `x-ignore` are out of scope: skip them without comment.
 
 ## Vocabulary
 

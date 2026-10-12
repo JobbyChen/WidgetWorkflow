@@ -8,7 +8,8 @@ Groups, in order:
   steps     every step changes the drawing, not just the caption
   steady    a curve shared between scenarios keeps its label in one place
   head      house format -- a <title> exists, the Red Hat Display link,
-            sn25-v6.css, and a current house script
+            sn25-v6.css, and a current house script (--no-head skips this
+            for a page in another house format, such as StudyKnight's)
   engine    <!--SDG-ENGINE--> exactly once, or an engine already embedded whose
             bytes match engine/; and no <link>/<script src> to a hosted copy
   markup    no <u>, <h3> only on Concise pages, <strong> used for vocabulary
@@ -2152,6 +2153,12 @@ def main():
                     help="the file this one was built from (the full edition, "
                          "the chapter as sent). Its class dates must all "
                          "survive into FILE.")
+    ap.add_argument("--no-head", action="store_true",
+                    help="skip the house-head checks. For a page in another "
+                         "house format (the StudyKnight files carry "
+                         "sk26-v1.css and content/sn25-v5.js) where the head "
+                         "is not the conversion's to change; the widgets are "
+                         "still checked in full.")
     args = ap.parse_args()
     path = pathlib.Path(args.file)
     if not path.exists():
@@ -2160,7 +2167,10 @@ def main():
     r = Report()
 
     print("checking %s\n" % path)
-    check_head(src, r)
+    if args.no_head:
+        r.skip("head", "--no-head: the head is another house format's")
+    else:
+        check_head(src, r)
     check_engine(src, r)
     check_markup(src, r, concise="concise" in path.name.lower())
     check_toc(src, r)

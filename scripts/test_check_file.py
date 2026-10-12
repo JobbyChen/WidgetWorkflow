@@ -513,8 +513,10 @@ case("a long <strong> in prose is reported", lambda r: C.check_markup(
 case("a centred equation keeps its <strong>", lambda r: C.check_markup(
     '<body><p style="text-align: center;"><strong>Tax Burden = 6% of the first $50,000 plus 30% of the rest.</strong></p></body>', r)
     or not r.has("WARN", "markup", "swallows"))
-case("<h3> in the body is allowed", lambda r: C.check_markup("<body><h3>Sub:</h3></body>", r)
-     or not r.has("FAIL", "markup", "<h3>"))
+case("<h3> on a Concise page is allowed", lambda r: C.check_markup("<body><h3>Sub:</h3></body>", r, concise=True)
+     or not (r.has("FAIL", "markup", "<h3>") or r.has("WARN", "markup", "<h3>")))
+case("<h3> on a Full or Balanced page is flagged", lambda r: C.check_markup("<body><h3>Sub:</h3></body>", r)
+     or r.has("WARN", "markup", "<h3>"))
 TOC_PAGE = ('<body><details class="toc-box"><nav><ul>'
             '<li><a href="#alpha">Alpha</a></li></ul></nav></details>'
             '<h1 id="alpha">Alpha</h1>')

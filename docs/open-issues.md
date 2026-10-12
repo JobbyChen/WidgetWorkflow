@@ -86,6 +86,12 @@ Checkboxes. Keep `CLAUDE.md`'s status paragraph in sync with this file.
 
 ## Engine feature requests from the macro chapters
 
+- [ ] **A `table` whose rows are one quantity and several prices.** The schedule
+  shape takes `[price, q1, q2…]`; a cost table (Q, AVC, ATC, MC per row) is the
+  other way round, so the chapter 11 Piesanos table cannot be linked to its
+  plot with hover-highlighting the way a demand schedule is. `byq: true` on
+  the table, or a transposed `rows`, would do it (2026-10-12).
+
 - [ ] **A `flow` widget kind for process diagrams** (Ian asked whether the
   Fed open-market flowcharts in Exam 3 Monetary Policy could be widgets,
   2026-10-07; "maybe another time"). Two parties, the arrows between them

@@ -11,7 +11,7 @@ Groups, in order:
             sn25-v6.css, and a current house script
   engine    <!--SDG-ENGINE--> exactly once, or an engine already embedded whose
             bytes match engine/; and no <link>/<script src> to a hosted copy
-  markup    no <u>, no <h3>, <strong> used for vocabulary terms only
+  markup    no <u>, <strong> used for vocabulary terms only
   toc       the house table of contents, and whether its links reach the
             headings -- unless studyguide/sn25-v2.js builds it in the browser
   json      every <div class="sdg"> holds one parseable JSON config
@@ -423,8 +423,8 @@ def check_markup(src, r):
     if re.search(r"<u\b", body, re.I):
         r.fail("markup", "<u> is never used; the printed underline is <b>, or "
                          "<strong> when the word is a term")
-    if re.search(r"<h3\b", body, re.I):
-        r.fail("markup", "<h3> is not part of the house format; use <h2>")
+    # <h3> is allowed (Ian, 2026-10-12): Concise pages use h3s, often ending
+    # in a colon, under an h2.
     # A centred equation written as text keeps its <strong> (Ian, 2026-10-07):
     # blue and bold is how the house format sets a displayed formula, so a
     # centred paragraph is not measured here.

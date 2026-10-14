@@ -813,3 +813,37 @@ and that `x-ignore` folders are skipped. The repo's new home
 (`ian-sn2/WidgetWorkflow`) and default branch are in `CLAUDE.md`'s head.
 The one open item from the review that is outside this repo — uploading the
 stylesheet with the phone table rule to S3 — is in `docs/open-issues.md`.
+
+## 2026-10-12 to 14 — the UCF project: 24 chapters in three editions
+
+Ian sent 24 StudyKnight chapters (ECO2013 and ECO2023, Full, Balanced and
+Concise), 190 unique figures, and asked for a copy of each edition with the
+graph images replaced by widgets and nothing else changed. Six agents built
+the chapters in parallel from a shared brief, review chapters reusing the
+base chapters' configs verbatim so one figure is drawn one way everywhere;
+`scripts/apply_widgets.py` applied the maps and proved byte-identity outside
+the widgets, and `--no-head` let `check_file.py` check StudyKnight pages.
+The decisions, in the order Ian made them:
+
+* The TOC script is the one head change (`content/sn25-v5.js` →
+  `studyguide/sn25-v2.js`); the text is never touched, and the source's
+  defects (underline tags, "in the class", wrong titles, a 252 term code,
+  reversed elasticity ranges, a $20 that should be $15) stay on the
+  checklist, which also lives as an interactive page with saved ticks.
+* A vertical frontier shift gets a `moves` arrow; the production-table
+  figures of the comparative-advantage chapter are widgets with `calcs`
+  totals, because their numbers change each semester.
+* The Concise editions were pruned: a widget stays only where the Concise
+  text introduces it, cases merge into scenario buttons, and nothing is
+  tabled in place of a dropped widget. 148 Concise widgets became 110.
+* The buyers' tax brace sits where the source draws its arrow; a shaded
+  rectangle is named at its left end beside the axis; a name that cannot
+  fit its shape goes over dashed guides rather than a solid line, or above
+  the shape with a leader where a solid line crosses the only inside spot;
+  a hatched numeric figure with its amount in the text carries no name.
+* Redone chapters are delivered as the three files alone, not a path tree;
+  the finished files are not committed until Ian has reviewed them.
+
+Also found on the way: the BSC2010 question boxes become click-to-check
+quizzes only when a chapter carries the `<style>`/`<script>` block the
+Molecular Genetics file has before `</body>`; the Mutations files lacked it.

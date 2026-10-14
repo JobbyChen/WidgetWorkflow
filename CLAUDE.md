@@ -577,6 +577,34 @@ economics instead of label placement.
   shifted curve arrives, which is the printed grey-original convention; that
   is the only weight change a shift pair gets. `thin` is for a line that is
   genuinely secondary in the drawing, such as the 45-degree line.
+* **A shaded area's name goes where the source puts it, and never on a
+  solid line.** Ian, 2026-10-14, from the Exam 3 review's profit and loss
+  rectangles. A rectangle against the price axis is named at its left end,
+  beside the axis, where no cost curve runs; a thin one takes the name on one
+  line. Where the name cannot fit inside the shape at all, it goes beside the
+  shape **over the dashed guides** rather than over a curve (the
+  monopolistic-competition DWL wedge), and where a solid line crosses the
+  only inside spot (MR through a monopoly's profit rectangle) the name sits
+  above the shape with a `leader` hairline into it, as the source draws it.
+  A numeric figure the source hatches without a name, stating the amount in
+  the text, carries no in-plot name either. `place_labels.py` still finds the
+  centroid; these are the cases where the centroid is wrong.
+* **A brace goes where the source draws its arrow.** The buyers' tax arrow
+  sits between D and D_TAX at the lower right, past Q*; drawn at the upper
+  left it collided with the P_T guide and read as a different figure (Ian,
+  2026-10-14). Check each brace against the artwork, not against the
+  sellers' case it was copied from.
+* **A vertical shift gets a `moves` arrow.** The engine's shift arrow is
+  horizontal, so a frontier whose corn intercept moves up and whose TV
+  intercept stays put had no arrow at all ("why is there no up arrow",
+  Ian, 2026-10-12). Draw it as a `moves` arrow between the two lines at
+  the widest point of the gap, standing 7 units clear of each.
+* **A figure whose numbers change each semester is a widget, table and
+  all.** The comparative-advantage production figures (two frontiers with a
+  total-production table beside them) were kept as images for want of a
+  two-panel table; Ian's call (2026-10-12) is that people, goods and numbers
+  are exactly what changes, so they are two panels with the totals as a
+  `calcs` block under the plots.
 * **An image that stays an image says why.** `<!-- KEEP: why -->` immediately
   before the `<img>`, declared the way a point declares `divider` or `boxed`,
   and `check_file.py` stops reporting it as a graph. The macro chapters are
@@ -960,6 +988,32 @@ Ian changed this rule on 2026-09-17, and the change applies **here only**:
   finish the output. This file governs work done here, with Ian present. If v6
   is ever given a question-asking step, it needs a bump to v7 and a note about
   unattended runs.
+
+### Converting another publisher's files (the UCF / StudyKnight set, 2026-10-12)
+
+* **Only the widgets change.** The head keeps its own stylesheet
+  (`sk26-v1.css`) and `<title>`; the one head change is swapping
+  `content/sn25-v5.js` for the live `studyguide/sn25-v2.js`, which builds the
+  table of contents (Ian: "one thing you can fix is the toc"). No prose,
+  markup or heading edits, however wrong they look: those go on the
+  checklist. `scripts/apply_widgets.py` replaces each mapped `<img>` with its
+  widget, anchors widgets into a Concise edition, and refuses to write a file
+  that differs from its source in anything else; `check_file.py --no-head`
+  checks the widgets without the Smokin' Notes head rules.
+* **A Concise edition carries a widget only where its own text introduces
+  it.** Cases of one lesson that the text introduces together (surplus and
+  shortage, the two taxes, the four surplus areas) become one widget with
+  scenario buttons; a widget the Concise text never introduces is dropped,
+  and not replaced by a table of its numbers either (Ian, 2026-10-12: the
+  Concise exists to save vertical space, and Full and Balanced carry the
+  figure). Two widgets back to back with no text between them is never
+  acceptable; `concise_runs.py` in the build area lists any such run.
+* **Deliveries.** The full set goes as one zip: `c - ECO2013 UCF Widgets/`
+  and `d - ECO2023 UCF - Widgets/` with `Exam N/` and chapter subfolders (no
+  "- DONE" suffix), new files only, plus `CHECKLIST.md` and one changelog per
+  chapter. A redone chapter goes as the three files on their own, or one flat
+  folder, never a path tree. The finished UCF files are not committed here;
+  Ian reviews them first.
 
 ### Reviewing Ian's work
 

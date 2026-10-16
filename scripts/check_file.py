@@ -1006,8 +1006,14 @@ def guide_segments(pn, X, Y, ox, oy, ax):
     # parked at the end of a curve that runs down to the axis lands on the axis
     # itself, which is exactly where "D" sat in the Piesanos figure. Always on
     # screen, so no visibility window.
-    out.append(([(ox, 14.0), (ox, oy), (ox + pw + 14, oy)], "the axis lines",
-                (0, None)))
+    if ax.get("cross"):
+        # axes.cross puts the crossing inside the plot (engine v2.58)
+        cx, cy = X(float(ax["cross"][0])), Y(float(ax["cross"][1]))
+        out.append(([(cx, 14.0), (cx, oy)], "the axis lines", (0, None)))
+        out.append(([(ox, cy), (ox + pw + 14, cy)], "the axis lines", (0, None)))
+    else:
+        out.append(([(ox, 14.0), (ox, oy), (ox + pw + 14, oy)], "the axis lines",
+                    (0, None)))
     for p in pn.get("points") or []:
         if p.get("guides") is False:
             continue

@@ -1,4 +1,4 @@
-# Engine reference — `engine/sd-graph.js` v2.57
+# Engine reference — `engine/sd-graph.js` v2.58
 
 Written from the engine source. The conversion prompt carries a shorter version
 of this in its own "Engine reference" section; that one is what the model needs
@@ -232,6 +232,13 @@ links, changes and spans as what a step can change.
 `money` prefixes prices with `$`; `cents` forces two decimals; `k` renders
 quantities of 1000+ as `12k`. `grid` draws the dashed gridlines at every tick —
 the schedule-graph look. `bg:false` removes the tinted plot rectangle.
+
+`cross: [q, p]` draws the two axis lines through that data point instead of
+along the plot's left and bottom edges (**v2.58**): a scatter of a stock's
+returns against the market's has four quadrants and its axes meet at the
+origin in the middle. Pick a scale with the origin at the centre (`[55, 55]`
+on a 110 axis) and leave the ticks out. `check_file.py` tests labels against
+the lines where they are drawn.
 
 `x` and `y` are the axis **titles**, defaulting to `P` and `Q`, which is what
 the printed artwork uses. A production possibilities frontier names its axes with

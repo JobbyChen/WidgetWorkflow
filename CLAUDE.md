@@ -724,7 +724,7 @@ not enough to reproduce an implementation.
   `embed_engine.py`'s paths reproduce the delivered file byte-for-byte; all 20
   prototype widgets render with no engine errors; `check_file.py` runs the
   geometric label test over 74 labels in the 263 file with no overlaps.
-* **Engine is v2.57** (a `flow` chain-of-boxes widget and a shield against the host page's own CSS, both from the FIN3403 set; the rest below is unchanged). Since v2.6: `areas` shade a polygon (v2.11) with
+* **Engine is v2.58** (a `flow` chain-of-boxes widget, a shield against the host page's own CSS, and `axes.cross` for axes that meet inside the plot, all from the FIN3403 set; the rest below is unchanged). Since v2.6: `areas` shade a polygon (v2.11) with
   `edge` to outline it (v2.18) and labels centred on their anchor (v2.13);
   `dot:false` drops a marker but keeps the axis label (v2.12); points take
   `guides:"p"`/`"q"` for one leg of the elbow (v2.14); braces take
@@ -1057,8 +1057,7 @@ Ian changed this rule on 2026-09-17, and the change applies **here only**:
   symbolic: word axis titles wrapped on `\n`, no numbers unless the source
   prints them, `grey` for a faded series, histograms and bar charts as
   rectangular `areas`. What stays a picture: timelines (the calculator
-  widget draws its own), a scatter plot through the origin (no negative
-  axes), the annotated button legend, income-statement tables, the stock
+  widget draws its own), the annotated button legend, income-statement tables, the stock
   quote table. Flow charts (the leverage chains) are the `flow` widget.
 * **A chapter's own `<style>` can restyle the plot.** The risk chapter's
   `.brace { transform: scaleX(.65) }` squeezed every upright brace into the

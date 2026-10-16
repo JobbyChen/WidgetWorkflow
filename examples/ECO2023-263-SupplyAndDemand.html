@@ -337,7 +337,7 @@
 .sdg .sdg-flow .sub { font-size:70%; font-weight:600; }
 </style>
 <script>
-/* ===== sd-graph.js v2.57 — data-driven supply & demand widgets =====
+/* ===== sd-graph.js v2.58 — data-driven supply & demand widgets =====
    Markup:  <div class="sdg"><script type="application/json">{ ...config... }<\/script></div>
    Top-level config:
      title, lede, caption         heading / intro / static caption (caption used only when there are no steps)
@@ -553,7 +553,14 @@
       (ax.xticks || []).forEach(function (q) { g.appendChild(el('line', {class: 'grid', x1: X(q), y1: 14, x2: X(q), y2: O.y})); });
       (ax.yticks || []).forEach(function (p) { g.appendChild(el('line', {class: 'grid', x1: O.x, y1: Y(p), x2: O.x + PW + 14, y2: Y(p)})); });
     }
-    g.appendChild(el('path', {class: 'ax', d: 'M' + O.x + ' 14 L' + O.x + ' ' + O.y + ' L' + (O.x + PW + 14) + ' ' + O.y}));
+    // axes.cross: [q, p] puts the crossing of the two axis lines inside the
+    // plot (v2.58) -- a scatter of returns against market returns has four
+    // quadrants, and its axes meet at the origin in the middle of the picture
+    // rather than at the bottom-left corner. Everything else is drawn as
+    // before; only the two lines and their titles move.
+    var AXX = ax.cross ? X(ax.cross[0]) : O.x, AXY = ax.cross ? Y(ax.cross[1]) : O.y;
+    if (ax.cross) g.appendChild(el('path', {class: 'ax', d: 'M' + AXX + ' 14 L' + AXX + ' ' + O.y + ' M' + O.x + ' ' + AXY + ' L' + (O.x + PW + 14) + ' ' + AXY}));
+    else g.appendChild(el('path', {class: 'ax', d: 'M' + O.x + ' 14 L' + O.x + ' ' + O.y + ' L' + (O.x + PW + 14) + ' ' + O.y}));
     (ax.xticks || []).forEach(function (q) { g.appendChild(el('text', {class: 'tk', x: X(q), y: O.y + 15, 'text-anchor': 'middle'}, fmtQ(q, ax))); });
     (ax.yticks || []).forEach(function (p) { g.appendChild(el('text', {class: 'tk', x: O.x - 6, y: Y(p) + 4, 'text-anchor': 'end'}, fmtP(p, ax))); });
     // Axis titles. P and Q fit anywhere, but a PPF names its axes with words, so
@@ -574,12 +581,12 @@
       return t;
     }
     g.appendChild(axisTitle(ax.x || 'Q', O.x + PW + 34,
-                            O.y + (xtitle.length > 1 ? 36 : 16), 'end'));
+                            AXY + (xtitle.length > 1 ? 36 : 16), 'end'));
     // A wrapped title drops below the topmost tick rather than standing
     // beside it (v2.35), which is where the source puts it and what keeps the
     // margin down to the title's own width: side by side, "100%" and
     // "Cumulative / % of Income" cost 40px of plot between them.
-    g.appendChild(axisTitle(ax.y || 'P', ytitle.length > 1 ? O.x - 12 : O.x - 2,
+    g.appendChild(axisTitle(ax.y || 'P', ytitle.length > 1 ? AXX - 12 : AXX - 2,
                             ytitle.length > 1 ? 52 : 11,
                             ytitle.length > 1 ? 'end' : 'start'));
 

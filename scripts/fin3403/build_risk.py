@@ -116,6 +116,19 @@ normal = {
         "tech": {"label": "Tech Stock", "points": normal_points("3.31%", "15.6%", "27.89%"),
                  "caption": "The tech stock's band is the same two-thirds of outcomes, but its larger standard deviation stretches it from 3.31% all the way to 27.89%."}}}
 
+# 9. beta as the slope of the best-fit line: axes through the origin
+dots = [[65.3, 86.9], [42.3, 73.5], [86.6, 83.0], [79.1, 69.2], [38.5, 60.3], [53.3, 53.2], [32.3, 46.1], [52.3, 34.8], [23.7, 28.0], [41.9, 6.7]]
+scatter = {
+    "title": "Beta as the Slope of the Best-Fit Line",
+    "axes": AX("Market Returns\n(e.g. S&P 500)", "A Specific\nStock's Returns", bg=False, cross=[55, 55]),
+    "curves": [{"id": "BF", "label": "Best-Fit Line\nSlope = Beta", "pts": [[10.3, 6.4], [92.8, 95.1]], "color": "orange", "ldx": 8, "ldy": 2, "at": 1}],
+    "points": [{"q": d[0], "p": d[1], "guides": False, "showP": False, "showQ": False} for d in dots],
+    "steps": ["Each dot is one period: the market's return across, the stock's return up. Both can be negative, so the axes cross at the origin.",
+              "The best-fit line through the dots summarises how the stock moves with the market, and its slope is the stock's beta."]}
+
+# the tech-stock figure is the same widget opening on the Tech Stock case
+normal_tech = dict(normal, activeScenario="tech", scenarios={"tech": normal["scenarios"]["tech"], "utility": normal["scenarios"]["utility"]})
+
 R = "fin3403-exam2-risk-return-"
 E = "fin3403-exam4-exam2review-"
 risk = {R + "01-expected-return-vs-risk-curve.png": risk_curve,
@@ -126,9 +139,11 @@ risk = {R + "01-expected-return-vs-risk-curve.png": risk_curve,
         R + "07-security-market-line-sml-diagram.png": sml,
         R + "09-sml-overpriced-correctly-underpriced.png": sml_priced,
         R + "10-normal-curve-utility-stock-68-percent.png": normal,
-        R + "11-normal-curve-tech-stock-68-percent.png": {"keep": "the same figure for the tech stock is a button on the widget above"}}
+        R + "06-beta-best-fit-line-scatter-plot.png": scatter,
+        R + "11-normal-curve-tech-stock-68-percent.png": normal_tech}
 review = {E + "22-risk-return-curve-expected-return-vs-risk.png": risk_curve,
           E + "23-diversification-portfolio-risk-chart-company-unique.png": diversify,
+          E + "24-beta-scatter-plot-specific-stock-returns-vs-market-.png": scatter,
           E + "25-security-market-line-sml-capm-chart.png": sml,
           E + "27-sml-overpriced-correctly-priced-underpriced-stock.png": sml_priced}
 # Concise: only where the Concise's own sentence or table introduces the figure

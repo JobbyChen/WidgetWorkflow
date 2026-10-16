@@ -847,3 +847,25 @@ The decisions, in the order Ian made them:
 Also found on the way: the BSC2010 question boxes become click-to-check
 quizzes only when a chapter carries the `<style>`/`<script>` block the
 Molecular Genetics file has before `</body>`; the Mutations files lacked it.
+
+## 2026-10-16 — FIN3403: calculator screenshots become HP 10bII+ widgets
+
+Ian sent the UCF finance set (four exams, 15 chapters, three editions each)
+with a sample page carrying an interactive HP 10bII+ calculator widget, and
+asked for the same treatment as the economics set: calculator widgets in
+place of the screenshots, the TOC script swap as the only head change, the
+text untouched, and no widgets back to back in the Concise editions.
+
+What was built: `engine/hp10bii.js`/`.css` (the sample, extended with P/YR,
+EFF%, AMORT, Nj, PI, a chained second stage, alternatives buttons and Σ+
+statistics, because the notes use every one of those); `apply_widgets.py`
+grew `"hp"` map entries, the hp embed and `occurrence`; and the proof learned
+to cut replaced tags out by position, since the TVM chapter uses one picture
+twice. 76 screenshots in seven chapters became widgets (27 in TVM alone),
+25 Concise placements were made where the Concise text states the numbers,
+and every widget was driven in Chromium against the number the notes print:
+162 runs, 0 mismatches. Kept as pictures: timelines, charts, the annotated
+button legend, the hand-added breakdowns. Source findings (a 2015/2018 year
+mismatch in the Exam 2 Review's GM bond, 34.33 vs 34.31 years, alt texts
+calling P/YR "PMT", fixed-width diagrams wider than a phone) went on the
+checklist unchanged. The delivery is a zip, not a commit; Ian reviews first.

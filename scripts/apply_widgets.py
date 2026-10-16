@@ -34,7 +34,17 @@ MAP.json:
      "anchors": [{"after": "<b>Binding price ceiling</b>",
                   "image": "eco2023-market-equilibrium-04-price-ceiling-diagram.png"}]}
 
-An image entry is a widget config or `{"keep": why}`. A kept image is left as
+An image entry is a widget config, `{"keep": why}`, or a **calculator widget**
+for the FIN3403 set (2026-10-16): `{"hp": "tvm"|"cf"|"amort"|"stat"|"keys",
+...attributes}`. Each remaining key becomes a `data-` attribute on a
+`<div class="hp10bii…">` (`alt` is JSON-encoded into `data-alt`), the engine
+for those is `engine/hp10bii.css` + `engine/hp10bii.js`, embedded as a
+`<style>` and a `<script>` after the house script, and the original `<img>`
+tag is kept inside a `<noscript>` so a reader without JavaScript still sees
+the screenshot. `"occurrence": 2` replaces only the second use of an image
+that the file carries twice and leaves the others as they are. `expect` and
+`alt_expect` are test expectations for a harness; `--strip-expect` drops
+them from the delivered file. A kept image is left as
 the tag it is -- no comment is added, because the file's other content is not
 this script's to change -- and the reason goes in the changelog. `anchors`
 reuse a config from `images` by name, or carry their own under `widget`; an
@@ -52,6 +62,7 @@ and the comments it inserted taken back out of the output, and the replaced
 """
 
 import argparse
+import html
 import json
 import os
 import pathlib
@@ -68,6 +79,40 @@ HOUSE_SCRIPT_RE = re.compile(r'^[ \t]*<script[^>]*src="[^"]*sn25-v\d+\.js"[^>]*>
                              re.M)
 TOC_SCRIPT = "https://smokinnotes.s3.us-east-1.amazonaws.com/studyguide/sn25-v2.js"
 OLD_SCRIPT_RE = re.compile(r'https://smokinnotes\.s3\.us-east-1\.amazonaws\.com/content/sn25-v\d+\.js')
+HP_KINDS = {"tvm": "hp10bii", "cf": "hp10bii-cf", "keys": "hp10bii-keys",
+            "amort": "hp10bii-amort", "stat": "hp10bii-stat"}
+ENGINE_DIR = pathlib.Path(__file__).resolve().parent.parent / "engine"
+STRIP_EXPECT = False
+
+
+def hp_block():
+    css = (ENGINE_DIR / "hp10bii.css").read_text(encoding="utf-8")
+    js = (ENGINE_DIR / "hp10bii.js").read_text(encoding="utf-8")
+    assert "</style" not in css and "</script" not in js
+    return "<style>\n%s</style>\n<script>\n%s</script>\n" % (css, js)
+
+
+def hp_html(cfg, img_tag=""):
+    """<div class="hp10bii" data-...>[<noscript>img</noscript>]</div> from a map entry."""
+    kind = HP_KINDS.get(cfg.get("hp"))
+    if not kind:
+        sys.exit("unknown calculator widget kind: %r" % cfg.get("hp"))
+    attrs = []
+    for k, v in cfg.items():
+        if k in ("hp", "occurrence") or (STRIP_EXPECT and k in ("expect", "alt_expect")):
+            continue
+        name = "data-" + k.replace("_", "-")
+        if k == "alt":
+            text = json.dumps(v, ensure_ascii=False)
+            if "'" in text:
+                sys.exit("data-alt may not contain a single quote: %s" % text[:80])
+            attrs.append("%s='%s'" % (name, text.replace("&", "&amp;").replace("<", "&lt;")))
+        else:
+            attrs.append('%s="%s"' % (name, html.escape(str(v), quote=True)))
+    inner = "<noscript>%s</noscript>" % img_tag if img_tag else ""
+    return '<div class="%s" %s>%s</div>' % (kind, " ".join(attrs), inner)
+
+
 BLOCK_OPEN_RE = re.compile(r"<(p|ul|ol|table|div|h[1-6]|li|tr|td|th|blockquote)\b", re.I)
 
 
@@ -112,7 +157,8 @@ def apply(src, m, name, use_anchors=False, toc=False):
     used = set()
     problems = []
     inserted = []      # every snippet this run put in, for the proof at the end
-    removed = []       # every <img> tag it took out
+    removed = []       # (start, end) of every <img> tag it took out, in source order
+    seen = {}          # basename -> how many times the file has used it so far
 
     # 2. images
     def sub(match):
@@ -123,10 +169,20 @@ def apply(src, m, name, use_anchors=False, toc=False):
             problems.append("image not in the map: %s" % (base or tag[:60]))
             return tag
         entry = images[base]
-        used.add(base)
+        seen[base] = seen.get(base, 0) + 1
         if isinstance(entry, dict) and "keep" in entry:
+            used.add(base)
             return tag
-        removed.append(tag)
+        if isinstance(entry, dict) and "occurrence" in entry and entry["occurrence"] != seen[base]:
+            return tag             # another use of the same picture stays a picture
+        used.add(base)
+        if isinstance(entry, dict) and "hp" in entry:
+            # the calculator widget wraps the tag (kept for <noscript>); for the proof
+            # the tag has left the source and come back inside the inserted snippet
+            removed.append(match.span())
+            inserted.append(hp_html(entry, tag))
+            return inserted[-1]
+        removed.append(match.span())
         inserted.append(widget_html(entry))
         return inserted[-1]
 
@@ -154,7 +210,7 @@ def apply(src, m, name, use_anchors=False, toc=False):
                     problems.append("anchor names no usable widget: %r" % needle[:60])
                     continue
                 used.add(a["image"])
-            body = widget_html(cfg)
+            body = hp_html(cfg) if "hp" in cfg else widget_html(cfg)
         pos = out.find(needle)
         end = block_end(out, pos)
         comment = a.get("comment", "below-referenced paragraph")
@@ -172,27 +228,43 @@ def apply(src, m, name, use_anchors=False, toc=False):
     if problems:
         sys.exit("%s:\n  " % name + "\n  ".join(problems))
 
-    # 1. engine
-    n_widgets = out.count('<div class="sdg"')   # before the engine's own doc comment joins the file
+    # 1. engine(s)
+    n_sdg = out.count('<div class="sdg"')   # before the engine's own doc comment joins the file
+    n_hp = sum(out.count('<div class="%s" ' % k) for k in HP_KINDS.values())
+    n_widgets = n_sdg + n_hp
     if not n_widgets:
         return out, 0
-    if PLACEHOLDER not in out and not embed_engine.CSS_BLOCK.search(out):
+    hpb = hp_block() if n_hp else ""
+    if n_hp:
         hm = HOUSE_SCRIPT_RE.search(out)
         if hm:
-            out = out[:hm.end()] + PLACEHOLDER + "\n" + out[hm.end():]
+            out = out[:hm.end()] + hpb + out[hm.end():]
         else:
-            out = out.replace("</head>", PLACEHOLDER + "\n</head>", 1)
-    out = re.sub(r"[ \t]*" + re.escape(PLACEHOLDER) + r"[ \t]*\n?",
-                 lambda _m: embed_engine.blocks(), out, count=1)
+            out = out.replace("</head>", hpb + "</head>", 1)
+    if n_sdg:
+        if PLACEHOLDER not in out and not embed_engine.CSS_BLOCK.search(out):
+            hm = HOUSE_SCRIPT_RE.search(out)
+            if hm:
+                out = out[:hm.end()] + PLACEHOLDER + "\n" + out[hm.end():]
+            else:
+                out = out.replace("</head>", PLACEHOLDER + "\n</head>", 1)
+        out = re.sub(r"[ \t]*" + re.escape(PLACEHOLDER) + r"[ \t]*\n?",
+                     lambda _m: embed_engine.blocks(), out, count=1)
 
-    # the proof: nothing but the engine and the widgets differs
-    back = out.replace(embed_engine.blocks(), "", 1)
+    # the proof: nothing but the engine(s) and the widgets differs
+    back = out.replace(embed_engine.blocks(), "", 1) if n_sdg else out
+    if n_hp:
+        back = back.replace(hpb, "", 1)
     for snippet in inserted:
         assert snippet in back, "an inserted snippet is not in the output"
         back = back.replace(snippet, "", 1)
-    orig = src
-    for tag in removed:
-        orig = orig.replace(tag, "", 1)
+    # cut the replaced tags out of the source by position: a picture the file uses
+    # twice is the same bytes twice, and replace() would take the wrong one
+    orig, pos = [], 0
+    for a, b in removed:
+        orig.append(src[pos:a]); pos = b
+    orig.append(src[pos:])
+    orig = "".join(orig)
     if back != orig:
         sys.exit("%s: the output differs from the source beyond the widgets "
                  "and the engine; not written" % name)
@@ -209,7 +281,11 @@ def main():
                     help="apply the map's anchors (the Concise edition)")
     ap.add_argument("--toc", action="store_true",
                     help="swap content/sn25-v*.js for the live TOC script")
+    ap.add_argument("--strip-expect", action="store_true",
+                    help="drop the calculator widgets' test expectations (the delivered file)")
     args = ap.parse_args()
+    global STRIP_EXPECT
+    STRIP_EXPECT = args.strip_expect
     src = pathlib.Path(args.source).read_text(encoding="utf-8")
     m = json.loads(pathlib.Path(args.map).read_text(encoding="utf-8"))
     out, n = apply(src, m, args.source, args.anchors, args.toc)

@@ -1,0 +1,189 @@
+/* HP 10bII+ interactive calculator widget — hp10bii.css  (v2, FIN3403 edition) */
+
+.hp-widget {
+  display: flex;
+  gap: 22px;
+  align-items: flex-start;
+  margin: 22px 0;
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  color: #222;
+  --hp-orange: #f08a3c;
+  --hp-blue: #6fc0e6;
+  --hp-body: #19191b;
+  --hp-key: #2c2c2f;
+  --hp-lcd: #a9b78e;
+  --hp-lcd-ink: #1a2417;
+}
+.hp-widget.hp-hl-only { display: block; width: 258px; margin: 18px auto; float: none; }
+.hp-widget * { box-sizing: border-box; }
+
+/* ---------- calculator body ---------- */
+.hp-calc {
+  flex: 0 0 258px;
+  width: 258px !important;
+  max-width: 258px;
+  background: var(--hp-body);
+  border-radius: 14px 14px 10px 10px;
+  padding: 0 10px 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,.35), inset 0 0 0 1px #3a3a3d;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.hp-hl-only .hp-calc { width: 258px; }
+.hp-bezel {
+  background: linear-gradient(#d5d8dc, #b7babf);
+  margin: 0 -10px 10px;
+  padding: 9px 12px 10px;
+  border-radius: 14px 14px 0 0;
+}
+.hp-brand {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  color: #2a2a2c; font-size: 11.5px; line-height: 1.15; margin-bottom: 7px; font-weight: 600;
+}
+.hp-brand small { display: block; font-size: 8.5px; font-weight: 500; }
+.hp-lcd {
+  background: var(--hp-lcd);
+  border-radius: 3px;
+  box-shadow: inset 0 0 0 2px #7f8b6b, inset 0 3px 6px rgba(0,0,0,.35);
+  padding: 4px 8px 5px;
+  height: 52px;
+  display: flex; flex-direction: column; justify-content: space-between;
+  color: var(--hp-lcd-ink);
+}
+.hp-lcd-top { display: flex; gap: 8px; font-size: 8px; height: 10px; letter-spacing: .5px; font-weight: 600; }
+.hp-lcd-top .hp-ann { visibility: hidden; }
+.hp-lcd-top .hp-ann.on { visibility: visible; }
+.hp-lcd-top .hp-ann.sh-o { color: #8a4a12; }
+.hp-lcd-top .hp-ann.sh-b { color: #1c4f73; }
+.hp-lcd-num {
+  font-family: "DejaVu Sans Mono", "Menlo", "Consolas", monospace;
+  font-size: 23px; font-weight: 700; text-align: right; letter-spacing: 1px;
+  white-space: nowrap; overflow: hidden; line-height: 1;
+  transform: skewX(-6deg);
+}
+.hp-lcd-bot { display: flex; justify-content: flex-end; gap: 9px; font-size: 7.5px; height: 9px; font-weight: 600; }
+.hp-lcd-bot .hp-ann { visibility: hidden; }
+.hp-lcd-bot .hp-ann.on { visibility: visible; }
+
+.hp-keys { display: grid; grid-template-columns: repeat(5, 1fr); column-gap: 6px; row-gap: 2px; }
+.hp-k { display: flex; flex-direction: column; align-items: center; min-width: 0; }
+.hp-k .hp-up {
+  font-size: 7.5px; color: var(--hp-blue); height: 11px; line-height: 11px;
+  white-space: nowrap; letter-spacing: .2px; font-weight: 600;
+}
+.hp-k button {
+  appearance: none; -webkit-appearance: none;
+  width: 100%; height: 31px; margin: 0; padding: 2px 0 1px;
+  border: 1px solid #45454a; border-bottom-color: #0a0a0a;
+  border-radius: 7px; background: var(--hp-key); color: #fff;
+  font: inherit; font-size: 11.5px; font-weight: 700; line-height: 1;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px;
+  cursor: pointer;
+  transition: background .08s, transform .05s;
+}
+.hp-k button .hp-dn { font-size: 7px; color: var(--hp-orange); font-weight: 700; letter-spacing: .1px; }
+.hp-k button:hover { background: #3a3a3e; }
+.hp-k button:active, .hp-k button.hp-press { background: #55555b; transform: translateY(1px); }
+.hp-k button:focus-visible { outline: 2px solid #fff; outline-offset: 1px; }
+.hp-k button.hp-lit { background: #fff; color: #111; border-color: #fff; box-shadow: 0 0 0 3px rgba(255,255,255,.35); }
+.hp-k button.hp-lit .hp-dn { color: #c45d12; }
+.hp-k button.hp-glow { box-shadow: 0 0 0 3px #ffd23f; border-color: #ffd23f; animation: hp-pulse 1.4s ease-in-out infinite; }
+@keyframes hp-pulse { 50% { box-shadow: 0 0 0 5px rgba(255,210,63,.35); } }
+@media (prefers-reduced-motion: reduce) { .hp-k button.hp-glow { animation: none; } }
+.hp-k button.hp-shift-b { background: var(--hp-blue); color: #123; }
+.hp-k button.hp-shift-o { background: var(--hp-orange); color: #321; }
+.hp-k button.hp-shift-b.hp-lit, .hp-k button.hp-shift-o.hp-lit { background: #fff; }
+.hp-k button.hp-shift-b.hp-on { box-shadow: 0 0 0 2px #fff; }
+.hp-k button.hp-shift-o.hp-on { box-shadow: 0 0 0 2px #fff; }
+.hp-k .hp-arrow { font-size: 15px; line-height: 12px; }
+.hp-bracket {
+  grid-column: 1 / -1; height: 9px; margin-top: 3px;
+  color: var(--hp-blue); font-size: 7px; font-weight: 600; text-align: center; line-height: 9px;
+  position: relative;
+}
+.hp-bracket::before, .hp-bracket::after {
+  content: ""; position: absolute; top: 4px; height: 1px; background: var(--hp-blue); opacity: .8;
+}
+.hp-bracket.hp-br1::before { left: 8px; right: 60%; } .hp-bracket.hp-br1::after { left: 58%; right: 8px; }
+.hp-bracket.hp-br2::before { left: 22%; width: 12%; } .hp-bracket.hp-br2::after { left: 47%; width: 12%; }
+.hp-k.hp-blank { visibility: hidden; }
+.hp-widget.hp-static .hp-k button { cursor: default; }
+.hp-widget.hp-static .hp-k button:hover { background: var(--hp-key); }
+.hp-widget.hp-static .hp-k button.hp-shift-b:hover { background: var(--hp-blue); }
+.hp-widget.hp-static .hp-k button.hp-shift-o:hover { background: var(--hp-orange); }
+
+/* ---------- side panel ---------- */
+.hp-side { flex: 1 1 260px; min-width: 0; font-size: 14px; line-height: 1.45; }
+.hp-tl { display: block; width: 100%; height: auto; margin-bottom: 8px; }
+.hp-regs { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; margin-bottom: 10px; }
+.hp-regs > div {
+  background: #f1f1ee; border-radius: 6px; padding: 5px 7px 6px; font-size: 11px; color: #666;
+  border: 1px solid #e3e3df; transition: background .2s, border-color .2s;
+}
+.hp-regs b { display: block; font-family: "DejaVu Sans Mono", Menlo, Consolas, monospace; font-size: 12.5px; color: #222; font-weight: 600; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hp-regs > div.hp-stored { background: #e4f0f8; border-color: #9ccbe6; }
+.hp-regs > div.hp-solved { background: var(--hp-lcd); border-color: #7f8b6b; }
+.hp-regs > div.hp-solved b { color: var(--hp-lcd-ink); }
+.hp-regs.hp-cf { grid-template-columns: repeat(auto-fill, minmax(78px, 1fr)); }
+
+.hp-strip { display: flex; flex-wrap: wrap; gap: 4px 5px; margin-bottom: 10px; }
+.hp-strip .hp-grp { display: inline-flex; gap: 3px; padding: 3px 5px; border-radius: 6px; border: 1px solid transparent; cursor: pointer; }
+.hp-strip .hp-grp:hover { border-color: #ccc; }
+.hp-strip .hp-grp.cur { background: #fff6e0; border-color: #f0b46b; }
+.hp-strip .hp-grp.done { opacity: .55; }
+.hp-strip .hp-grp.cur.done { opacity: 1; }
+.hp-strip kbd {
+  display: inline-block; min-width: 18px; padding: 1px 5px; border-radius: 4px; text-align: center;
+  background: #2c2c2f; color: #fff; font: 600 10.5px/1.5 "Helvetica Neue", Arial, sans-serif; border: 1px solid #000;
+}
+.hp-strip kbd.o { background: var(--hp-orange); color: #321; border-color: #b8641f; }
+.hp-strip kbd.b { background: var(--hp-blue); color: #123; border-color: #3f8fb3; }
+.hp-strip kbd.o::after, .hp-strip kbd.b::after { content: "\21B1"; }
+.hp-strip kbd.fn { background: #fff; color: #222; border-color: #999; }
+
+.hp-caption { min-height: 64px; margin-bottom: 8px; }
+.hp-caption .hp-res { font-weight: 700; }
+.hp-controls { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.hp-controls button {
+  appearance: none; font: inherit; font-size: 13px; padding: 5px 11px; border-radius: 6px;
+  border: 1px solid #b9b9b4; background: #fff; color: #222; cursor: pointer;
+}
+.hp-controls button:hover { background: #f3f3f0; }
+.hp-controls button:focus-visible { outline: 2px solid #2b6cb0; outline-offset: 1px; }
+.hp-controls button.hp-play { background: var(--hp-orange); border-color: #c46a24; color: #201000; font-weight: 700; }
+.hp-controls button.hp-play:hover { background: #f79a54; }
+.hp-controls .hp-prog { font-size: 12px; color: #777; margin-left: 4px; }
+.hp-hint { font-size: 12px; color: #777; margin-top: 8px; }
+
+@media (max-width: 640px) {
+  .hp-widget { flex-direction: column; gap: 14px; }
+  .hp-calc { flex-basis: auto; }
+  .hp-side { width: 100%; flex-basis: auto; }
+  .hp-regs { grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); }
+  .hp-controls button { padding: 7px 12px; }
+  .hp-strip .hp-grp { padding: 5px 6px; }
+  .hp-strip kbd { font-size: 12px; padding: 2px 6px; }
+}
+@media print {
+  .hp-controls, .hp-hint { display: none; }
+}
+
+
+/* ---------- v2 additions: P/YR cell, amortization outputs, alternatives, AMORT annunciator ---------- */
+.hp-regs.hp-regs6 { grid-template-columns: repeat(6, 1fr); }
+.hp-regs.hp-regs3 { grid-template-columns: repeat(3, 1fr); }
+.hp-regs small { font-size: 9.5px; color: #888; }
+.hp-lcd-top .hp-ann.amort { margin-left: auto; color: var(--hp-lcd-ink); letter-spacing: .3px; }
+.hp-alts { display: flex; flex-wrap: wrap; gap: 6px; margin: 22px 0 -12px; font-family: "Helvetica Neue", Arial, sans-serif; }
+.hp-alts button {
+  appearance: none; font: inherit; font-size: 13px; padding: 5px 12px; border-radius: 6px;
+  border: 1px solid #b9b9b4; background: #fff; color: #222; cursor: pointer; min-height: 32px;
+}
+.hp-alts button:hover { background: #f3f3f0; }
+.hp-alts button.cur { background: #1f2a3a; border-color: #1f2a3a; color: #fff; font-weight: 700; }
+.hp-alts button:focus-visible { outline: 2px solid #2b6cb0; outline-offset: 1px; }
+.hp-widget noscript { display: none; }
+@media (max-width: 640px) {
+  .hp-regs.hp-regs6, .hp-regs.hp-regs3 { grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); }
+  .hp-alts button { padding: 8px 12px; min-height: 44px; }
+}

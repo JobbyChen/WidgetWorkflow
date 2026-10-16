@@ -1015,6 +1015,41 @@ Ian changed this rule on 2026-09-17, and the change applies **here only**:
   folder, never a path tree. The finished UCF files are not committed here;
   Ian reviews them first.
 
+### Calculator widgets (the FIN3403 UCF set, 2026-10-16)
+
+* **A calculator screenshot becomes an HP 10bII+ widget, not a graph.** The
+  engine is `engine/hp10bii.css` + `engine/hp10bii.js` (the sample Ian sent,
+  extended); `apply_widgets.py` embeds both after the house script whenever a
+  map entry carries `"hp"`, and keeps the original `<img>` inside the widget
+  as a `<noscript>` fallback, so the file's proof still holds. Kinds: `tvm`
+  (N, I/YR, PV, PMT, FV, `EFF%`), `cf` (CFj, Nj as `50000x5`, NPV, IRR,
+  `PI` with `io`), `amort` (INPUT, AMORT, = = =), `stat` (Σ+, x̄, Sx), `keys`
+  (a static picture with keys glowing). `alt` gives one widget a row of
+  buttons for cases of one lesson; `then` chains a second calculation that
+  starts from the answer on the display; `occurrence` replaces one use of a
+  picture the file carries twice.
+* **Follow the notes' convention, not the sample's.** The sample typed
+  `5/12` into I/YR with P/YR at 1; these notes set P/YR (`12 [orange] P/YR`),
+  count N in periods and leave I/YR annual, and the engine now does the same,
+  because the prose beside each widget says so ("we didn't change the interest
+  rate because I/YR refers to an annual rate"). Amortization rounds the
+  payment and each period's interest to four places, which is the only way
+  the notes' PRIN/INT/BAL (and the 0.0250 residual) come out to the cent.
+* **Every number comes from the screenshot's own register boxes or the
+  prose**, and every widget's result is checked in Chromium against the
+  number the notes print: `python scripts/check_calc_widgets.py FILE` drives
+  each widget to its last step and compares `data-expect` (kept in the test
+  build, stripped from the delivery with `--strip-expect`). 162 runs, 0
+  mismatches on the first delivery.
+* **Concise: a widget only where the Concise's own text states the numbers**,
+  placed after that line or table, cases merged under `alt`, never two in a
+  row (the UCF rule above, applied to calculators). A keystroke list with no
+  values beside it (the Σ+ keys, the deferred-annuity methods) gets nothing.
+* The build lives in `scripts/fin3403/` (`fin_maps.py` writes every chapter's
+  map, `fin_assemble.py` applies them to a folder holding the unpacked P1/P2
+  zips and writes `FIN3403 Widgets/Exam N/<chapter>/`). The finished files are
+  not committed; Ian reviews them first.
+
 ### Reviewing Ian's work
 
 When Ian asks for a check of files he has written or edited (a chapter, a

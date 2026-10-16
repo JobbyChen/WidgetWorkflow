@@ -668,8 +668,9 @@
       steps.push({ keys: [then.solve], text: function (evs) {
         var r = evs[0].value;
         var t = "Press <b>" + then.solve + "</b>: <span class='hp-res'>" + fmt(r) + "</span>. ";
-        if (then.solve === "PV") t += "That is the value at the start of the timeline" + (r < 0 ? "; the minus sign only says it is the amount paid out today." : ".");
-        else if (then.solve === "FV") t += "That is the value at the end of the timeline" + (r < 0 ? "; the minus sign only marks the direction of the cash flow." : ".");
+        var first = fmt(Math.abs(engine.R[storeReg])), nset = engine.R.N;
+        if (then.solve === "PV") t += "That is the " + first + " found first, discounted " + plain(nset) + " more " + (nset === 1 ? period : periods) + " back to the start of the timeline" + (r < 0 ? "; the minus sign only says it is the amount paid out today." : ".");
+        else if (then.solve === "FV") t += "That is the " + first + " found first, compounded " + plain(nset) + " more " + (nset === 1 ? period : periods) + " forward to the end of the timeline" + (r < 0 ? "; the minus sign only marks the direction of the cash flow." : ".");
         else if (then.solve === "I/YR") t = "Press <b>I/YR</b>: <span class='hp-res'>" + fmt(r) + "%</span>. That is the annual rate at which the present value just entered grows into the future value stored a moment ago.";
         if (d.note) t += " " + d.note;
         return t;

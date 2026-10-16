@@ -3,7 +3,7 @@
 Nj, PI, chained-stage, alternatives and statistics support the FIN3403 notes need.
 Every replacement asserts it matched exactly once."""
 import pathlib, sys
-S = pathlib.Path(__file__).resolve().parent.parent
+S = pathlib.Path("/tmp/claude-0/-home-user-WidgetWorkflow/18e4fdac-d634-5a6b-a05e-3dc28e88a03b/scratchpad/fin")
 src = (S / "hp10bii.js").read_text()
 out = src
 
@@ -302,8 +302,9 @@ rep("""      else if (solve === "I/YR") t += "This is the rate per " + period + 
       steps.push({ keys: [then.solve], text: function (evs) {
         var r = evs[0].value;
         var t = "Press <b>" + then.solve + "</b>: <span class='hp-res'>" + fmt(r) + "</span>. ";
-        if (then.solve === "PV") t += "That is the value at the start of the timeline" + (r < 0 ? "; the minus sign only says it is the amount paid out today." : ".");
-        else if (then.solve === "FV") t += "That is the value at the end of the timeline" + (r < 0 ? "; the minus sign only marks the direction of the cash flow." : ".");
+        var first = fmt(Math.abs(engine.R[storeReg])), nset = engine.R.N;
+        if (then.solve === "PV") t += "That is the " + first + " found first, discounted " + plain(nset) + " more " + (nset === 1 ? period : periods) + " back to the start of the timeline" + (r < 0 ? "; the minus sign only says it is the amount paid out today." : ".");
+        else if (then.solve === "FV") t += "That is the " + first + " found first, compounded " + plain(nset) + " more " + (nset === 1 ? period : periods) + " forward to the end of the timeline" + (r < 0 ? "; the minus sign only marks the direction of the cash flow." : ".");
         else if (then.solve === "I/YR") t = "Press <b>I/YR</b>: <span class='hp-res'>" + fmt(r) + "%</span>. That is the annual rate at which the present value just entered grows into the future value stored a moment ago.";
         if (d.note) t += " " + d.note;
         return t;

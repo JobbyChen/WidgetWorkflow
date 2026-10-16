@@ -262,6 +262,9 @@ MATRIX_STEPPABLE = ("marks",)
 # A years table's steps bring in a year, an arrow, or the running total
 # (engine v2.48). `total` is one object rather than a list, so it is wrapped.
 PLAYS_STEPPABLE = ("years", "arrows", "total")
+# A flow chart's steps bring in a change arrow or a multiplier arrow, and a
+# box or a link may arrive late too (engine v2.57).
+FLOW_STEPPABLE = ("nodes", "links", "changes", "spans")
 
 
 def check_steps(cfgs, r):
@@ -307,6 +310,8 @@ def check_steps(cfgs, r):
                     if isinstance(pl.get("total"), dict):
                         pl["total"] = [pl["total"]]
                     sources.append((-2, pl, PLAYS_STEPPABLE))
+                if v.get("flow"):
+                    sources.append((-3, v["flow"], FLOW_STEPPABLE))
                 for pi, pn, keys in sources:
                     for key in keys:
                         for ei, e in enumerate(pn.get(key) or []):
@@ -534,7 +539,7 @@ def check_schema(cfgs, r):
         # An amortization explorer is the third way a widget earns its place:
         # no steps and no static caption, but a reading the student scrubs to
         # (v2.50).
-        if not (has_steps or cfg.get("caption") or cfg.get("amort") or static_preset
+        if not (has_steps or cfg.get("caption") or cfg.get("amort") or cfg.get("flow") or static_preset
                 or titled_scenarios
                 or cfg.get("lede")
                 or any(v.get("caption") or (isinstance(v.get("steps"), list)

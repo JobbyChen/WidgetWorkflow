@@ -106,6 +106,19 @@
 .sdg .arrow.row { stroke-width:2.4; stroke:var(--red); }
 .sdg .hline { stroke-width:3; }
 .sdg .brace { fill:none; stroke-width:1.8; }
+/* A host page can style the same short class names the plot uses -- the
+   FIN3403 risk chapter's own <style> sets `.brace { position:absolute;
+   transform:scaleX(.65) }` for a CSS diagram, and every upright brace in the
+   widget was squeezed into the margin by it (v2.57). The plot's elements
+   take no layout from the page: nothing here is positioned or transformed by
+   a stylesheet, except the rotated left-brace label, whose rotation is an
+   attribute and is excluded. */
+.sdg svg .brace, .sdg svg .grid, .sdg svg .arrow, .sdg svg .area, .sdg svg .guide,
+.sdg svg .pt, .sdg svg .curve, .sdg svg .tk, .sdg svg .ax, .sdg svg .halo, .sdg svg .hline,
+.sdg svg .plotbg { transform:none; }
+.sdg svg .brace, .sdg svg .tag, .sdg svg .grid, .sdg svg .arrow, .sdg svg .area, .sdg svg .guide,
+.sdg svg .pt, .sdg svg .curve, .sdg svg .tk, .sdg svg .ax, .sdg svg .sub, .sdg svg .halo, .sdg svg .hline,
+.sdg svg .plotbg { position:static; margin:0; padding:0; border:0; visibility:visible; }
 .sdg .curve-g.dim .curve { stroke-width:2; opacity:.8; }
 /* `dimAt` fades a curve from a given step so a label can be read over it.
    Fainter than `dim`, which only marks a curve a shift has moved on from. */
@@ -294,3 +307,21 @@
   .sdg .pl-cell { padding:5px 8px; min-width:0; }
   .sdg .pl-col, .sdg .pl-total { padding:5px 8px; }
 }
+
+/* A flow chart (v2.57): boxes joined by chain links, a thick arrow for a
+   change in one box, a thin red arrow for the multiplier between two. A part
+   a step has not reached keeps its place, as a years-table row does. */
+.sdg .sdg-flowfig { margin:0 auto; max-width:var(--fig); width:100%; }
+.sdg .sdg-flow { display:block; width:100%; height:auto; font-family:inherit; }
+.sdg .fl-node rect { fill:#fbf1c7; stroke:#9a8a4a; stroke-width:1.4; }
+.sdg .fl-nodelabel { font-size:12.5px; font-weight:800; fill:var(--navy, #1f2a3a); }
+.sdg .fl-link line { stroke:#8d8d8d; stroke-width:2.2; }
+.sdg .fl-link rect { fill:#fff; stroke:#6f6f6f; stroke-width:1.6; }
+.sdg .fl-linklabel { font-size:9.5px; font-style:italic; font-weight:700; fill:#333; }
+.sdg .fl-change path { fill:#111; }
+.sdg .fl-changelabel { font-size:12px; font-weight:800; fill:#111; }
+.sdg .fl-span path { fill:none; stroke:#c0392b; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; }
+.sdg .fl-spanlabel { font-size:11px; font-weight:800; fill:#c0392b; }
+.sdg .fl-step { opacity:0; transition:opacity .45s ease; }
+.sdg .fl-step.shown { opacity:1; }
+.sdg .sdg-flow .sub { font-size:70%; font-weight:600; }

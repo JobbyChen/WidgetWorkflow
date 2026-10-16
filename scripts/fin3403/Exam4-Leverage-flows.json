@@ -1,0 +1,171 @@
+{
+ "images": {
+  "fin3403-exam4-leverage-02-leverage-chain-sales-ebit-eps.png": {
+   "title": "How Leverage Links the Income Statement",
+   "flow": {
+    "nodes": [
+     "Sales",
+     "Operating\nIncome (EBIT)",
+     "EPS"
+    ],
+    "links": [
+     "Operating\nLeverage",
+     "Financial\nLeverage"
+    ]
+   },
+   "caption": "Operating leverage carries a change in sales into operating income; financial leverage carries a change in operating income into earnings per share."
+  },
+  "fin3403-exam4-leverage-06-triangle-diagram-dol-dfl-dcl.png": {
+   "title": "The Three Measures of Leverage",
+   "flow": {
+    "nodes": [
+     "Sales",
+     "Operating\nIncome (EBIT)",
+     "EPS"
+    ],
+    "links": [
+     "DOL",
+     "DFL"
+    ],
+    "spans": [
+     {
+      "from": 0,
+      "to": 2,
+      "label": "DCL"
+     }
+    ]
+   },
+   "caption": "DOL links sales to operating income, DFL links operating income to earnings per share, and DCL spans the whole chain from sales to earnings per share."
+  },
+  "fin3403-exam4-leverage-07-dol-chain-diagram-10pct-to-20pct.png": {
+   "title": "Degree of Operating Leverage",
+   "flow": {
+    "nodes": [
+     "Sales",
+     "Operating\nIncome (EBIT)",
+     "EPS"
+    ],
+    "links": [
+     "Operating\nLeverage",
+     "Financial\nLeverage"
+    ],
+    "changes": [
+     {
+      "node": 0,
+      "text": "+10%",
+      "dir": "up",
+      "at": 1
+     },
+     {
+      "node": 1,
+      "text": "+20%",
+      "dir": "up",
+      "at": 2
+     }
+    ],
+    "spans": [
+     {
+      "from": 0,
+      "to": 1,
+      "label": "DOL_{S} = 2",
+      "at": 2
+     }
+    ]
+   },
+   "steps": [
+    "Sales, operating income and earnings per share are linked by the two kinds of leverage.",
+    "Sales rise by 10%.",
+    "With a degree of operating leverage of 2, operating income rises by twice as much: 20%."
+   ]
+  },
+  "fin3403-exam4-leverage-08-dfl-chain-diagram-10pct-to-30pct.png": {
+   "title": "Degree of Financial Leverage",
+   "flow": {
+    "nodes": [
+     "Sales",
+     "Operating\nIncome (EBIT)",
+     "EPS"
+    ],
+    "links": [
+     "Operating\nLeverage",
+     "Financial\nLeverage"
+    ],
+    "changes": [
+     {
+      "node": 1,
+      "text": "−10%",
+      "dir": "down",
+      "at": 1
+     },
+     {
+      "node": 2,
+      "text": "−30%",
+      "dir": "down",
+      "at": 2
+     }
+    ],
+    "spans": [
+     {
+      "from": 1,
+      "to": 2,
+      "label": "DFL = 3",
+      "at": 2
+     }
+    ]
+   },
+   "steps": [
+    "The same chain, read from operating income to earnings per share.",
+    "Operating income falls by 10%.",
+    "With a degree of financial leverage of 3, earnings per share fall three times as far: 30%."
+   ]
+  },
+  "fin3403-exam4-leverage-09-dcl-chain-diagram-10pct-to-40pct.png": {
+   "title": "Degree of Combined Leverage",
+   "flow": {
+    "nodes": [
+     "Sales",
+     "Operating\nIncome (EBIT)",
+     "EPS"
+    ],
+    "links": [
+     "Operating\nLeverage",
+     "Financial\nLeverage"
+    ],
+    "changes": [
+     {
+      "node": 0,
+      "text": "+10%",
+      "dir": "up",
+      "at": 1
+     },
+     {
+      "node": 2,
+      "text": "+40%",
+      "dir": "up",
+      "at": 2
+     }
+    ],
+    "spans": [
+     {
+      "from": 0,
+      "to": 2,
+      "label": "DCL = 4",
+      "at": 2
+     }
+    ]
+   },
+   "steps": [
+    "Combined leverage runs the whole chain, from sales to earnings per share.",
+    "Sales rise by 10%.",
+    "With a degree of combined leverage of 4, earnings per share rise four times as far: 40%."
+   ]
+  }
+ },
+ "anchors": [
+  {
+   "after": "Financial risk",
+   "image": "fin3403-exam4-leverage-02-leverage-chain-sales-ebit-eps.png",
+   "comment": "below the two-types-of-leverage table"
+  }
+ ]
+}

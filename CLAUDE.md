@@ -724,7 +724,7 @@ not enough to reproduce an implementation.
   `embed_engine.py`'s paths reproduce the delivered file byte-for-byte; all 20
   prototype widgets render with no engine errors; `check_file.py` runs the
   geometric label test over 74 labels in the 263 file with no overlaps.
-* **Engine is v2.56.** Since v2.6: `areas` shade a polygon (v2.11) with
+* **Engine is v2.57** (a `flow` chain-of-boxes widget and a shield against the host page's own CSS, both from the FIN3403 set; the rest below is unchanged). Since v2.6: `areas` shade a polygon (v2.11) with
   `edge` to outline it (v2.18) and labels centred on their anchor (v2.13);
   `dot:false` drops a marker but keeps the axis label (v2.12); points take
   `guides:"p"`/`"q"` for one leg of the elbow (v2.14); braces take
@@ -1049,10 +1049,29 @@ Ian changed this rule on 2026-09-17, and the change applies **here only**:
   "Bond with flotation example: … → kd = 8.6045%" line had a widget under it
   and Ian pulled it ("there's no context for this widget", 2026-10-16). The
   text has to introduce the calculation, not just list its inputs.
+* **Every chart or graph the sd-graph engine can draw is an sd-graph figure
+  too** (Ian, 2026-10-16: "anything that can be converted from chart/graph to
+  SDG"), static with a caption where the picture is static -- to Ian a widget
+  means interaction, but a drawn figure is wanted either way. Steps only
+  where the picture genuinely builds. Conceptual finance graphs are
+  symbolic: word axis titles wrapped on `\n`, no numbers unless the source
+  prints them, `grey` for a faded series, histograms and bar charts as
+  rectangular `areas`. What stays a picture: timelines (the calculator
+  widget draws its own), a scatter plot through the origin (no negative
+  axes), the annotated button legend, income-statement tables, the stock
+  quote table. Flow charts (the leverage chains) are the `flow` widget.
+* **A chapter's own `<style>` can restyle the plot.** The risk chapter's
+  `.brace { transform: scaleX(.65) }` squeezed every upright brace into the
+  margin while `check_file` and the DOM both said they were fine; the
+  engine's stylesheet now pins layout properties on its SVG classes
+  (v2.57). When a widget looks wrong only on one page, grep that page's
+  `<style>` for the engine's class names first.
 * The build lives in `scripts/fin3403/` (`fin_maps.py` writes every chapter's
-  map, `fin_assemble.py` applies them to a folder holding the unpacked P1/P2
-  zips and writes `FIN3403 Widgets/Exam N/<chapter>/`). The finished files are
-  not committed; Ian reviews them first.
+  map and merges the graph overlays from `graphs/*.json`, which
+  `build_risk.py` and `build_other.py` write; `fin_assemble.py` applies them
+  to a folder holding the unpacked P1/P2 zips and writes `FIN3403
+  Widgets/Exam N/<chapter>/`). The finished files are not committed; Ian
+  reviews them first.
 
 ### Reviewing Ian's work
 

@@ -19,8 +19,9 @@ def amort(ranges, expect, **kw):
 def keep(why): return {"keep": why}
 def after(needle, widget, comment="below-referenced paragraph"):
     return {"after": needle, "widget": widget, "comment": comment}
+WRITTEN = {}
 def write(key, images, anchors=()):
-    (MAPS / (key + ".json")).write_text(json.dumps({"images": images, "anchors": list(anchors)}, ensure_ascii=False, indent=1))
+    WRITTEN[key] = {"images": dict(images), "anchors": list(anchors)}
 
 # ---------------------------------------------------------------- shared problems
 fv100 = dict(n=1, iyr=7, pv=-100, pmt=0, pyr=1, solve="FV")                          # $100 for one year at 7%
@@ -41,6 +42,15 @@ treas = dict(n=20, pv=-1453.75, pmt=38.75, fv=1000, pyr=2, period="half-year", s
 npv_cf = "-150000,50000x5"                                                             # $150,000 outlay, $50,000 for 5 years
 full_cf = "-151000,49821x4,93321"                                                      # the chapter's capital budgeting example
 
+# the project-ranking figures: each project's NPV, PI and IRR as one widget with a button per reading
+size_disparity = cf("-270000,120000x3", "1.1053", iyr=10, pyr=1, solve="PI", io=270000,
+                    alt=[{"label": "Project A: NPV and PI"}, {"label": "Project A: IRR", "solve": "IRR"},
+                         {"label": "Project B: NPV and PI", "cf": "-60000,30000x3", "io": 60000}, {"label": "Project B: IRR", "cf": "-60000,30000x3", "solve": "IRR"}],
+                    alt_expect="1.1053|15.8885|1.2434|23.3752")
+time_disparity = cf("-48000,1200,1400,39000,42000", "1.1800", iyr=12, pyr=1, solve="PI", io=48000,
+                    alt=[{"label": "Project C: NPV and PI"}, {"label": "Project C: IRR", "solve": "IRR"},
+                         {"label": "Project D: NPV and PI", "cf": "-46500,36500,24000,2400,2400", "io": 46500}, {"label": "Project D: IRR", "cf": "-46500,36500,24000,2400,2400", "solve": "IRR"}],
+                    alt_expect="1.1800|17.5796|1.1818|25.5059")
 bond_cases = tvm("1,000.0000", iyr=11, **bond,
                  alt=[{"label": "Case 1: at par (11%)"}, {"label": "Case 2: premium (10%)", "iyr": 10},
                       {"label": "Case 3: discount (12%)", "iyr": 12},
@@ -62,7 +72,7 @@ P = "fin3403-exam2-tvm-"
 images = {
     P + "01-hp10bii-calculator.png": keys("SHIFT_O,4,="),
     P + "02-calculator-buttons-diagram.png": keep("an annotated close-up whose legend (N = ..., P/YR = ...) is content the widget would lose"),
-    P + "03-calculator-input-example.png": tvm("107.0000", occurrence=2, **fv100),   # first use explains the box convention and stays a picture
+    P + "03-calculator-input-example.png": tvm("107.0000", **fv100),   # used twice (the convention and the first example); both are the widget (Ian, 2026-10-16)
     P + "06-five-year-calculation.png": tvm("140.2552", n=5, iyr=7, pv=-100, pmt=0, pyr=1, solve="FV"),
     P + "07-quarterly-compounding.png": tvm("141.4778", n=20, iyr=7, pv=-100, pmt=0, pyr=4, period="quarter", solve="FV"),
     P + "08-monthly-compounding.png": tvm("141.7625", n=60, iyr=7, pv=-100, pmt=0, pyr=12, period="month", solve="FV"),
@@ -85,10 +95,14 @@ images = {
     P + "24-annuity-due-pv.png": tvm("2,808.0182", beg=1, **ann_pv),
     P + "25-annuity-due-fv.png": tvm("3,439.9430", beg=1, **ann_fv),
     P + "26-uneven-cash-flows-2.png": keep("the uneven cash-flow timeline"),
-    P + "27-uneven-cash-flows-breakdown-2.png": keep("the four separate present values added up by hand"),
+    P + "27-uneven-cash-flows-breakdown-2.png": tvm("925.9259", n=1, iyr=8, fv=1000, pmt=0, pyr=1, solve="PV", order="N,I/YR,PMT,FV,PV",
+        alt=[{"label": "$1,000 at year 1"}, {"label": "$2,000 at year 2", "n": 2, "fv": 2000}, {"label": "$3,000 at year 3", "n": 3, "fv": 3000}, {"label": "$6,000 at year 4", "n": 4, "fv": 6000}],
+        alt_expect="925.9259|1,714.6776|2,381.4967|4,410.1791", note="The four present values add up to $9,432.29."),
     P + "28-cfj-npv-keys.png": cf("0,1000,2000,3000,6000", "9,432.2794", **uneven),
     P + "29-deferred-annuity.png": keep("the deferred-annuity timeline"),
-    P + "30-deferred-method1.png": keep("method 1: five present values added by hand"),
+    P + "30-deferred-method1.png": tvm("13,660.2691", n=4, iyr=10, fv=20000, pmt=0, pyr=1, solve="PV", order="N,I/YR,PMT,FV,PV",
+        alt=[{"label": "Period 4"}, {"label": "Period 5", "n": 5}, {"label": "Period 6", "n": 6}, {"label": "Period 7", "n": 7}, {"label": "Period 8", "n": 8}],
+        alt_expect="13,660.2691|12,418.4265|11,289.4786|10,263.1624|9,330.1476", note="The five present values add up to $56,961.49."),
     P + "31-deferred-method2.png": tvm("56,961.4841", n=5, iyr=10, pmt=-20000, pyr=1, solve="PV", order="N,I/YR,PMT,PV",
                                        then="+/-,FV|N=3,PMT=0|PV", tl_start=3,
                                        note="That is the present value at time 0 of the annuity that starts in period 4."),
@@ -97,7 +111,8 @@ images = {
     P + "32-deferred-future-value.png": tvm("383,208", n=5, iyr=10, pmt=-20000, pyr=1, solve="FV", order="N,I/YR,PMT,FV",
                                             then="+/-,PV|N=12,PMT=0|FV", tl_start=3,
                                             note="The lump sum at period 8 grows for 12 more periods to period 20."),
-    P + "33-amortization-diagram.png": keep("the principal/interest-over-time diagram"),
+    P + "33-amortization-diagram.png": {"title": "How Each Mortgage Payment Splits Between Interest and Principal", "lede": "The $300,000, 30-year, 5% mortgage: slide along the loan to read how much of a payment is interest and how much reduces the balance.",
+                 "amort": {"amount": 300000, "rate": 5, "term": 30, "terms": [30], "hideCompare": True}},
     P + "34-house-payment-example-2.png": tvm("1,610.4649", **mortgage),
     P + "35-amort-keys-2.png": keys("FV,INPUT,="),
     P + "36-single-payment-breakdown.png": amort("1;300", "-85,339.6535"),
@@ -178,8 +193,8 @@ write("Exam3-CapitalBudgeting", {
     P + "13-cashflow-timeline-multiple-sign-changes.png": keep("a cash-flow timeline with three sign changes"),
     P + "15-calculator-result-200126-irr-example2.png": cf("-1000,200,300,400,400,500", "20.0126", solve="IRR"),
     P + "16-capital-rationing-bar-chart-irr-projects-vwxyz.png": keep("a bar chart"),
-    P + "17-project-ab-size-disparity-cashflow-diagrams.png": keep("cash-flow diagrams with NPV, IRR and PI listed"),
-    P + "18-project-cd-time-disparity-cashflow-diagrams.png": keep("cash-flow diagrams with NPV, IRR and PI listed"),
+    P + "17-project-ab-size-disparity-cashflow-diagrams.png": size_disparity,
+    P + "18-project-cd-time-disparity-cashflow-diagrams.png": time_disparity,
     P + "19-machine1-machine2-eaa-calculator-displays.png": tvm("1,264.45", n=3, iyr=12, pv=3037, pyr=1, solve="PMT", order="N,I/YR,PV,PMT",
                                                                alt=[{"label": "Machine 1"}, {"label": "Machine 2", "n": 6, "pv": 4337}], alt_expect="1,264.45|1,054.8699"),
     P + "21-cashflow-diagram-151000-49821-93321-summary.png": keep("the project's cash-flow summary diagram"),
@@ -212,7 +227,8 @@ write("Exam4-Exam2Review", {
     P + "11-annuity-due-timeline-begin-mode-pv-fv.png": keep("timeline"),
     P + "12-uneven-cashflows-timeline-1000-2000-3000-6000.png": keep("the uneven cash-flow timeline"),
     P + "13-uneven-cashflows-npv-result-9432-2794.png": cf("0,1000,2000,3000,6000", "9,432.2794", **uneven),
-    P + "14-amortized-loan-payment-principal-interest-diagram.png": keep("the principal/interest-over-time diagram"),
+    P + "14-amortized-loan-payment-principal-interest-diagram.png": {"title": "How Each Mortgage Payment Splits Between Interest and Principal", "lede": "The $300,000, 30-year, 5% mortgage: slide along the loan to read how much of a payment is interest and how much reduces the balance.",
+                 "amort": {"amount": 300000, "rate": 5, "term": 30, "terms": [30], "hideCompare": True}},
     P + "15-calculator-amortized-loan-360-5pct-300000-result.png": tvm("1,610.4649", **mortgage),
     P + "16-calculator-input-amort-equals-keys-identified.png": keys("FV,INPUT,="),
     P + "17-amort-first-payment-breakdown-prin-360-int-1250-bal.png": amort("1", "-299,639.5351"),
@@ -255,8 +271,8 @@ write("Exam4-Exam3Review", {
     P + "05-pi-calculator-1-20.png": cf(npv_cf, "1.2016", iyr=12, solve="PI", io=150000),
     P + "07-irr-calculator-19-8577.png": cf(npv_cf, "19.8577", pyr=1, solve="IRR"),
     P + "08-capital-rationing-irr-bar-chart.png": keep("a bar chart"),
-    P + "09-size-disparity-project-a-b-timelines.png": keep("cash-flow timelines with NPV, IRR and PI listed"),
-    P + "10-time-disparity-project-c-d-timelines.png": keep("cash-flow timelines with NPV, IRR and PI listed"),
+    P + "09-size-disparity-project-a-b-timelines.png": size_disparity,
+    P + "10-time-disparity-project-c-d-timelines.png": time_disparity,
     P + "11-eaa-project-a-b-calculators-2.png": tvm("1,264.45", n=3, iyr=12, pv=3037, pyr=1, solve="PMT", order="N,I/YR,PV,PMT",
                                                    alt=[{"label": "Project A"}, {"label": "Project B", "n": 6, "pv": 4337}], alt_expect="1,264.45|1,054.8699"),
     P + "13-capital-budgeting-example-cashflow-summary.png": keep("the project's cash-flow summary diagram"),
@@ -266,4 +282,33 @@ write("Exam4-Exam3Review", {
     after("same project → IRR = 19.86% &gt; 12% → accept.", cf(npv_cf, "19.8577", pyr=1, solve="IRR")),
     after("<p>NPV = <b>$42,632.06</b> &gt; 0", cf(full_cf, "42,632.06", iyr=14, solve="NPV")),
 ])
+# ---------------------------------------------------------------- merge: every chapter, every image, plus graph/flow overlays
+# A chapter map must name every <img> its editions carry. Build the full list from the
+# sources (default: keep), overlay what this file wrote, then overlay any
+# S/fin/graphs/<ChapterKey>*.json written by the graph builds ({"images": {...}, "anchors": [...]}).
+import re, glob
+FIN = MAPS.parent
+def chapter_sources():
+    out = {}
+    for full in list(FIN.glob("p1/Finance P1/Exam */*/*-Full.html")) + list(FIN.glob("p2/Finance P2/Exam */*/*-Full.html")):
+        m = re.match(r"UCF FIN3403-\d{3}-(Exam\d)-(.+)-Full\.html$", full.name)
+        out["%s-%s" % m.groups()] = full.parent
+    return out
+for key, folder in chapter_sources().items():
+    bases = set()
+    for f in folder.glob("*.html"):
+        if "Ignore" in f.name: continue
+        bases.update(re.findall(r'<img[^>]*?src="[^"]*/([^"/]+)"', f.read_text(encoding="utf-8")))
+    mp = MAPS / (key + ".json")
+    base = WRITTEN.get(key, {"images": {}, "anchors": []})   # never the file: a previous merge's overlays would pile up
+    images = {b: {"keep": "not a calculator screenshot or a plotted graph"} for b in sorted(bases)}
+    images.update(base["images"])
+    anchors = list(base.get("anchors", []))
+    for g in sorted(glob.glob(str(FIN / "graphs" / (key + "*.json")))):
+        gm = json.loads(open(g, encoding="utf-8").read())
+        for b, cfg in gm.get("images", {}).items():
+            assert b in bases, "%s names an image the chapter does not use: %s" % (g, b)
+            images[b] = cfg
+        anchors.extend(gm.get("anchors", []))
+    mp.write_text(json.dumps({"images": images, "anchors": anchors}, ensure_ascii=False, indent=1))
 print("maps written:", sorted(p.name for p in MAPS.glob("*.json")))

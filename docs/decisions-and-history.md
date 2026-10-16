@@ -869,3 +869,18 @@ button legend, the hand-added breakdowns. Source findings (a 2015/2018 year
 mismatch in the Exam 2 Review's GM bond, 34.33 vs 34.31 years, alt texts
 calling P/YR "PMT", fixed-width diagrams wider than a phone) went on the
 checklist unchanged. The delivery is a zip, not a commit; Ian reviews first.
+
+Later the same day Ian asked for more: every chart or graph that can be
+drawn in sd-graph, static or not ("to me a widget involves some kind of
+interaction", but he wants the figures drawn either way), and the flow
+charts too. So the risk chapter's eight figures, the yield curves, the
+capital-structure pair, the break-even figures and the IRR bar chart became
+sd-graph figures; the leverage chains became a new `flow` widget (engine
+v2.57); the project-ranking cash-flow diagrams, the hand-added present
+values and the amortization diagram became calculator widgets and an
+amortization explorer. Two things learned: a Concise widget needs a sentence
+that introduces the figure, not a bullet of inputs (the cost-of-capital
+example came out); and a page's own `<style>` can restyle the plot's short
+class names -- `.brace { transform: scaleX(.65) }` in the risk chapter
+squeezed every upright brace into the margin with every check passing, so
+the engine's CSS now pins those properties.

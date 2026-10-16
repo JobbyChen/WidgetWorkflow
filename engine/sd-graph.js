@@ -1,4 +1,4 @@
-/* ===== sd-graph.js v2.56 — data-driven supply & demand widgets =====
+/* ===== sd-graph.js v2.57 — data-driven supply & demand widgets =====
    Markup:  <div class="sdg"><script type="application/json">{ ...config... }<\/script></div>
    Top-level config:
      title, lede, caption         heading / intro / static caption (caption used only when there are no steps)
@@ -687,6 +687,7 @@
     if (cfg.matrix) { this.panels = []; this.buildMatrix(); return this.finish(); }
     if (cfg.plays) { this.panels = []; this.buildPlays(); return this.finish(); }
     if (cfg.amort) { this.panels = []; this.buildAmort(); return this.finish(); }
+    if (cfg.flow) { this.panels = []; this.buildFlow(); return this.finish(); }
     var panels = cfg.panels || [cfg];
     this.panels = panels.map(buildPanel);
     var body = h('div', 'sdg-body' + (cfg.table ? ' has-table' : '') + (panels.length > 1 ? ' two' : ''));
@@ -904,6 +905,78 @@
            ' M' + (bx - uy * ww) + ' ' + (by + ux * ww) + ' L' + x2 + ' ' + y2 +
            ' L' + (bx + uy * ww) + ' ' + (by - ux * ww);
   }
+
+  // ----------------------------------------------------------------- flow --
+  // A chain of boxes (v2.57): the leverage chapter's "Sales -> Operating
+  // Income -> EPS" with the kind of leverage named on each link, a thick
+  // arrow above a box for the change in it ("+10%"), and a thin red arrow
+  // from one change to the next carrying the multiplier ("DOL = 2"). A
+  // picture states the whole argument at once; the widget lets the +10% in
+  // sales arrive first and the +20% in operating income answer it.
+  //
+  //   flow: {nodes: ["Sales", "Operating\nIncome (EBIT)", "EPS"],
+  //          links: ["Operating\nLeverage", "Financial\nLeverage"],
+  //          changes: [{node: 0, text: "+10%", dir: "up", at: 1}, {node: 1, text: "+20%", at: 2}],
+  //          spans: [{from: 0, to: 1, label: "DOL_S = 2", at: 2}]}
+  //
+  // nodes and links are strings or {text, at, until}; changes and spans take
+  // at/until like anything else, and those are what a step changes.
+  Widget.prototype.buildFlow = function () {
+    var self = this, f = this.cfg.flow, host = this.host;
+    var nodes = (f.nodes || []).map(function (n) { return typeof n === 'string' ? {text: n} : n; });
+    var links = (f.links || []).map(function (l) { return typeof l === 'string' ? {text: l} : l; });
+    var changes = f.changes || [], spans = f.spans || [];
+    var W = 372, M = 6, GAP = 34, NH = 40, n = nodes.length;
+    var NW = (W - 2 * M - (n - 1) * GAP) / n;
+    var top = 10 + (spans.length ? 22 : 0) + (changes.length ? 52 : 0);
+    var H = top + NH + (links.some(function (l) { return l.text; }) ? 34 : 10);
+    var svg = el('svg', {viewBox: '0 0 ' + W + ' ' + H, role: 'img', class: 'sdg-flow', 'aria-label': this.cfg.title || 'Flow chart'});
+    function cx(i) { return M + i * (NW + GAP) + NW / 2; }
+    function lines(t) { return String(t).split('\n'); }
+    function text(x, y, t, cls, dy, anchor) {
+      var e = el('text', {x: x, y: y, class: cls, 'text-anchor': anchor || 'middle'});
+      lines(t).forEach(function (row, i) { var sp = el('tspan', {x: x, dy: i ? dy : 0}); setLabel(sp, row); e.appendChild(sp); });
+      return e;
+    }
+    function part(g, spec) { if (spec && (spec.at || spec.until != null)) { g.classList.add('fl-step'); self.mparts.push({node: g, spec: spec, cls: 'shown'}); } }
+    // links first, so the boxes sit over their ends
+    links.forEach(function (l, i) {
+      if (i >= n - 1) return;
+      var g = el('g', {class: 'fl-link'}), x1 = M + (i + 1) * NW + i * GAP, x2 = x1 + GAP, y = top + NH / 2;
+      g.appendChild(el('line', {x1: x1, y1: y, x2: x2, y2: y}));
+      [0.25, 0.5, 0.75].forEach(function (t) { g.appendChild(el('rect', {x: x1 + GAP * t - 4.5, y: y - 2.6, width: 9, height: 5.2, rx: 2.6})); });
+      if (l.text) g.appendChild(text((x1 + x2) / 2, top + NH + 13, l.text, 'fl-linklabel', 10.5));
+      part(g, l); svg.appendChild(g);
+    });
+    nodes.forEach(function (nd, i) {
+      var g = el('g', {class: 'fl-node'}), x = M + i * (NW + GAP);
+      g.appendChild(el('rect', {x: x, y: top, width: NW, height: NH, rx: 6}));
+      var rows = lines(nd.text), y0 = top + NH / 2 + 4.5 - (rows.length - 1) * 7;
+      g.appendChild(text(cx(i), y0, nd.text, 'fl-nodelabel', 14));
+      part(g, nd); svg.appendChild(g);
+    });
+    var tips = {};
+    changes.forEach(function (c) {
+      var g = el('g', {class: 'fl-change'}), x = cx(c.node), base = top - 6, tip = base - 36, down = c.dir === 'down';
+      var y1 = down ? tip : base, y2 = down ? base : tip, s = down ? 1 : -1;
+      // a solid arrow: shaft plus head, the way the source draws it
+      g.appendChild(el('path', {d: 'M' + (x - 3) + ' ' + y1 + ' L' + (x - 3) + ' ' + (y2 - s * 13) + ' L' + (x - 9) + ' ' + (y2 - s * 13) + ' L' + x + ' ' + y2 + ' L' + (x + 9) + ' ' + (y2 - s * 13) + ' L' + (x + 3) + ' ' + (y2 - s * 13) + ' L' + (x + 3) + ' ' + y1 + ' Z'}));
+      g.appendChild(text(x + 13, (base + tip) / 2 + 4, c.text || '', 'fl-changelabel', 13, 'start'));
+      tips[c.node] = tip;   // the multiplier arrow runs along the tops, whichever way the change points
+      part(g, c); svg.appendChild(g);
+    });
+    spans.forEach(function (sp) {
+      var g = el('g', {class: 'fl-span'}), xa = cx(sp.from), xb = cx(sp.to);
+      var ya = tips[sp.from] != null ? tips[sp.from] - 2 : top - 10, yb = tips[sp.to] != null ? tips[sp.to] - 2 : top - 10;
+      if (tips[sp.from] == null && tips[sp.to] == null) { ya = yb = top - 12; }
+      g.appendChild(el('path', {d: headed(xa, ya, xb, yb), class: 'arrow'}));
+      if (sp.label) g.appendChild(text((xa + xb) / 2, Math.min(ya, yb) - 7, sp.label, 'fl-spanlabel', 12));
+      part(g, sp); svg.appendChild(g);
+    });
+    var fig = h('figure', 'sdg-flowfig'); fig.appendChild(svg);
+    var body = h('div', 'sdg-body'); body.appendChild(fig);
+    var main = h('div', 'sdg-main'); main.appendChild(body); host.appendChild(main); this.main = main;
+  };
 
   // ---------------------------------------------------------------- amort --
   // An amortization explorer (v2.50). Every other widget here draws data the

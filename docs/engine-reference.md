@@ -1,4 +1,4 @@
-# Engine reference — `engine/sd-graph.js` v2.56
+# Engine reference — `engine/sd-graph.js` v2.57
 
 Written from the engine source. The conversion prompt carries a shorter version
 of this in its own "Engine reference" section; that one is what the model needs
@@ -197,6 +197,29 @@ what the schedule is indexed by.
 
 A widget carrying one needs no `steps` and no `caption`: the reading the
 student scrubs to is what it is for.
+
+### `flow`
+
+A chain of boxes (**v2.57**): the leverage chapter's "Sales → Operating
+Income (EBIT) → EPS", with the kind of leverage named on each link, a thick
+arrow above a box for a change in it, and a thin red arrow from one change to
+the next carrying the multiplier. Drawn as one SVG, like a plot, and it takes
+the same step controls.
+
+```json
+{"flow": {"nodes": ["Sales", "Operating\nIncome (EBIT)", "EPS"],
+          "links": ["Operating\nLeverage", "Financial\nLeverage"],
+          "changes": [{"node": 0, "text": "+10%", "dir": "up", "at": 1},
+                      {"node": 1, "text": "+20%", "dir": "up", "at": 2}],
+          "spans": [{"from": 0, "to": 1, "label": "DOL_{S} = 2", "at": 2}]}}
+```
+
+`nodes` and `links` are strings or `{text, at, until}`; text wraps on `\n`
+and takes `_{...}`. A `change` is a solid arrow above its node, `dir: "up"`
+or `"down"`, with its text beside it; a `span` runs between the tops of two
+change arrows (or just above the boxes where there are none, which is how
+the DOL/DFL/DCL triangle is drawn as a row). `check_file.py` counts nodes,
+links, changes and spans as what a step can change.
 
 ### `axes`
 
@@ -647,6 +670,19 @@ pressed against a dashed guide, warns.
 Animation: elements cross-fade over 0.45s and shifted curves slide over 0.6s,
 both disabled under `prefers-reduced-motion`. A screenshot taken sooner than
 that catches a curve mid-slide.
+
+## The page's own stylesheet
+
+The plot's SVG uses short class names (`brace`, `tag`, `grid`, `arrow`,
+`area`, `guide`, `pt`, `curve`), and a chapter's own `<style>` block can
+target the same names: the FIN3403 risk chapter sets `.brace { position:
+absolute; transform: scaleX(.65) }` for a CSS diagram of its own, and every
+upright brace in the widgets on that page was squeezed into the left margin
+while the DOM said they were in the right place (**v2.57**). The stylesheet
+now pins `transform`, `position`, `margin`, `padding`, `border` and
+`visibility` on those elements. `check_file.py` cannot see this -- it is a
+render-only defect -- so a widget that looks wrong on a page that has its own
+CSS is a stylesheet collision until proved otherwise.
 
 ## What the engine does not do
 

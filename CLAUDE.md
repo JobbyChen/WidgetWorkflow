@@ -1044,7 +1044,11 @@ Ian changed this rule on 2026-09-17, and the change applies **here only**:
 * **Concise: a widget only where the Concise's own text states the numbers**,
   placed after that line or table, cases merged under `alt`, never two in a
   row (the UCF rule above, applied to calculators). A keystroke list with no
-  values beside it (the Σ+ keys, the deferred-annuity methods) gets nothing.
+  values beside it (the Σ+ keys, the deferred-annuity methods) gets nothing,
+  and neither does a bare example bullet: the Cost of Capital Concise's
+  "Bond with flotation example: … → kd = 8.6045%" line had a widget under it
+  and Ian pulled it ("there's no context for this widget", 2026-10-16). The
+  text has to introduce the calculation, not just list its inputs.
 * The build lives in `scripts/fin3403/` (`fin_maps.py` writes every chapter's
   map, `fin_assemble.py` applies them to a folder holding the unpacked P1/P2
   zips and writes `FIN3403 Widgets/Exam N/<chapter>/`). The finished files are

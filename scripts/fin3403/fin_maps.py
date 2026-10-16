@@ -6,7 +6,7 @@ screenshots. Every number here is read from the chapter's prose or the screensho
 own register boxes (the alt texts repeat them); nothing is invented. `expect` is the
 result the notes print, checked by test_hp.py against what the widget computes."""
 import json, pathlib
-MAPS = pathlib.Path(__file__).resolve().parent.parent / "maps"
+MAPS = pathlib.Path("/tmp/claude-0/-home-user-WidgetWorkflow/18e4fdac-d634-5a6b-a05e-3dc28e88a03b/scratchpad/fin") / "maps"
 MAPS.mkdir(exist_ok=True)
 
 def tvm(expect, **kw):
@@ -161,7 +161,8 @@ cost_debt = dict(n=20, pmt=40, fv=1000, pyr=2, period="half-year", solve="I/YR")
 write("Exam3-CostOfCapital", {
     P + "01-calculator-ytm-8000.png": tvm("8.0000", pv=-1000, **cost_debt),
     P + "02-calculator-cost-of-debt-8-6045.png": tvm("8.6045", pv=-960, **cost_debt),
-}, [after("<b>Bond with flotation example:</b>", tvm("8.6045", pv=-960, **cost_debt))])
+})   # Concise: none. Its one example line sits in a bullet list with no text introducing the
+     # calculation, which Ian judged no context for a widget (2026-10-16).
 
 # ---------------------------------------------------------------- Exam 3: Capital Budgeting
 P = "fin3403-exam3-capbudget-"
